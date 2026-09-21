@@ -1,0 +1,28 @@
+# OE Isan Menu — โปรเจกต์เมนูร้าน โออี อาหารอีสาน แจ่วฮ้อน
+
+เมนูร้านอาหารในรูปแบบ HTML (A4) พร้อม editor สำหรับแก้ไขราคา/เมนู และจัดวางรูปอาหาร
+
+## ไฟล์ในโปรเจกต์
+
+| ไฟล์ | บทบาท | มีรูป | Editor UI |
+|---|---|---|---|
+| `OEIsanHotpotMenu.html` | เมนูสำหรับพิมพ์ (print) | ไม่มี | ไม่มี |
+| `OEIsanHotpotMenuEditor.html` | editor แก้ราคา/เมนู | ไม่มี | มี |
+| `OEIsanHotpotMenuWithImage.html` | เมนู + รูปอาหาร (print) | มี | ไม่มี |
+| `OEIsanHotpotMenuWithImageEditor.html` | editor + รูปอาหาร (ตัวหลัก) | มี | มี |
+
+## วิธีเปิด
+เปิดใน Chrome / Edge โดยตรง (ดับเบิลคลิก หรือวาง path ใน address bar)
+กด **Ctrl+Shift+R** เพื่อโหลดเวอร์ชันล่าสุด (ล้าง cache)
+
+## editor — ปุ่มการทำงาน
+- **แก้ไขเมนู / ปิดการแก้ไขเมนู** — แก้ชื่อ/ราคา/หัวข้อ/เพิ่ม-ลบกลุ่ม/รายการ/หน้า
+- **แก้ไขรูป / ปิดการแก้ไขรูป** — ลากย้าย/ปรับขนาด/ลบ/เพิ่มรูป และเปลี่ยนโลโก้
+- **Save Editor File** — บันทึกไฟล์ editor (เลือกที่เก็บทุกครั้ง) มีจุดเหลืองเตือนเมื่อมีการแก้ที่ยังไม่บันทึก
+- **Save Menu File** — บันทึกไฟล์เมนูสำหรับพิมพ์ (ตัด editor ออก)
+
+## พิมพ์เป็น PDF
+Ctrl+P (Chrome/Edge) → A4, Margins = None, Background graphics = ON
+
+## Version control
+Local Git repo (ไม่มี remote) — commit ทุกครั้งที่แก้เสร็จเพื่อให้ย้อนกลับได้

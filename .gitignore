@@ -1,0 +1,13 @@
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp
+*.bak
+
+# ไฟล์ที่ดาวน์โหลด/ส่งออกชั่วคราว (สำเนาซ้ำจากปุ่ม Save)
+OEIsanHotPotMenuEditor_*.html
+OEIsanHotpotMenu_*.html
+*(1).html
+*(2).html
+*(3).html

@@ -464,7 +464,7 @@ body{background:#e8e2d9;color:#2b2320;
   margin-bottom:9px;background:#fff;box-shadow:0 1px 3px rgba(90,60,30,.06);}
 .sec-h{color:var(--accent);background:#f5efe4 !important;padding:8px 13px;font-family:'Prompt',sans-serif;font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px;border-left:5px solid var(--accent);border-bottom:1px solid #e3d8c6;}
 .sec-h .em{font-size:18px;}
-.secimg{margin-left:6px;height:26px;width:auto;}
+.secimg{margin-left:auto;height:26px;width:auto;}
 .sec-b{padding:5px 13px 7px;}
 .row{display:flex;align-items:flex-end;gap:5px;padding:2px 0;font-size:15px;}
 .nm{color:#2b3038;min-width:0;overflow-wrap:anywhere;word-break:break-word;}
@@ -761,6 +761,7 @@ function addPage(){
   var last=pages[pages.length-1];
   var np=last.cloneNode(true);
   np.classList.remove('overflowed');
+  np.querySelectorAll('.fimg').forEach(function(el){el.remove();});  /* หน้าใหม่เริ่มสะอาด — ไม่ copy รูป header มา */
   // clear grid -> two empty columns, each with an add-group button
   var grid=np.querySelector('.grid');
   grid.innerHTML='<div class="col" data-col="L"><button class="ed-addgroup" contenteditable="false" data-act="add-group">➕ เพิ่มกลุ่ม</button></div>'
@@ -774,6 +775,7 @@ function addPage(){
 }
 function toggleEdit(){
   var on=document.body.classList.toggle('editmode');
+  if(on && document.body.classList.contains('imgmode')){ toggleImgMode(); }  /* mutual exclusion: เปิดแก้เมนู → ปิดแก้รูป */
   document.body.classList.add('editing-on');
   document.querySelectorAll('.nm, .pr').forEach(function(sp){
     if(on) sp.setAttribute('contenteditable','true'); else sp.removeAttribute('contenteditable');
@@ -834,7 +836,7 @@ function buildMenuHtml(){
   clone.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
   clone.querySelectorAll('[data-edit]').forEach(function(el){el.removeAttribute('data-edit');});
   clone.querySelectorAll('[data-wired]').forEach(function(el){el.removeAttribute('data-wired');});
-  var b=clone.querySelector('body'); if(b) b.classList.remove('editmode','editing-on');
+  var b=clone.querySelector('body'); if(b){ b.classList.remove('editmode','editing-on'); b.style.paddingTop=''; }
   clone.querySelectorAll('.page.overflowed').forEach(function(el){el.classList.remove('overflowed');});
   return '<!DOCTYPE html>\n'+clone.outerHTML;
 }
@@ -1016,6 +1018,7 @@ function _imgBind(el){
 }
 function toggleImgMode(){
   var on=document.body.classList.toggle('imgmode');
+  if(on && document.body.classList.contains('editmode')){ toggleEdit(); }  /* mutual exclusion: เปิดแก้รูป → ปิดแก้เมนู */
   var btn=document.getElementById('btnImg');
   btn.classList.toggle('on',on);
   btn.textContent=on?'ปิดการแก้ไขรูป':'แก้ไขรูป';

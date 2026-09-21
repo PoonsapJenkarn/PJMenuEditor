@@ -432,7 +432,7 @@
 
 
 
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&amp;family=Sarabun:wght@400;600&amp;family=Noto+Sans+Thai:wght@500;700&amp;display=swap" rel="stylesheet"><style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&amp;family=Sarabun:wght@400;600;700&amp;family=Noto+Sans+Thai:wght@400;500;700&amp;family=Kanit:wght@400;600;700&amp;family=Mitr:wght@400;600;700&amp;family=Bai+Jamjuree:wght@400;600;700&amp;display=swap" rel="stylesheet"><style>
 @page { size: A4; margin: 0; }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -492,6 +492,37 @@ body.imgmode .fimg.sel{outline:2px solid #4200db;outline-offset:1px;}.fimg.sel::
 .btn-img.on{background:#5f2d78;}
 #imgbar{display:none;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;}
 body.imgmode #imgbar{display:flex;}
+/* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
+#typobar{display:none;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;width:100%;}
+body.editmode #typobar{display:flex;}
+#typobar .tlabel{font-size:12px;color:#cdd3da;font-weight:600;}
+#typobar .tinfo{font-size:12px;color:#ffd54a;font-weight:600;min-width:90px;}
+#typobar select,#typobar input[type=color],#typobar input[type=number]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:12px;height:30px;vertical-align:middle;}
+#typobar input[type=color]{width:34px;padding:2px;cursor:pointer;}
+#typobar input[type=number]{width:56px;}
+#typobar button.tbtn{font-size:12px;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#4a8579;color:#fff;font-weight:600;}
+#typobar button.tbtn.reset{background:#8a6d1a;}
+#typobar button.tbtn.applyall{background:#3d6fb5;}
+#typobar button.tbtn:disabled{background:#555;color:#999;cursor:not-allowed;}
+#typobar .seg{display:inline-flex;gap:3px;align-items:center;padding:0 6px;border-left:1px solid #555;}
+#typobar .ttoggle{width:30px;height:30px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;}
+#typobar .ttoggle.on{background:#4a8579;color:#fff;border-color:#4a8579;}
+#typobar .ttoggle:disabled{opacity:.4;cursor:not-allowed;}
+/* highlight element ที่กำลังเลือกแก้ */
+.typosel{outline:2px dashed #3d6fb5 !important;outline-offset:2px;border-radius:3px;}
+@media print{#typobar{display:none !important;}.typosel{outline:none !important;}}
+#typobar{display:none;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;width:100%;}
+body.editmode #typobar{display:flex;}
+#typobar select,#typobar input[type=color],#typobar input[type=number]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:12px;height:30px;vertical-align:middle;}
+#typobar input[type=color]{width:34px;padding:2px;cursor:pointer;}
+#typobar input[type=number]{width:56px;}
+#typobar .tlabel{font-size:12px;color:#cdd3da;font-weight:600;}
+#typobar .tbtn{font-size:12px;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#4a8579;color:#fff;font-weight:600;}
+#typobar .tbtn.reset{background:#8a6d1a;}
+#typobar .seg{display:inline-flex;gap:3px;align-items:center;padding:0 6px;border-left:1px solid #555;}
+#typobar .ttoggle{width:30px;height:30px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;}
+#typobar .ttoggle.on{background:#4a8579;color:#fff;border-color:#4a8579;}
+@media print{#typobar{display:none !important;}}
 #imgbar select{padding:5px;border:1px solid #ccc;border-radius:6px;font-size:12px;}
 #imgbar button{font-size:12px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#4200db;color:#fff;}
 #imgbar .info{font-family:monospace;font-size:11px;color:#333;background:#f3f3f7;padding:4px 6px;border-radius:5px;}
@@ -559,6 +590,7 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
 #edToast:not(.show){opacity:0 !important;pointer-events:none !important;}
 @media print{#edToast{display:none !important;visibility:hidden !important;}}
 </style>
+
 </head><body class="">
 <div id="edToast" style="display: none;" class=""></div>
 <div id="edbar">
@@ -577,6 +609,32 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
   <button onclick="imgScale(10)">+ ใหญ่</button>
   <button onclick="document.getElementById('imgFile').click()">📁 เพิ่มรูป</button>
   <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="imgAdd(event)">
+</div>
+<div id="typobar">
+  <span class="tlabel">🎨 จัดรูปแบบ:</span>
+  <span class="tinfo" id="typoInfo">คลิกข้อความที่ต้องการแก้</span>
+  <select id="typoFont" onchange="typoApplySel()" disabled>
+    <option value="">— ฟอนต์ —</option>
+    <option value="'Prompt',sans-serif">Prompt</option>
+    <option value="'Sarabun',sans-serif">Sarabun</option>
+    <option value="'Noto Sans Thai',sans-serif">Noto Sans Thai</option>
+    <option value="'Kanit',sans-serif">Kanit</option>
+    <option value="'Mitr',sans-serif">Mitr</option>
+    <option value="'Bai Jamjuree',sans-serif">Bai Jamjuree</option>
+  </select>
+  <input type="color" id="typoColor" onchange="typoApplySel()" title="สี" disabled>
+  <input type="number" id="typoSize" min="8" max="48" step="0.5" onchange="typoApplySel()" title="ขนาด (px)" disabled>
+  <span class="seg">
+    <button class="ttoggle" id="typoBold" onclick="typoToggleSel('bold')" title="ตัวหนา" disabled><b>B</b></button>
+    <button class="ttoggle" id="typoItalic" onclick="typoToggleSel('italic')" title="ตัวเอียง" disabled><i>I</i></button>
+  </span>
+  <span class="seg" id="typoLineSeg" style="display:none">
+    <select id="typoLineStyle" onchange="typoApplySel()" title="แบบเส้น">
+      <option value="dotted">จุด</option><option value="dashed">ขีด</option><option value="solid">ทึบ</option>
+    </select>
+  </span>
+  <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" disabled>ใช้ทั้งประเภท</button>
+  <button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" disabled>↺ คืนค่า</button>
 </div>
 
 </div>
@@ -734,7 +792,7 @@ function toggleEdit(){
     ? 'คลิกแก้ชื่อ/ราคา/หัวข้อ/โลโก้ · ➕ เพิ่มกลุ่ม/รายการ/หน้า · × ลบ · เสร็จแล้วกด "💾 Save File" เพื่อบันทึก'
     : 'กด "แก้ไขเมนู" เพื่อแก้ราคา/ชื่อ · "แก้ไขรูป" เพื่อจัดวางรูป · "💾 Save File" เพื่อบันทึกไฟล์';
   checkOverflow();
-  if(on){ markDirty(); }
+  if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); }
 }
 function checkOverflow(){
   var warn=document.getElementById('edwarn'); var bad=[];
@@ -754,6 +812,7 @@ function buildEditorHtml(){
   var clone=document.documentElement.cloneNode(true);
   clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
+  clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   var sv=clone.querySelector('#btnSave'); if(sv) sv.classList.remove('dirty');
   var ib=clone.querySelector('#imgbar'); if(ib){ib.style.removeProperty('display');}
   var tt=clone.querySelector('#edToast'); if(tt){tt.className='';tt.textContent='';tt.style.display='none';}
@@ -771,6 +830,7 @@ function buildMenuHtml(){
   ['#edbar','#editorUI','#editorScript'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
   clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,#logoInput,#edConfirm,#edToast,.rz,.delbtn,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
+  clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   clone.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
   clone.querySelectorAll('[data-edit]').forEach(function(el){el.removeAttribute('data-edit');});
   clone.querySelectorAll('[data-wired]').forEach(function(el){el.removeAttribute('data-wired');});
@@ -1019,6 +1079,137 @@ document.addEventListener('mousemove',function(e){
 });
 document.addEventListener('mouseup',function(){ if(_imgMode){ markDirty(); } _imgMode=null;});
 document.querySelectorAll('.fimg').forEach(_imgBind);
+
+/* ===== Typography (คลิกเลือกอิสระ + inline style ต่อ element) ===== */
+/* ลำดับความสำคัญในการระบุประเภทของ element ที่คลิก */
+var TYPO_TYPES = [
+  {key:'ln',      sel:'.ln',        label:'เส้นจุด',        line:true },
+  {key:'noteh',   sel:'.crab b',    label:'หมายเหตุ-หัวข้อ' },
+  {key:'notesub', sel:'.crab .sub', label:'หมายเหตุ-คำอธิบาย' },
+  {key:'nm',      sel:'.nm',        label:'ชื่อเมนู' },
+  {key:'pr',      sel:'.pr',        label:'ราคา' },
+  {key:'sechead', sel:'.sechead',   label:'หัวข้อกลุ่ม' }
+];
+var _typoEl=null, _typoType=null;
+function _typoFind(node){
+  // ไต่จาก target ขึ้นหา element ที่ตรงประเภทแรกสุด
+  for(var i=0;i<TYPO_TYPES.length;i++){
+    var t=TYPO_TYPES[i]; var el=node.closest? node.closest(t.sel):null;
+    if(el) return {el:el,type:t};
+  }
+  return null;
+}
+function _rgbToHex(c){
+  if(!c) return '#000000';
+  if(c[0]==='#') return c;
+  var m=c.match(/\d+/g); if(!m) return '#000000';
+  return '#'+m.slice(0,3).map(function(x){var h=parseInt(x).toString(16);return h.length<2?'0'+h:h;}).join('');
+}
+function _typoTypeDef(key){ for(var i=0;i<TYPO_TYPES.length;i++){ if(TYPO_TYPES[i].key===key) return TYPO_TYPES[i]; } return null; }
+function typoSelect(el,type){
+  // ล้าง highlight เก่า
+  if(_typoEl) _typoEl.classList.remove('typosel');
+  _typoEl=el; _typoType=type;
+  el.classList.add('typosel');
+  var isLine=!!type.line;
+  document.getElementById('typoInfo').textContent=type.label;
+  // เปิด controls
+  ['typoColor','typoApplyAll','typoResetBtn'].forEach(function(id){document.getElementById(id).disabled=false;});
+  document.getElementById('typoFont').disabled=isLine;
+  document.getElementById('typoSize').disabled=isLine;
+  document.getElementById('typoBold').disabled=isLine;
+  document.getElementById('typoItalic').disabled=isLine;
+  document.getElementById('typoLineSeg').style.display=isLine?'inline-flex':'none';
+  document.getElementById('typoFont').style.display=isLine?'none':'';
+  document.getElementById('typoSize').style.display=isLine?'none':'';
+  document.getElementById('typoFont').parentNode; // no-op
+  var cs=getComputedStyle(el);
+  if(isLine){
+    document.getElementById('typoColor').value=_rgbToHex(el.style.borderBottomColor||cs.borderBottomColor);
+    document.getElementById('typoLineStyle').value=el.style.borderBottomStyle||cs.borderBottomStyle||'dotted';
+  } else {
+    document.getElementById('typoColor').value=_rgbToHex(el.style.color||cs.color);
+    document.getElementById('typoSize').value=Math.round((parseFloat(el.style.fontSize)||parseFloat(cs.fontSize)||15)*2)/2;
+    var curFont=el.style.fontFamily||cs.fontFamily; var fsel=document.getElementById('typoFont'); fsel.value='';
+    for(var i=0;i<fsel.options.length;i++){ var v=fsel.options[i].value; if(v && curFont.indexOf(v.split(',')[0].replace(/'/g,''))>=0){ fsel.value=v; break; } }
+    var w=el.style.fontWeight||cs.fontWeight;
+    document.getElementById('typoBold').classList.toggle('on', parseInt(w)>=600);
+    document.getElementById('typoItalic').classList.toggle('on', (el.style.fontStyle||cs.fontStyle)==='italic');
+  }
+}
+function typoClear(){
+  if(_typoEl) _typoEl.classList.remove('typosel');
+  _typoEl=null; _typoType=null;
+  document.getElementById('typoInfo').textContent='คลิกข้อความที่ต้องการแก้';
+  ['typoFont','typoColor','typoSize','typoBold','typoItalic','typoApplyAll','typoResetBtn'].forEach(function(id){document.getElementById(id).disabled=true;});
+  document.getElementById('typoBold').classList.remove('on');
+  document.getElementById('typoItalic').classList.remove('on');
+  document.getElementById('typoLineSeg').style.display='none';
+  document.getElementById('typoFont').style.display='';
+  document.getElementById('typoSize').style.display='';
+}
+function typoApplySel(){
+  if(!_typoEl) return;
+  if(_typoType.line){
+    _typoEl.style.borderBottomColor=document.getElementById('typoColor').value;
+    _typoEl.style.borderBottomStyle=document.getElementById('typoLineStyle').value;
+  } else {
+    var f=document.getElementById('typoFont').value; if(f) _typoEl.style.fontFamily=f;
+    _typoEl.style.color=document.getElementById('typoColor').value;
+    var sz=parseFloat(document.getElementById('typoSize').value); if(sz) _typoEl.style.fontSize=sz+'px';
+  }
+  if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+}
+function typoToggleSel(which){
+  if(!_typoEl||_typoType.line) return;
+  var btn=document.getElementById(which==='bold'?'typoBold':'typoItalic');
+  var on=!btn.classList.contains('on'); btn.classList.toggle('on',on);
+  if(which==='bold') _typoEl.style.fontWeight=on?'700':'400';
+  else _typoEl.style.fontStyle=on?'italic':'normal';
+  if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+}
+function typoApplyAllSame(){
+  if(!_typoEl) return;
+  var sel=_typoType.sel, src=_typoEl;
+  document.querySelectorAll(sel).forEach(function(el){
+    if(el===src) return;
+    if(_typoType.line){
+      if(src.style.borderBottomColor) el.style.borderBottomColor=src.style.borderBottomColor;
+      if(src.style.borderBottomStyle) el.style.borderBottomStyle=src.style.borderBottomStyle;
+    } else {
+      if(src.style.fontFamily) el.style.fontFamily=src.style.fontFamily;
+      if(src.style.color) el.style.color=src.style.color;
+      if(src.style.fontSize) el.style.fontSize=src.style.fontSize;
+      if(src.style.fontWeight) el.style.fontWeight=src.style.fontWeight;
+      if(src.style.fontStyle) el.style.fontStyle=src.style.fontStyle;
+    }
+  });
+  if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+  var inf=document.getElementById('typoInfo'); var old=inf.textContent; inf.textContent='✓ ใช้กับทุก'+_typoType.label+'แล้ว';
+  setTimeout(function(){ if(_typoType) inf.textContent=_typoType.label; },1400);
+}
+function typoResetSel(){
+  if(!_typoEl) return;
+  if(_typoType.line){
+    _typoEl.style.removeProperty('border-bottom-color');
+    _typoEl.style.removeProperty('border-bottom-style');
+    _typoEl.style.removeProperty('border-bottom-width');
+  } else {
+    ['font-family','color','font-size','font-weight','font-style'].forEach(function(pp){_typoEl.style.removeProperty(pp);});
+  }
+  typoSelect(_typoEl,_typoType); // reload ค่าที่โชว์ให้ตรงกับ default
+  if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+}
+/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */
+document.addEventListener('click',function(ev){
+  if(!document.body.classList.contains('editmode')) return;
+  if(ev.target.closest('#typobar')||ev.target.closest('#edbar')) return;
+  var found=_typoFind(ev.target);
+  if(found) typoSelect(found.el,found.type);
+},true);
+
+
+
 
 /* ---- Sync body padding-top กับความสูงจริงของ toolbar (กัน edwarn ทับ header A4) ---- */
 function syncBarHeight(){

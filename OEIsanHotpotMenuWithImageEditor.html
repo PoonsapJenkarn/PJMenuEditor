@@ -1025,6 +1025,13 @@ function toggleImgMode(){
   if(on){ markDirty(); }
   if(!on){ if(_imgSel){_imgSel.classList.remove('sel');_imgSel=null;} _imgReadout(null); }
 }
+/* คลิกนอกรูป (ในโหมดแก้ไขรูป) = ยกเลิกเลือก + ซ่อนกรอบ */
+document.addEventListener('mousedown',function(e){
+  if(!document.body.classList.contains('imgmode'))return;
+  if(e.target.closest('.fimg'))return;   /* คลิกที่รูป — _imgBind จัดการ (stopPropagation อยู่แล้ว) */
+  if(e.target.closest('#edbar'))return;  /* คลิกที่แถบเครื่องมือ — ไม่ยกเลิก (ปุ่ม +/− ต้องใช้รูปที่เลือก) */
+  if(_imgSel){_imgSel.classList.remove('sel');_imgSel=null;_imgReadout(null);}
+});
 function imgScale(pct){
   if(!_imgSel)return;
   var cs=getComputedStyle(_imgSel),r=parseFloat(_imgSel.dataset.ratio)||1;

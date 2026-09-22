@@ -4,6 +4,7 @@ desktop.ini
 .DS_Store
 *.tmp
 *.bak
+~$*
 
 # ไฟล์ที่ดาวน์โหลด/ส่งออกชั่วคราว (สำเนาซ้ำจากปุ่ม Save)
 OEIsanHotPotMenuEditor_*.html

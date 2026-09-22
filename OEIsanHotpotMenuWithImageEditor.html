@@ -485,12 +485,15 @@ body{background:#e8e2d9;color:#2b2320;
 .page{position:relative;}
 .fimg{position:absolute;z-index:20;pointer-events:none;}.fimg>img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block;pointer-events:none;}
 body.imgmode .fimg{pointer-events:auto;cursor:move;}
-body.imgmode .fimg.sel{outline:2px solid #4200db;outline-offset:1px;}.fimg.sel::after{content:'';position:absolute;right:0;bottom:0;width:16px;height:16px;background:linear-gradient(135deg,transparent 50%,#4200db 50%);border-bottom-right-radius:8px;pointer-events:none;opacity:.7;}
+body.imgmode .fimg.sel{outline:2px solid #4200db;outline-offset:1px;}
+.fimg .sizetag{display:none;position:absolute;right:3px;top:3px;background:rgba(0,0,0,.78);color:#fff;font:600 11px/1.3 monospace;padding:2px 6px;border-radius:5px;z-index:33;pointer-events:none;white-space:nowrap;}
+body.imgmode .fimg.sel .sizetag{display:block;}
+@media print{.fimg .sizetag{display:none !important;}}.fimg.sel::after{content:'';position:absolute;right:0;bottom:0;width:16px;height:16px;background:linear-gradient(135deg,transparent 50%,#4200db 50%);border-bottom-right-radius:8px;pointer-events:none;opacity:.7;}
 .fimg .rz{pointer-events:auto;position:absolute;right:3px;bottom:3px;width:18px;height:18px;background:#4200db;border:2px solid #fff;border-radius:50%;cursor:nwse-resize;z-index:32;box-shadow:0 1px 3px rgba(0,0,0,.4);}
 .fimg .delbtn{pointer-events:auto;position:absolute;left:3px;top:3px;width:20px;height:20px;background:#db0000;color:#fff;border:2px solid #fff;border-radius:50%;cursor:pointer;z-index:32;font-size:13px;line-height:16px;text-align:center;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.4);}
 .btn-img{background:#8a4b9c;color:#fff;}
 .btn-img.on{background:#5f2d78;}
-#imgbar{display:none;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;}
+#imgbar{display:none;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;width:100%;}
 body.imgmode #imgbar{display:flex;}
 /* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
 #typobar{display:none;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;width:100%;}
@@ -525,7 +528,9 @@ body.editmode #typobar{display:flex;}
 @media print{#typobar{display:none !important;}}
 #imgbar select{padding:5px;border:1px solid #ccc;border-radius:6px;font-size:12px;}
 #imgbar button{font-size:12px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#4200db;color:#fff;}
-#imgbar .info{font-family:monospace;font-size:11px;color:#333;background:#f3f3f7;padding:4px 6px;border-radius:5px;}
+#imgbar .imgstatus{font-family:monospace;font-size:11.5px;color:#ffd54a;display:inline-flex;align-items:center;gap:5px;margin-left:8px;}
+#imgbar .imgstatus::before{content:'ℹ️';font-size:13px;}
+#imgbar button:disabled{background:#555;color:#9aa0a8;cursor:not-allowed;opacity:.65;}
 @media print{.fimg .rz,.fimg .delbtn{display:none!important;} .fimg{pointer-events:none!important;} .fimg.sel{outline:none!important;}}
 </style>
 <style id="editorUI">
@@ -539,8 +544,7 @@ body.editmode #typobar{display:flex;}
 #edbar .btn-edit{background:#f4c542;color:#2b3038;}
 #edbar .btn-edit.on{background:#39c93f;color:#fff;}
 #edbar .btn-dl{background:#1592d9;color:#fff;}.btn-save{background:#00802f;color:#fff;position:relative;}.btn-save.dirty::after{content:'';position:absolute;top:5px;right:6px;width:8px;height:8px;background:#ffd23f;border:1px solid #fff;border-radius:50%;}
-#edwarn{width:100%;display:none;background:#fff3cd;color:#8a6d1a;border:1px solid #f0d488;border-radius:8px;padding:8px 12px;
-  font-size:13px;font-weight:600;font-family:'Sarabun',sans-serif;}
+#edwarn{display:none;color:#ffd54a;padding:3px 6px;font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;line-height:1.3;}
 #edwarn.show{display:block;}
 body.editmode .nm[contenteditable],body.editmode .pr[contenteditable]{outline:1px dashed #1592d9;
   background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}
@@ -600,15 +604,15 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
   <button class="btn-img" id="btnImg" onclick="toggleImgMode()">แก้ไขรูป</button>
   <button class="btn-save" id="btnSave" onclick="saveEditorFile()">💾 Save Editor File</button>
   <button class="btn-addpage" id="btnAddPage" onclick="addPage()">➕ เพิ่มหน้าใหม่</button><button class="btn-dl" id="btnDl" onclick="downloadMenu()">⬇ Save Menu File</button>
-  <div id="edwarn" class=""></div>
 <div id="emojiPicker"><div class="pk-hint">เลือกไอคอนหมวด (คลิกเพื่อใช้)</div><div class="eg" id="emojiGrid"></div></div>
 <input type="file" id="logoInput" accept="image/*" style="display:none">
 <div id="imgbar">
-  <span class="info" id="imgInfo">คลิกรูปเพื่อเลือก</span>
   <button onclick="imgScale(-10)">− เล็ก</button>
   <button onclick="imgScale(10)">+ ใหญ่</button>
   <button onclick="document.getElementById('imgFile').click()">📁 เพิ่มรูป</button>
+  <button id="btnImgAll" onclick="imgToAllPages()" disabled>📋 ใส่รูปนี้ทุกหน้า</button>
   <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="imgAdd(event)">
+  <span class="imgstatus" id="imgInfo">คลิกรูปเพื่อเลือก</span>
 </div>
 <div id="typobar">
   <span class="tlabel">🎨 จัดรูปแบบ:</span>
@@ -635,6 +639,7 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
   </span>
   <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" disabled>ใช้ทั้งประเภท</button>
   <button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" disabled>↺ คืนค่า</button>
+  <div id="edwarn" class=""></div>
 </div>
 
 </div>
@@ -804,7 +809,7 @@ function checkOverflow(){
   });
   if(bad.length){
     warn.classList.add('show');
-    warn.textContent='⚠️ เนื้อหาส่วนที่ล้นเกินกระดาษ A4 (หลังการแก้ไข) จะถูกตัดไม่แสดงตอนพิมพ์ กรุณาเพิ่มหรือลบรายการไม่ให้เกินหน้ากระดาษ A4 (หลังการแก้ไข)';
+    warn.textContent='⚠️ เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4';
   } else { warn.classList.remove('show'); warn.textContent=''; }
   if(typeof syncBarHeight==='function') syncBarHeight();
 }
@@ -812,7 +817,7 @@ function buildEditorHtml(){
   /* Full-fidelity clone that KEEPS the editor (bar+css+script) so the saved
      file is itself a working editor. Only strips transient runtime state. */
   var clone=document.documentElement.cloneNode(true);
-  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   var sv=clone.querySelector('#btnSave'); if(sv) sv.classList.remove('dirty');
@@ -830,7 +835,7 @@ function buildMenuHtml(){
   /* Clean print-only menu: editor removed entirely. Used by ดาวน์โหลดเมนู. */
   var clone=document.documentElement.cloneNode(true);
   ['#edbar','#editorUI','#editorScript'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
-  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,#logoInput,#edConfirm,#edToast,.rz,.delbtn,#imgbar').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,#logoInput,#edConfirm,#edToast,.rz,.delbtn,.sizetag,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   clone.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
@@ -986,14 +991,19 @@ window.addEventListener('load', function(){ renumber(); checkOverflow(); });
 var _imgSel=null,_imgMode=null,_isx,_isy,_ist,_isoff,_isw,_ish,_iaxis,_iunit,_iloff,_iaddN=0;
 function _isLeft(el){return el.style.left && el.style.left!=='' && el.style.left!=='auto';}
 function _imgReadout(el){
-  var v=document.getElementById('imgInfo'); if(!v)return;
-  if(!el){v.textContent='คลิกรูปเพื่อเลือก';return;}
+  var v=document.getElementById('imgInfo');
+  var ba=document.getElementById('btnImgAll');
+  if(!el){ if(v) v.textContent='คลิกรูปเพื่อเลือก'; if(ba) ba.disabled=true; return; }
+  if(ba) ba.disabled=false;
+  var cs=getComputedStyle(el), w=Math.round(parseFloat(cs.width)), h=Math.round(parseFloat(cs.height));
   var s=el.style, pos=_isLeft(el)?('left:'+s.left):('right:'+(parseInt(s.right)||0)+'px');
-  v.textContent='#'+el.dataset.num+(el.classList.contains('hdr')?'(hdr) ':' ')+'top:'+s.top+' '+pos+' w:'+parseInt(s.width)+' h:'+parseInt(s.height);
+  if(v) v.textContent='#'+el.dataset.num+(el.classList.contains('hdr')?'(hdr) ':' ')+'top:'+s.top+' '+pos+' w:'+w+' h:'+h;
+  var t=el.querySelector('.sizetag'); if(t) t.textContent=w+' × '+h;
 }
 function _imgHandles(el){
   if(!el.querySelector('.delbtn')){var d=document.createElement('div');d.className='delbtn';d.textContent='×';
     d.onclick=function(ev){ev.stopPropagation();el.remove();_imgSel=null;_imgReadout(null);markDirty();};el.appendChild(d);}
+  if(!el.querySelector('.sizetag')){var t=document.createElement('div');t.className='sizetag';el.appendChild(t);}
 }
 function _imgSelect(el){if(_imgSel)_imgSel.classList.remove('sel');_imgSel=el;el.classList.add('sel');_imgHandles(el);_imgReadout(el);}
 function _imgBind(el){
@@ -1073,6 +1083,32 @@ function imgAdd(ev){
     im.src=rd.result;
   };
   rd.readAsDataURL(f); ev.target.value='';
+}
+/* ใส่รูปที่เลือกไปทุกหน้า (ตำแหน่ง+ขนาดเป๊ะ) — data-syncid กันซ้ำ, รักษาการแก้แยกหน้า */
+function imgToAllPages(){
+  var vi=document.getElementById('imgInfo');
+  if(!_imgSel){ if(vi) vi.textContent='เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"'; return; }
+  var src=_imgSel;
+  var sid=src.dataset.syncid; if(!sid){ sid='sync'+(++_iaddN); src.dataset.syncid=sid; }
+  var srcPage=src.closest('.page');
+  var css=src.style.cssText, ratio=src.dataset.ratio||'1';
+  var im0=src.querySelector('img'), imgSrc=im0?im0.getAttribute('src'):'';
+  var isHdr=src.classList.contains('hdr');
+  var added=0;
+  document.querySelectorAll('.page').forEach(function(pg){
+    if(pg===srcPage) return;
+    if(pg.querySelector('.fimg[data-syncid="'+sid+'"]')) return;  /* มีสำเนาแล้ว — ไม่ใส่ซ้ำ (รักษาการแก้แยกหน้า) */
+    var el=document.createElement('div');
+    el.className='fimg'+(isHdr?' hdr':'');
+    var im=document.createElement('img'); im.src=imgSrc; im.alt='sync';
+    el.appendChild(im);
+    el.dataset.num='p'+(++_iaddN); el.dataset.ratio=ratio; el.dataset.syncid=sid;
+    el.style.cssText=css;
+    pg.appendChild(el); _imgBind(el);
+    added++;
+  });
+  markDirty(); checkOverflow();
+  if(vi) vi.textContent = added>0 ? ('✓ ใส่รูปไป '+added+' หน้าแล้ว') : 'ทุกหน้ามีรูปนี้อยู่แล้ว';
 }
 document.addEventListener('mousemove',function(e){
   if(!_imgMode||!_imgSel)return;

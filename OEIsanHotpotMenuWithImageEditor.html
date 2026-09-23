@@ -490,8 +490,9 @@ body.imgmode .fimg.sel::before{content:'';position:absolute;inset:-4px;pointer-e
 .fimg .sizetag{display:none;position:absolute;right:3px;top:3px;background:rgba(0,0,0,.78);color:#fff;font:600 11px/1.3 monospace;padding:2px 6px;border-radius:5px;z-index:33;pointer-events:none;white-space:nowrap;}
 body.imgmode .fimg.sel .sizetag{display:block;}
 @media print{.fimg .sizetag{display:none !important;}}
-.fimg .rz{display:none;pointer-events:auto;position:absolute;right:3px;bottom:3px;width:16px;height:16px;background:#217346;border:2px solid #fff;border-radius:50%;cursor:nwse-resize;z-index:32;box-shadow:0 1px 3px rgba(0,0,0,.3);}
-body.imgmode .fimg.sel .rz{display:block;}
+.fimg .rz{display:none;pointer-events:auto;position:absolute;right:-9px;bottom:-9px;width:22px;height:22px;background:#217346;border:2px solid #fff;border-radius:50%;cursor:nwse-resize;z-index:33;box-shadow:0 1px 4px rgba(0,0,0,.3);align-items:center;justify-content:center;}
+.fimg .rz svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.2;}
+body.imgmode .fimg.sel .rz{display:flex;}
 .fimg .delbtn{display:none;pointer-events:auto;position:absolute;left:3px;top:3px;width:20px;height:20px;background:#db0000;color:#fff;border:2px solid #fff;border-radius:50%;cursor:pointer;z-index:32;font-size:13px;line-height:16px;text-align:center;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.4);}
 body.imgmode .fimg.sel .delbtn{display:flex;align-items:center;justify-content:center;}
 .btn-img{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
@@ -547,6 +548,10 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #edtabs .edtab.active{color:#217346;font-weight:600;background:#fff;}
 #edtabs .edtab.active::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2.5px;background:#217346;}
 #edtabs .hint{margin-left:auto;margin-right:0;font-size:11.5px;color:#8a8886;font-weight:400;}
+#edtabs .langsw{margin-left:auto;display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-right:6px;}
+#edtabs .langsw button{font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;border:none;background:#fff;color:#605e5c;padding:5px 11px;cursor:pointer;}
+#edtabs .langsw button.on{background:#217346;color:#fff;}
+@media print{#edtabs .langsw{display:none !important;}}
 #edribbon{display:flex;padding:7px 12px;height:82px;box-sizing:border-box;background:#faf9f8;}
 #edribbon .rpane{display:none;align-items:center;gap:9px;flex-wrap:wrap;width:100%;}
 #edribbon .rpane.active{display:flex;}
@@ -634,6 +639,8 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
 #edToast.warn{background:#fff3cd;color:#8a6d1a;border:1px solid #f0d488;}
 @media print{#edToast{display:none !important;}}
 @media print{.ed-del,.ed-add{display:none !important;} .page.overflowed{outline:none;}}
+/* วิธี B: ซ่อนปุ่มแก้ไขชั่วคราวตอนวัด overflow (ให้ได้ความสูงเท่าตอนพิมพ์) */
+body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-delpage,body.measuring .ed-delgroup{display:none !important;}
 /* ===== FIX: ซ่อน modal/toast บนจอให้ถูกต้อง (แก้ปัญหา modal ค้าง + toast ติด print) ===== */
 
 #edToast:not(.show){opacity:0 !important;pointer-events:none !important;}
@@ -645,21 +652,22 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
 <div id="edbar">
   <div id="edtabs">
     <span class="edbrand" title="POONSAP"><svg width="30" height="30" viewBox="0 0 32 32" aria-label="POONSAP"><path fill="#d50000" d="M2 5 H30 L27 27 H5 Z"/><text x="16.3" y="24" font-family="'Montserrat','Prompt',Arial,sans-serif" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">P</text></svg></span>
-    <button class="edtab active" data-tab="home" onclick="switchTab('home')">ข้อความ</button>
-    <button class="edtab" data-tab="image" onclick="switchTab('image')">รูป</button>
-    <button class="edtab" data-tab="page" onclick="switchTab('page')">หน้า</button>
-    <button class="edtab" data-tab="view" onclick="switchTab('view')">ไฟล์</button>
+    <button class="edtab active" data-tab="home" data-i18n="tab.text" onclick="switchTab('home')">ข้อความ</button>
+    <button class="edtab" data-tab="image" data-i18n="tab.image" onclick="switchTab('image')">รูป</button>
+    <button class="edtab" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button>
+    <button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button>
     <span class="hint" id="edhint"></span>
+    <span class="langsw"><button id="langTH" onclick="setLang('th')">TH</button><button id="langEN" onclick="setLang('en')">EN</button></span>
   </div>
   <div id="edribbon">
     <div class="rpane active" data-pane="home">
       <div class="rgroup"><div class="rgb">
-        <button class="btn-edit b-lg" id="btnEdit" onclick="toggleEdit()"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span id="btnEditLabel">แก้ข้อความ</span></button>
-      </div><div class="rgl">โหมด</div></div>
+        <button class="btn-edit b-lg" id="btnEdit" onclick="toggleEdit()"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span id="btnEditLabel" data-i18n="btn.editText">แก้ข้อความ</span></button>
+      </div><div class="rgl" data-i18n="grp.mode">โหมด</div></div>
       <div id="typobar">
         <div class="rgroup fontgrp"><div class="rgb">
         <select id="typoFont" onchange="typoApplySel()" disabled>
-          <option value="">— ฟอนต์ —</option>
+          <option value="" data-i18n="font.placeholder">— ฟอนต์ —</option>
           <option value="'Prompt',sans-serif">Prompt</option>
           <option value="'Sarabun',sans-serif">Sarabun</option>
           <option value="'Noto Sans Thai',sans-serif">Noto Sans Thai</option>
@@ -678,41 +686,41 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
             <option value="dotted">จุด</option><option value="dashed">ขีด</option><option value="solid">ทึบ</option>
           </select>
         </span>
-        </div><div class="rgl">ฟอนต์</div></div>
+        </div><div class="rgl" data-i18n="grp.font">ฟอนต์</div></div>
         <div class="rgroup"><div class="rgb">
-        <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>ใช้ทั้งประเภท</button>
-        <button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg>คืนค่า</button>
-        </div><div class="rgl">จัดรูปแบบ</div></div>
+        <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span data-i18n="btn.applyAll">ใช้ทั้งประเภท</span></button>
+        <button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg><span data-i18n="btn.reset">คืนค่า</span></button>
+        </div><div class="rgl" data-i18n="grp.format">จัดรูปแบบ</div></div>
       </div>
     </div>
     <div class="rpane" data-pane="image">
       <div class="rgroup"><div class="rgb">
-        <button class="btn-img b-lg" id="btnImg" onclick="toggleImgMode()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-6 6"/></svg><span id="btnImgLabel">แก้รูป</span></button>
-      </div><div class="rgl">โหมด</div></div>
+        <button class="btn-img b-lg" id="btnImg" onclick="toggleImgMode()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-6 6"/></svg><span id="btnImgLabel" data-i18n="btn.editImage">แก้รูป</span></button>
+      </div><div class="rgl" data-i18n="grp.mode">โหมด</div></div>
       <div id="imgbar">
         <div class="rgroup"><div class="rgb">
-        <button class="b-lg" onclick="document.getElementById('imgFile').click()"><svg viewBox="0 0 24 24"><path d="M4 5h5l2 2h9v12H4z"/><path d="M12 11v5M9.5 13.5h5"/></svg><span>เพิ่มรูป</span></button>
-        <button class="b-lg" id="btnImgAll" onclick="imgToAllPages()" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="12" rx="1"/><path d="M8 8h12v12H8z"/></svg><span>ใส่ทุกหน้า</span></button>
-        <button class="b-lg" id="btnImgBigger" onclick="imgScale(10)" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 8v8M8 12h8"/></svg><span>ขยาย</span></button>
-        <button class="b-lg" id="btnImgSmaller" onclick="imgScale(-10)" disabled><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/><path d="M8 12h8"/></svg><span>ย่อ</span></button>
+        <button class="b-lg" onclick="document.getElementById('imgFile').click()"><svg viewBox="0 0 24 24"><path d="M4 5h5l2 2h9v12H4z"/><path d="M12 11v5M9.5 13.5h5"/></svg><span data-i18n="btn.addImage">เพิ่มรูป</span></button>
+        <button class="b-lg" id="btnImgAll" onclick="imgToAllPages()" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="12" rx="1"/><path d="M8 8h12v12H8z"/></svg><span data-i18n="btn.applyToAll">ใส่ทุกหน้า</span></button>
+        <button class="b-lg" id="btnImgBigger" onclick="imgScale(10)" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 8v8M8 12h8"/></svg><span data-i18n="btn.enlarge">ขยาย</span></button>
+        <button class="b-lg" id="btnImgSmaller" onclick="imgScale(-10)" disabled><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/><path d="M8 12h8"/></svg><span data-i18n="btn.shrink">ย่อ</span></button>
         <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="imgAdd(event)">
-        </div><div class="rgl">จัดการรูป</div></div>
+        </div><div class="rgl" data-i18n="grp.imgtools">จัดการรูป</div></div>
       </div>
     </div>
     <div class="rpane" data-pane="view">
       <div class="rgroup"><div class="rgb">
         <button class="btn-save b-lg" id="btnSave" onclick="saveEditorFile()"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7"/><rect x="8" y="13" width="8" height="5"/></svg><span>Save Editor</span></button>
         <button class="btn-dl b-lg" id="btnDl" onclick="downloadMenu()"><svg viewBox="0 0 24 24"><path d="M12 4v10M8 11l4 4 4-4"/><path d="M5 19h14"/></svg><span>Save Menu</span></button>
-      </div><div class="rgl">ไฟล์</div></div>
+      </div><div class="rgl" data-i18n="grp.file">ไฟล์</div></div>
       <div class="rgroup"><div class="rgb">
-        <button class="btn-print b-lg" id="btnPrint" onclick="window.print()"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="7" rx="1"/><path d="M8 16h8v5H8z"/></svg><span>พิมพ์</span></button>
-      </div><div class="rgl">พิมพ์</div></div>
+        <button class="btn-print b-lg" id="btnPrint" onclick="window.print()"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="7" rx="1"/><path d="M8 16h8v5H8z"/></svg><span data-i18n="btn.print">พิมพ์</span></button>
+      </div><div class="rgl" data-i18n="grp.print">พิมพ์</div></div>
     </div>
     <div class="rpane" data-pane="page">
       <div class="rgroup"><div class="rgb">
-        <button class="btn-addpage b-lg" id="btnAddPage" onclick="addPage()"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 8v6M9 11h6"/></svg><span>เพิ่มหน้า</span></button>
-        <button class="b-lg" id="btnDelPage" onclick="deletePagesByRange()"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>ลบหน้า</span></button>
-      </div><div class="rgl">หน้า</div></div>
+        <button class="btn-addpage b-lg" id="btnAddPage" onclick="addPage()"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 8v6M9 11h6"/></svg><span data-i18n="btn.addPage">เพิ่มหน้า</span></button>
+        <button class="b-lg" id="btnDelPage" onclick="deletePagesByRange()"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-i18n="btn.delPage">ลบหน้า</span></button>
+      </div><div class="rgl" data-i18n="grp.pagetools">หน้า</div></div>
     </div>
   </div>
   <div id="emojiPicker"><div class="pk-hint">เลือกไอคอนหมวด (คลิกเพื่อใช้)</div><div class="eg" id="emojiGrid"></div></div>
@@ -872,28 +880,55 @@ function toggleEdit(){
   var btn=document.getElementById('btnEdit');
   btn.classList.toggle('on',on); if(!document.getElementById('btnEditLabel')){ btn.textContent= on?'ปิดการแก้ไขข้อความ':'แก้ไขข้อความ'; }
   document.getElementById('edhint').textContent='';
+  if(on){ setStatus('info','โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้'); } else { setStatus('info','พร้อมใช้งาน'); }
   checkOverflow();
   if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); }
 }
-function setStatus(type,msg,meta){
+/* สถานะโหมดปัจจุบัน (info ระดับพื้นหลัง) — warning/error จะ override ชั่วคราว แล้วกลับมาที่นี่ */
+var _statusMode={type:'info',msg:'พร้อมใช้งาน'};
+var _overflowWarn=false;
+function _renderStatus(type,msg){
   var bar=document.getElementById('edstatus'); if(!bar) return;
   var t=(type==='error'||type==='warning')?type:'info';
   bar.className=t;
   var ic={info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',warning:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',error:'<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>'}[t];
   var icEl=document.getElementById('edstatusIc'); if(icEl) icEl.innerHTML='<svg viewBox="0 0 24 24">'+ic+'</svg>';
   var msgEl=document.getElementById('edstatusMsg'); if(msgEl) msgEl.textContent=(msg==null?'':msg);
-  var mEl=document.getElementById('edstatusMeta'); if(mEl) mEl.textContent=(meta==null?'':meta);
+  var mEl=document.getElementById('edstatusMeta'); if(mEl) mEl.textContent='';
   if(typeof syncBarHeight==='function') syncBarHeight();
 }
+/* setStatus: info = ตั้งสถานะโหมดพื้นหลัง (จำไว้); warning/error = แสดงทับชั่วคราว */
+function setStatus(type,msg){
+  var t=(type==='error'||type==='warning')?type:'info';
+  if(t==='info'){
+    _statusMode={type:'info',msg:msg};
+    /* priority: ถ้ามี warning overflow ค้างอยู่ อย่า render info ทับ — แค่จำสถานะโหมดไว้ */
+    if(_overflowWarn) return;
+    _renderStatus('info',msg);
+  } else {
+    /* warning/error แสดงทับทันที */
+    _renderStatus(t,msg);
+  }
+}
+/* clearStatus: ล้าง warning/error แล้วกลับไปแสดงสถานะโหมดปัจจุบัน */
+function clearStatus(){ _renderStatus(_statusMode.type,_statusMode.msg); }
 function checkOverflow(){
+  /* วิธี B: วัดแบบซ่อนปุ่มแก้ไขชั่วคราว (body.measuring) เพื่อได้ความสูงเท่าตอนพิมพ์จริง
+     — เบราว์เซอร์อ่าน layout ใน tick เดียวก่อน paint จึงไม่กระพริบ วัดได้แม้อยู่ใน edit mode */
+  document.body.classList.add('measuring');
   var bad=[];
   document.querySelectorAll('.page').forEach(function(pg,i){
     pg.classList.remove('overflowed');
     if(pg.scrollHeight > pg.clientHeight + 2){ pg.classList.add('overflowed'); bad.push(i+1); }
   });
+  document.body.classList.remove('measuring');
   if(bad.length){
-    setStatus('warning','เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4','หน้าที่ล้น: '+bad.join(', '));
-  } else { setStatus('info','พร้อมใช้งาน'); }
+    _overflowWarn=true;
+    _renderStatus('warning','เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4');
+  } else {
+    if(_overflowWarn){ _overflowWarn=false; }
+    clearStatus();
+  }
 }
 function buildEditorHtml(){
   /* Full-fidelity clone that KEEPS the editor (bar+css+script) so the saved
@@ -1071,6 +1106,33 @@ document.addEventListener('click', function(ev){
 
 window.addEventListener('resize', checkOverflow);
 window.addEventListener('load', function(){ renumber(); checkOverflow(); });
+/* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
+var I18N={
+ th:{'tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์',
+  'grp.mode':'โหมด','grp.font':'ฟอนต์','grp.format':'จัดรูปแบบ','grp.imgtools':'จัดการรูป','grp.pagetools':'หน้า','grp.file':'ไฟล์','grp.print':'พิมพ์',
+  'btn.editText':'แก้ข้อความ','btn.editImage':'แก้รูป','btn.applyAll':'ใช้ทั้งประเภท','btn.reset':'คืนค่า',
+  'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ',
+  'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —'},
+ en:{'tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File',
+  'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
+  'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
+  'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink',
+  'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —'}
+};
+var _lang='th';
+function t(k){ return (I18N[_lang]||I18N.th)[k] || (I18N.th[k]||k); }
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
+  var th=document.getElementById('langTH'), en=document.getElementById('langEN');
+  if(th) th.className=(_lang==='th'?'on':''); if(en) en.className=(_lang==='en'?'on':'');
+}
+function setLang(l){
+  _lang=(l==='en'?'en':'th');
+  try{ localStorage.setItem('oe_lang', _lang); }catch(e){}
+  applyLang();
+}
+try{ var _sv=localStorage.getItem('oe_lang'); if(_sv==='en'||_sv==='th') _lang=_sv; }catch(e){}
+applyLang();
 
 /* ===== IMAGE MODE (added) ===== */
 var _imgSel=null,_imgMode=null,_isx,_isy,_ist,_isoff,_isw,_ish,_iaxis,_iunit,_iloff,_iaddN=0;
@@ -1089,6 +1151,7 @@ function _imgHandles(el){
   if(!el.querySelector('.delbtn')){var d=document.createElement('div');d.className='delbtn';d.textContent='×';
     d.onclick=function(ev){ev.stopPropagation();el.remove();_imgSel=null;_imgReadout(null);markDirty();};el.appendChild(d);}
   if(!el.querySelector('.sizetag')){var t=document.createElement('div');t.className='sizetag';el.appendChild(t);}
+  if(!el.querySelector('.rz')){var r=document.createElement('div');r.className='rz';r.title='ลากเพื่อขยาย/ย่อรูป';r.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 8 L16 16 M16 9 V16 H9"/></svg>';el.appendChild(r);}
 }
 function _imgSelect(el){if(_imgSel)_imgSel.classList.remove('sel');_imgSel=el;el.classList.add('sel');_imgHandles(el);_imgReadout(el);}
 function _imgBind(el){
@@ -1118,6 +1181,7 @@ function toggleImgMode(){
   btn.classList.toggle('on',on);
   if(!document.getElementById('btnImgLabel')){ btn.textContent=on?'ปิดการแก้ไขรูป':'แก้ไขรูป'; }
   document.getElementById('edhint').textContent='';
+  if(on){ setStatus('info','โหมดจัดการรูป · คลิกรูปเพื่อเลือก'); } else { setStatus('info','พร้อมใช้งาน'); }
   if(on){ markDirty(); }
   if(!on){ if(_imgSel){_imgSel.classList.remove('sel');_imgSel=null;} _imgReadout(null); }
 }
@@ -1314,8 +1378,7 @@ function typoApplyAllSame(){
     }
   });
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
-  setStatus('info','✓ ใช้กับทุก'+_typoType.label+'แล้ว');
-  setTimeout(function(){ if(_typoType) setStatus('info',_typoType.label); },1400);
+  toast('✓ ใช้รูปแบบกับทุก'+_typoType.label+'แล้ว', true);
 }
 function typoResetSel(){
   if(!_typoEl) return;
@@ -1375,7 +1438,7 @@ function deletePagesByRange(){
   var pages=document.querySelectorAll('.page');
   for(var k=nums.length-1;k>=0;k--){ var idx=nums[k]-1; if(pages[idx]) pages[idx].remove(); }
   renumber(); checkOverflow();
-  setStatus('info','ลบแล้ว '+nums.length+' หน้า เหลือ '+remain+' หน้า');
+  toast('🗑 ลบแล้ว '+nums.length+' หน้า เหลือ '+remain+' หน้า', true);
 }
 function switchTab(name){
   var tabs=document.querySelectorAll('#edtabs .edtab');

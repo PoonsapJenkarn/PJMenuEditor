@@ -497,6 +497,10 @@ body.imgmode .fimg.sel .delbtn{display:flex;align-items:center;justify-content:c
 .btn-img{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
 #edbar .btn-img.on{background:#217346;color:#fff;border-color:#217346;}
 #imgbar{display:contents;}
+/* ===== Parent-Child Activation (v21) — เมนูลูก active เฉพาะเมื่อ parent เข้าโหมดแก้ไข ===== */
+/* imgbar/typobar เป็น display:contents จึง gate ที่ .rgroup ลูก (opacity ไม่ทำงานบน display:contents) */
+body:not(.imgmode) #imgbar .rgroup{opacity:.45;pointer-events:none;transition:opacity .15s;}
+body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:opacity .15s;}
 /* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
 #typobar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;width:100%;}
 #typobar .tlabel{font-size:12px;color:#605e5c;font-weight:600;}
@@ -537,7 +541,7 @@ body.imgmode .fimg.sel .delbtn{display:flex;align-items:center;justify-content:c
 #edbar .btn-edit.on{background:#217346;color:#fff;border-color:#217346;}
 #edbar .btn-dl{background:#217346;color:#fff;}.btn-save{background:#1a5c38;color:#fff;position:relative;}.btn-save.dirty::after{content:'';position:absolute;top:5px;right:6px;width:8px;height:8px;background:#ffd23f;border:1px solid #fff;border-radius:50%;}
 #edtabs{display:flex;align-items:center;gap:2px;padding:0 8px;background:#f3f2f1;border-bottom:1px solid #e1dfdd;flex-wrap:wrap;}
-#edtabs .edbrand{background:#217346;color:#fff;padding:8px 14px;font-weight:700;font-size:14px;}
+#edtabs .edbrand{display:inline-flex;align-items:center;padding:5px 10px;}
 #edtabs .edtab{font-family:'Prompt',sans-serif;font-size:13px;color:#444;padding:9px 15px;cursor:pointer;font-weight:500;border:none;border-radius:0;background:none;position:relative;}
 #edtabs .edtab:hover{background:#eceae9;}
 #edtabs .edtab.active{color:#217346;font-weight:600;background:#fff;}
@@ -640,8 +644,8 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
 <div id="edToast" style="display: none;" class=""></div>
 <div id="edbar">
   <div id="edtabs">
-    <span class="edbrand">โอ อี</span>
-    <button class="edtab active" data-tab="home" onclick="switchTab('home')">เมนู</button>
+    <span class="edbrand" title="POONSAP"><svg width="30" height="30" viewBox="0 0 32 32" aria-label="POONSAP"><path fill="#d50000" d="M2 5 H30 L27 27 H5 Z"/><text x="16.3" y="24" font-family="'Montserrat','Prompt',Arial,sans-serif" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">P</text></svg></span>
+    <button class="edtab active" data-tab="home" onclick="switchTab('home')">ข้อความ</button>
     <button class="edtab" data-tab="image" onclick="switchTab('image')">รูป</button>
     <button class="edtab" data-tab="page" onclick="switchTab('page')">หน้า</button>
     <button class="edtab" data-tab="view" onclick="switchTab('view')">ไฟล์</button>
@@ -650,7 +654,7 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
   <div id="edribbon">
     <div class="rpane active" data-pane="home">
       <div class="rgroup"><div class="rgb">
-        <button class="btn-edit b-lg" id="btnEdit" onclick="toggleEdit()"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span id="btnEditLabel">แก้เมนู</span></button>
+        <button class="btn-edit b-lg" id="btnEdit" onclick="toggleEdit()"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span id="btnEditLabel">แก้ข้อความ</span></button>
       </div><div class="rgl">โหมด</div></div>
       <div id="typobar">
         <div class="rgroup fontgrp"><div class="rgb">
@@ -687,10 +691,10 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
       </div><div class="rgl">โหมด</div></div>
       <div id="imgbar">
         <div class="rgroup"><div class="rgb">
-        <button class="b-lg" onclick="imgScale(-10)"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/><path d="M8 12h8"/></svg><span>เล็ก</span></button>
-        <button class="b-lg" onclick="imgScale(10)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 8v8M8 12h8"/></svg><span>ใหญ่</span></button>
         <button class="b-lg" onclick="document.getElementById('imgFile').click()"><svg viewBox="0 0 24 24"><path d="M4 5h5l2 2h9v12H4z"/><path d="M12 11v5M9.5 13.5h5"/></svg><span>เพิ่มรูป</span></button>
         <button class="b-lg" id="btnImgAll" onclick="imgToAllPages()" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="12" rx="1"/><path d="M8 8h12v12H8z"/></svg><span>ใส่ทุกหน้า</span></button>
+        <button class="b-lg" id="btnImgBigger" onclick="imgScale(10)" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 8v8M8 12h8"/></svg><span>ขยาย</span></button>
+        <button class="b-lg" id="btnImgSmaller" onclick="imgScale(-10)" disabled><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/><path d="M8 12h8"/></svg><span>ย่อ</span></button>
         <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="imgAdd(event)">
         </div><div class="rgl">จัดการรูป</div></div>
       </div>
@@ -707,7 +711,7 @@ body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;backgr
     <div class="rpane" data-pane="page">
       <div class="rgroup"><div class="rgb">
         <button class="btn-addpage b-lg" id="btnAddPage" onclick="addPage()"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 8v6M9 11h6"/></svg><span>เพิ่มหน้า</span></button>
-        <button class="b-lg" id="btnDelPage" onclick="deleteLastPage()"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>ลบหน้า</span></button>
+        <button class="b-lg" id="btnDelPage" onclick="deletePagesByRange()"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>ลบหน้า</span></button>
       </div><div class="rgl">หน้า</div></div>
     </div>
   </div>
@@ -866,7 +870,7 @@ function toggleEdit(){
   });
   decorate(on);
   var btn=document.getElementById('btnEdit');
-  btn.classList.toggle('on',on); if(!document.getElementById('btnEditLabel')){ btn.textContent= on?'ปิดการแก้ไขเมนู':'แก้ไขเมนู'; }
+  btn.classList.toggle('on',on); if(!document.getElementById('btnEditLabel')){ btn.textContent= on?'ปิดการแก้ไขข้อความ':'แก้ไขข้อความ'; }
   document.getElementById('edhint').textContent='';
   checkOverflow();
   if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); }
@@ -1073,8 +1077,9 @@ var _imgSel=null,_imgMode=null,_isx,_isy,_ist,_isoff,_isw,_ish,_iaxis,_iunit,_il
 function _isLeft(el){return el.style.left && el.style.left!=='' && el.style.left!=='auto';}
 function _imgReadout(el){
   var ba=document.getElementById('btnImgAll');
-  if(!el){ setStatus('info','คลิกรูปเพื่อเลือก'); if(ba) ba.disabled=true; return; }
-  if(ba) ba.disabled=false;
+  var bz=document.getElementById('btnImgBigger'), bs=document.getElementById('btnImgSmaller');
+  if(!el){ setStatus('info','คลิกรูปเพื่อเลือก'); if(ba) ba.disabled=true; if(bz) bz.disabled=true; if(bs) bs.disabled=true; return; }
+  if(ba) ba.disabled=false; if(bz) bz.disabled=false; if(bs) bs.disabled=false;
   var cs=getComputedStyle(el), w=Math.round(parseFloat(cs.width)), h=Math.round(parseFloat(cs.height));
   var s=el.style, pos=_isLeft(el)?('left:'+s.left):('right:'+(parseInt(s.right)||0)+'px');
   setStatus('info','รูป #'+el.dataset.num+(el.classList.contains('hdr')?' (หัวเมนู)':'')+' · top:'+s.top+' '+pos+' · w:'+w+' h:'+h);
@@ -1293,6 +1298,7 @@ function typoToggleSel(which){
 }
 function typoApplyAllSame(){
   if(!_typoEl) return;
+  if(!window.confirm('ใช้รูปแบบนี้กับทุก'+_typoType.label+'ในเมนูใช่ไหม? จะเปลี่ยนทุกอันประเภทเดียวกันทั้งหมด')) return;
   var sel=_typoType.sel, src=_typoEl;
   document.querySelectorAll(sel).forEach(function(el){
     if(el===src) return;
@@ -1313,6 +1319,7 @@ function typoApplyAllSame(){
 }
 function typoResetSel(){
   if(!_typoEl) return;
+  if(!window.confirm('คืนค่าเริ่มต้นของ'+_typoType.label+'ที่เลือกใช่ไหม? การปรับแต่งจะถูกล้าง')) return;
   if(_typoType.line){
     _typoEl.style.removeProperty('border-bottom-color');
     _typoEl.style.removeProperty('border-bottom-style');
@@ -1334,12 +1341,41 @@ document.addEventListener('click',function(ev){
 
 
 
-function deleteLastPage(){
+function deletePagesByRange(){
+  var total=document.querySelectorAll('.page').length;
+  if(total<=1){ setStatus('warning','ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้'); return; }
+  var raw=window.prompt('กรอกหน้าที่จะลบ เช่น 1,3,5-7 (มีทั้งหมด '+total+' หน้า)\nลบทั้งหมดไม่ได้ ต้องเหลืออย่างน้อย 1 หน้า','');
+  if(raw==null) return;
+  raw=raw.trim();
+  if(!raw){ setStatus('warning','ไม่ได้กรอกหน้าที่จะลบ'); return; }
+  if(/^(all|\*|ทั้งหมด)$/i.test(raw)){ setStatus('error','ลบทั้งหมดไม่ได้ — อันตรายเกินไป'); return; }
+  if(!/^[0-9,\s-]+$/.test(raw)){ setStatus('error','รูปแบบไม่ถูกต้อง — ใช้ได้แค่ตัวเลข จุลภาค และขีด เช่น 1,3,5-7'); return; }
+  var want={}; var parts=raw.split(',');
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i].trim(); if(!p) continue;
+    if(p.indexOf('-')>=0){
+      var mm=p.split('-'); if(mm.length!==2){ setStatus('error','ช่วงไม่ถูกต้อง: '+p); return; }
+      var a=parseInt(mm[0],10), b=parseInt(mm[1],10);
+      if(isNaN(a)||isNaN(b)||a<1||b<1){ setStatus('error','ช่วงไม่ถูกต้อง: '+p); return; }
+      if(a>b){ var t=a;a=b;b=t; }
+      for(var n=a;n<=b;n++) want[n]=true;
+    } else {
+      var v=parseInt(p,10);
+      if(isNaN(v)||v<1){ setStatus('error','เลขหน้าไม่ถูกต้อง: '+p); return; }
+      want[v]=true;
+    }
+  }
+  var nums=Object.keys(want).map(Number).sort(function(x,y){return x-y;});
+  if(!nums.length){ setStatus('warning','ไม่มีหน้าที่จะลบ'); return; }
+  var bad=nums.filter(function(n){return n>total;});
+  if(bad.length){ setStatus('error','หน้าไม่มีอยู่จริง: '+bad.join(', ')+' (มีทั้งหมด '+total+' หน้า)'); return; }
+  if(nums.length>=total){ setStatus('error','ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า'); return; }
+  var remain=total-nums.length;
+  if(!window.confirm('จะลบหน้า '+nums.join(', ')+' (รวม '+nums.length+' หน้า จาก '+total+' หน้า เหลือ '+remain+' หน้า) ใช่ไหม? กู้คืนไม่ได้')) return;
   var pages=document.querySelectorAll('.page');
-  if(pages.length<=1){ if(typeof setStatus==='function') setStatus('warning','ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้'); return; }
-  askDelete('ลบหน้าสุดท้าย (หน้า '+pages.length+') ทั้งหน้าใช่ไหม? ทุกกลุ่มและเมนูในหน้านี้จะหายและกู้คืนไม่ได้', function(){
-    pages[pages.length-1].remove(); renumber(); checkOverflow();
-  });
+  for(var k=nums.length-1;k>=0;k--){ var idx=nums[k]-1; if(pages[idx]) pages[idx].remove(); }
+  renumber(); checkOverflow();
+  setStatus('info','ลบแล้ว '+nums.length+' หน้า เหลือ '+remain+' หน้า');
 }
 function switchTab(name){
   var tabs=document.querySelectorAll('#edtabs .edtab');

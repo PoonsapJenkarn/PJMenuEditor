@@ -15,3 +15,6 @@ OEIsanHotpotMenu_*.html
 _imgall/
 _imgcheck/
 _imgcheck2/
+
+# ไฟล์ที่ไม่เกี่ยวกับโปรเจกต์ OE Isan (เคยหลุดเข้า repo)
+Glasses.docx

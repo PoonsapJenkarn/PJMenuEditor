@@ -909,9 +909,9 @@ document.addEventListener('click', function(ev){
   if(!document.body.classList.contains('editmode')) return;
   ev.preventDefault(); ev.stopPropagation();
   if(act==='del-row'){
-    var row=btn.closest('.row'); if(row){ row.remove(); checkOverflow(); }
+    var row=btn.closest('.row'); if(row){ row.remove(); checkOverflow(); _snapNow(); }
   } else if(act==='add-row'){
-    var body=btn.closest('.sec-b'); if(body){ body.insertBefore(newRow(), btn); checkOverflow(); }
+    var body=btn.closest('.sec-b'); if(body){ body.insertBefore(newRow(), btn); checkOverflow(); _snapNow(); }
   } else if(act==='add-group'){
     var col=btn.parentNode; var sec=newSection();
     col.insertBefore(sec, btn);
@@ -919,14 +919,15 @@ document.addEventListener('click', function(ev){
     sec.querySelector('.sechead').setAttribute('contenteditable','true');
     checkOverflow();
     sec.scrollIntoView({behavior:'smooth', block:'center'});
+    _snapNow();
   } else if(act==='del-group'){
     var sec=btn.closest('.sec'); if(!sec) return;
     var nm=sec.querySelector('.sechead')?sec.querySelector('.sechead').textContent:'';
-    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delGroupOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delGroupMsg',{name:epEsc(nm)}),onOk:function(){ sec.remove(); checkOverflow(); flashStatus('info',t('fl.delGroup')); }});
+    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delGroupOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delGroupMsg',{name:epEsc(nm)}),onOk:function(){ sec.remove(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delGroup')); }});
   } else if(act==='del-page'){
     var pg=btn.closest('.page'); if(!pg) return;
     if(document.querySelectorAll('.page').length<=1){ return; }
-    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delPageOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delPageMsg'),onOk:function(){ pg.remove(); renumber(); checkOverflow(); flashStatus('info',t('fl.delPage')); }});
+    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delPageOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delPageMsg'),onOk:function(){ pg.remove(); renumber(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delPage')); }});
   }
 });
 function renumber(){
@@ -952,7 +953,7 @@ function addPage(){
   decorate(document.body.classList.contains('editmode'));
   checkOverflow();
   np.scrollIntoView({behavior:'smooth', block:'start'});
-  if(typeof markDirty==='function') markDirty();
+  if(typeof _snapNow==='function') _snapNow();
   var _np=document.querySelectorAll('.page').length;
   flashStatus('info',t('fl.addPage',{n:_np,from:(_np-1)}));
 }
@@ -1151,7 +1152,7 @@ function _serializePages(){
   var wrap=document.createElement('div');
   for(var i=0;i<pages.length;i++){ wrap.appendChild(pages[i].cloneNode(true)); }
   /* strip transient editor artifacts — snapshot เก็บเฉพาะเนื้อหาสะอาด */
-  wrap.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
+  wrap.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   wrap.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
@@ -1201,15 +1202,17 @@ function _takeSnapshot(){
   _updateUndoButtons();
 }
 function _scheduleSnapshot(){ clearTimeout(_snapTimer); _snapTimer=setTimeout(_takeSnapshot, 500); }
-function undo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!undoStack.length) return; redoStack.push(_lastSnap); _lastSnap=undoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); }
-function redo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!redoStack.length) return; undoStack.push(_lastSnap); _lastSnap=redoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); }
+/* _snapNow: ถ่าย snapshot ทันที (สำหรับ structural op — เพิ่ม/ลบ กลุ่ม/รายการ/หน้า = 1 undo step ต่อการกระทำ) v53 */
+function _snapNow(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; } _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _takeSnapshot(); }
+function undo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!undoStack.length) return; redoStack.push(_lastSnap); _lastSnap=undoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',t('fl.undo')); }
+function redo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!redoStack.length) return; undoStack.push(_lastSnap); _lastSnap=redoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',t('fl.redo')); }
 function _updateUndoButtons(){ var u=document.getElementById('btnUndo'), r=document.getElementById('btnRedo'); if(u) u.disabled=!undoStack.length; if(r) r.disabled=!redoStack.length; }
 /* Ctrl+Z = undo · Ctrl+Y / Ctrl+Shift+Z = redo (v47 เฟส 2) */
 document.addEventListener('keydown', function(e){
   if(!(e.ctrlKey||e.metaKey)) return;
-  var k=(e.key||'').toLowerCase();
-  if(k==='z' && !e.shiftKey){ e.preventDefault(); undo(); }
-  else if(k==='y' || (k==='z' && e.shiftKey)){ e.preventDefault(); redo(); }
+  var c=e.code||'';  /* ใช้ physical key — ทนทุก layout/ภาษา (ไทยกด Ctrl+Z ได้) */
+  if(c==='KeyZ' && !e.shiftKey){ e.preventDefault(); undo(); }
+  else if(c==='KeyY' || (c==='KeyZ' && e.shiftKey)){ e.preventDefault(); redo(); }
 });
 window.addEventListener('beforeunload', function(e){
   if(_dirty){ e.preventDefault(); e.returnValue=''; return ''; }
@@ -1331,7 +1334,7 @@ var I18N={
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว',
-  'ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป',
+  'ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
@@ -1348,7 +1351,7 @@ var I18N={
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode',
-  'ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image',
+  'ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',

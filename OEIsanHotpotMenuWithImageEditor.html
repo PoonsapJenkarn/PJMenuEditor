@@ -548,9 +548,19 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #edtabs .edtab.active{color:#217346;font-weight:600;background:#fff;}
 #edtabs .edtab.active::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2.5px;background:#217346;}
 #edtabs .hint{margin-left:auto;margin-right:0;font-size:11.5px;color:#8a8886;font-weight:400;}
-#edtabs .langsw{margin-left:auto;display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-right:6px;}
+#edtabs .langsw{display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-right:6px;}
 #edtabs .langsw button{font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;border:none;background:#fff;color:#605e5c;padding:5px 11px;cursor:pointer;}
 #edtabs .langsw button.on{background:#217346;color:#fff;}
+#edtabs .qab{display:inline-flex;gap:2px;margin-right:8px;}
+#edtabs .qab button{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #d2d0ce;background:#fff;border-radius:6px;cursor:pointer;padding:0;position:relative;}
+#edtabs .qab .qab-badge{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 3px;box-sizing:border-box;background:#217346;color:#fff;font-family:'Prompt',sans-serif;font-size:9.5px;font-weight:700;line-height:15px;text-align:center;border-radius:8px;pointer-events:none;}
+#edtabs .qab button:disabled .qab-badge{display:none;}
+@media print{#edtabs .qab .qab-badge{display:none !important;}}
+#edtabs .qab button:hover:not(:disabled){background:#eef7f1;border-color:#217346;}
+#edtabs .qab button:disabled{opacity:.38;cursor:not-allowed;}
+#edtabs .qab button svg{width:17px;height:17px;stroke:#3a3937;fill:none;stroke-width:2;}
+#edtabs .qab button:hover:not(:disabled) svg{stroke:#217346;}
+@media print{#edtabs .qab{display:none !important;}}
 @media print{#edtabs .langsw{display:none !important;}}
 #edribbon{display:flex;padding:7px 12px;height:82px;box-sizing:border-box;background:#faf9f8;}
 #edribbon .rpane{display:none;align-items:center;gap:9px;flex-wrap:wrap;width:100%;}
@@ -676,6 +686,7 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
     <button class="edtab" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button>
     <button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button>
     <span class="hint" id="edhint"></span>
+    <span class="qab"><button id="btnUndo" onclick="undo()" data-i18n-title="ttl.undo" title="ย้อนกลับ (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="qab-badge" id="undoBadge"></span></button><button id="btnRedo" onclick="redo()" data-i18n-title="ttl.redo" title="ทำซ้ำ (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="qab-badge" id="redoBadge"></span></button></span>
     <span class="langsw"><button id="langTH" onclick="setLang('th')">TH</button><button id="langEN" onclick="setLang('en')">EN</button></span>
   </div>
   <div id="edribbon">
@@ -1206,7 +1217,7 @@ function _scheduleSnapshot(){ clearTimeout(_snapTimer); _snapTimer=setTimeout(_t
 function _snapNow(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; } _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _takeSnapshot(); }
 function undo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!undoStack.length) return; redoStack.push(_lastSnap); _lastSnap=undoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',t('fl.undo')); }
 function redo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!redoStack.length) return; undoStack.push(_lastSnap); _lastSnap=redoStack.pop(); _restorePages(_lastSnap); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',t('fl.redo')); }
-function _updateUndoButtons(){ var u=document.getElementById('btnUndo'), r=document.getElementById('btnRedo'); if(u) u.disabled=!undoStack.length; if(r) r.disabled=!redoStack.length; }
+function _updateUndoButtons(){ var u=document.getElementById('btnUndo'), r=document.getElementById('btnRedo'); if(u) u.disabled=!undoStack.length; if(r) r.disabled=!redoStack.length; var ub=document.getElementById('undoBadge'); if(ub) ub.textContent=undoStack.length?undoStack.length:''; var rb=document.getElementById('redoBadge'); if(rb) rb.textContent=redoStack.length?redoStack.length:''; }
 /* Ctrl+Z = undo · Ctrl+Y / Ctrl+Shift+Z = redo (v47 เฟส 2) */
 document.addEventListener('keydown', function(e){
   if(!(e.ctrlKey||e.metaKey)) return;
@@ -1334,7 +1345,7 @@ var I18N={
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว',
-  'ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว',
+  'ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
@@ -1351,7 +1362,7 @@ var I18N={
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode',
-  'ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone',
+  'ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',

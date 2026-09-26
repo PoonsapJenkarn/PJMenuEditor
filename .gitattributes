@@ -1,0 +1,18 @@
+# OE Isan Menu — line-ending & diff policy
+# เป้าหมาย: repo เก็บ LF เหมือนกันทุกเครื่อง เลิก warning "LF will be replaced by CRLF" ถาวร
+
+# ค่าเริ่มต้น: ทุกไฟล์ text ให้ normalize เป็น LF (ทั้ง repo และ working dir)
+* text=auto eol=lf
+
+# ไฟล์ text ระบุชัด
+*.html  text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+*.svg   text eol=lf
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+
+# ไฟล์ binary — git ห้ามแตะ/ห้าม diff (กัน line-ending conversion ทำไฟล์เสีย)
+*.docx  binary
+*.png   binary
+*.bak   binary

@@ -647,7 +647,17 @@ body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;curso
 @media print{}
 @media print{.ed-del,.ed-add{display:none !important;} .page.overflowed{outline:none;}}
 /* วิธี B: ซ่อนปุ่มแก้ไขชั่วคราวตอนวัด overflow (ให้ได้ความสูงเท่าตอนพิมพ์) */
-body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-delpage,body.measuring .ed-delgroup{display:none !important;}
+body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-delpage,body.measuring .ed-delgroup,body.measuring .dh{display:none !important;}
+/* ===== v59: drag-to-reorder handle ===== */
+.dh{cursor:grab;color:#b7bcc4;font-size:14px;line-height:1;padding:0 2px;user-select:none;flex:none;}
+.dh:hover{color:#217346;}
+.dh:active{cursor:grabbing;}
+.row.dragging,.sec.dragging{opacity:.4;}
+.row.drop-before{box-shadow:0 -2px 0 #217346;}
+.row.drop-after{box-shadow:0 2px 0 #217346;}
+.sec.drop-before{box-shadow:0 -3px 0 #217346;}
+.sec.drop-after{box-shadow:0 3px 0 #217346;}
+@media print{.dh{display:none !important;}}
 /* ===== inline panel (แทน native prompt/confirm ทั้งแอป v33+) ===== */
 #edpanel{display:flex;align-items:center;gap:11px;width:100%;box-sizing:border-box;padding:9px 14px;border-top:1px solid #e1dfdd;font-family:'Prompt','Sarabun',sans-serif;animation:epslide .16s ease;}
 #edpanel.ep-hidden{display:none;}
@@ -864,6 +874,53 @@ function addDelBtn(row){
   b.title=t('ttl.delRow'); b.setAttribute('contenteditable','false'); b.setAttribute('data-act','del-row');
   row.appendChild(b);
 }
+function addDragHandle(row){
+  if(row.querySelector('.dh')) return;
+  var h=document.createElement('span'); h.className='dh'; h.textContent='⠇';
+  h.setAttribute('contenteditable','false'); h.setAttribute('data-i18n-title','ttl.dragReorder'); h.title=t('ttl.dragReorder');
+  row.insertBefore(h, row.firstChild);
+}
+function addDragHandleSec(sec){
+  var head=sec.querySelector('.sec-h'); if(!head||head.querySelector('.dh')) return;
+  var h=document.createElement('span'); h.className='dh'; h.textContent='⠇';
+  h.setAttribute('contenteditable','false'); h.setAttribute('data-i18n-title','ttl.dragReorder'); h.title=t('ttl.dragReorder');
+  head.insertBefore(h, head.firstChild);
+}
+var _dragEl=null,_dragType=null,_grabbed=null;
+function _dragIndicate(el,e){ _dragClear(); var r=el.getBoundingClientRect(); el.classList.add(e.clientY>r.top+r.height/2?'drop-after':'drop-before'); }
+function _dragClear(){ document.querySelectorAll('.drop-before,.drop-after').forEach(function(x){x.classList.remove('drop-before','drop-after');}); }
+function _initDragReorder(){
+  document.addEventListener('mousedown',function(e){
+    var h=e.target.closest?e.target.closest('.dh'):null;
+    _grabbed = h ? h.closest('.row,.sec') : null;
+  });
+  document.addEventListener('dragstart',function(e){
+    var src=e.target.closest?e.target.closest('.row,.sec'):null;
+    if(!_grabbed||src!==_grabbed){ e.preventDefault(); return; }
+    _dragEl=_grabbed; _dragType=_dragEl.classList.contains('sec')?'sec':'row';
+    _dragEl.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+    try{ e.dataTransfer.setData('text/plain','x'); }catch(_){ }
+  });
+  document.addEventListener('dragover',function(e){
+    if(!_dragEl) return;
+    var tgt=e.target.closest?e.target.closest(_dragType==='sec'?'.sec':'.row'):null;
+    if(!tgt||tgt===_dragEl||tgt.parentNode!==_dragEl.parentNode) return;
+    e.preventDefault(); _dragIndicate(tgt,e);
+  });
+  document.addEventListener('drop',function(e){
+    if(!_dragEl) return;
+    var tgt=e.target.closest?e.target.closest(_dragType==='sec'?'.sec':'.row'):null;
+    if(!tgt||tgt===_dragEl||tgt.parentNode!==_dragEl.parentNode){ _dragClear(); return; }
+    e.preventDefault();
+    var rc=tgt.getBoundingClientRect(); var after=e.clientY>rc.top+rc.height/2;
+    tgt.parentNode.insertBefore(_dragEl, after?tgt.nextSibling:tgt);
+    _dragEl.classList.remove('dragging'); _dragClear(); _snapNow(); checkOverflow();
+  });
+  document.addEventListener('dragend',function(e){
+    if(_dragEl) _dragEl.classList.remove('dragging');
+    _dragClear(); _dragEl=null; _dragType=null; _grabbed=null;
+  });
+}
 function newSection(){
   var sec=document.createElement('section'); sec.className='sec';
   sec.innerHTML='<div class="sec-h" style="--accent:#4a8579">'
@@ -887,14 +944,14 @@ function addRowBtn(body){
 function decorate(on){
   document.querySelectorAll('.sec-b').forEach(function(body){
     body.querySelectorAll('.row').forEach(function(r){
-      if(on) addDelBtn(r); else {var d=r.querySelector('.ed-del'); if(d) d.remove();}
+      if(on){ addDelBtn(r); addDragHandle(r); r.setAttribute('draggable','true'); } else {var d=r.querySelector('.ed-del'); if(d) d.remove(); var dh=r.querySelector('.dh'); if(dh) dh.remove(); r.removeAttribute('draggable');}
     });
     if(on) addRowBtn(body);
     else { var a=body.querySelector('.ed-add'); if(a) a.remove(); }
   });
   document.querySelectorAll('.sec').forEach(function(sec){
-    if(on) addDelGroupBtn(sec);
-    else { var d=sec.querySelector('.ed-delgroup'); if(d) d.remove(); }
+    if(on){ addDelGroupBtn(sec); addDragHandleSec(sec); sec.setAttribute('draggable','true'); }
+    else { var d=sec.querySelector('.ed-delgroup'); if(d) d.remove(); var sh=sec.querySelector('.sec-h .dh'); if(sh) sh.remove(); sec.removeAttribute('draggable'); }
   });
   // add-group buttons already in DOM per column — just tag them
   document.querySelectorAll('.ed-addgroup').forEach(function(btn){
@@ -922,11 +979,11 @@ document.addEventListener('click', function(ev){
   if(act==='del-row'){
     var row=btn.closest('.row'); if(row){ row.remove(); checkOverflow(); _snapNow(); }
   } else if(act==='add-row'){
-    var body=btn.closest('.sec-b'); if(body){ body.insertBefore(newRow(), btn); checkOverflow(); _snapNow(); }
+    var body=btn.closest('.sec-b'); if(body){ var _nr=newRow(); body.insertBefore(_nr, btn); addDragHandle(_nr); _nr.setAttribute('draggable','true'); checkOverflow(); _snapNow(); }
   } else if(act==='add-group'){
     var col=btn.parentNode; var sec=newSection();
     col.insertBefore(sec, btn);
-    addDelGroupBtn(sec); addRowBtn(sec.querySelector('.sec-b'));
+    addDelGroupBtn(sec); addRowBtn(sec.querySelector('.sec-b')); addDragHandleSec(sec); sec.setAttribute('draggable','true');
     sec.querySelector('.sechead').setAttribute('contenteditable','true');
     checkOverflow();
     sec.scrollIntoView({behavior:'smooth', block:'center'});
@@ -1166,6 +1223,7 @@ function _serializePages(){
   wrap.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
+  wrap.querySelectorAll('.dragging,.drop-before,.drop-after').forEach(function(el){el.classList.remove('dragging','drop-before','drop-after');});
   wrap.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
   /* image pool: แทน base64 ด้วย data-pool id (snapshot เหลือ KB) */
   var imgs=wrap.querySelectorAll('img');
@@ -1335,7 +1393,7 @@ document.addEventListener('click', function(ev){
 });
 
 window.addEventListener('resize', checkOverflow);
-window.addEventListener('load', function(){ renumber(); checkOverflow(); _lastSnap=_serializePages(); _updateUndoButtons(); });
+window.addEventListener('load', function(){ renumber(); checkOverflow(); _lastSnap=_serializePages(); _updateUndoButtons(); _initDragReorder(); });
 /* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
 var I18N={
  th:{'tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์',
@@ -1345,7 +1403,7 @@ var I18N={
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว',
-  'ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
+  'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
@@ -1362,7 +1420,7 @@ var I18N={
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode',
-  'ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
+  'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',

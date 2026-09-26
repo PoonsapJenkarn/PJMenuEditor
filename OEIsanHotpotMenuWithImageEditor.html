@@ -188,6 +188,8 @@ body{padding-top:56px;}
 .ed-add{display:block;margin:5px 0 0;border:1px dashed #1592d9;background:rgba(21,146,217,.06);
   color:#1592d9;border-radius:6px;padding:3px 0;width:100%;font-size:12px;font-weight:600;
   font-family:'Prompt',sans-serif;cursor:pointer;}
+.ed-dup{margin-left:4px;border:none;background:#1592d9;color:#fff;border-radius:50%;
+  width:18px;height:18px;font-size:10px;line-height:1;cursor:pointer;padding:0;flex:none;}
 .page.overflowed{outline:3px solid #e8a020;outline-offset:-3px;}
 .ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:12px;cursor:pointer;}.sec-h .sechead{outline:none;flex:1 1 auto;}body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}@media print{.ed-delpage{display:none !important;}} body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:11px;color:#888;margin-bottom:6px;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0;padding-bottom:0;} }
 
@@ -199,6 +201,9 @@ body.editmode .ed-addgroup{display:block;}
 .ed-delgroup{margin-left:auto;border:none;background:#e0332a;color:#fff;border-radius:6px;
   width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
 body.editmode .ed-delgroup{display:inline-flex;align-items:center;justify-content:center;}
+.ed-dupgroup{margin-left:6px;border:none;background:#1592d9;color:#fff;border-radius:6px;
+  width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
+body.editmode .ed-dupgroup{display:inline-flex;align-items:center;justify-content:center;}
 body.imgmode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}
 body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}
 body.headermode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}
@@ -206,7 +211,7 @@ body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;curso
 #edbar #btnEditHeader.on{background:#217346;color:#fff;border-color:#217346;}
 #edbar #btnEditHeader.on svg{stroke:#fff;}
 #edbar #btnEditHeader.on span{color:#fff;}
-@media print{.ed-addgroup,.ed-delgroup{display:none !important;}}
+@media print{.ed-addgroup,.ed-delgroup,.ed-dupgroup{display:none !important;}}
 
 
 
@@ -218,9 +223,9 @@ body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;curso
 
 
 @media print{}
-@media print{.ed-del,.ed-add{display:none !important;} .page.overflowed{outline:none;}}
+@media print{.ed-del,.ed-add,.ed-dup{display:none !important;} .page.overflowed{outline:none;}}
 /* วิธี B: ซ่อนปุ่มแก้ไขชั่วคราวตอนวัด overflow (ให้ได้ความสูงเท่าตอนพิมพ์) */
-body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-delpage,body.measuring .ed-delgroup,body.measuring .dh{display:none !important;}
+body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-dup,body.measuring .ed-delpage,body.measuring .ed-delgroup,body.measuring .ed-dupgroup,body.measuring .dh{display:none !important;}
 /* ===== v59: drag-to-reorder handle ===== */
 .dh{cursor:grab;color:#b7bcc4;font-size:14px;line-height:1;padding:0 2px;user-select:none;flex:none;}
 .dh:hover{color:#217346;}
@@ -447,6 +452,13 @@ function addDelBtn(row){
   b.title=t('ttl.delRow'); b.setAttribute('contenteditable','false'); b.setAttribute('data-act','del-row');
   row.appendChild(b);
 }
+function addDupBtn(row){
+  if(row.querySelector('.ed-dup')) return;
+  var b=document.createElement('button'); b.className='ed-dup'; b.textContent='⧉';
+  b.title=t('ttl.dupRow'); b.setAttribute('data-i18n-title','ttl.dupRow'); b.setAttribute('contenteditable','false'); b.setAttribute('data-act','dup-row');
+  var del=row.querySelector('.ed-del');
+  if(del) row.insertBefore(b, del); else row.appendChild(b);
+}
 function addDragHandle(row){
   if(row.querySelector('.dh')) return;
   var h=document.createElement('span'); h.className='dh'; h.textContent='⠇';
@@ -508,6 +520,14 @@ function addDelGroupBtn(sec){
   b.title=t('ttl.delGroup'); b.setAttribute('contenteditable','false'); b.setAttribute('data-act','del-group');
   h.appendChild(b);
 }
+function addDupGroupBtn(sec){
+  var h=sec.querySelector('.sec-h'); if(!h) return;
+  if(h.querySelector('.ed-dupgroup')) return;
+  var b=document.createElement('button'); b.className='ed-dupgroup'; b.textContent='⧉';
+  b.title=t('ttl.dupGroup'); b.setAttribute('data-i18n-title','ttl.dupGroup'); b.setAttribute('contenteditable','false'); b.setAttribute('data-act','dup-group');
+  var del=h.querySelector('.ed-delgroup');
+  if(del) h.insertBefore(b, del); else h.appendChild(b);
+}
 function addRowBtn(body){
   if(body.querySelector('.ed-add')) return;
   var addb=document.createElement('button'); addb.className='ed-add'; addb.textContent='➕ เพิ่มรายการ';
@@ -517,14 +537,14 @@ function addRowBtn(body){
 function decorate(on){
   document.querySelectorAll('.sec-b').forEach(function(body){
     body.querySelectorAll('.row').forEach(function(r){
-      if(on){ addDelBtn(r); addDragHandle(r); r.setAttribute('draggable','true'); } else {var d=r.querySelector('.ed-del'); if(d) d.remove(); var dh=r.querySelector('.dh'); if(dh) dh.remove(); r.removeAttribute('draggable');}
+      if(on){ addDupBtn(r); addDelBtn(r); addDragHandle(r); r.setAttribute('draggable','true'); } else {var d=r.querySelector('.ed-del'); if(d) d.remove(); var du=r.querySelector('.ed-dup'); if(du) du.remove(); var dh=r.querySelector('.dh'); if(dh) dh.remove(); r.removeAttribute('draggable');}
     });
     if(on) addRowBtn(body);
     else { var a=body.querySelector('.ed-add'); if(a) a.remove(); }
   });
   document.querySelectorAll('.sec').forEach(function(sec){
-    if(on){ addDelGroupBtn(sec); addDragHandleSec(sec); sec.setAttribute('draggable','true'); }
-    else { var d=sec.querySelector('.ed-delgroup'); if(d) d.remove(); var sh=sec.querySelector('.sec-h .dh'); if(sh) sh.remove(); sec.removeAttribute('draggable'); }
+    if(on){ addDupGroupBtn(sec); addDelGroupBtn(sec); addDragHandleSec(sec); sec.setAttribute('draggable','true'); }
+    else { var d=sec.querySelector('.ed-delgroup'); if(d) d.remove(); var dug=sec.querySelector('.ed-dupgroup'); if(dug) dug.remove(); var sh=sec.querySelector('.sec-h .dh'); if(sh) sh.remove(); sec.removeAttribute('draggable'); }
   });
   // add-group buttons already in DOM per column — just tag them
   document.querySelectorAll('.ed-addgroup').forEach(function(btn){
@@ -552,15 +572,40 @@ document.addEventListener('click', function(ev){
   if(act==='del-row'){
     var row=btn.closest('.row'); if(row){ row.remove(); checkOverflow(); _snapNow(); }
   } else if(act==='add-row'){
-    var body=btn.closest('.sec-b'); if(body){ var _nr=newRow(); body.insertBefore(_nr, btn); addDragHandle(_nr); _nr.setAttribute('draggable','true'); checkOverflow(); _snapNow(); }
+    var body=btn.closest('.sec-b'); if(body){ var _nr=newRow(); body.insertBefore(_nr, btn); addDupBtn(_nr); addDelBtn(_nr); addDragHandle(_nr); _nr.setAttribute('draggable','true'); checkOverflow(); _snapNow(); }
+  } else if(act==='dup-row'){
+    var row=btn.closest('.row'); if(row){
+      var nr=row.cloneNode(true);
+      nr.querySelectorAll('.ed-del,.ed-dup,.dh').forEach(function(el){el.remove();});
+      nr.classList.remove('typosel','sel');
+      nr.querySelectorAll('.typosel,.sel').forEach(function(el){el.classList.remove('typosel','sel');});
+      nr.classList.remove('dragging','drop-before','drop-after');
+      row.parentNode.insertBefore(nr, row.nextSibling);
+      addDupBtn(nr); addDelBtn(nr); addDragHandle(nr); nr.setAttribute('draggable','true');
+      checkOverflow(); _snapNow(); flashStatus('info',t('fl.dupRow'));
+    }
   } else if(act==='add-group'){
     var col=btn.parentNode; var sec=newSection();
     col.insertBefore(sec, btn);
-    addDelGroupBtn(sec); addRowBtn(sec.querySelector('.sec-b')); addDragHandleSec(sec); sec.setAttribute('draggable','true');
+    addDupGroupBtn(sec); addDelGroupBtn(sec); addRowBtn(sec.querySelector('.sec-b')); addDragHandleSec(sec); sec.setAttribute('draggable','true');
     sec.querySelector('.sechead').setAttribute('contenteditable','true');
     checkOverflow();
     sec.scrollIntoView({behavior:'smooth', block:'center'});
     _snapNow();
+  } else if(act==='dup-group'){
+    var sec=btn.closest('.sec'); if(sec){
+      var ns=sec.cloneNode(true);
+      ns.querySelectorAll('.ed-del,.ed-dup,.ed-delgroup,.ed-dupgroup,.ed-add,.dh').forEach(function(el){el.remove();});
+      ns.classList.remove('typosel','sel');
+      ns.querySelectorAll('.typosel,.sel').forEach(function(el){el.classList.remove('typosel','sel');});
+      ns.classList.remove('dragging','drop-before','drop-after');
+      sec.parentNode.insertBefore(ns, sec.nextSibling);
+      addDupGroupBtn(ns); addDelGroupBtn(ns); addDragHandleSec(ns); ns.setAttribute('draggable','true');
+      ns.querySelectorAll('.sec-b .row').forEach(function(r){ addDupBtn(r); addDelBtn(r); addDragHandle(r); r.setAttribute('draggable','true'); });
+      addRowBtn(ns.querySelector('.sec-b'));
+      checkOverflow(); _snapNow(); flashStatus('info',t('fl.dupGroup'));
+      ns.scrollIntoView({behavior:'smooth', block:'center'});
+    }
   } else if(act==='del-group'){
     var sec=btn.closest('.sec'); if(!sec) return;
     var nm=sec.querySelector('.sechead')?sec.querySelector('.sechead').textContent:'';
@@ -588,7 +633,7 @@ function addPage(){
   var grid=np.querySelector('.grid');
   grid.innerHTML='<div class="col" data-col="L"><button class="ed-addgroup" contenteditable="false" data-act="add-group">➕ เพิ่มกลุ่ม</button></div>'
     +'<div class="col" data-col="R"><button class="ed-addgroup" contenteditable="false" data-act="add-group">➕ เพิ่มกลุ่ม</button></div>';
-  np.querySelectorAll('.ed-delpage,.ed-add,.ed-del,.ed-delgroup').forEach(function(el){el.remove();});
+  np.querySelectorAll('.ed-delpage,.ed-add,.ed-del,.ed-dup,.ed-delgroup,.ed-dupgroup').forEach(function(el){el.remove();});
   last.parentNode.insertBefore(np, last.nextSibling);
   renumber();
   decorate(document.body.classList.contains('editmode'));
@@ -671,7 +716,7 @@ function buildEditorHtml(){
   /* Full-fidelity clone that KEEPS the editor (bar+css+script) so the saved
      file is itself a working editor. Only strips transient runtime state. */
   var clone=document.documentElement.cloneNode(true);
-  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   var sv=clone.querySelector('#btnSave'); if(sv) sv.classList.remove('dirty');
@@ -690,7 +735,7 @@ function buildMenuHtml(){
   /* Clean print-only menu: editor removed entirely. Used by ดาวน์โหลดเมนู. */
   var clone=document.documentElement.cloneNode(true);
   ['#edbar','#edstatus','#editorUI','#editorScript'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
-  clone.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,#logoInput,#edpanel,.rz,.delbtn,.sizetag,#imgbar').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,#logoInput,#edpanel,.rz,.delbtn,.sizetag,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   clone.querySelectorAll('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
@@ -793,7 +838,7 @@ function _serializePages(){
   var wrap=document.createElement('div');
   for(var i=0;i<pages.length;i++){ wrap.appendChild(pages[i].cloneNode(true)); }
   /* strip transient editor artifacts — snapshot เก็บเฉพาะเนื้อหาสะอาด */
-  wrap.querySelectorAll('.ed-del,.ed-add,.ed-delpage,.ed-delgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
+  wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   wrap.querySelectorAll('.dragging,.drop-before,.drop-after').forEach(function(el){el.classList.remove('dragging','drop-before','drop-after');});
@@ -976,7 +1021,7 @@ var I18N={
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว',
-  'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
+  'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
@@ -993,7 +1038,7 @@ var I18N={
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode',
-  'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
+  'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',

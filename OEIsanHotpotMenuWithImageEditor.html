@@ -425,6 +425,8 @@ function openPanel(opts){
   }
   html+='<span class="ep-btns"><button type="button" class="ep-ok">'+epEsc(opts.okText||t('pnl.confirmDelOk'))+'</button>'+(opts.hideCancel?'':'<button type="button" class="ep-cancel">'+epEsc(opts.cancelText||t('pnl.cancel'))+'</button>')+'</span>';
   p.innerHTML=html;
+  p.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
+  p.querySelectorAll('[data-i18n-title]').forEach(function(el){ el.title=t(el.getAttribute('data-i18n-title')); });
   p.className=tone;
   var okb=p.querySelector('.ep-ok'), cnb=p.querySelector('.ep-cancel'), inp=p.querySelector('.ep-input');
   function doOk(){
@@ -718,7 +720,7 @@ function toggleEdit(){
   document.getElementById('edhint').textContent='';
   if(on){ setStatus('info',t('st.editText')); } else { setStatus('info',t('st.ready')); }
   checkOverflow();
-  if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); }
+  if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); setStatus('info',t('st.ready')); }
 }
 /* สถานะโหมดปัจจุบัน (info ระดับพื้นหลัง) — warning/error จะ override ชั่วคราว แล้วกลับมาที่นี่ */
 var _statusMode={type:'info',msg:'พร้อมใช้งาน'};
@@ -1087,7 +1089,7 @@ var I18N={
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ',
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
-  'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทั้งเพจ','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
+  'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทั้งเพจ','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
@@ -1104,7 +1106,7 @@ var I18N={
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink',
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
-  'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
+  'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
@@ -1504,7 +1506,9 @@ function _bulkPriceExec(v){
   });
   if(typeof markDirty==='function') markDirty();
   if(typeof checkOverflow==='function') checkOverflow();
-  flashStatus('info',t('fl.bulkPrice',{n:n}));
+  var _unit=(v.mode==='pct')?'%':(' '+t('pr.baht'));
+  var _key=(v.dir==='down')?'fl.bulkPriceDown':'fl.bulkPriceUp';
+  flashStatus('info',t(_key,{amt:v.amt, unit:_unit, n:n}));
 }
 function typoResetSel(){
   if(!_typoEl) return;

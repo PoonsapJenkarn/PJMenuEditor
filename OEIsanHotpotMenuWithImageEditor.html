@@ -170,6 +170,38 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #edbar .btn-img.on svg{stroke:#fff;}
 #edbar .btn-img.on #btnImgLabel{color:#fff;}
 #typobar .ttoggle.on:hover{background:#1a5c38;border-color:#1a5c38;color:#fff;}
+/* partial typography color dropdown + sizebox (v80 Step2) */
+#typobar .sizebox{display:inline-flex;align-items:center;border:1px solid #ccc;border-radius:6px;overflow:hidden;height:30px;}
+#typobar .sizebox .szbtn{border:none;background:#fff;width:26px;height:30px;cursor:pointer;font-size:15px;font-weight:600;color:#217346;padding:0;}
+#typobar .sizebox .szbtn:hover:not(:disabled){background:#eef7f1;}
+#typobar .sizebox .szbtn:disabled{opacity:.4;cursor:not-allowed;}
+#typobar .sizebox #typoSize{width:40px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:30px;font-family:inherit;font-size:12px;}
+#typobar .colorpick{position:relative;display:inline-flex;align-items:center;}
+#typobar .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #ccc;border-radius:6px;overflow:hidden;}
+#typobar .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0 6px;display:inline-flex;align-items:center;}
+#typobar .cp-trigger .cp-apply:hover{background:#eef7f1;}
+#typobar .cp-trigger .cp-current{width:20px;height:20px;border-radius:4px;border:1px solid #bbb;display:inline-block;}
+#typobar .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #ccc;background:#fff;cursor:pointer;padding:0 5px;display:inline-flex;align-items:center;}
+#typobar .cp-trigger .cp-caretbtn:hover{background:#eef7f1;}
+#typobar .cp-trigger .cp-caret{font-size:10px;color:#666;}
+#typobar .cp-trigger .cp-apply:disabled,#typobar .cp-trigger .cp-caretbtn:disabled{opacity:.4;cursor:not-allowed;}
+#typobar .cp-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}
+#typobar .cp-pop.open{display:block;}
+#typobar .cp-sec-label{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 5px;}
+#typobar .cp-grid,#typobar .cp-custom{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-bottom:9px;}
+#typobar .cp-sw{width:20px;height:20px;border:1px solid #d2d0ce;border-radius:4px;cursor:pointer;padding:0;}
+#typobar .cp-sw:hover{transform:scale(1.15);border-color:#217346;}
+#typobar .cp-sw.white{border-color:#bbb;}
+#typobar .cp-empty{grid-column:1/-1;font-size:11px;color:#b0b4b8;}
+#typobar .cp-foot{display:flex;flex-wrap:wrap;align-items:center;gap:5px;border-top:1px solid #eee;padding-top:8px;}
+#typobar .cp-foot #typoHex{width:80px;height:28px;border:1px solid #d2d0ce;border-radius:5px;font-family:monospace;font-size:12px;text-align:center;text-transform:uppercase;}
+#typobar .cp-foot #typoColor{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;}
+#typobar .cp-add{height:28px;padding:0 8px;border:1px solid #d2d0ce;background:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:11px;white-space:nowrap;}
+#typobar .cp-add:hover{background:#eef7f1;border-color:#217346;color:#217346;}
+#typobar .cp-paint{flex:1 1 100%;height:28px;padding:0 10px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;}
+#typobar button.tbtn.clearsel,#typobar button.tbtn.clearfield{background:none;color:#323130;border-color:transparent;}
+#typobar button.tbtn.clearsel svg,#typobar button.tbtn.clearfield svg{stroke:#444;}
+
 .btn-print{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
 @media print{#edtabs,#edribbon{display:none !important;}}
 #edstatus{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#217346;color:#fff;display:flex;align-items:center;gap:9px;padding:5px 16px;font-family:'Prompt','Sarabun',sans-serif;font-size:12px;box-shadow:0 -1px 4px rgba(0,0,0,.12);transition:background .15s;}
@@ -321,7 +353,7 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
       </div><div class="rgl" data-i18n="grp.mode">โหมด</div></div>
       <div id="typobar">
         <div class="rgroup fontgrp"><div class="rgb">
-        <select id="typoFont" onchange="typoApplySel()" disabled>
+        <select id="typoFont" onchange="typoFontApply()" disabled>
           <option value="" data-i18n="font.placeholder">— ฟอนต์ —</option>
           <option value="'Prompt',sans-serif">Prompt</option>
           <option value="'Sarabun',sans-serif">Sarabun</option>
@@ -330,14 +362,30 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
           <option value="'Mitr',sans-serif">Mitr</option>
           <option value="'Bai Jamjuree',sans-serif">Bai Jamjuree</option>
         </select>
-        <input type="color" id="typoColor" onchange="typoApplySel()" title="สี" data-i18n-title="ttl.color" disabled>
-        <input type="number" id="typoSize" min="8" max="48" step="0.5" onchange="typoApplySel()" title="ขนาด (px)" data-i18n-title="ttl.size" disabled>
+        <span class="colorpick" id="typoColorPick">
+          <span class="cp-trigger"><button type="button" class="cp-apply" id="typoCpApply" title="ทาสีปัจจุบันลงช่วงที่เลือก"><span class="cp-current" id="typoCpCurrent" style="background:#C0392B"></span></button><button type="button" class="cp-caretbtn" id="typoCpCaret" title="เลือกสีอื่น"><span class="cp-caret">▾</span></button></span>
+          <input type="color" id="typoColor" value="#c0392b" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;">
+          <div class="cp-pop" id="typoCpPop">
+            <div class="cp-sec-label">Swatch</div>
+            <div class="cp-grid" id="typoCpGrid"></div>
+            <div class="cp-sec-label">สีที่กำหนดเอง</div>
+            <div class="cp-custom" id="typoCpCustom"></div>
+            <div class="cp-foot">
+              <input type="text" id="typoHex" value="#C0392B" maxlength="7" spellcheck="false" title="พิมพ์รหัสสี HEX">
+              <button type="button" class="cp-add" id="typoCpAdd" title="เลือกสีเองแล้วบันทึก">+ กำหนดเอง</button>
+              <button type="button" class="cp-paint" id="typoCpPaint" title="ใช้สีนี้กับช่วงที่เลือก">ทาสี</button>
+            </div>
+          </div>
+        </span>
+        <span class="sizebox"><button type="button" class="szbtn" id="typoSizeDown" onclick="typoSizeStep(-1)" title="เล็กลง">−</button><input type="text" id="typoSize" value="15" readonly><button type="button" class="szbtn" id="typoSizeUp" onclick="typoSizeStep(1)" title="ใหญ่ขึ้น">+</button></span>
         <span class="seg">
-          <button class="ttoggle" id="typoBold" onclick="typoToggleSel('bold')" title="ตัวหนา" data-i18n-title="ttl.bold" disabled><b>B</b></button>
-          <button class="ttoggle" id="typoItalic" onclick="typoToggleSel('italic')" title="ตัวเอียง" data-i18n-title="ttl.italic" disabled><i>I</i></button>
+          <button class="ttoggle" id="typoBold" onclick="applyExec('bold')" title="ตัวหนา" data-i18n-title="ttl.bold"><b>B</b></button>
+          <button class="ttoggle" id="typoItalic" onclick="applyExec('italic')" title="ตัวเอียง" data-i18n-title="ttl.italic"><i>I</i></button>
+          <button class="ttoggle" id="typoUnderline" onclick="applyExec('underline')" title="ขีดล่าง"><u>U</u></button>
+          <button class="ttoggle" id="typoStrike" onclick="applyExec('strikeThrough')" title="ขีดกลาง"><s>S</s></button>
         </span>
         <span class="seg" id="typoLineSeg" style="display:none">
-          <select id="typoLineStyle" onchange="typoApplySel()" title="แบบเส้น" data-i18n-title="ttl.lineStyle">
+          <select id="typoLineStyle" onchange="typoLineApply()" title="แบบเส้น" data-i18n-title="ttl.lineStyle">
             <option value="dotted">จุด</option><option value="dashed">ขีด</option><option value="solid">ทึบ</option>
           </select>
         </span>
@@ -345,6 +393,8 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
         <div class="rgroup"><div class="rgb">
         <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" data-i18n-title="ttl.applyAll" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span data-i18n="btn.applyAll">ใช้ทั้งประเภท</span></button>
         <button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" data-i18n-title="ttl.reset" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg><span data-i18n="btn.reset">คืนค่า</span></button>
+        <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ล้างรูปแบบเฉพาะจุดที่ไฮไลท์"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span>ล้างจุดที่เลือก</span></button>
+        <button class="tbtn clearfield" id="typoClearField" onclick="typoClearField()" title="ล้างรูปแบบทั้งช่อง" disabled><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/><path d="M8 9h8M8 13h5"/></svg><span>ล้างทั้งช่อง</span></button>
         </div><div class="rgl" data-i18n="grp.format">จัดรูปแบบ</div></div>
       </div>
     </div>
@@ -1089,7 +1139,7 @@ var I18N={
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ',
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
-  'grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทั้งเพจ','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
+  'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทั้งเพจ','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับทุก{label}แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
@@ -1106,7 +1156,7 @@ var I18N={
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink',
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
-  'grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
+  'fl.needSel':'⚠️ No text selected — drag to highlight text first','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to all {label}','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
@@ -1319,21 +1369,21 @@ function typoSelect(el,type){
   var isLine=!!type.line;
   setStatus('info',_typoLabel(type));
   // เปิด controls
-  ['typoColor','typoApplyAll','typoResetBtn'].forEach(function(id){document.getElementById(id).disabled=false;});
+  ['typoColor','typoCpApply','typoApplyAll','typoResetBtn','typoClearSel','typoClearField'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=false;});
   document.getElementById('typoFont').disabled=isLine;
   document.getElementById('typoSize').disabled=isLine;
   document.getElementById('typoBold').disabled=isLine;
   document.getElementById('typoItalic').disabled=isLine;
+  ['typoUnderline','typoStrike','typoSizeUp','typoSizeDown','typoCpApply'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=isLine;});
   document.getElementById('typoLineSeg').style.display=isLine?'inline-flex':'none';
   document.getElementById('typoFont').style.display=isLine?'none':'';
   document.getElementById('typoSize').style.display=isLine?'none':'';
   document.getElementById('typoFont').parentNode; // no-op
   var cs=getComputedStyle(el);
   if(isLine){
-    document.getElementById('typoColor').value=_rgbToHex(el.style.borderBottomColor||cs.borderBottomColor);
+    _setCurrent(_rgbToHex(el.style.borderBottomColor||cs.borderBottomColor));
     document.getElementById('typoLineStyle').value=el.style.borderBottomStyle||cs.borderBottomStyle||'dotted';
   } else {
-    document.getElementById('typoColor').value=_rgbToHex(el.style.color||cs.color);
     document.getElementById('typoSize').value=Math.round((parseFloat(el.style.fontSize)||parseFloat(cs.fontSize)||15)*2)/2;
     var curFont=el.style.fontFamily||cs.fontFamily; var fsel=document.getElementById('typoFont'); fsel.value='';
     for(var i=0;i<fsel.options.length;i++){ var v=fsel.options[i].value; if(v && curFont.indexOf(v.split(',')[0].replace(/'/g,''))>=0){ fsel.value=v; break; } }
@@ -1346,32 +1396,50 @@ function typoClear(){
   if(_typoEl) _typoEl.classList.remove('typosel');
   _typoEl=null; _typoType=null;
   setStatus('info',t('st.clickText'));
-  ['typoFont','typoColor','typoSize','typoBold','typoItalic','typoApplyAll','typoResetBtn'].forEach(function(id){document.getElementById(id).disabled=true;});
+  ['typoFont','typoColor','typoSize','typoBold','typoItalic','typoUnderline','typoStrike','typoSizeUp','typoSizeDown','typoApplyAll','typoResetBtn','typoClearSel','typoClearField','typoCpApply'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=true;});
   document.getElementById('typoBold').classList.remove('on');
   document.getElementById('typoItalic').classList.remove('on');
   document.getElementById('typoLineSeg').style.display='none';
   document.getElementById('typoFont').style.display='';
   document.getElementById('typoSize').style.display='';
 }
-function typoApplySel(){
-  if(!_typoEl) return;
-  if(_typoType.line){
-    _typoEl.style.borderBottomColor=document.getElementById('typoColor').value;
-    _typoEl.style.borderBottomStyle=document.getElementById('typoLineStyle').value;
-  } else {
-    var f=document.getElementById('typoFont').value; if(f) _typoEl.style.fontFamily=f;
-    _typoEl.style.color=document.getElementById('typoColor').value;
-    var sz=parseFloat(document.getElementById('typoSize').value); if(sz) _typoEl.style.fontSize=sz+'px';
+/* wiring: new mockup-based apply functions (v81 — old typoApplySel/typoToggleSel removed) */
+function typoColorApply(){
+  var c=document.getElementById('typoColor').value;
+  /* line elements: element-level color for border */
+  if(_typoEl&&_typoType&&_typoType.line){ _typoEl.style.borderBottomColor=c; if(typeof markDirty==='function') markDirty(); return; }
+  /* text: partial range apply (from mockup) */
+  applyColorRange(c);
+}
+function typoColorLive(){ typoColorApply(); }
+function typoFontApply(){
+  var f=document.getElementById('typoFont').value; if(!f) return;
+  if(hasRange()){
+    if(lastEditable) lastEditable.focus(); restoreSelection();
+    try{ document.execCommand('styleWithCSS',false,true); document.execCommand('fontName',false,f); }catch(e){}
+    saveSelection(); if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow(); return;
   }
+  if(_typoEl&&!(_typoType&&_typoType.line)){ _typoEl.style.fontFamily=f; if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow(); }
+}
+function typoLineApply(){
+  /* only for line-type elements */
+  if(!_typoEl||!(_typoType&&_typoType.line)) return;
+  _typoEl.style.borderBottomColor=document.getElementById('typoColor').value;
+  _typoEl.style.borderBottomStyle=document.getElementById('typoLineStyle').value;
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
 }
-function typoToggleSel(which){
-  if(!_typoEl||_typoType.line) return;
-  var btn=document.getElementById(which==='bold'?'typoBold':'typoItalic');
-  var on=!btn.classList.contains('on'); btn.classList.toggle('on',on);
-  if(which==='bold') _typoEl.style.fontWeight=on?'700':'400';
-  else _typoEl.style.fontStyle=on?'italic':'normal';
-  if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+function typoSizeStep(d){
+  var inp=document.getElementById('typoSize');
+  var v=Math.max(8,Math.min(72,(parseFloat(inp.value)||15)+d)); v=Math.round(v); inp.value=v;
+  if(hasRange()){ applyFontSizePx(v); return; }
+  if(_typoEl&&!(_typoType&&_typoType.line)){ _typoEl.style.fontSize=v+'px'; if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow(); }
+}
+function typoClearSel(){
+  if(!hasRange()){ if(typeof flashStatus==='function') flashStatus('warning',t('fl.needSel')); return; }
+  clearFormatSel();
+}
+function typoClearField(){
+  clearFormatField();
 }
 function typoApplyAllSame(){
   if(!_typoEl) return;
@@ -1395,6 +1463,285 @@ function _applyAllExec(sel,src,lbl){
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
   flashStatus('info',t('fl.applyAll',{label:lbl}));
 }
+
+/* ===== MOCKUP VERBATIM: partial text formatting (v80) — copied from typo_partial_mockup.html, only IDs adapted ===== */
+'use strict';
+  var savedRange = null;
+  var lastEditable = null;
+
+
+  function saveSelection(){
+    var sel = window.getSelection();
+    if(sel && sel.rangeCount){
+      var r = sel.getRangeAt(0);
+      var host = r.commonAncestorContainer;
+      var el = (host.nodeType===1?host:host.parentNode);
+      var ed = el && el.closest ? el.closest('[contenteditable]') : null;
+      if(ed){ lastEditable = ed; if(!r.collapsed){ savedRange = r.cloneRange(); } return true; }
+    }
+    return false;
+  }
+  function restoreSelection(){
+    if(!savedRange) return false;
+    var sel = window.getSelection();
+    sel.removeAllRanges(); sel.addRange(savedRange);
+    return true;
+  }
+  function selectionText(){ return savedRange ? savedRange.toString() : ''; }
+  function hasRange(){ return savedRange && !savedRange.collapsed; }
+  function needSel(){ if(typeof flashStatus==='function') flashStatus('info','\u26a0\ufe0f ยังไม่ได้ highlight ข้อความ — ลากคลุมข้อความก่อน'); }
+
+  // Reflect current selection's font/size/color into the toolbar
+  function reflectFromSelection(){
+    if(!savedRange) return;
+    var node = savedRange.startContainer;
+    var el = (node.nodeType===1?node:node.parentNode);
+    if(!el || !el.closest) return;
+    var cs = getComputedStyle(el);
+    // size
+    var px = Math.round(parseFloat(cs.fontSize)||15);
+    document.getElementById('typoSize').value = px;
+    // font
+    var fam = cs.fontFamily || '';
+    var fsel = document.getElementById('typoFont'); var matched='';
+    for(var i=0;i<fsel.options.length;i++){
+      var v=fsel.options[i].value;
+      if(v){ var first=v.split(',')[0].replace(/['"]/g,''); if(fam.indexOf(first)>=0){ matched=v; break; } }
+    }
+    fsel.value = matched;
+    // color: DO NOT overwrite swatch — swatch is a "paint bucket" holding the last-used
+    // color so you can keep applying the same color to multiple selections (Word/Docs model).
+  }
+
+  document.addEventListener('selectionchange', function(){
+    if(!document.body.classList.contains('editmode')) return;
+    var sel = window.getSelection();
+    if(!sel||!sel.rangeCount) return;
+    var host = sel.getRangeAt(0).commonAncestorContainer;
+    var el = (host.nodeType===1?host:host.parentNode);
+    if(el&&el.closest&&el.closest('#typobar,#edbar,#edpanel,#edstatus,#actlog')) return;
+    var ed = el && el.closest ? el.closest('[contenteditable]') : null;
+    if(ed){ saveSelection(); syncButtons(); reflectFromSelection(); }
+  });
+  /* clear stale savedRange when clicking outside toolbar (not on text drag) */
+  document.addEventListener('mousedown',function(e){
+    if(!document.body.classList.contains('editmode')) return;
+    var _tg=e.target; if(_tg&&_tg.closest&&(_tg.closest('#typobar')||_tg.closest('#edbar')||_tg.closest('#edpanel')||_tg.closest('#edstatus')||_tg.closest('#actlog'))) return;
+    if(_tg&&_tg.closest&&_tg.closest('[contenteditable]')) return;
+    savedRange=null;
+  },true);
+
+  // Toolbar must NOT steal focus — preventDefault keeps selection alive
+  document.getElementById('typobar').addEventListener('mousedown', function(e){
+    // For focus-taking controls (HEX text input, color picker, font select): SNAPSHOT the
+    // still-live selection NOW, before the browser moves focus and kills the highlight.
+    if(e.target.id==='typoColor' || e.target.id==='typoHex' || e.target.id==='typoFont' || e.target.tagName==='OPTION'){ saveSelection(); return; }
+    e.preventDefault();
+  });
+
+  function ensureCSS(on){ try{ document.execCommand('styleWithCSS', false, on!==false); }catch(e){} }
+
+  function applyExec(cmd, val){
+    if(!hasRange()){ needSel(); return; }
+    lastEditable.focus(); restoreSelection(); ensureCSS(true);
+    document.execCommand(cmd, false, val===undefined?null:val);
+    saveSelection(); syncButtons();
+  }
+
+  // Font size in px via Range API — deterministic, no execCommand
+  function applyFontSizePx(px){
+    if(!hasRange()){ needSel(); return; }
+    lastEditable.focus(); restoreSelection();
+    var sel=window.getSelection(); if(!sel.rangeCount) return;
+    var range=sel.getRangeAt(0);
+    var frag=range.extractContents();
+    // strip any nested font-size inside the selection so the new size wins
+    frag.querySelectorAll && frag.querySelectorAll('[style]').forEach(function(el){ el.style.removeProperty('font-size'); });
+    var span=document.createElement('span');
+    span.style.fontSize=px+'px';
+    span.appendChild(frag);
+    range.insertNode(span);
+    // re-select the span's contents so repeated +/- keeps working
+    var r=document.createRange(); r.selectNodeContents(span);
+    sel.removeAllRanges(); sel.addRange(r);
+    savedRange=r.cloneRange();
+  }
+  // Color via Range API — deterministic, no execCommand (same pattern as size)
+  function applyColorRange(hex){
+    // Operate on the SAVED range (captured at highlight / mousedown), not live selection —
+    // live selection is dead once focus moved to the HEX input.
+    if(!savedRange || savedRange.collapsed){ if(typeof flashStatus==='function') flashStatus('info',t_needSel()); return; }
+    if(lastEditable) lastEditable.focus();
+    var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+    var range=sel.getRangeAt(0);
+    if(range.collapsed){ if(typeof flashStatus==='function') flashStatus('info',t_needSel()); return; }
+    var frag=range.extractContents();
+    frag.querySelectorAll && frag.querySelectorAll('[style]').forEach(function(el){ el.style.removeProperty('color'); });
+    var span=document.createElement('span');
+    span.style.color=hex;
+    span.appendChild(frag);
+    range.insertNode(span);
+    var r=document.createRange(); r.selectNodeContents(span);
+    sel.removeAllRanges(); sel.addRange(r);
+    savedRange=r.cloneRange();
+    if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 '+hex);
+  }
+  function t_needSel(){ return '\u26a0\ufe0f ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน'; }
+  // Clear formatting via Range API — replace selection with plain text
+  function clearFormatSel(){
+    if(!hasRange()){ needSel(); return; }
+    lastEditable.focus(); restoreSelection();
+    var sel=window.getSelection(); if(!sel.rangeCount) return;
+    var range=sel.getRangeAt(0);
+    var text=range.toString();
+    // Delete the selected content, then split any styled ancestor spans so the
+    // replacement text is inserted as a PLAIN text node at field level (unwrapped).
+    range.deleteContents();
+    var tn=document.createTextNode(text);
+    // Walk up: if the insertion point is inside a styled <span> within the field,
+    // split that span at the caret and place the plain text between the halves.
+    var container=range.startContainer, offset=range.startOffset;
+    var field=lastEditable;
+    // Insert the text node at the current range first
+    range.insertNode(tn);
+    // Now lift tn out of any inline ancestor (span/b/i/font) up to the field
+    var node=tn;
+    while(node.parentNode && node.parentNode!==field){
+      var parent=node.parentNode;
+      // split parent into [before | node | after]
+      var after=parent.cloneNode(false);
+      var sib=node.nextSibling;
+      while(sib){ var nx=sib.nextSibling; after.appendChild(sib); sib=nx; }
+      // move node up before parent's next sibling
+      if(parent.nextSibling) parent.parentNode.insertBefore(node, parent.nextSibling);
+      else parent.parentNode.appendChild(node);
+      if(after.childNodes.length){ if(node.nextSibling) parent.parentNode.insertBefore(after, node.nextSibling); else parent.parentNode.appendChild(after); }
+      // remove now-empty parent if it has no children
+      if(!parent.childNodes.length) parent.parentNode.removeChild(parent);
+    }
+    // normalize to merge adjacent text nodes
+    if(field.normalize) field.normalize();
+    var r=document.createRange(); r.selectNode(tn);
+    sel.removeAllRanges(); sel.addRange(r);
+    savedRange=r.cloneRange();
+  }
+  function clearFormatField(){
+    var ed = lastEditable || (document.querySelector('[contenteditable]:focus'));
+    if(!ed){ if(typeof flashStatus==='function') flashStatus('info','\u26a0\ufe0f ยังไม่ได้เลือกช่อง — คลิกในช่องข้อความก่อน'); return; }
+    ed.textContent = ed.textContent;
+    savedRange=null;
+    if(typeof flashStatus==='function') flashStatus('info','\ud83e\uddf9 ล้างรูปแบบทั้งช่องแล้ว');
+  }
+
+  function syncButtons(){
+    try{
+      document.getElementById('typoBold').classList.toggle('on', document.queryCommandState('bold'));
+      document.getElementById('typoItalic').classList.toggle('on', document.queryCommandState('italic'));
+      document.getElementById('typoUnderline').classList.toggle('on', document.queryCommandState('underline'));
+      document.getElementById('typoStrike').classList.toggle('on', document.queryCommandState('strikeThrough'));
+    }catch(e){}
+    var txt = selectionText();
+    if(txt) if(typeof flashStatus==='function') flashStatus('info','เลือกอยู่: "' + (txt.length>30?txt.slice(0,30)+'\u2026':txt) + '" (' + txt.length + ' ตัวอักษร)');
+  }
+
+  // ----- Color dropdown palette (focus-safe: popup lives inside #tbar) -----
+  var SWATCHES=['#000000','#434343','#666666','#999999','#B7B7B7','#CCCCCC','#EFEFEF','#FFFFFF','#C0392B','#E67E22','#F1C40F','#27AE60','#1ABC9C','#1592D9','#2C3E90','#8E44AD','#7B241C','#935116','#9A7D0A','#186A3B','#117864','#0E6191','#1B2631','#5B2C6F','#F5B7B1','#F8C471','#F9E79F','#A9DFBF','#A3E4D7','#AED6F1','#A9CCE3','#D7BDE2','#217346','#8B0000','#FF6B35','#2ECC71','#3498DB','#2C3E50','#E91E63','#795548'];
+  var CUSTOM_KEY='oe_custom_swatches';
+  function _loadCustom(){ try{ var a=JSON.parse(localStorage.getItem(CUSTOM_KEY)); return (a&&a.length)?a:[]; }catch(e){ return []; } }
+  function _saveCustom(a){ try{ localStorage.setItem(CUSTOM_KEY, JSON.stringify(a)); }catch(e){} }
+  function _setCurrent(col){ var cur=document.getElementById('typoCpCurrent'); if(cur) cur.style.background=col; var tc=document.getElementById('typoColor'); if(tc) tc.value=col; var th=document.getElementById('typoHex'); if(th) th.value=String(col).toUpperCase(); }
+  function _mkSw(c){
+    var b=document.createElement('button'); b.type='button';
+    b.className='cp-sw'+(String(c).toUpperCase()==='#FFFFFF'?' white':''); b.style.background=c;
+    b.title=c; b.setAttribute('data-c',c);
+    b.addEventListener('click',function(){ _pickColor(this.getAttribute('data-c')); });
+    return b;
+  }
+  function _pickColor(col){
+    document.getElementById('typoColor').value=col;
+    document.getElementById('typoHex').value=String(col).toUpperCase();
+    _setCurrent(col);
+    applyColorRange(col);
+    _closePop();
+  }
+  function _renderCustom(){
+    var row=document.getElementById('typoCpCustom'); if(!row) return;
+    row.innerHTML=''; var arr=_loadCustom();
+    if(!arr.length){ var e=document.createElement('span'); e.className='cp-empty'; e.textContent='ยังไม่มีสีที่กำหนดเอง'; row.appendChild(e); return; }
+    arr.forEach(function(c){ row.appendChild(_mkSw(c)); });
+  }
+  (function(){
+    var grid=document.getElementById('typoCpGrid'); if(grid){ SWATCHES.forEach(function(c){ grid.appendChild(_mkSw(c)); }); }
+    _renderCustom();
+    var initCur=document.getElementById('typoCpCurrent'); if(initCur&&initCur.style.background){ var ih=_rgbToHex(initCur.style.background); var tc=document.getElementById('typoColor'); if(tc) tc.value=ih; var th=document.getElementById('typoHex'); if(th) th.value=ih.toUpperCase(); }
+  })();
+  function _openPop(){ var p=document.getElementById('typoCpPop'); if(p) p.classList.add('open'); }
+  function _closePop(){ var p=document.getElementById('typoCpPop'); if(p) p.classList.remove('open'); }
+  document.getElementById('typoCpApply').addEventListener('click',function(){
+    var col=document.getElementById('typoColor').value; applyColorRange(col);
+  });
+  document.getElementById('typoCpCaret').addEventListener('click',function(){
+    var p=document.getElementById('typoCpPop'); if(p) p.classList.toggle('open');
+  });
+  document.getElementById('typoCpAdd').addEventListener('click',function(){ document.getElementById('typoColor').click(); });
+  document.getElementById('typoColor').addEventListener('change',function(){
+    var c=this.value.toUpperCase(); var arr=_loadCustom();
+    if(arr.indexOf(c)<0){ arr.unshift(c); if(arr.length>8) arr=arr.slice(0,8); _saveCustom(arr); _renderCustom(); }
+    _setCurrent(c); document.getElementById('typoHex').value=c;
+  });
+  document.addEventListener('mousedown',function(e){
+    var cp=document.getElementById('typoColorPick');
+    if(cp && !cp.contains(e.target)) _closePop();
+  });
+  // ----- Wire controls -----
+  // Live apply while dragging in the picker
+  document.getElementById('typoColor').addEventListener('input', function(){
+    document.getElementById('typoHex').value=this.value.toUpperCase();
+    applyColorRange(this.value);
+    if(typeof flashStatus==='function') flashStatus('info','เปลี่ยนสีช่วงที่เลือก \u2192 ' + this.value);
+  });
+  function _normHex(s){ s=(s||'').trim(); if(s.charAt(0)!=='#') s='#'+s;
+    if(/^#[0-9a-fA-F]{3}$/.test(s)){ s='#'+s.charAt(1)+s.charAt(1)+s.charAt(2)+s.charAt(2)+s.charAt(3)+s.charAt(3); }
+    return /^#[0-9a-fA-F]{6}$/.test(s) ? s.toUpperCase() : null; }
+  document.getElementById('typoHex').addEventListener('input', function(){
+    var h=_normHex(this.value);
+    if(h){ document.getElementById('typoColor').value=h; this.style.borderColor='#d2d0ce'; }
+    else { this.style.borderColor='#c0392b'; }
+  });
+  document.getElementById('typoHex').addEventListener('keydown', function(e){
+    if(e.key==='Enter'){ e.preventDefault(); var h=_normHex(this.value); if(h){ this.value=h; document.getElementById('typoColor').value=h; applyColorRange(h); if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 '+h); } }
+  });
+  // Explicit apply of the CURRENT color (works even if color unchanged)
+  document.getElementById('typoCpPaint').addEventListener('click', function(){
+    var c = _normHex(document.getElementById('typoHex').value) || document.getElementById('typoColor').value;
+    document.getElementById('typoColor').value=c; document.getElementById('typoHex').value=c.toUpperCase();
+    applyColorRange(c);
+    if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 ' + c);
+  });
+  document.getElementById('typoFont').addEventListener('change', function(){
+    if(this.value){ applyExec('fontName', this.value); if(typeof flashStatus==='function') flashStatus('info','เปลี่ยนฟอนต์ช่วงที่เลือก \u2192 ' + this.value); }
+  });
+  document.getElementById('typoBold').addEventListener('click', function(){ applyExec('bold'); });
+  document.getElementById('typoItalic').addEventListener('click', function(){ applyExec('italic'); });
+  document.getElementById('typoUnderline').addEventListener('click', function(){ applyExec('underline'); });
+  document.getElementById('typoStrike').addEventListener('click', function(){ applyExec('strikeThrough'); });
+
+  function curSize(){ return parseFloat(document.getElementById('typoSize').value)||15; }
+  document.getElementById('typoSizeUp').addEventListener('click', function(){
+    var v=Math.min(72, curSize()+1); document.getElementById('typoSize').value=v; applyFontSizePx(v);
+    if(typeof flashStatus==='function') flashStatus('info','ขนาดช่วงที่เลือก \u2192 ' + v + 'px');
+  });
+  document.getElementById('typoSizeDown').addEventListener('click', function(){
+    var v=Math.max(6, curSize()-1); document.getElementById('typoSize').value=v; applyFontSizePx(v);
+    if(typeof flashStatus==='function') flashStatus('info','ขนาดช่วงที่เลือก \u2192 ' + v + 'px');
+  });
+  document.getElementById('typoClearSel').addEventListener('click', function(){
+    clearFormatSel(); if(typeof flashStatus==='function') flashStatus('info','ล้างรูปแบบช่วงที่เลือกแล้ว');
+  });
+  document.getElementById('typoClearField').addEventListener('click', function(){
+    clearFormatField(); 
+  });
+/* ===== END MOCKUP VERBATIM ===== */
 /* ===== Bulk price adjust (v63) ===== */
 function _bulkAdjustOne(txt, mode, dir, amt){
   /* returns {out:string, changed:bool} — handles int + range "a-b"; 0 IS adjustable; skips blank/non-numeric; changed only when value actually differs */

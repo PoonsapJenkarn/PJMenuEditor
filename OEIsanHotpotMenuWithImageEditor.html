@@ -245,6 +245,8 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 @media print{#actlog,#edstatus #actlogToggle{display:none !important;}}
 body.editmode .nm[contenteditable],body.editmode .pr[contenteditable]{outline:1px dashed #1592d9;
   background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}
+/* ช่องราคาว่าง (แถวใหม่) ในโหมดแก้: เป็นช่องว่างที่เห็นกรอบและคลิกกรอกได้ — เดิมกว้าง 0 มองไม่เห็น · พิมพ์แล้วลบหมด browser อาจเหลือ <br> จึงรวมกรณีนั้นด้วย · ไม่มีผลตอนพิมพ์/บันทึก (ไม่มี class editmode) */
+body.editmode .pr[contenteditable]:empty,body.editmode .pr[contenteditable]:has(> br:only-child){display:inline-block;min-width:3em;min-height:1.15em;}
 body{padding-top:56px;}
 .ed-del{margin-left:6px;border:none;background:#e0332a;color:#fff;border-radius:50%;
   width:18px;height:18px;font-size:11px;line-height:1;cursor:pointer;padding:0;flex:none;}
@@ -1066,6 +1068,63 @@ document.addEventListener('keydown', function(e){
 window.addEventListener('beforeunload', function(e){
   if(_dirty){ e.preventDefault(); e.returnValue=''; return ''; }
 });
+/* ===== ช่องราคา (.pr): รับเฉพาะตัวเลข =====
+   รับ 0-9 และ '-' ได้ 1 ตัวสำหรับช่วงราคา (เช่น 100-150 — มีใช้ในเมนูและปรับราคารองรับ) · '-' พิมพ์เป็นตัวแรกไม่ได้
+   เลขไทย ๐-๙ แปลงเป็น 0-9 อัตโนมัติ · ตัวอื่นไม่แสดงและแจ้งเตือน · Enter ไม่ขึ้นบรรทัดใหม่
+   ชั้น 1 beforeinput (พิมพ์/วาง/ลากวาง) · ชั้น 2 input (ช่องทางอื่นที่หลุด เช่น autocorrect) */
+var _PR_TH_DIGITS='๐๑๒๓๔๕๖๗๘๙';
+function _prNorm(str){ return String(str==null?'':str).replace(/[๐-๙]/g,function(c){ return String(_PR_TH_DIGITS.indexOf(c)); }); }
+/* กรองข้อความทีละตัว · st={dash:bool, pos:int} ใช้ต่อเนื่องข้าม text node · คืน {out, dropped} */
+function _prCleanChars(v,st,blockLeadDash){
+  var out='', dropped=false;
+  for(var i=0;i<v.length;i++){
+    var c=_prNorm(v.charAt(i));
+    if(c>='0'&&c<='9'){ out+=c; st.pos++; continue; }
+    if(c==='-' && !st.dash && !(blockLeadDash && st.pos===0)){ out+=c; st.dash=true; st.pos++; continue; }
+    dropped=true;
+  }
+  return {out:out, dropped:dropped};
+}
+function _prCell(n){
+  if(!document.body.classList.contains('editmode')) return null;
+  var e=n&&(n.nodeType===1?n:n.parentNode);
+  return (e&&e.closest)?e.closest('.pr[contenteditable]'):null;
+}
+function _prWarn(){ if(typeof flashStatus==='function') flashStatus('warning',t('fl.prNumOnly')); }
+document.addEventListener('beforeinput',function(e){
+  var cell=_prCell(e.target); if(!cell) return;
+  var it=e.inputType||'';
+  if(it==='insertParagraph'||it==='insertLineBreak'){ e.preventDefault(); return; }
+  if(!/^insert(Text|ReplacementText|FromPaste|FromDrop|FromYank)$/.test(it)) return;
+  var data=e.data; if(data==null && e.dataTransfer){ data=e.dataTransfer.getData('text/plain'); }
+  if(data==null) return;  /* ไม่รู้ข้อความ: ให้ชั้น input จัดการ */
+  /* ข้อความเดิมที่เหลือหลังแทนที่ช่วงที่เลือก → รู้ว่ามี '-' แล้วหรือยัง และ cursor อยู่ตัวแรกไหม */
+  var sel=window.getSelection(), r=(sel&&sel.rangeCount)?sel.getRangeAt(0):null, txt=cell.textContent||'', pre=txt.length, cut=0;
+  if(r && cell.contains(r.startContainer)){ var rr=document.createRange(); rr.selectNodeContents(cell); rr.setEnd(r.startContainer,r.startOffset); pre=rr.toString().length; cut=r.toString().length; }
+  var rest=txt.slice(0,pre)+txt.slice(pre+cut);
+  var res=_prCleanChars(String(data),{dash:rest.indexOf('-')>=0,pos:pre},true);
+  if(res.out===data) return;  /* ผ่านทั้งหมด */
+  e.preventDefault();
+  if(res.out) document.execCommand('insertText',false,res.out);
+  if(res.dropped) _prWarn();
+},true);
+document.addEventListener('input',function(e){
+  var cell=_prCell(e.target); if(!cell) return;
+  var sel=window.getSelection(), cn=null, co=0;
+  if(sel&&sel.rangeCount){ cn=sel.getRangeAt(0).startContainer; co=sel.getRangeAt(0).startOffset; }
+  var st={dash:false,pos:0}, dropped=false, fixNode=null, fixOff=0;
+  var w=document.createTreeWalker(cell,NodeFilter.SHOW_TEXT,null), tn;
+  while((tn=w.nextNode())){
+    var v=tn.nodeValue, res=_prCleanChars(v,st,false);
+    if(res.dropped) dropped=true;
+    if(res.out!==v){
+      if(tn===cn){ var keep=_prCleanChars(v.slice(0,co),{dash:false,pos:1},false).out.length; fixNode=tn; fixOff=keep; }
+      tn.nodeValue=res.out;
+    }
+  }
+  if(fixNode){ try{ var nr=document.createRange(); nr.setStart(fixNode,Math.min(fixOff,fixNode.nodeValue.length)); nr.collapse(true); sel.removeAllRanges(); sel.addRange(nr); }catch(_){ } }
+  if(dropped) _prWarn();
+},true);
 // จับการพิมพ์แก้ข้อความ (ชื่อ/ราคา/หัวข้อ) = dirty
 document.addEventListener('input', function(e){
   if(document.body.classList.contains('editmode')||document.body.classList.contains('headermode')) markDirty();
@@ -1182,10 +1241,10 @@ var I18N={
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ',
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
-  'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
+  'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.prNumOnly':'⚠️ ราคาใส่ได้เฉพาะตัวเลข (ช่วงราคาใช้ - เช่น 100-150)','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
-  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
+  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','pr.onePage':'เฉพาะหน้า','sc.pageOpt':'หน้า {p}','pnl.pickGroup':'— เลือกกลุ่ม —','pnl.pickPage':'— เลือกหน้า —','pnl.needGroup':'เลือกกลุ่มก่อน','pnl.needPage':'เลือกหน้าก่อน','fl.bulkPriceNone':'ไม่มีราคาไหนเปลี่ยน — ไม่มีราคาที่ปรับได้ในขอบเขตนี้','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
   'fl.savingEditor':'⏳ กำลังบันทึกไฟล์ Editor...','fl.savedEditor':'✅ บันทึกไฟล์ Editor แล้ว: {name}','fl.cancelEditor':'ยกเลิกการบันทึก — ยังไม่ได้บันทึกไฟล์','fl.fallbackEditor':'⚠️ เบราว์เซอร์นี้เขียนทับไฟล์โดยตรงไม่ได้ — บันทึกเป็นไฟล์ดาวน์โหลดแทน (ใช้ Chrome/Edge + เปิดผ่าน http เพื่อเขียนทับไฟล์เดิม)',
   'pnl.cancel':'ยกเลิก','pnl.delOk':'ลบ','pnl.delGroupOk':'ลบกลุ่ม','pnl.delGroupMsg':'ลบกลุ่ม <b>"{name}"</b> ทั้งกลุ่มใช่ไหม? เมนูทั้งหมดในกลุ่มนี้จะหาย — กู้คืนไม่ได้','pnl.delPageOk':'ลบหน้านี้','pnl.delPageMsg':'ลบหน้านี้ทั้งหน้าใช่ไหม? ทุกกลุ่มและเมนูในหน้านี้จะหาย — กู้คืนไม่ได้',
@@ -1199,10 +1258,10 @@ var I18N={
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink',
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
-  'fl.needSel':'⚠️ No text selected — drag to highlight text first','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
+  'fl.needSel':'⚠️ No text selected — drag to highlight text first','fl.prNumOnly':'⚠️ Price accepts numbers only (use - for a range, e.g. 100-150)','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
-  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
+  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','pr.onePage':'One page','sc.pageOpt':'Page {p}','pnl.pickGroup':'— Choose group —','pnl.pickPage':'— Choose page —','pnl.needGroup':'Choose a group first','pnl.needPage':'Choose a page first','fl.bulkPriceNone':'No prices changed — nothing adjustable in this scope','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',
   'fl.savingEditor':'⏳ Saving editor file...','fl.savedEditor':'✅ Editor file saved: {name}','fl.cancelEditor':'Save cancelled — file not saved','fl.fallbackEditor':'⚠️ This browser cannot overwrite the file directly — saved as a download instead (use Chrome/Edge over http to overwrite the original)',
   'pnl.cancel':'Cancel','pnl.delOk':'Delete','pnl.delGroupOk':'Delete Group','pnl.delGroupMsg':'Delete the entire group <b>"{name}"</b>? All items in this group will be lost — cannot undo','pnl.delPageOk':'Delete This Page','pnl.delPageMsg':'Delete this whole page? All groups and items on it will be lost — cannot undo',
@@ -2020,33 +2079,87 @@ function _bulkAdjustOne(txt, mode, dir, amt){
   }
   return {out:txt, changed:false}; /* non-numeric -> skip */
 }
-function _bulkPriceTargets(scope, groupIdx){
-  /* scope 'all' -> every .pr on all pages; 'group' -> only .pr inside the chosen .sec */
-  if(scope==='group'){
-    var secs=document.querySelectorAll('.sec');
-    var sec=secs[groupIdx];
-    if(!sec) return [];
-    return Array.prototype.slice.call(sec.querySelectorAll('.pr'));
+function _bulkPriceTargets(scope, groupIdx, pageIdx){
+  /* 'group' = .pr ในกลุ่มที่เลือก · 'page' = .pr ในหน้าที่เลือก · 'all' = .pr ทุกหน้า · ยังไม่เลือก = [] */
+  if(scope==='group'){ var sec=document.querySelectorAll('.sec')[groupIdx]; return sec?Array.prototype.slice.call(sec.querySelectorAll('.pr')):[]; }
+  if(scope==='page'){ var pg=document.querySelectorAll('.page')[pageIdx]; return pg?Array.prototype.slice.call(pg.querySelectorAll('.sec-b .pr')):[]; }
+  if(scope==='all') return Array.prototype.slice.call(document.querySelectorAll('.sec-b .pr'));
+  return [];
+}
+/* อ่านค่าจาก panel ปรับราคา (ใช้ทั้งตอน preview และ readValues) */
+function _bulkPriceRead(p){
+  var g=p.querySelector('.ep-gsel'), pg=p.querySelector('.ep-psel');
+  return {
+    mode:(p.querySelector('input[name="bpMode"]:checked')||{}).value||'baht',
+    dir:(p.querySelector('input[name="bpDir"]:checked')||{}).value||'up',
+    scope:(p.querySelector('input[name="bpScope"]:checked')||{}).value||'',
+    amt:parseFloat((p.querySelector('.ep-num')||{}).value)||0,
+    gidx:(g&&g.value!=='')?parseInt(g.value,10):-1,
+    pidx:(pg&&pg.value!=='')?parseInt(pg.value,10):-1
+  };
+}
+function _bulkPriceCheck(v){
+  if(!v||!v.scope) return t('pnl.needScope');
+  if(v.scope==='group' && v.gidx<0) return t('pnl.needGroup');
+  if(v.scope==='page' && v.pidx<0) return t('pnl.needPage');
+  if(!(v.amt>0)) return t('pr.errAmt');
+  return '';
+}
+/* panel ปรับราคาเปิดค้างได้ (ไม่ปิดเมื่อคลิกนอก) ผู้ใช้จึงเพิ่ม/ลบหน้า-กลุ่ม หรือ undo ระหว่างที่เปิดอยู่ได้
+   → สร้างตัวเลือก dropdown หน้า/กลุ่มใหม่ทุกครั้งที่เอกสารเปลี่ยน และจำตัวที่เลือกด้วย element (ไม่ใช่เลขลำดับ) ไม่ให้ไปลงผิดหน้า/กลุ่ม */
+function _bulkPriceSync(p){
+  var gs=p.querySelector('.ep-gsel'), ps=p.querySelector('.ep-psel');
+  if(gs){
+    var secs=Array.prototype.slice.call(document.querySelectorAll('.sec')), gr=(gs._ref&&document.contains(gs._ref))?gs._ref:null;
+    gs.innerHTML='<option value="" disabled>'+epEsc(t('pnl.pickGroup'))+'</option>'+_typoGroupOptsHtml(null);
+    var gi=gr?secs.indexOf(gr):-1; if(gi>=0){ gs.value=String(gi); } else { gs.selectedIndex=0; } gs._ref=gi>=0?gr:null;
   }
-  return Array.prototype.slice.call(document.querySelectorAll('.sec-b .pr'));
+  if(ps){
+    var pages=Array.prototype.slice.call(document.querySelectorAll('.page')), pr=(ps._ref&&document.contains(ps._ref))?ps._ref:null;
+    var h='<option value="" disabled>'+epEsc(t('pnl.pickPage'))+'</option>';
+    for(var i=0;i<pages.length;i++){ h+='<option value="'+i+'">'+epEsc(t('sc.pageOpt',{p:i+1}))+'</option>'; }
+    ps.innerHTML=h;
+    var pi=pr?pages.indexOf(pr):-1; if(pi>=0){ ps.value=String(pi); } else { ps.selectedIndex=0; } ps._ref=pi>=0?pr:null;
+  }
+}
+var _bpObs=null, _bpObsT=null;
+function _bulkPriceObsStop(){ if(_bpObs){ _bpObs.disconnect(); _bpObs=null; } clearTimeout(_bpObsT); }
+function _bulkPriceObsStart(){
+  _bulkPriceObsStop(); if(!window.MutationObserver) return;
+  function relevant(m){
+    var tg=(m.target.nodeType===1)?m.target:m.target.parentNode;
+    if(tg && tg.closest && tg.closest('.page')) return true;
+    var ls=[m.addedNodes,m.removedNodes];
+    for(var a=0;a<2;a++){ for(var b=0;b<ls[a].length;b++){ var n=ls[a][b]; if(n.nodeType===1 && (n.classList.contains('page') || (n.querySelector && n.querySelector('.page')))) return true; } }
+    return false;
+  }
+  _bpObs=new MutationObserver(function(ms){
+    var pp=document.getElementById('edpanel');
+    if(!pp || !pp.querySelector('.ep-psel')){ _bulkPriceObsStop(); return; }  /* panel ปรับราคาถูกปิด/แทนที่แล้ว */
+    if(!ms.some(relevant)) return;
+    clearTimeout(_bpObsT);
+    _bpObsT=setTimeout(function(){ var q=document.getElementById('edpanel'); if(q && q.querySelector('.ep-psel')){ _bulkPriceSync(q); _bulkPricePreview(q); } },80);
+  });
+  _bpObs.observe(document.body,{childList:true,subtree:true,characterData:true});
 }
 function _bulkPricePreview(p){
-  var mode=(p.querySelector('input[name="bpMode"]:checked')||{}).value||'baht';
-  var dir=(p.querySelector('input[name="bpDir"]:checked')||{}).value||'up';
-  var scope=(p.querySelector('input[name="bpScope"]:checked')||{}).value||'all';
-  var amt=parseFloat((p.querySelector('.ep-num')||{}).value)||0;
-  var gsel=p.querySelector('.ep-sel'); var gidx=gsel?parseInt(gsel.value,10):-1;
-  /* toggle group dropdown visibility */
-  var gwrap=p.querySelector('.ep-gwrap'); if(gwrap) gwrap.style.display=(scope==='group'?'inline-flex':'none');
-  var pv=p.querySelector('.ep-preview'); if(!pv) return;
-  var targets=_bulkPriceTargets(scope, gidx);
+  var _gs=p.querySelector('.ep-gsel'), _ps=p.querySelector('.ep-psel');
+  if(_gs) _gs._ref=(_gs.value!=='')?(document.querySelectorAll('.sec')[parseInt(_gs.value,10)]||null):null;
+  if(_ps) _ps._ref=(_ps.value!=='')?(document.querySelectorAll('.page')[parseInt(_ps.value,10)]||null):null;
+  var v=_bulkPriceRead(p);
+  var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=(v.scope==='group'?'inline-flex':'none');
+  var pw=p.querySelector('.ep-pwrap'); if(pw) pw.style.display=(v.scope==='page'?'inline-flex':'none');
+  var ok=p.querySelector('.ep-ok'), pv=p.querySelector('.ep-preview');
+  var err=_bulkPriceCheck(v);
+  if(err){ if(ok) ok.disabled=true; if(pv){ pv.className='ep-preview'; pv.textContent=(err===t('pr.errAmt'))?t('pr.enterAmt'):err; } return; }
   var n=0, sample=null, sampleFrom=null;
-  targets.forEach(function(el){
-    var r=_bulkAdjustOne(el.textContent, mode, dir, amt);
-    if(r.changed && amt>0){ n++; if(sample===null){ sampleFrom=String(el.textContent).trim(); sample=r.out; } }
+  _bulkPriceTargets(v.scope, v.gidx, v.pidx).forEach(function(el){
+    var r=_bulkAdjustOne(el.textContent, v.mode, v.dir, v.amt);
+    if(r.changed){ n++; if(sample===null){ sampleFrom=String(el.textContent).trim(); sample=r.out; } }
   });
+  if(ok) ok.disabled=(n===0);
+  if(!pv) return;
   pv.className='ep-preview';
-  if(amt<=0){ pv.textContent=t('pr.enterAmt'); return; }
   pv.innerHTML='<b>'+n+'</b> '+t('pr.itemsUnit')+(sample!==null?(' · '+epEsc(sampleFrom)+'→'+epEsc(sample)):'');
 }
 function openPricePanel(){
@@ -2054,19 +2167,19 @@ function openPricePanel(){
   if(_bpbtn && _bpbtn.classList.contains('on')){ closePanel(); return; }
   var _enteredEdit=false;
   if(!document.body.classList.contains('editmode')){ toggleEdit(); _enteredEdit=true; }
-  var secs=document.querySelectorAll('.sec');
-  var optsHtml='';
-  for(var i=0;i<secs.length;i++){
-    var nm=secs[i].querySelector('.sechead'); var label=nm?nm.textContent.trim():('กลุ่ม '+(i+1));
-    optsHtml+='<option value="'+i+'">'+epEsc(label)+'</option>';
-  }
+  /* ไม่ได้เปิดจากช่องที่คลิก (กดจากแท็บ หน้า = ออกจากโหมดแก้ ล้างการเลือกแล้ว) จึงไม่มีกลุ่ม/หน้าให้เลือกไว้ก่อน — ผู้ใช้ต้องเลือกเอง */
+  var gOpts='<option value="" selected disabled>'+epEsc(t('pnl.pickGroup'))+'</option>'+_typoGroupOptsHtml(null);
+  var pages=document.querySelectorAll('.page'), pOpts='<option value="" selected disabled>'+epEsc(t('pnl.pickPage'))+'</option>';
+  for(var i=0;i<pages.length;i++){ pOpts+='<option value="'+i+'">'+epEsc(t('sc.pageOpt',{p:i+1}))+'</option>'; }
   var body=''
     +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
     +'<span class="ep-seg">'
-    +'<label><input type="radio" name="bpScope" value="all" checked><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'<label><input type="radio" name="bpScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>'
+    +'<label><input type="radio" name="bpScope" value="page"><span data-i18n="pr.onePage">เฉพาะหน้า</span></label>'
+    +'<label><input type="radio" name="bpScope" value="all"><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'</span>'
-    +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
+    +'<span class="ep-gwrap" style="display:none"><select class="ep-sel ep-gsel">'+gOpts+'</select></span>'
+    +'<span class="ep-pwrap" style="display:none"><select class="ep-sel ep-psel">'+pOpts+'</select></span>'
     +'</span>'
     +'<span class="ep-pf"><span class="ep-seg">'
     +'<label><input type="radio" name="bpMode" value="baht" checked><span data-i18n="pr.baht">บาท</span></label>'
@@ -2080,28 +2193,23 @@ function openPricePanel(){
     +'</span>';
   openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okText:t('pr.apply'), cancelText:t('pnl.cancel'),
     onCustom:_bulkPricePreview,
-    onClose:function(){ if(_enteredEdit && document.body.classList.contains('editmode')){ toggleEdit(); } },
-    readValues:function(p){
-      return {
-        mode:(p.querySelector('input[name="bpMode"]:checked')||{}).value||'baht',
-        dir:(p.querySelector('input[name="bpDir"]:checked')||{}).value||'up',
-        scope:(p.querySelector('input[name="bpScope"]:checked')||{}).value||'all',
-        amt:parseFloat((p.querySelector('.ep-num')||{}).value)||0,
-        gidx:(function(){var g=p.querySelector('.ep-sel');return g?parseInt(g.value,10):-1;})()
-      };
-    },
-    validate:function(v){ if(!v||!(v.amt>0)) return t('pr.errAmt'); return ''; },
+    onClose:function(){ _bulkPriceObsStop(); if(_enteredEdit && document.body.classList.contains('editmode')){ toggleEdit(); } },
+    readValues:function(p){ _bulkPriceSync(p); return _bulkPriceRead(p); },  /* ตรวจหน้า/กลุ่มกับเอกสารปัจจุบันก่อนปรับราคา */
+    validate:_bulkPriceCheck,
     onOk:function(v){ _bulkPriceExec(v); }
   });
+  _bulkPriceObsStart();
 }
 function _bulkPriceExec(v){
-  var targets=_bulkPriceTargets(v.scope, v.gidx);
-  if(typeof _snapNow==='function') _snapNow();
-  var n=0;
-  targets.forEach(function(el){
+  var ch=[];
+  _bulkPriceTargets(v.scope, v.gidx, v.pidx).forEach(function(el){
     var r=_bulkAdjustOne(el.textContent, v.mode, v.dir, v.amt);
-    if(r.changed){ el.textContent=r.out; n++; }
+    if(r.changed) ch.push([el,r.out]);
   });
+  if(!ch.length){ flashStatus('warning',t('fl.bulkPriceNone')); return; }  /* ไม่มีอะไรเปลี่ยน: ไม่บันทึกจุด undo ไม่บอกว่าสำเร็จ */
+  if(typeof _snapNow==='function') _snapNow();
+  ch.forEach(function(c){ c[0].textContent=c[1]; });
+  var n=ch.length;
   if(typeof markDirty==='function') markDirty();
   if(typeof checkOverflow==='function') checkOverflow();
   var _unit=(v.mode==='pct')?'%':(' '+t('pr.baht'));

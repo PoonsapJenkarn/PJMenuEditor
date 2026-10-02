@@ -89,8 +89,6 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #typobar .seg{display:inline-flex;gap:3px;align-items:center;padding:0 6px;border-left:1px solid #555;}
 #typobar .ttoggle{width:30px;height:30px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;}
 #typobar .ttoggle.on{background:#217346;color:#fff;border-color:#217346;}
-#typobar .tbtn.on{background:#217346;color:#fff;}
-#typobar .tbtn.on:hover{background:#1a5c38;color:#fff;}
 #typobar .ttoggle:disabled{opacity:.4;cursor:not-allowed;}
 /* highlight element ที่กำลังเลือกแก้ */
 .typosel{outline:2px dashed #3d6fb5 !important;outline-offset:2px;border-radius:3px;}
@@ -203,6 +201,10 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #typobar .cp-paint{flex:1 1 100%;height:28px;padding:0 10px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;}
 #typobar button.tbtn.clearsel,#typobar button.tbtn.clearfield{background:none;color:#323130;border-color:transparent;}
 #typobar button.tbtn.clearsel svg,#typobar button.tbtn.clearfield svg{stroke:#444;}
+/* มาตรฐาน UI: สถานะ active (.on) ของปุ่ม typobar — ต้องอยู่หลังกฎพื้นฐาน/hover/สีเฉพาะปุ่มทั้งหมด และใช้ selector button.tbtn.on (specificity ไม่ต่ำกว่ากฎอื่น) ไม่อย่างนั้นพื้นจะไม่เขียวแต่ตัวอักษรขาว */
+#typobar button.tbtn.on{background:#217346;color:#fff;border-color:#217346;}
+#typobar button.tbtn.on:hover{background:#1a5c38;color:#fff;border-color:#1a5c38;}
+#typobar button.tbtn.on svg{stroke:#fff;}
 
 .btn-print{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
 @media print{#edtabs,#edribbon{display:none !important;}}
@@ -330,6 +332,7 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
 #edpanel.info{background:#eef7f1;border-top-color:#bfe0cc;}
 #edpanel.info .ep-ic svg{stroke:#217346;}
 #edpanel.info .ep-ok{background:#217346;}
+#edpanel .ep-ok:disabled{opacity:.45;cursor:not-allowed;}
 #edpanel.warn{background:#fff8e6;border-top-color:#e6c65c;}
 #edpanel.warn .ep-ic svg{stroke:#b8860b;}
 #edpanel.warn .ep-ok{background:#b8860b;}
@@ -460,10 +463,25 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
 var _panelCb=null,_panelKey=null,_panelOutside=null,_panelOnClose=null;
 var EP_ICONS={info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',warn:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',danger:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
 function epEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var _panelActiveBtn=null;  /* มาตรฐาน UI: ปุ่มที่เปิด panel แสดง .on (เขียว) จน panel ปิด */
+var _panelSeq=0;  /* เลขรอบของ panel — กันการปิดที่เลื่อนเวลาไว้ ไปปิด panel ที่เปิดใหม่ */
+/* คลิกนอก panel: ปิดหลังปล่อยเมาส์ (หลัง click ทำงานแล้ว) ไม่ใช่ตอนกด
+   ถ้าปิดตอน mousedown แถบเครื่องมือจะหดทันที เนื้อหาเลื่อนขึ้น click ไปตก element อื่น → toolbar ค้าง disabled / คลิกหาย */
+function _panelCloseAfterRelease(seq){
+  var done=false;
+  function fin(){ if(done) return; done=true; document.removeEventListener('mouseup',fin,true); document.removeEventListener('dragend',fin,true);
+    setTimeout(function(){ if(seq===_panelSeq) closePanel(); },0); }
+  document.addEventListener('mouseup',fin,true); document.addEventListener('dragend',fin,true);
+}
 function openPanel(opts){
   opts=opts||{};
   var p=document.getElementById('edpanel'); if(!p) return;
+  if(_panelKey){ document.removeEventListener('keydown',_panelKey); _panelKey=null; }  /* เปิดทับ panel เดิม: ถอด listener เก่าก่อน */
+  if(_panelOutside){ document.removeEventListener('mousedown',_panelOutside); _panelOutside=null; }
+  var _mySeq=++_panelSeq;
   _panelCb=opts.onOk||null;
+  if(_panelActiveBtn){ _panelActiveBtn.classList.remove('on'); _panelActiveBtn=null; }
+  if(opts.activeBtn){ var _ab=document.getElementById(opts.activeBtn); if(_ab){ _ab.classList.add('on'); _panelActiveBtn=_ab; } }
   _panelOnClose=opts.onClose||null;
   var tone=opts.tone||'info';
   var ic=EP_ICONS[tone]||EP_ICONS.info;
@@ -508,7 +526,7 @@ function openPanel(opts){
     var pp=document.getElementById('edpanel'); if(!pp||pp.classList.contains('ep-hidden'))return;
     if(e.target && e.target.closest && e.target.closest('#edpanel'))return;
     if(opts.toggleBtn && e.target && e.target.closest && e.target.closest('#'+opts.toggleBtn))return;
-    closePanel();
+    _panelCloseAfterRelease(_mySeq);
   };
   if(!opts.noOutsideClose){ setTimeout(function(){ document.addEventListener('mousedown',_panelOutside); },60); }
   if(inp){ setTimeout(function(){ try{inp.focus();inp.select();}catch(e){} },30); }
@@ -516,8 +534,9 @@ function openPanel(opts){
 }
 function closePanel(){
   var p=document.getElementById('edpanel'); if(!p) return;
+  _panelSeq++;  /* panel นี้ปิดแล้ว — การปิดที่เลื่อนเวลาไว้จะไม่ทำซ้ำ */
   p.className='ep-hidden'; p.innerHTML=''; _panelCb=null;
-  var _bpbtn=document.getElementById('btnBulkPrice'); if(_bpbtn) _bpbtn.classList.remove('on');
+  if(_panelActiveBtn){ _panelActiveBtn.classList.remove('on'); _panelActiveBtn=null; }
   if(_panelKey){ document.removeEventListener('keydown',_panelKey); _panelKey=null; }
   if(_panelOutside){ document.removeEventListener('mousedown',_panelOutside); _panelOutside=null; }
   if(_panelOnClose){ var _oc=_panelOnClose; _panelOnClose=null; try{ _oc(); }catch(e){} }
@@ -620,10 +639,23 @@ function _initDragReorder(){
     _dragClear(); _dragEl=null; _dragType=null; _grabbed=null;
   });
 }
+/* ชื่อกลุ่มใหม่ = หมวดใหม่ (N) · N = เลขสูงสุดที่มีในเอกสาร + 1 (ไม่นำเลขที่ถูกลบกลับมาใช้ซ้ำ) */
+var _NEWGRP_RE=/^หมวดใหม่ \((\d+)\)$/;
+function _nextNewGroupNo(){
+  var mx=0; document.querySelectorAll('.sechead').forEach(function(h){ var m=(h.textContent||'').trim().match(_NEWGRP_RE); if(m) mx=Math.max(mx,parseInt(m[1],10)); });
+  return mx+1;
+}
+/* กลุ่มที่ทำสำเนา: ถ้าชื่อเป็น หมวดใหม่ (N) ให้เปลี่ยนเป็นเลขใหม่ — เปลี่ยนเฉพาะตัวเลข รูปแบบตัวอักษรคงเดิม */
+function _renumberDupGroup(sec){
+  var h=sec.querySelector('.sechead'); if(!h || !_NEWGRP_RE.test((h.textContent||'').trim())) return;
+  var n=_nextNewGroupNo(), w=document.createTreeWalker(h,NodeFilter.SHOW_TEXT,null), tn, last=null;
+  while((tn=w.nextNode())){ if(/\(\d+\)/.test(tn.nodeValue)) last=tn; }
+  if(last) last.nodeValue=last.nodeValue.replace(/\((\d+)\)(?![\s\S]*\(\d+\))/,'('+n+')');
+}
 function newSection(){
   var sec=document.createElement('section'); sec.className='sec';
   sec.innerHTML='<div class="sec-h" style="--accent:#4a8579">'
-    +'<span class="em">🍽️</span><span class="sechead" contenteditable="true">หมวดใหม่</span></div>'
+    +'<span class="em">🍽️</span><span class="sechead" contenteditable="true">หมวดใหม่ ('+_nextNewGroupNo()+')</span></div>'
     +'<div class="sec-b"></div>';
   var _dss=_defaultStyles.sechead;
   if(_dss&&(_dss.fontFamily||_dss.fontSize||_dss.color)){var sh=sec.querySelector('.sechead');if(sh){if(_dss.fontFamily)sh.style.fontFamily=_dss.fontFamily;if(_dss.fontSize)sh.style.fontSize=_dss.fontSize;sh.style.fontWeight=_dss.fontWeight||'';sh.style.fontStyle=_dss.fontStyle||'';if(_dss.color)sh.style.color=_dss.color;}}
@@ -715,6 +747,7 @@ document.addEventListener('click', function(ev){
       ns.classList.remove('typosel','sel');
       ns.querySelectorAll('.typosel,.sel').forEach(function(el){el.classList.remove('typosel','sel');});
       ns.classList.remove('dragging','drop-before','drop-after');
+      _renumberDupGroup(ns);  /* หมวดใหม่ (N) → เลขใหม่ */
       sec.parentNode.insertBefore(ns, sec.nextSibling);
       addDupGroupBtn(ns); addDelGroupBtn(ns); addDragHandleSec(ns); ns.setAttribute('draggable','true');
       ns.querySelectorAll('.sec-b .row').forEach(function(r){ addDupBtn(r); addDelBtn(r); addDragHandle(r); r.setAttribute('draggable','true'); });
@@ -1152,7 +1185,7 @@ var I18N={
   'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
-  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
+  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
   'fl.savingEditor':'⏳ กำลังบันทึกไฟล์ Editor...','fl.savedEditor':'✅ บันทึกไฟล์ Editor แล้ว: {name}','fl.cancelEditor':'ยกเลิกการบันทึก — ยังไม่ได้บันทึกไฟล์','fl.fallbackEditor':'⚠️ เบราว์เซอร์นี้เขียนทับไฟล์โดยตรงไม่ได้ — บันทึกเป็นไฟล์ดาวน์โหลดแทน (ใช้ Chrome/Edge + เปิดผ่าน http เพื่อเขียนทับไฟล์เดิม)',
   'pnl.cancel':'ยกเลิก','pnl.delOk':'ลบ','pnl.delGroupOk':'ลบกลุ่ม','pnl.delGroupMsg':'ลบกลุ่ม <b>"{name}"</b> ทั้งกลุ่มใช่ไหม? เมนูทั้งหมดในกลุ่มนี้จะหาย — กู้คืนไม่ได้','pnl.delPageOk':'ลบหน้านี้','pnl.delPageMsg':'ลบหน้านี้ทั้งหน้าใช่ไหม? ทุกกลุ่มและเมนูในหน้านี้จะหาย — กู้คืนไม่ได้',
@@ -1169,7 +1202,7 @@ var I18N={
   'fl.needSel':'⚠️ No text selected — drag to highlight text first','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
-  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
+  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',
   'fl.savingEditor':'⏳ Saving editor file...','fl.savedEditor':'✅ Editor file saved: {name}','fl.cancelEditor':'Save cancelled — file not saved','fl.fallbackEditor':'⚠️ This browser cannot overwrite the file directly — saved as a download instead (use Chrome/Edge over http to overwrite the original)',
   'pnl.cancel':'Cancel','pnl.delOk':'Delete','pnl.delGroupOk':'Delete Group','pnl.delGroupMsg':'Delete the entire group <b>"{name}"</b>? All items in this group will be lost — cannot undo','pnl.delPageOk':'Delete This Page','pnl.delPageMsg':'Delete this whole page? All groups and items on it will be lost — cannot undo',
@@ -1565,31 +1598,46 @@ function _typoVisualSig(el){
   all.forEach(function(x){ var c=getComputedStyle(x); out.push([c.color,c.fontFamily,c.fontSize,c.fontWeight,c.fontStyle,c.textDecorationLine,c.borderBottomColor,c.borderBottomStyle].join('|')); });
   return out.join(';');
 }
+/* dropdown กลุ่ม: แสดง ชื่อกลุ่ม · หน้า N และต่อท้ายลำดับ k เฉพาะชื่อที่ซ้ำในหน้าเดียวกัน · เลือก curSec ไว้ก่อน
+   ลำดับ: เรียงตามหน้า แล้วตามชื่อ (เลขในชื่อเรียงแบบตัวเลข (9) ก่อน (10)) · ชื่อซ้ำเรียงตามตำแหน่งในเอกสาร · value = index เดิมใน .sec */
+function _typoGroupOptsHtml(curSec){
+  var secs=document.querySelectorAll('.sec'), pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var info=[], cnt={};
+  for(var i=0;i<secs.length;i++){
+    var sh=secs[i].querySelector('.sechead'); var nm=sh?sh.textContent.trim():''; if(!nm) nm='กลุ่ม '+(i+1);
+    var pg=pages.indexOf(secs[i].closest('.page'))+1, key=pg+'|'+nm;
+    cnt[key]=(cnt[key]||0)+1; info.push({i:i,nm:nm,pg:pg,key:key,k:cnt[key]});
+  }
+  var ord=info.slice().sort(function(a,b){ return (a.pg-b.pg) || a.nm.localeCompare(b.nm,'th',{numeric:true}) || (a.i-b.i); });
+  var html='';
+  for(var j=0;j<ord.length;j++){
+    var o=ord[j], lb=t('sc.grpOpt',{name:o.nm,p:o.pg})+(cnt[o.key]>1?' ('+o.k+')':'');
+    html+='<option value="'+o.i+'"'+(secs[o.i]===curSec?' selected':'')+'>'+epEsc(lb)+'</option>';
+  }
+  return html;
+}
 function typoApplyAllSame(){
   if(!_typoEl) return;
+  var _tb=document.getElementById('typoApplyAll'); if(_tb && _tb.classList.contains('on')){ closePanel(); return; }  /* กดซ้ำ = ปิด panel */
   var _lbl=_typoLabel(_typoType), _sel=_typoType.sel, _src=_typoEl;
   var _fmt=_typoType.line?null:_typoCaptureFormat(_src);  /* รูปแบบช่องต้นทาง: style ทั้งช่อง + ช่วงตัวอักษรที่ทาไว้ */
-  var secs=document.querySelectorAll('.sec');
-  var optsHtml='';
-  for(var i=0;i<secs.length;i++){
-    var sh=secs[i].querySelector('.sechead'); var sl=sh?sh.textContent.trim():('กลุ่ม '+(i+1));
-    optsHtml+='<option value="'+i+'">'+epEsc(sl)+'</option>';
-  }
+  var _inSec=!!_typoEl.closest('.sec'), optsHtml=_typoGroupOptsHtml(_typoEl.closest('.sec'));  /* เลือกกลุ่มของช่องที่คลิกไว้ก่อน · ซ่อน เฉพาะกลุ่ม ถ้าช่องไม่ได้อยู่ในกลุ่มเมนู */
   var body=''
     +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
     +'<span class="ep-seg">'
-    +'<label><input type="radio" name="taScope" value="all" checked><span data-i18n="pr.allPages">ทั้งหมด</span></label>'
+    +(_inSec?'<label><input type="radio" name="taScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>':'')
     +'<label><input type="radio" name="taScope" value="page"><span>เฉพาะหน้านี้</span></label>'
-    +'<label><input type="radio" name="taScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>'
+    +'<label><input type="radio" name="taScope" value="all"><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'</span>'
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
-  openPanel({mode:'custom',title:t('btn.applyAll')||'ใช้ทั้งประเภท',bodyHtml:body,
+  openPanel({mode:'custom',title:t('btn.applyAll')||'ใช้ทั้งประเภท',bodyHtml:body,activeBtn:'typoApplyAll',toggleBtn:'typoApplyAll',
     okText:t('pnl.applyAllOk'),cancelText:t('pnl.cancel'),
-    onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="taScope"]:checked')||{}).value==='group'?'inline-flex':'none'); },
-    readValues:function(p){ return {scope:(p.querySelector('input[name="taScope"]:checked')||{}).value||'all', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
+    onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="taScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="taScope"]:checked'); },
+    readValues:function(p){ return {scope:(p.querySelector('input[name="taScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
+    validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },  /* ไม่มีค่าเริ่มต้น: ต้องเลือกขอบเขตก่อน (กัน Enter) */
     onOk:function(v){
-      var scope=(v&&v.scope)||'all';
+      var scope=v.scope;
       var gidx=(v&&v.gidx)||0;
       var targets=_typoScopeTargets(_sel,scope,gidx);
       var n=0;
@@ -2006,7 +2054,6 @@ function openPricePanel(){
   if(_bpbtn && _bpbtn.classList.contains('on')){ closePanel(); return; }
   var _enteredEdit=false;
   if(!document.body.classList.contains('editmode')){ toggleEdit(); _enteredEdit=true; }
-  if(_bpbtn) _bpbtn.classList.add('on');
   var secs=document.querySelectorAll('.sec');
   var optsHtml='';
   for(var i=0;i<secs.length;i++){
@@ -2031,7 +2078,7 @@ function openPricePanel(){
     +'</span>'
     +'<input class="ep-num" type="number" min="0" step="1" value="10">'
     +'</span>';
-  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, toggleBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okText:t('pr.apply'), cancelText:t('pnl.cancel'),
+  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okText:t('pr.apply'), cancelText:t('pnl.cancel'),
     onCustom:_bulkPricePreview,
     onClose:function(){ if(_enteredEdit && document.body.classList.contains('editmode')){ toggleEdit(); } },
     readValues:function(p){
@@ -2063,29 +2110,26 @@ function _bulkPriceExec(v){
 }
 function typoResetSel(){
   if(!_typoEl) return;
+  var _tb=document.getElementById('typoResetBtn'); if(_tb && _tb.classList.contains('on')){ closePanel(); return; }  /* กดซ้ำ = ปิด panel */
   var _el=_typoEl, _ty=_typoType, _lbl=_typoLabel(_ty), _sel=_ty.sel;
-  var secs=document.querySelectorAll('.sec');
-  var optsHtml='';
-  for(var i=0;i<secs.length;i++){
-    var sh=secs[i].querySelector('.sechead'); var sl=sh?sh.textContent.trim():('กลุ่ม '+(i+1));
-    optsHtml+='<option value="'+i+'">'+epEsc(sl)+'</option>';
-  }
+  var _inSec=!!_typoEl.closest('.sec'), optsHtml=_typoGroupOptsHtml(_typoEl.closest('.sec'));  /* เลือกกลุ่มของช่องที่คลิกไว้ก่อน · ซ่อน เฉพาะกลุ่ม ถ้าช่องไม่ได้อยู่ในกลุ่มเมนู */
   var body=''
     +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
     +'<span class="ep-seg">'
-    +'<label><input type="radio" name="trScope" value="one" checked><span>เฉพาะอันนี้</span></label>'
+    +'<label><input type="radio" name="trScope" value="one"><span>เฉพาะอันนี้</span></label>'
+    +(_inSec?'<label><input type="radio" name="trScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>':'')
     +'<label><input type="radio" name="trScope" value="page"><span>เฉพาะหน้านี้</span></label>'
-    +'<label><input type="radio" name="trScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>'
-    +'<label><input type="radio" name="trScope" value="all"><span data-i18n="pr.allPages">ทั้งหมด</span></label>'
+    +'<label><input type="radio" name="trScope" value="all"><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'</span>'
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
-  openPanel({mode:'custom',title:t('btn.reset')||'คืนค่า',bodyHtml:body,tone:'warn',
+  openPanel({mode:'custom',title:t('btn.reset')||'คืนค่า',bodyHtml:body,activeBtn:'typoResetBtn',toggleBtn:'typoResetBtn',
     okText:t('pnl.resetOk'),cancelText:t('pnl.cancel'),
-    onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="trScope"]:checked')||{}).value==='group'?'inline-flex':'none'); },
-    readValues:function(p){ return {scope:(p.querySelector('input[name="trScope"]:checked')||{}).value||'one', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
+    onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="trScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="trScope"]:checked'); },
+    readValues:function(p){ return {scope:(p.querySelector('input[name="trScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
+    validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },
     onOk:function(v){
-      var scope=(v&&v.scope)||'one';
+      var scope=v.scope;
       var gidx=(v&&v.gidx)||0;
       var targets=(scope==='one')?[_el]:_typoScopeTargets(_sel,scope,gidx);
       var n=0;

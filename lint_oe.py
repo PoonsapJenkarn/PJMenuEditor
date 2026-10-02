@@ -83,6 +83,35 @@ def main():
     if re.search(r"edhint'?\)?\.textContent\s*=\s*['\"][^'\"]+['\"]", txt):
         warnings.append("#edhint ถูก set ข้อความ (ต้องว่างถาวรตาม v11+)")
 
+    # ---- 7) ปุ่มสถานะ .on ต้องไม่ถูก CSS อื่นทับพื้นหลัง (บั๊ก 2 ต.ค. 2026: พื้นไม่เขียว ตัวอักษรขาว อ่านไม่ออก) ----
+    #   ดู UI_STANDARD.md ข้อ 1: กฎ .on ต้องใช้ selector ที่ specificity ไม่ต่ำกว่ากฎอื่น และวางไว้หลังสุด
+    _css = ''.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt))
+    _css = re.sub(r'/\*[\s\S]*?\*/', '', _css)
+    _rules = []
+    for _i, (_sel, _body) in enumerate(re.findall(r'([^{}]+)\{([^{}]*)\}', _css)):
+        for _one in _sel.split(','):
+            _rules.append((_i, _one.strip(), _body))
+    def _spec(sel):
+        return (len(re.findall(r'#[\w-]+', sel)),
+                len(re.findall(r'\.[\w-]+|\[[^\]]+\]|:(?!:)[\w-]+', sel)),
+                len(re.findall(r'(?:^|[\s>+~])([a-zA-Z][\w-]*)', sel)))
+    _seen = set()
+    for _oi, _osel, _obody in [r for r in _rules if '.on' in r[1] and 'background' in r[2] and not r[1].endswith('svg')]:
+        _toks = set(re.findall(r'[.#][\w-]+', _osel.split()[-1])) - {'.on'}
+        for _ri, _rsel, _rbody in _rules:
+            if _ri == _oi or 'background' not in _rbody or '.on' in _rsel or ':disabled' in _rsel: continue
+            if _rsel.split()[0] != _osel.split()[0]: continue
+            if not (set(re.findall(r'[.#][\w-]+', _rsel.split()[-1])) & _toks): continue
+            _sr, _so = _spec(_rsel), _spec(_osel)
+            if (_sr > _so or (_sr == _so and _ri > _oi)) and (_osel, _rsel) not in _seen:
+                _seen.add((_osel, _rsel))
+                errors.append("สถานะ .on ถูกทับ: '{}' แพ้ '{}' (พื้นจะไม่เขียว)".format(_osel, _rsel))
+
+    # ---- 8) คลิกนอก panel ต้องไม่ปิด panel ตอน mousedown (layout เลื่อน → click ตกผิด element) ----
+    _m = re.search(r'_panelOutside=function\(e\)\{([\s\S]*?)\n\s*\};', txt)
+    if _m and re.search(r'(?<![\w.])closePanel\(\)', _m.group(1)):
+        errors.append('_panelOutside เรียก closePanel() ตอน mousedown — ใช้ _panelCloseAfterRelease(seq) (ดู UI_STANDARD.md ข้อ 2)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

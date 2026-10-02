@@ -16,5 +16,9 @@ _imgall/
 _imgcheck/
 _imgcheck2/
 
-# ไฟล์ที่ไม่เกี่ยวกับโปรเจกต์ OE Isan (เคยหลุดเข้า repo)
-Glasses.docx
+# ไฟล์ Word / Excel — ไม่เกี่ยวกับโปรเจกต์ OE Isan (โปรเจกต์นี้เป็น HTML ล้วน)
+*.docx
+*.doc
+*.xlsx
+*.xls
+*.xlsm

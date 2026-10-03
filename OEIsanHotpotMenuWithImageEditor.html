@@ -856,8 +856,10 @@ function setStatus(type,msg){
 }
 /* clearStatus: ล้าง warning/error แล้วกลับไปแสดงสถานะโหมดปัจจุบัน */
 function clearStatus(){ _renderStatus(_statusMode.type,_statusMode.msg); }
-function checkOverflow(){
-  /* วิธี B: วัดแบบซ่อนปุ่มแก้ไขชั่วคราว (body.measuring) เพื่อได้ความสูงเท่าตอนพิมพ์จริง
+function checkOverflow(opts){
+  /* opts.quiet (ตอนเปลี่ยนขนาดหน้าต่าง): ไม่ใช่การแก้เอกสาร → ไม่แตะแถบล่าง เว้นแต่สถานะล้นหน้าเปลี่ยน (ขึ้น/หายคำเตือน)
+     ผู้เรียกอื่น (แก้เอกสาร) ยังคืนข้อความโหมดเหมือนเดิม — ผลครั้งก่อนไม่ค้างหลังมีการแก้ใหม่
+     วิธี B: วัดแบบซ่อนปุ่มแก้ไขชั่วคราว (body.measuring) เพื่อได้ความสูงเท่าตอนพิมพ์จริง
      — เบราว์เซอร์อ่าน layout ใน tick เดียวก่อน paint จึงไม่กระพริบ วัดได้แม้อยู่ใน edit mode */
   document.body.classList.add('measuring');
   var bad=[];
@@ -869,8 +871,9 @@ function checkOverflow(){
   if(bad.length){
     _overflowWarn=true;
     _renderStatus('warning','เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4');
-  } else {
-    if(_overflowWarn){ _overflowWarn=false; }
+  } else if(_overflowWarn){
+    _overflowWarn=false; clearStatus();  /* เพิ่งหายล้น → เอาคำเตือนออก (ทุกกรณี รวม quiet) */
+  } else if(!(opts && opts.quiet)){
     clearStatus();
   }
 }
@@ -1245,7 +1248,7 @@ document.addEventListener('click', function(ev){
   if(pk && !pk.contains(ev.target)) hidePicker();
 });
 
-window.addEventListener('resize', checkOverflow);
+window.addEventListener('resize', function(){ checkOverflow({quiet:true}); });  /* เดิมส่ง checkOverflow ตรงๆ → ทุกครั้งที่ย่อ/ขยายหน้าต่าง เขียนทับผลลัพธ์ในแถบล่าง */
 window.addEventListener('load', function(){ renumber(); checkOverflow(); _lastSnap=_serializePages(); _updateUndoButtons(); _initDragReorder(); });
 /* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
 var I18N={

@@ -134,11 +134,11 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #edtabs .qab button:hover:not(:disabled) svg{stroke:#217346;}
 @media print{#edtabs .qab{display:none !important;}}
 @media print{#edtabs .langsw{display:none !important;}}
-#edribbon{display:flex;padding:7px 12px;height:82px;box-sizing:border-box;background:#faf9f8;}
+#edribbon{display:flex;padding:7px 12px;min-height:82px;box-sizing:border-box;background:#faf9f8;}  /* min-height ไม่ใช่ height: หน้าต่างแคบ กลุ่มปุ่มขึ้นบรรทัดใหม่ แถบสูงตาม → syncBarHeight ดันหน้าเมนูลง (UI_STANDARD ข้อ 7) */
 #edribbon .rpane{display:none;align-items:center;gap:9px;flex-wrap:wrap;width:100%;}
 #edribbon .rpane.active{display:flex;}
 /* v9 Excel-like flat ribbon (SVG line icons, monochrome) */
-#edribbon .rpane{align-items:stretch;gap:0;}
+#edribbon .rpane{align-items:stretch;gap:6px 0;}
 #edribbon .rgroup{display:flex;flex-direction:column;justify-content:space-between;padding:2px 8px;border-right:1px solid #eaeaea;}
 #edribbon .rgb{display:flex;align-items:flex-start;gap:1px;}
 #edribbon .rgl{font-size:11px;color:#797775;text-align:center;padding:2px 0 3px;margin-top:auto;}
@@ -301,19 +301,25 @@ body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.m
 .sec.drop-after{box-shadow:0 3px 0 #217346;}
 @media print{.dh{display:none !important;}}
 /* ===== inline panel (แทน native prompt/confirm ทั้งแอป v33+) ===== */
-#edpanel{display:flex;align-items:center;gap:11px;width:100%;box-sizing:border-box;padding:9px 14px;border-top:1px solid #e1dfdd;font-family:'Prompt','Sarabun',sans-serif;animation:epslide .16s ease;}
+#edpanel{display:flex;align-items:center;gap:8px 11px;flex-wrap:wrap;width:100%;box-sizing:border-box;padding:9px 14px;border-top:1px solid #e1dfdd;font-family:'Prompt','Sarabun',sans-serif;animation:epslide .16s ease;}
 #edpanel.ep-hidden{display:none;}
 @keyframes epslide{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
 #edpanel .ep-ic{flex:none;display:flex;}
 #edpanel .ep-ic svg{width:21px;height:21px;fill:none;stroke-width:1.9;}
-#edpanel .ep-msg{font-size:13px;font-weight:500;color:#2e3440;line-height:1.4;}
+#edpanel .ep-msg{font-size:13px;font-weight:500;color:#2e3440;line-height:1.4;flex:1 1 220px;min-width:0;}
 #edpanel .ep-msg b{font-weight:700;}
 #edpanel .ep-label{font-size:12.5px;font-weight:600;color:#3a3937;white-space:nowrap;}
 #edpanel .ep-input{font-family:inherit;font-size:13px;font-weight:500;padding:5px 10px;border:1px solid #c8ccd2;border-radius:6px;width:160px;outline:none;}
 #edpanel .ep-input:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
-#edpanel .ep-preview{font-size:11.5px;color:#6b7280;white-space:nowrap;}
+#edpanel .ep-preview{font-size:11.5px;color:#6b7280;white-space:normal;line-height:1.35;flex:1 1 180px;min-width:0;}  /* ข้อความยาว = ขึ้นบรรทัดในพื้นที่ตัวเอง ไม่ดันส่วนอื่น */
 #edpanel .ep-preview b{color:#c0392b;font-weight:700;}
 #edpanel .ep-preview.ep-err{color:#c0392b;font-weight:600;}
+#edpanel .ep-goset{margin-left:8px;font-family:inherit;font-size:11.5px;font-weight:600;color:#217346;background:#fff;border:1px solid #217346;border-radius:6px;padding:2px 10px;cursor:pointer;vertical-align:middle;}
+#edpanel .ep-goset:hover{background:#217346;color:#fff;}
+#edpanel .ep-chk{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#3a3937;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-chk input{accent-color:#217346;margin:0;cursor:pointer;}
+#edpanel .ep-chk:has(input:disabled){opacity:.45;cursor:not-allowed;}
+#edpanel .ep-chk:has(input:disabled) input{cursor:not-allowed;}
 #edpanel .ep-btns{display:flex;gap:6px;margin-left:auto;}
 #edpanel .ep-pf{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 #edpanel .ep-seg{display:inline-flex;border:1px solid #c8ccd2;border-radius:6px;overflow:hidden;}
@@ -1249,10 +1255,10 @@ var I18N={
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ',
   'btn.addPage':'เพิ่มหน้า','btn.delPage':'ลบหน้า','btn.print':'พิมพ์','font.placeholder':'— ฟอนต์ —',
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
-  'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.prNumOnly':'⚠️ ราคาใส่ได้เฉพาะตัวเลข (ช่วงราคาใช้ - เช่น 100-150)','fl.amtNumOnly':'⚠️ จำนวนใส่ได้เฉพาะตัวเลขจำนวนเต็ม','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'🔼 เพิ่มราคา +{amt}{unit} · {n} รายการ','fl.bulkPriceDown':'🔽 ลดราคา −{amt}{unit} · {n} รายการ','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
+  'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.prNumOnly':'⚠️ ราคาใส่ได้เฉพาะตัวเลข (ช่วงราคาใช้ - เช่น 100-150)','fl.amtNumOnly':'⚠️ จำนวนใส่ได้เฉพาะตัวเลขจำนวนเต็ม','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceDown':'✓ ลดราคา −{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceUpFill':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ · ใส่ในช่องว่าง {f} ช่อง','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
   'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.priceMode':'โหมดปรับราคา · แก้ได้เฉพาะช่องราคา','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
-  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.applyAllNoFmt':'ไม่มีช่องไหนเปลี่ยน — ช่องต้นทางยังเป็นรูปแบบเริ่มต้น ไม่มีรูปแบบให้คัดลอก','fl.applyAllNoMatch':'ไม่มีช่องไหนเปลี่ยน — รูปแบบที่ทาไว้บางตัวอักษร คัดลอกได้เฉพาะช่องที่มีข้อความเดียวกัน · ถ้าจะให้ทั้งช่อง ให้ไฮไลท์ทั้งข้อความ หรือคลิกโดยไม่ไฮไลท์ แล้วจัดรูปแบบ','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','pr.onePage':'เฉพาะหน้า','sc.pageOpt':'หน้า {p}','pnl.pickGroup':'— เลือกกลุ่ม —','pnl.pickPage':'— เลือกหน้า —','pnl.needGroup':'เลือกกลุ่มก่อน','pnl.needPage':'เลือกหน้าก่อน','fl.bulkPriceNone':'ไม่มีราคาไหนเปลี่ยน — ไม่มีราคาที่ปรับได้ในขอบเขตนี้','pr.task':'งาน','pr.setApply':'ใส่ราคา','pr.fillLbl':'ใส่ในช่อง','pr.fillEmpty':'เฉพาะช่องว่าง','pr.fillAll':'แทนที่ทุกช่อง','pr.priceLbl':'ราคา','pr.amtLbl':'จำนวน','pr.needFill':'เลือกว่าจะใส่ในช่องไหนก่อน','pr.needPrice':'ใส่ราคาก่อน (ตัวเลข หรือช่วง เช่น 35-45)','pr.setAdd':'ใส่ใหม่ {a} ช่อง','pr.setOver':'เขียนทับ {o} ช่อง','pr.setNoEmpty':'ไม่มีช่องราคาว่างในขอบเขตนี้','pr.setNoChange':'ทุกช่องในขอบเขตนี้เป็นราคานี้อยู่แล้ว','fl.setPrice':'✓ ใส่ราคา {price} ในช่องว่าง {a} ช่องแล้ว','fl.setPriceOver':'✓ ใส่ราคา {price} แล้ว — ใหม่ {a} ช่อง · เขียนทับ {o} ช่อง','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
+  'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.applyAllNoFmt':'ไม่มีช่องไหนเปลี่ยน — ช่องต้นทางยังเป็นรูปแบบเริ่มต้น ไม่มีรูปแบบให้คัดลอก','fl.applyAllNoMatch':'ไม่มีช่องไหนเปลี่ยน — รูปแบบที่ทาไว้บางตัวอักษร คัดลอกได้เฉพาะช่องที่มีข้อความเดียวกัน · ถ้าจะให้ทั้งช่อง ให้ไฮไลท์ทั้งข้อความ หรือคลิกโดยไม่ไฮไลท์ แล้วจัดรูปแบบ','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','pr.onePage':'เฉพาะหน้า','sc.pageOpt':'หน้า {p}','pnl.pickGroup':'— เลือกกลุ่ม —','pnl.pickPage':'— เลือกหน้า —','pnl.needGroup':'เลือกกลุ่มก่อน','pnl.needPage':'เลือกหน้าก่อน','pr.noItems':'ไม่มีรายการในขอบเขตนี้','pr.allEmpty':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ต้องใส่ราคาก่อน','pr.adjSame':'ไม่มีราคาที่เปลี่ยน — ผลที่ได้เท่าราคาเดิม (ราคาต่ำสุด 0 · % ปัดเป็นจำนวนเต็ม)','pr.adjNoNum':'ไม่มีราคาที่เป็นตัวเลขในขอบเขตนี้','pr.skipEmpty':'ข้ามช่องว่าง {n} ช่อง','pr.skipNonNum':'ข้ามช่องที่ไม่ใช่ตัวเลข {n} ช่อง','pr.skipSame':'ได้ราคาเดิม {n} ช่อง','pr.task':'งาน','pr.setApply':'ใส่ราคา','pr.fillLbl':'ใส่ในช่อง','pr.fillEmpty':'เฉพาะช่องว่าง','pr.fillAll':'แทนที่ทุกช่อง','pr.priceLbl':'ราคา','pr.amtLbl':'จำนวน','pr.inclEmpty':'รวมช่องว่าง (นับเป็น 0)','pr.inclEmptyNA':'ใช้ได้เฉพาะ เพิ่ม แบบ บาท','pr.fillEmptyN':'ช่องว่าง {n} ช่อง → {v}','pr.allEmptyTick':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ติ๊ก "รวมช่องว่าง" หรือใส่ราคาก่อน','pr.needFill':'เลือกว่าจะใส่ในช่องไหนก่อน','pr.needPrice':'ใส่ราคาก่อน (ตัวเลข หรือช่วง เช่น 35-45)','pr.setAdd':'ใส่ใหม่ {a} ช่อง','pr.setOver':'เขียนทับ {o} ช่อง','pr.setNoEmpty':'ไม่มีช่องราคาว่างในขอบเขตนี้','pr.setNoChange':'ทุกช่องในขอบเขตนี้เป็นราคานี้อยู่แล้ว','fl.setPrice':'✓ ใส่ราคา {price} ในช่องว่าง {a} ช่องแล้ว','fl.setPriceOver':'✓ ใส่ราคา {price} แล้ว — ใหม่ {a} ช่อง · เขียนทับ {o} ช่อง','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
   'fl.savingEditor':'⏳ กำลังบันทึกไฟล์ Editor...','fl.savedEditor':'✅ บันทึกไฟล์ Editor แล้ว: {name}','fl.cancelEditor':'ยกเลิกการบันทึก — ยังไม่ได้บันทึกไฟล์','fl.fallbackEditor':'⚠️ เบราว์เซอร์นี้เขียนทับไฟล์โดยตรงไม่ได้ — บันทึกเป็นไฟล์ดาวน์โหลดแทน (ใช้ Chrome/Edge + เปิดผ่าน http เพื่อเขียนทับไฟล์เดิม)',
   'pnl.cancel':'ยกเลิก','pnl.delOk':'ลบ','pnl.delGroupOk':'ลบกลุ่ม','pnl.delGroupMsg':'ลบกลุ่ม <b>"{name}"</b> ทั้งกลุ่มใช่ไหม? เมนูทั้งหมดในกลุ่มนี้จะหาย — กู้คืนไม่ได้','pnl.delPageOk':'ลบหน้านี้','pnl.delPageMsg':'ลบหน้านี้ทั้งหน้าใช่ไหม? ทุกกลุ่มและเมนูในหน้านี้จะหาย — กู้คืนไม่ได้',
@@ -1266,10 +1272,10 @@ var I18N={
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink',
   'btn.addPage':'Add Page','btn.delPage':'Delete Page','btn.print':'Print','font.placeholder':'— Font —',
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
-  'fl.needSel':'⚠️ No text selected — drag to highlight text first','fl.prNumOnly':'⚠️ Price accepts numbers only (use - for a range, e.g. 100-150)','fl.amtNumOnly':'⚠️ Amount accepts whole numbers only','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'🔼 Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'🔽 Decreased −{amt}{unit} · {n} items','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
+  'fl.needSel':'⚠️ No text selected — drag to highlight text first','fl.prNumOnly':'⚠️ Price accepts numbers only (use - for a range, e.g. 100-150)','fl.amtNumOnly':'⚠️ Amount accepts whole numbers only','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'✓ Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'✓ Decreased −{amt}{unit} · {n} items','fl.bulkPriceUpFill':'✓ Increased +{amt}{unit} · {n} items · {f} empty filled','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
   'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.priceMode':'Price mode · Only price cells can be edited','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
-  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.applyAllNoFmt':'Nothing changed — the source still has the default style, nothing to copy','fl.applyAllNoMatch':'Nothing changed — per-character formatting copies only to cells with the same text · for the whole cell, select all its text (or click without selecting) then format','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','pr.onePage':'One page','sc.pageOpt':'Page {p}','pnl.pickGroup':'— Choose group —','pnl.pickPage':'— Choose page —','pnl.needGroup':'Choose a group first','pnl.needPage':'Choose a page first','fl.bulkPriceNone':'No prices changed — nothing adjustable in this scope','pr.task':'Action','pr.setApply':'Set price','pr.fillLbl':'Fill','pr.fillEmpty':'Empty only','pr.fillAll':'Replace all','pr.priceLbl':'Price','pr.amtLbl':'Amount','pr.needFill':'Choose which cells to fill first','pr.needPrice':'Enter a price first (number or range, e.g. 35-45)','pr.setAdd':'Fill {a} empty','pr.setOver':'Overwrite {o}','pr.setNoEmpty':'No empty price cells in this scope','pr.setNoChange':'Every cell in this scope already has this price','fl.setPrice':'✓ Set price {price} in {a} empty cells','fl.setPriceOver':'✓ Set price {price} — {a} new · {o} overwritten','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
+  'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.applyAllNoFmt':'Nothing changed — the source still has the default style, nothing to copy','fl.applyAllNoMatch':'Nothing changed — per-character formatting copies only to cells with the same text · for the whole cell, select all its text (or click without selecting) then format','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','pr.onePage':'One page','sc.pageOpt':'Page {p}','pnl.pickGroup':'— Choose group —','pnl.pickPage':'— Choose page —','pnl.needGroup':'Choose a group first','pnl.needPage':'Choose a page first','pr.noItems':'No items in this scope','pr.allEmpty':'All {n} price cells in this scope are empty — set prices first','pr.adjSame':'No prices changed — results equal current prices (minimum 0 · % rounds to whole numbers)','pr.adjNoNum':'No numeric prices in this scope','pr.skipEmpty':'{n} empty skipped','pr.skipNonNum':'{n} non-numeric skipped','pr.skipSame':'{n} unchanged','pr.task':'Action','pr.setApply':'Set price','pr.fillLbl':'Fill','pr.fillEmpty':'Empty only','pr.fillAll':'Replace all','pr.priceLbl':'Price','pr.amtLbl':'Amount','pr.inclEmpty':'Include empty (as 0)','pr.inclEmptyNA':'Only for Increase in baht','pr.fillEmptyN':'{n} empty → {v}','pr.allEmptyTick':'All {n} price cells in this scope are empty — tick "Include empty" or set prices first','pr.needFill':'Choose which cells to fill first','pr.needPrice':'Enter a price first (number or range, e.g. 35-45)','pr.setAdd':'Fill {a} empty','pr.setOver':'Overwrite {o}','pr.setNoEmpty':'No empty price cells in this scope','pr.setNoChange':'Every cell in this scope already has this price','fl.setPrice':'✓ Set price {price} in {a} empty cells','fl.setPriceOver':'✓ Set price {price} — {a} new · {o} overwritten','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',
   'fl.savingEditor':'⏳ Saving editor file...','fl.savedEditor':'✅ Editor file saved: {name}','fl.cancelEditor':'Save cancelled — file not saved','fl.fallbackEditor':'⚠️ This browser cannot overwrite the file directly — saved as a download instead (use Chrome/Edge over http to overwrite the original)',
   'pnl.cancel':'Cancel','pnl.delOk':'Delete','pnl.delGroupOk':'Delete Group','pnl.delGroupMsg':'Delete the entire group <b>"{name}"</b>? All items in this group will be lost — cannot undo','pnl.delPageOk':'Delete This Page','pnl.delPageMsg':'Delete this whole page? All groups and items on it will be lost — cannot undo',
@@ -2120,6 +2126,7 @@ function _bulkPriceRead(p){
     price:String((p.querySelector('.ep-price')||{}).value||'').trim(),
     mode:(p.querySelector('input[name="bpMode"]:checked')||{}).value||'baht',
     dir:(p.querySelector('input[name="bpDir"]:checked')||{}).value||'up',
+    incl:(function(){ var c=p.querySelector('input[name="bpIncl"]'), d=(p.querySelector('input[name="bpDir"]:checked')||{}).value||'up', m=(p.querySelector('input[name="bpMode"]:checked')||{}).value||'baht'; return !!(c && c.checked && d==='up' && m==='baht'); })(),  /* นับช่องว่างเป็น 0 เฉพาะ เพิ่ม+บาท */
     scope:(p.querySelector('input[name="bpScope"]:checked')||{}).value||'',
     amt:parseInt((p.querySelector('.ep-amt')||{}).value,10)||0,
     gidx:(g&&g.value!=='')?parseInt(g.value,10):-1,
@@ -2149,6 +2156,36 @@ function _bulkSetPlan(targets,v){
   });
   return r;
 }
+/* งานปรับราคา: แยกช่องในขอบเขตเป็น เปลี่ยน / ว่าง / ไม่ใช่ตัวเลข / ได้ราคาเดิม — preview กับ exec ใช้ตัวเดียวกัน เหตุผลจึงตรงกัน
+   ช่องว่าง = "ยังไม่มีราคา" ไม่ใช่ 0 → ไม่แตะ เว้นแต่ผู้ใช้ติ๊ก "รวมช่องว่าง" (v.incl, เฉพาะ เพิ่ม+บาท) */
+function _bulkAdjPlan(targets,v){
+  var r={total:targets.length,empty:0,filled:0,adj:0,nonnum:0,same:0,list:[],sample:null,sampleFrom:null};
+  targets.forEach(function(el){
+    var cur=String(el.textContent||'').trim();
+    if(!cur){ if(v.incl){ r.filled++; r.list.push([el,String(v.amt)]); } else r.empty++; return; }  /* ติ๊ก รวมช่องว่าง: 0+X = X */
+    var a=_bulkAdjustOne(cur, v.mode, v.dir, v.amt);
+    if(a.changed){ r.adj++; r.list.push([el,a.out]); if(r.sample===null){ r.sampleFrom=cur; r.sample=a.out; } }
+    else if(/^\d+(\s*-\s*\d+)?$/.test(cur)) r.same++;
+    else r.nonnum++;
+  });
+  return r;
+}
+/* เหตุผลจริงเมื่อไม่มีช่องไหนเปลี่ยน */
+function _bulkAdjReason(pl,v){
+  if(!pl.total) return t('pr.noItems');
+  if(pl.empty===pl.total) return t((v && v.dir==='up' && v.mode==='baht')?'pr.allEmptyTick':'pr.allEmpty',{n:pl.empty});  /* เพิ่ม+บาท มีทางเลือกติ๊ก รวมช่องว่าง ด้วย */
+  if(pl.same) return t('pr.adjSame');
+  return t('pr.adjNoNum');
+}
+/* ปุ่ม "ใส่ราคา" ในข้อความ (ช่องว่างทั้งหมด): สลับเป็นงานใส่ราคา + เฉพาะช่องว่าง · ขอบเขตเดิมคงไว้ · ไปที่ช่องราคา */
+function _bulkPriceGoSet(p){
+  var ts=p.querySelector('input[name="bpTask"][value="set"]'), fe=p.querySelector('input[name="bpFill"][value="empty"]');
+  if(ts) ts.checked=true;
+  if(fe) fe.checked=true;
+  _bulkPricePreview(p);
+  /* focus หลังจบ event click ทั้งหมด (handler อื่น/การจัดการ focus ของเบราว์เซอร์จะไม่ทับ) */
+  setTimeout(function(){ var pi=p.querySelector('.ep-price'); if(pi && document.contains(pi) && pi.focus){ pi.focus(); } },0);
+}
 /* ช่องราคาใน panel: กรองแบบเดียวกับช่องราคาในเมนู (_prCleanChars) · ไม่บล็อก '-' ตัวแรก เพื่อแก้ 35-45 ได้ — ตรวจรูปแบบตอน _bulkPriceCheck */
 function _bulkPriceCleanInput(p){
   /* .ep-price = ตัวเลข + '-' 1 ตัว (35 หรือ 35-45) · .ep-amt = จำนวนเต็มเท่านั้น (ราคาในเมนูเป็นจำนวนเต็ม ทศนิยมจะได้ราคาที่ช่องราคาเองรับไม่ได้) */
@@ -2165,15 +2202,29 @@ function _bulkPriceCleanInput(p){
 }
 /* panel ปรับราคาเปิดค้างได้ (ไม่ปิดเมื่อคลิกนอก) ผู้ใช้จึงเพิ่ม/ลบหน้า-กลุ่ม หรือ undo ระหว่างที่เปิดอยู่ได้
    → สร้างตัวเลือก dropdown หน้า/กลุ่มใหม่ทุกครั้งที่เอกสารเปลี่ยน และจำตัวที่เลือกด้วย element (ไม่ใช่เลขลำดับ) ไม่ให้ไปลงผิดหน้า/กลุ่ม */
+/* ตัวระบุกลุ่มที่เลือก ไว้หาคืนหลัง undo/redo (_restorePages สร้าง element ใหม่ทั้งหมด _ref เดิมจึงหลุด)
+   คืนได้เฉพาะเมื่อตำแหน่งเดิมยังเป็นกลุ่มชื่อเดิมในหน้าเดิม — ไม่ตรง = ไม่เลือก (ไม่เดา) */
+function _bpSecKey(sec){
+  if(!sec) return null;
+  var secs=Array.prototype.slice.call(document.querySelectorAll('.sec')), pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var sh=sec.querySelector('.sechead');
+  return {i:secs.indexOf(sec), nm:sh?sh.textContent.trim():'', pg:pages.indexOf(sec.closest('.page'))};
+}
+function _bpSecFromKey(k){
+  if(!k || k.i<0) return null;
+  var s=document.querySelectorAll('.sec')[k.i]; if(!s) return null;
+  var kk=_bpSecKey(s);
+  return (kk.nm===k.nm && kk.pg===k.pg)?s:null;
+}
 function _bulkPriceSync(p){
   var gs=p.querySelector('.ep-gsel'), ps=p.querySelector('.ep-psel');
   if(gs){
-    var secs=Array.prototype.slice.call(document.querySelectorAll('.sec')), gr=(gs._ref&&document.contains(gs._ref))?gs._ref:null;
+    var secs=Array.prototype.slice.call(document.querySelectorAll('.sec')), gr=(gs._ref&&document.contains(gs._ref))?gs._ref:_bpSecFromKey(gs._key);
     gs.innerHTML='<option value="" disabled>'+epEsc(t('pnl.pickGroup'))+'</option>'+_typoGroupOptsHtml(null);
     var gi=gr?secs.indexOf(gr):-1; if(gi>=0){ gs.value=String(gi); } else { gs.selectedIndex=0; } gs._ref=gi>=0?gr:null;
   }
   if(ps){
-    var pages=Array.prototype.slice.call(document.querySelectorAll('.page')), pr=(ps._ref&&document.contains(ps._ref))?ps._ref:null;
+    var pages=Array.prototype.slice.call(document.querySelectorAll('.page')), pr=(ps._ref&&document.contains(ps._ref))?ps._ref:((ps._pidx>=0 && pages[ps._pidx])||null);  /* หน้า = ระบุด้วยเลขหน้า: หลัง undo เลขเดิมยังมี = เลือกเลขเดิม */
     var h='<option value="" disabled>'+epEsc(t('pnl.pickPage'))+'</option>';
     for(var i=0;i<pages.length;i++){ h+='<option value="'+i+'">'+epEsc(t('sc.pageOpt',{p:i+1}))+'</option>'; }
     ps.innerHTML=h;
@@ -2203,13 +2254,15 @@ function _bulkPriceObsStart(){
 function _bulkPricePreview(p){
   _bulkPriceCleanInput(p);
   var _gs=p.querySelector('.ep-gsel'), _ps=p.querySelector('.ep-psel');
-  if(_gs) _gs._ref=(_gs.value!=='')?(document.querySelectorAll('.sec')[parseInt(_gs.value,10)]||null):null;
-  if(_ps) _ps._ref=(_ps.value!=='')?(document.querySelectorAll('.page')[parseInt(_ps.value,10)]||null):null;
+  if(_gs){ _gs._ref=(_gs.value!=='')?(document.querySelectorAll('.sec')[parseInt(_gs.value,10)]||null):null; _gs._key=_bpSecKey(_gs._ref); }
+  if(_ps){ _ps._ref=(_ps.value!=='')?(document.querySelectorAll('.page')[parseInt(_ps.value,10)]||null):null; _ps._pidx=_ps._ref?parseInt(_ps.value,10):-1; }
   var v=_bulkPriceRead(p), isSet=(v.task==='set');
   function show(sel,on,disp){ var e=p.querySelector(sel); if(e) e.style.display=on?(disp||'inline-flex'):'none'; }
   show('.ep-gwrap',v.scope==='group'); show('.ep-pwrap',v.scope==='page');
   show('.ep-adjwrap',!isSet); show('.ep-fwrap',isSet);
-  show('.ep-setwrap',isSet);  /* .ep-amt อยู่ใน .ep-adjwrap · .ep-price อยู่ใน .ep-setwrap — ซ่อน/แสดงทั้งชุด */
+  show('.ep-setwrap',isSet);
+  var _ic=p.querySelector('input[name="bpIncl"]');
+  if(_ic){ var _ia=(v.dir==='up' && v.mode==='baht'); _ic.disabled=!_ia; if(!_ia) _ic.checked=false; var _il=_ic.closest?_ic.closest('label'):null; if(_il) _il.title=_ia?'':t('pr.inclEmptyNA'); }  /* ใช้ไม่ได้ = ปิด + ไม่ติ๊ก (ไม่แสดงติ๊กที่ไม่มีผล) */  /* .ep-amt อยู่ใน .ep-adjwrap · .ep-price อยู่ใน .ep-setwrap — ซ่อน/แสดงทั้งชุด */
   var ok=p.querySelector('.ep-ok'), pv=p.querySelector('.ep-preview');
   if(ok) ok.textContent=t(isSet?'pr.setApply':'pr.apply');  /* ปุ่มยืนยัน = คำกริยาของงานที่เลือก */
   var err=_bulkPriceCheck(v);
@@ -2220,19 +2273,31 @@ function _bulkPricePreview(p){
     if(ok) ok.disabled=(pl.list.length===0);
     if(!pv) return;
     pv.className='ep-preview';
-    if(!pl.list.length){ pv.textContent=t(v.fill==='all'?'pr.setNoChange':'pr.setNoEmpty'); return; }
+    if(!pl.list.length){ pv.textContent=!targets.length?t('pr.noItems'):t(v.fill==='all'?'pr.setNoChange':'pr.setNoEmpty'); return; }
     pv.innerHTML=epEsc(t('pr.setAdd',{a:pl.add}))+(pl.over?(' · <b>'+epEsc(t('pr.setOver',{o:pl.over}))+(pl.sample!==null?(' ('+epEsc(pl.sample)+'→'+epEsc(v.price)+')'):'')+'</b>'):'');
     return;
   }
-  var n=0, sample=null, sampleFrom=null;
-  targets.forEach(function(el){
-    var r=_bulkAdjustOne(el.textContent, v.mode, v.dir, v.amt);
-    if(r.changed){ n++; if(sample===null){ sampleFrom=String(el.textContent).trim(); sample=r.out; } }
-  });
-  if(ok) ok.disabled=(n===0);
+  var ap=_bulkAdjPlan(targets,v);
+  if(ok) ok.disabled=(ap.list.length===0);
   if(!pv) return;
   pv.className='ep-preview';
-  pv.innerHTML='<b>'+n+'</b> '+t('pr.itemsUnit')+(sample!==null?(' · '+epEsc(sampleFrom)+'→'+epEsc(sample)):'');
+  if(!ap.list.length){
+    pv.textContent=_bulkAdjReason(ap,v);
+    if(ap.total && ap.empty===ap.total){
+      var gb=document.createElement('button'); gb.type='button'; gb.className='ep-goset'; gb.textContent=t('pr.setApply');
+      gb.onmousedown=function(e){ e.preventDefault(); };  /* ปุ่มนี้จะถูกลบตอนสลับงาน — ไม่ให้รับ focus ก่อน (focus ค้างบน element ที่ถูกลบ = เบราว์เซอร์ย้าย focus ไป body) */
+      gb.onclick=function(){ _bulkPriceGoSet(p); };
+      pv.appendChild(gb);
+    }
+    return;
+  }
+  var seg=[];
+  if(ap.adj) seg.push('<b>'+ap.adj+'</b> '+epEsc(t('pr.itemsUnit'))+(ap.sample!==null?(' · '+epEsc(ap.sampleFrom)+'→'+epEsc(ap.sample)):''));
+  if(ap.filled) seg.push('<b>'+epEsc(t('pr.fillEmptyN',{n:ap.filled,v:v.amt}))+'</b>');  /* ช่องว่างที่จะได้ราคาใหม่ = แสดงเด่น ให้เห็นก่อนกด */
+  if(ap.empty) seg.push(epEsc(t('pr.skipEmpty',{n:ap.empty})));
+  if(ap.nonnum) seg.push(epEsc(t('pr.skipNonNum',{n:ap.nonnum})));
+  if(ap.same) seg.push(epEsc(t('pr.skipSame',{n:ap.same})));
+  pv.innerHTML=seg.join(' · ');
 }
 function openPricePanel(){
   var _bpbtn=document.getElementById('btnBulkPrice');
@@ -2270,7 +2335,9 @@ function openPricePanel(){
     +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpMode" value="baht" checked><span data-i18n="pr.baht">บาท</span></label>'
     +'<label><input type="radio" name="bpMode" value="pct"><span>%</span></label>'
-    +'</span></span>'
+    +'</span>'
+    +'<label class="ep-chk"><input type="checkbox" name="bpIncl"><span data-i18n="pr.inclEmpty">รวมช่องว่าง (นับเป็น 0)</span></label>'  /* ไม่ติ๊กไว้ก่อน · ใช้ได้เฉพาะ เพิ่ม+บาท (0+X=X) — ลด/% ช่องว่างจะได้ 0 จึงปิดไว้ */
+    +'</span>'
     +'<span class="ep-setwrap" style="display:none;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.priceLbl">ราคา</span><input class="ep-num ep-price" type="text" inputmode="numeric" autocomplete="off"></span>'  /* label นอกช่อง ไม่มี placeholder — ตัวอย่างอยู่ใน .ep-preview (UI_STANDARD ข้อ 6) */
     +'</span>';
   openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okText:t('pr.apply'), cancelText:t('pnl.cancel'),
@@ -2323,11 +2390,19 @@ function _priceFocusGroup(e){
   _bulkPricePreview(p);
 }
 document.addEventListener('focusin',_priceFocusGroup);
+/* โหมดปรับราคา: แก้ช่องราคาเอง = ผลครั้งก่อนในแถบล่างไม่ตรงกับเอกสารแล้ว → กลับเป็นข้อความโหมด (ประวัติยังอยู่ในบันทึกกิจกรรม)
+   ฟังที่ window ช่วง capture = ทำงานก่อนตัวกรองช่องราคา (document) → คำเตือน fl.prNumOnly ของการพิมพ์ครั้งนี้ยังขึ้นทับได้ */
+function _priceEditResetStatus(e){
+  if(!document.body.classList.contains('pricemode')) return;
+  var tg=e.target; if(!tg || !tg.closest || !tg.closest('.pr[contenteditable]')) return;
+  setStatus('info',t('st.priceMode'));
+}
+window.addEventListener('input',_priceEditResetStatus,true);
 function _priceModeExit(){ if(!document.body.classList.contains('pricemode')) return; closePanel(); _priceModeOff(); }
 function _bulkPriceExec(v){
   if(v.task==='set'){
-    var pl=_bulkSetPlan(_bulkPriceTargets(v.scope, v.gidx, v.pidx),v);
-    if(!pl.list.length){ flashStatus('warning',t(v.fill==='all'?'pr.setNoChange':'pr.setNoEmpty')); return; }  /* ไม่มีอะไรเปลี่ยน: ไม่บันทึกจุด undo */
+    var _tg=_bulkPriceTargets(v.scope, v.gidx, v.pidx), pl=_bulkSetPlan(_tg,v);
+    if(!pl.list.length){ flashStatus('warning',!_tg.length?t('pr.noItems'):t(v.fill==='all'?'pr.setNoChange':'pr.setNoEmpty')); return; }  /* ไม่มีอะไรเปลี่ยน: ไม่บันทึกจุด undo */
     if(typeof _snapNow==='function') _snapNow();
     pl.list.forEach(function(el){ el.textContent=v.price; });  /* เปลี่ยนเฉพาะตัวเลข รูปแบบของช่อง (style) คงเดิม */
     if(typeof markDirty==='function') markDirty();
@@ -2335,20 +2410,16 @@ function _bulkPriceExec(v){
     flashStatus('info', pl.over ? t('fl.setPriceOver',{price:v.price,a:pl.add,o:pl.over}) : t('fl.setPrice',{price:v.price,a:pl.add}));
     return;
   }
-  var ch=[];
-  _bulkPriceTargets(v.scope, v.gidx, v.pidx).forEach(function(el){
-    var r=_bulkAdjustOne(el.textContent, v.mode, v.dir, v.amt);
-    if(r.changed) ch.push([el,r.out]);
-  });
-  if(!ch.length){ flashStatus('warning',t('fl.bulkPriceNone')); return; }  /* ไม่มีอะไรเปลี่ยน: ไม่บันทึกจุด undo ไม่บอกว่าสำเร็จ */
+  var ap=_bulkAdjPlan(_bulkPriceTargets(v.scope, v.gidx, v.pidx),v), ch=ap.list;
+  if(!ch.length){ flashStatus('warning',_bulkAdjReason(ap,v)); return; }  /* ไม่มีอะไรเปลี่ยน: ไม่บันทึกจุด undo · บอกเหตุผลเดียวกับ preview */
   if(typeof _snapNow==='function') _snapNow();
   ch.forEach(function(c){ c[0].textContent=c[1]; });
-  var n=ch.length;
+  var n=ap.adj, f=ap.filled;
   if(typeof markDirty==='function') markDirty();
   if(typeof checkOverflow==='function') checkOverflow();
   var _unit=(v.mode==='pct')?'%':(' '+t('pr.baht'));
   var _key=(v.dir==='down')?'fl.bulkPriceDown':'fl.bulkPriceUp';
-  flashStatus('info',t(_key,{amt:v.amt, unit:_unit, n:n}));
+  flashStatus('info', !n ? t('fl.setPrice',{price:String(v.amt),a:f}) : (f ? t('fl.bulkPriceUpFill',{amt:v.amt, unit:_unit, n:n, f:f}) : t(_key,{amt:v.amt, unit:_unit, n:n})));
 }
 function typoResetSel(){
   if(!_typoEl) return;

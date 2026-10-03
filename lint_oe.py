@@ -117,6 +117,16 @@ def main():
     for _m in re.finditer(r'\bplaceholder\s*[=:]', txt):
         errors.append('ใช้ placeholder ที่บรรทัด {} — ใช้ label นอกช่อง + คำแนะนำใน .ep-preview (ดู UI_STANDARD.md ข้อ 6)'.format(txt.count('\n', 0, _m.start()) + 1))
 
+    # ---- 10) แถบ/panel ห้ามสูงตายตัว และข้อความยาวห้าม nowrap (บั๊ก 3 ต.ค. 2026: หน้าต่างแคบ ปุ่มตกทับหน้าเมนู / panel ดันกันเป็น 2 บรรทัด) ----
+    #   ดู UI_STANDARD.md ข้อ 7
+    _m = re.search(r'#edribbon\{([^}]*)\}', _css)
+    if _m and re.search(r'(?<![-\w])height\s*:', _m.group(1)):
+        errors.append('#edribbon ตั้ง height ตายตัว — ใช้ min-height (ดู UI_STANDARD.md ข้อ 7)')
+    for _sel in ('#edpanel .ep-preview', '#edpanel .ep-msg'):
+        _m = re.search(re.escape(_sel) + r'\{([^}]*)\}', _css)
+        if _m and 'nowrap' in _m.group(1):
+            errors.append(_sel + ' ใช้ white-space:nowrap — ข้อความยาวจะดันส่วนอื่น (ดู UI_STANDARD.md ข้อ 7)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

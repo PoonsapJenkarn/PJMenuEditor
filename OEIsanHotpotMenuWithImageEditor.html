@@ -382,38 +382,38 @@ body.measuring .grid{flex-direction:row !important;}
           <option value="'Bai Jamjuree',sans-serif">Bai Jamjuree</option>
         </select>
         <span class="colorpick" id="typoColorPick">
-          <span class="cp-trigger"><button type="button" class="cp-apply" id="typoCpApply" title="ทาสีปัจจุบันลงช่วงที่เลือก"><span class="cp-current" id="typoCpCurrent" style="background:#C0392B"></span></button><button type="button" class="cp-caretbtn" id="typoCpCaret" title="เลือกสีอื่น"><span class="cp-caret">▾</span></button></span>
+          <span class="cp-trigger"><button type="button" class="cp-apply" id="typoCpApply" title="ทาสีปัจจุบันลงช่วงที่เลือก" data-i18n-title="ttl.cpApply"><span class="cp-current" id="typoCpCurrent" style="background:#C0392B"></span></button><button type="button" class="cp-caretbtn" id="typoCpCaret" title="เลือกสีอื่น" data-i18n-title="ttl.cpCaret"><span class="cp-caret">▾</span></button></span>
           <input type="color" id="typoColor" value="#c0392b" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;">
           <div class="cp-pop" id="typoCpPop">
             <div class="cp-sec-label">Swatch</div>
             <div class="cp-grid" id="typoCpGrid"></div>
-            <div class="cp-sec-label">สีที่กำหนดเอง</div>
+            <div class="cp-sec-label" data-i18n="cp.customLbl">สีที่กำหนดเอง</div>
             <div class="cp-custom" id="typoCpCustom"></div>
             <div class="cp-foot">
-              <input type="text" id="typoHex" value="#C0392B" maxlength="7" spellcheck="false" title="พิมพ์รหัสสี HEX">
-              <button type="button" class="cp-add" id="typoCpAdd" title="เลือกสีเองแล้วบันทึก">+ กำหนดเอง</button>
-              <button type="button" class="cp-paint" id="typoCpPaint" title="ใช้สีนี้กับช่วงที่เลือก">ทาสี</button>
+              <input type="text" id="typoHex" value="#C0392B" maxlength="7" spellcheck="false" title="พิมพ์รหัสสี HEX" data-i18n-title="ttl.hex">
+              <button type="button" class="cp-add" id="typoCpAdd" title="เลือกสีเองแล้วบันทึก" data-i18n-title="ttl.cpAdd" data-i18n="cp.addCustom">+ กำหนดเอง</button>
+              <button type="button" class="cp-paint" id="typoCpPaint" title="ใช้สีนี้กับช่วงที่เลือก" data-i18n-title="ttl.cpPaint" data-i18n="cp.paint">ทาสี</button>
             </div>
           </div>
         </span>
-        <span class="sizebox"><button type="button" class="szbtn" id="typoSizeDown" title="เล็กลง">−</button><input type="text" id="typoSize" value="15" readonly><button type="button" class="szbtn" id="typoSizeUp" title="ใหญ่ขึ้น">+</button></span>
+        <span class="sizebox"><button type="button" class="szbtn" id="typoSizeDown" title="เล็กลง" data-i18n-title="ttl.sizeDown">−</button><input type="text" id="typoSize" value="15" readonly><button type="button" class="szbtn" id="typoSizeUp" title="ใหญ่ขึ้น" data-i18n-title="ttl.sizeUp">+</button></span>
         <span class="seg">
           <button class="ttoggle" id="typoBold" title="ตัวหนา" data-i18n-title="ttl.bold"><b>B</b></button>
           <button class="ttoggle" id="typoItalic" title="ตัวเอียง" data-i18n-title="ttl.italic"><i>I</i></button>
-          <button class="ttoggle" id="typoUnderline" title="ขีดล่าง"><u>U</u></button>
-          <button class="ttoggle" id="typoStrike" title="ขีดกลาง"><s>S</s></button>
+          <button class="ttoggle" id="typoUnderline" title="ขีดล่าง" data-i18n-title="ttl.underline"><u>U</u></button>
+          <button class="ttoggle" id="typoStrike" title="ขีดกลาง" data-i18n-title="ttl.strike"><s>S</s></button>
         </span>
         <span class="seg" id="typoLineSeg" style="display:none">
           <select id="typoLineStyle" onchange="typoLineApply()" title="แบบเส้น" data-i18n-title="ttl.lineStyle">
-            <option value="dotted">จุด</option><option value="dashed">ขีด</option><option value="solid">ทึบ</option>
+            <option value="dotted" data-i18n="ln.dotted">จุด</option><option value="dashed" data-i18n="ln.dashed">ขีด</option><option value="solid" data-i18n="ln.solid">ทึบ</option>
           </select>
         </span>
         </div><div class="rgl" data-i18n="grp.font">ฟอนต์</div></div>
         <div class="rgroup"><div class="rgb">
         <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" data-i18n-title="ttl.applyAll" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span data-i18n="btn.applyAll">ใช้ทั้งประเภท</span></button>
-        <button class="tbtn setdefault" id="typoSetDefault" onclick="typoSetDefault()" title="ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg><span>ตั้งค่าเริ่มต้น</span></button><button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" data-i18n-title="ttl.reset" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg><span data-i18n="btn.reset">คืนค่า</span></button>
-        <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ล้างรูปแบบเฉพาะจุดที่ไฮไลท์"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span>ล้างรูปแบบจุดที่เลือก</span></button>
-        <button class="tbtn clearfield" id="typoClearField" onclick="typoClearField()" title="ล้างรูปแบบทั้งช่อง" disabled><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/><path d="M8 9h8M8 13h5"/></svg><span>ล้างรูปแบบ</span></button>
+        <button class="tbtn setdefault" id="typoSetDefault" onclick="typoSetDefault()" title="ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่" data-i18n-title="ttl.setDefault"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg><span data-i18n="btn.setDefault">ตั้งค่าเริ่มต้น</span></button><button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" data-i18n-title="ttl.reset" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg><span data-i18n="btn.reset">คืนค่า</span></button>
+        <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ล้างรูปแบบเฉพาะจุดที่ไฮไลท์" data-i18n-title="ttl.clearSel"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span data-i18n="btn.clearSel">ล้างรูปแบบจุดที่เลือก</span></button>
+        <button class="tbtn clearfield" id="typoClearField" onclick="typoClearField()" title="ล้างรูปแบบทั้งช่อง" data-i18n-title="ttl.clearField" disabled><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/><path d="M8 9h8M8 13h5"/></svg><span data-i18n="btn.clearField">ล้างรูปแบบ</span></button>
         </div><div class="rgl" data-i18n="grp.format">จัดรูปแบบ</div></div>
       </div>
     </div>
@@ -454,7 +454,7 @@ body.measuring .grid{flex-direction:row !important;}
     </div>
   </div>
   <div id="edpanel" class="ep-hidden"></div>
-  <div id="emojiPicker"><div class="pk-hint">เลือกไอคอนหมวด (คลิกเพื่อใช้)</div><div class="eg" id="emojiGrid"></div></div>
+  <div id="emojiPicker"><div class="pk-hint" data-i18n="pk.hint">เลือกไอคอนหมวด (คลิกเพื่อใช้)</div><div class="eg" id="emojiGrid"></div></div>
   <input type="file" id="logoInput" accept="image/*" style="display:none">
 </div>
 <div id="edstatus" class="info"><button id="actlogToggle" onclick="toggleActLog()" data-i18n-title="log.toggle" title="บันทึกกิจกรรม"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button><span class="edstatus-ic" id="edstatusIc"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><span class="edstatus-msg" id="edstatusMsg">พร้อมใช้งาน</span><span class="edstatus-meta" id="edstatusMeta"></span></div><div id="actlog"><div class="al-head"><span class="al-title" data-i18n="log.title">บันทึกกิจกรรม</span><span class="al-count" id="actlogCount"></span><button class="al-close" id="actlogClose" onclick="toggleActLog(false)">✕</button></div><div class="al-cols" id="actlogCols"><span class="al-col al-col-ts sorted" data-sortcol="ts" onclick="_logSortBy('ts')"><span data-i18n="log.colTime">เวลา</span><span class="al-arrow">▼</span></span><span class="al-col al-col-ic" data-sortcol="type" onclick="_logSortBy('type')"><span data-i18n="log.colType">ประเภท</span><span class="al-arrow"></span></span><span class="al-col al-col-msg"><span data-i18n="log.colDetail">รายละเอียด</span></span></div><div class="al-body" id="actlogBody"></div></div>
@@ -472,6 +472,7 @@ body.measuring .grid{flex-direction:row !important;}
 /* askDelete ถูกแทนที่ด้วย openPanel (inline panel) ทั้งหมดแล้ว v33 — ลบ dead code ที่ใช้ native confirm */
 /* ===== inline panel system (แทน native prompt/confirm ทั้งแอป v33+) ===== */
 var _panelCb=null,_panelKey=null,_panelOutside=null,_panelOnClose=null;
+var _panelRelang=null;  /* เปลี่ยนภาษาขณะ panel เปิด → applyLang เรียกเพื่อแปลข้อความที่ JS ใส่ (ปุ่ม/ข้อความ/preview) */
 var EP_ICONS={info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',warn:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',danger:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
 function epEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 var _panelActiveBtn=null;  /* มาตรฐาน UI: ปุ่มที่เปิด panel แสดง .on (เขียว) จน panel ปิด */
@@ -498,17 +499,22 @@ function openPanel(opts){
   var tone=opts.tone||'info';
   var ic=EP_ICONS[tone]||EP_ICONS.info;
   var html='<span class="ep-ic"><svg viewBox="0 0 24 24">'+ic+'</svg></span>';
+  /* ข้อความ panel ส่งเป็น key (okKey/cancelKey/msgKey+msgArgs/labelKey) เพื่อแปลใหม่ได้เมื่อเปลี่ยนภาษา · okText/msg/label แบบข้อความสำเร็จรูปยังรองรับ แต่จะไม่เปลี่ยนภาษา (lint ข้อ 12 ห้ามส่ง t(...) ตรงๆ) */
+  function _okT(){ return opts.okKey?t(opts.okKey):(opts.okText||t('pnl.confirmDelOk')); }
+  function _cnT(){ return opts.cancelKey?t(opts.cancelKey):(opts.cancelText||t('pnl.cancel')); }
+  function _msgT(){ return opts.msgKey?t(opts.msgKey,opts.msgArgs):(opts.msg||''); }
+  function _lblT(){ return opts.labelKey?t(opts.labelKey):(opts.label||''); }
   if(opts.mode==='prompt'){
-    html+='<label class="ep-label">'+epEsc(opts.label||'')+'</label>';
+    html+='<label class="ep-label">'+epEsc(_lblT())+'</label>';
     html+='<input class="ep-input" type="text" value="'+epEsc(opts.value||'')+'">';  /* ไม่รองรับ placeholder โดยตั้งใจ — คำแนะนำ/ตัวอย่างให้แสดงใน .ep-preview (UI_STANDARD ข้อ 6) */
     html+='<span class="ep-preview"></span>';
   } else if(opts.mode==='custom'){
     html+=opts.bodyHtml||'';
     html+='<span class="ep-preview"></span>';
   } else {
-    html+='<span class="ep-msg">'+(opts.msg||'')+'</span>';
+    html+='<span class="ep-msg">'+_msgT()+'</span>';
   }
-  html+='<span class="ep-btns"><button type="button" class="ep-ok">'+epEsc(opts.okText||t('pnl.confirmDelOk'))+'</button>'+(opts.hideCancel?'':'<button type="button" class="ep-cancel">'+epEsc(opts.cancelText||t('pnl.cancel'))+'</button>')+'</span>';
+  html+='<span class="ep-btns"><button type="button" class="ep-ok">'+epEsc(_okT())+'</button>'+(opts.hideCancel?'':'<button type="button" class="ep-cancel">'+epEsc(_cnT())+'</button>')+'</span>';
   p.innerHTML=html;
   p.querySelectorAll('[data-i18n]').forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
   p.querySelectorAll('[data-i18n-title]').forEach(function(el){ el.title=t(el.getAttribute('data-i18n-title')); });
@@ -529,6 +535,19 @@ function openPanel(opts){
     p.querySelectorAll('input,select').forEach(function(f){ f.addEventListener('input',_refreshCustom); f.addEventListener('change',_refreshCustom); });
     _refreshCustom();
   }
+  _panelRelang=function(){
+    var lb=p.querySelector('.ep-label'); if(lb) lb.textContent=_lblT();
+    var mg=p.querySelector('.ep-msg'); if(mg) mg.innerHTML=_msgT();
+    if(okb) okb.textContent=_okT();
+    if(cnb) cnb.textContent=_cnT();
+    var pv=p.querySelector('.ep-preview'), wasErr=!!(pv && pv.classList.contains('ep-err'));
+    if(inp && opts.onInput) opts.onInput(inp.value,p);   /* prompt: preview ใหม่ตามภาษา */
+    if(opts.onCustom) opts.onCustom(p);                  /* custom: preview + ชื่อปุ่มตามงาน (เช่น ปรับราคา/ใส่ราคา) */
+    if(wasErr && pv && opts.validate){                   /* ข้อความ error จากการกด Enter/ยืนยัน → แปลใหม่ ถ้ายัง error อยู่ */
+      var err=opts.validate(opts.readValues?opts.readValues(p):(inp?inp.value:null));
+      if(err){ pv.className='ep-preview ep-err'; pv.textContent=err; }
+    }
+  };
   _panelKey=function(e){
     if(e.key==='Escape'){ e.preventDefault(); closePanel(); }
     else if(e.key==='Enter'){
@@ -550,7 +569,7 @@ function openPanel(opts){
 function closePanel(){
   var p=document.getElementById('edpanel'); if(!p) return;
   _panelSeq++;  /* panel นี้ปิดแล้ว — การปิดที่เลื่อนเวลาไว้จะไม่ทำซ้ำ */
-  p.className='ep-hidden'; p.innerHTML=''; _panelCb=null;
+  p.className='ep-hidden'; p.innerHTML=''; _panelCb=null; _panelRelang=null;
   if(_panelActiveBtn){ _panelActiveBtn.classList.remove('on'); _panelActiveBtn=null; }
   if(_panelKey){ document.removeEventListener('keydown',_panelKey); _panelKey=null; }
   if(_panelOutside){ document.removeEventListener('mousedown',_panelOutside); _panelOutside=null; }
@@ -693,7 +712,7 @@ function addDupGroupBtn(sec){
 }
 function addRowBtn(body){
   if(body.querySelector('.ed-add')) return;
-  var addb=document.createElement('button'); addb.className='ed-add'; addb.textContent='➕ เพิ่มรายการ';
+  var addb=document.createElement('button'); addb.className='ed-add'; addb.textContent=t('btn.addRow'); addb.setAttribute('data-i18n','btn.addRow');
   addb.setAttribute('contenteditable','false'); addb.setAttribute('data-act','add-row');
   body.appendChild(addb);
 }
@@ -712,13 +731,14 @@ function decorate(on){
   // add-group buttons already in DOM per column — just tag them
   document.querySelectorAll('.ed-addgroup').forEach(function(btn){
     btn.setAttribute('contenteditable','false');
+    btn.setAttribute('data-i18n','btn.addGroup'); btn.textContent=t('btn.addGroup');  /* ปุ่มที่บันทึกอยู่ในไฟล์ (ไม่มี data-i18n) → ตามภาษาที่เลือก */
     if(!btn.getAttribute('data-act')) btn.setAttribute('data-act','add-group');
   });
   document.querySelectorAll('.page').forEach(function(pg){
     var dp=pg.querySelector('.ed-delpage');
     if(on){
       if(!dp){
-        dp=document.createElement('button'); dp.className='ed-delpage'; dp.textContent='🗑 ลบหน้านี้';
+        dp=document.createElement('button'); dp.className='ed-delpage'; dp.textContent=t('btn.delThisPage'); dp.setAttribute('data-i18n','btn.delThisPage');
         dp.setAttribute('contenteditable','false'); dp.setAttribute('data-act','del-page');
         pg.appendChild(dp);
       }
@@ -773,11 +793,11 @@ document.addEventListener('click', function(ev){
   } else if(act==='del-group'){
     var sec=btn.closest('.sec'); if(!sec) return;
     var nm=sec.querySelector('.sechead')?sec.querySelector('.sechead').textContent:'';
-    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delGroupOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delGroupMsg',{name:epEsc(nm)}),onOk:function(){ sec.remove(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delGroup')); }});
+    openPanel({mode:'confirm',tone:'danger',okKey:'pnl.delGroupOk',cancelKey:'pnl.cancel',msgKey:'pnl.delGroupMsg',msgArgs:{name:epEsc(nm)},onOk:function(){ sec.remove(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delGroup')); }});
   } else if(act==='del-page'){
     var pg=btn.closest('.page'); if(!pg) return;
     if(document.querySelectorAll('.page').length<=1){ return; }
-    openPanel({mode:'confirm',tone:'danger',okText:t('pnl.delPageOk'),cancelText:t('pnl.cancel'),msg:t('pnl.delPageMsg'),onOk:function(){ pg.remove(); renumber(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delPage')); }});
+    openPanel({mode:'confirm',tone:'danger',okKey:'pnl.delPageOk',cancelKey:'pnl.cancel',msgKey:'pnl.delPageMsg',onOk:function(){ pg.remove(); renumber(); checkOverflow(); _snapNow(); flashStatus('info',t('fl.delPage')); }});
   }
 });
 function renumber(){
@@ -795,8 +815,8 @@ function addPage(){
   np.querySelectorAll('.fimg').forEach(function(el){el.remove();});  /* หน้าใหม่เริ่มสะอาด — ไม่ copy รูป header มา */
   // clear grid -> two empty columns, each with an add-group button
   var grid=np.querySelector('.grid');
-  grid.innerHTML='<div class="col" data-col="L"><button class="ed-addgroup" contenteditable="false" data-act="add-group">➕ เพิ่มกลุ่ม</button></div>'
-    +'<div class="col" data-col="R"><button class="ed-addgroup" contenteditable="false" data-act="add-group">➕ เพิ่มกลุ่ม</button></div>';
+  grid.innerHTML='<div class="col" data-col="L"><button class="ed-addgroup" contenteditable="false" data-act="add-group" data-i18n="btn.addGroup">'+epEsc(t('btn.addGroup'))+'</button></div>'
+    +'<div class="col" data-col="R"><button class="ed-addgroup" contenteditable="false" data-act="add-group" data-i18n="btn.addGroup">'+epEsc(t('btn.addGroup'))+'</button></div>';
   np.querySelectorAll('.ed-delpage,.ed-add,.ed-del,.ed-dup,.ed-delgroup,.ed-dupgroup').forEach(function(el){el.remove();});
   last.parentNode.insertBefore(np, last.nextSibling);
   renumber();
@@ -832,7 +852,7 @@ function toggleEdit(){
   if(on){ markDirty(); } else { if(typeof typoClear==='function') typoClear(); setStatus('info',t('st.ready')); }
 }
 /* สถานะโหมดปัจจุบัน (info ระดับพื้นหลัง) — warning/error จะ override ชั่วคราว แล้วกลับมาที่นี่ */
-var _statusMode={type:'info',msg:'พร้อมใช้งาน'};
+var _statusMode={type:'info',msg:null};  /* null = 'st.ready' ตามภาษาปัจจุบัน (I18N ยังไม่ถูกนิยามตอนบรรทัดนี้ทำงาน) */
 var _overflowWarn=false;
 function _renderStatus(type,msg){
   var bar=document.getElementById('edstatus'); if(!bar) return;
@@ -858,7 +878,7 @@ function setStatus(type,msg){
   }
 }
 /* clearStatus: ล้าง warning/error แล้วกลับไปแสดงสถานะโหมดปัจจุบัน */
-function clearStatus(){ _renderStatus(_statusMode.type,_statusMode.msg); }
+function clearStatus(){ _renderStatus(_statusMode.type,_statusMode.msg==null?t('st.ready'):_statusMode.msg); }
 function checkOverflow(opts){
   /* opts.quiet (ตอนเปลี่ยนขนาดหน้าต่าง): ไม่ใช่การแก้เอกสาร → ไม่แตะแถบล่าง เว้นแต่สถานะล้นหน้าเปลี่ยน (ขึ้น/หายคำเตือน)
      ผู้เรียกอื่น (แก้เอกสาร) ยังคืนข้อความโหมดเหมือนเดิม — ผลครั้งก่อนไม่ค้างหลังมีการแก้ใหม่
@@ -873,7 +893,7 @@ function checkOverflow(opts){
   document.body.classList.remove('measuring');
   if(bad.length){
     _overflowWarn=true;
-    _renderStatus('warning','เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4');
+    _renderStatus('warning',t('st.overflow'));
   } else if(_overflowWarn){
     _overflowWarn=false; clearStatus();  /* เพิ่งหายล้น → เอาคำเตือนออก (ทุกกรณี รวม quiet) */
   } else if(!(opts && opts.quiet)){
@@ -1184,7 +1204,7 @@ function editHeader(){
     markDirty();
   } else {
     document.querySelectorAll('[data-edit]').forEach(function(el){ el.removeAttribute('contenteditable'); });
-    setStatus('info','พร้อมใช้งาน');
+    setStatus('info',t('st.ready'));
   }
   var btn=document.getElementById('btnEditHeader');
   if(btn) btn.classList.toggle('on',on);
@@ -1263,13 +1283,13 @@ var I18N={
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.prNumOnly':'⚠️ ราคาใส่ได้เฉพาะตัวเลข (ช่วงราคาใช้ - เช่น 100-150)','fl.amtNumOnly':'⚠️ จำนวนใส่ได้เฉพาะตัวเลขจำนวนเต็ม','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceDown':'✓ ลดราคา −{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceUpFill':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ · ใส่ในช่องว่าง {f} ช่อง','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
-  'st.ready':'พร้อมใช้งาน','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.priceMode':'โหมดปรับราคา · แก้ได้เฉพาะช่องราคา','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
+  'st.ready':'พร้อมใช้งาน','pr.thisPage':'เฉพาะหน้านี้','pr.thisOne':'เฉพาะอันนี้','sc.grpFallback':'กลุ่ม {n}','st.overflow':'เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4','btn.addRow':'➕ เพิ่มรายการ','btn.addGroup':'➕ เพิ่มกลุ่ม','btn.delThisPage':'🗑 ลบหน้านี้','img.allDone':'✓ ใส่รูปไป {n} หน้าแล้ว','img.allNone':'ทุกหน้ามีรูปนี้อยู่แล้ว','typ.all':'ทุกประเภท','fl.setDefault':'✔ ตั้งค่าเริ่มต้น [{label}] แล้ว — ใช้กับ row ใหม่ต่อไป (ของเดิมไม่เปลี่ยน)','fl.noHighlight':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.paintRange':'ทาสีช่วงที่เลือก → {c}','fl.colorRange':'เปลี่ยนสีช่วงที่เลือก → {c}','fl.fontRange':'เปลี่ยนฟอนต์ช่วงที่เลือก → {f}','fl.noCell':'⚠️ ยังไม่ได้เลือกช่อง — คลิกในช่องข้อความก่อน','fl.clearedField':'🧹 ล้างรูปแบบทั้งช่องแล้ว','fl.clearedRange':'ล้างรูปแบบช่วงที่เลือกแล้ว','fl.selInfo':'เลือกอยู่: "{txt}" ({n} ตัวอักษร)','cp.noCustom':'ยังไม่มีสีที่กำหนดเอง','cp.customLbl':'สีที่กำหนดเอง','cp.addCustom':'+ กำหนดเอง','cp.paint':'ทาสี','ttl.cpApply':'ทาสีปัจจุบันลงช่วงที่เลือก','ttl.cpCaret':'เลือกสีอื่น','ttl.hex':'พิมพ์รหัสสี HEX','ttl.cpAdd':'เลือกสีเองแล้วบันทึก','ttl.cpPaint':'ใช้สีนี้กับช่วงที่เลือก','ttl.sizeDown':'เล็กลง','ttl.sizeUp':'ใหญ่ขึ้น','ttl.underline':'ขีดล่าง','ttl.strike':'ขีดกลาง','ln.dotted':'จุด','ln.dashed':'ขีด','ln.solid':'ทึบ','btn.setDefault':'ตั้งค่าเริ่มต้น','ttl.setDefault':'ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่','btn.clearSel':'ล้างรูปแบบจุดที่เลือก','ttl.clearSel':'ล้างรูปแบบเฉพาะจุดที่ไฮไลท์','btn.clearField':'ล้างรูปแบบ','ttl.clearField':'ล้างรูปแบบทั้งช่อง','pk.hint':'เลือกไอคอนหมวด (คลิกเพื่อใช้)','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.priceMode':'โหมดปรับราคา · แก้ได้เฉพาะช่องราคา','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว','fl.delPage':'🗑 ลบหน้าแล้ว','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.applyAllNoFmt':'ไม่มีช่องไหนเปลี่ยน — ช่องต้นทางยังเป็นรูปแบบเริ่มต้น ไม่มีรูปแบบให้คัดลอก','fl.applyAllNoMatch':'ไม่มีช่องไหนเปลี่ยน — รูปแบบที่ทาไว้บางตัวอักษร คัดลอกได้เฉพาะช่องที่มีข้อความเดียวกัน · ถ้าจะให้ทั้งช่อง ให้ไฮไลท์ทั้งข้อความ หรือคลิกโดยไม่ไฮไลท์ แล้วจัดรูปแบบ','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','pr.onePage':'เฉพาะหน้า','sc.pageOpt':'หน้า {p}','pnl.pickGroup':'— เลือกกลุ่ม —','pnl.pickPage':'— เลือกหน้า —','pnl.needGroup':'เลือกกลุ่มก่อน','pnl.needPage':'เลือกหน้าก่อน','pr.noItems':'ไม่มีรายการในขอบเขตนี้','pr.allEmpty':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ต้องใส่ราคาก่อน','pr.adjSame':'ไม่มีราคาที่เปลี่ยน — ผลที่ได้เท่าราคาเดิม (ราคาต่ำสุด 0 · % ปัดเป็นจำนวนเต็ม)','pr.adjNoNum':'ไม่มีราคาที่เป็นตัวเลขในขอบเขตนี้','pr.skipEmpty':'ข้ามช่องว่าง {n} ช่อง','pr.skipNonNum':'ข้ามช่องที่ไม่ใช่ตัวเลข {n} ช่อง','pr.skipSame':'ได้ราคาเดิม {n} ช่อง','pr.task':'งาน','pr.setApply':'ใส่ราคา','pr.fillLbl':'ใส่ในช่อง','pr.fillEmpty':'เฉพาะช่องว่าง','pr.fillAll':'แทนที่ทุกช่อง','pr.priceLbl':'ราคา','pr.amtLbl':'จำนวน','pr.inclEmpty':'รวมช่องว่าง (นับเป็น 0)','pr.inclEmptyNA':'ใช้ได้เฉพาะ เพิ่ม แบบ บาท','pr.fillEmptyN':'ช่องว่าง {n} ช่อง → {v}','pr.allEmptyTick':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ติ๊ก "รวมช่องว่าง" หรือใส่ราคาก่อน','pr.needFill':'เลือกว่าจะใส่ในช่องไหนก่อน','pr.needPrice':'ใส่ราคาก่อน (ตัวเลข หรือช่วง เช่น 35-45)','pr.setAdd':'ใส่ใหม่ {a} ช่อง','pr.setOver':'เขียนทับ {o} ช่อง','pr.setNoEmpty':'ไม่มีช่องราคาว่างในขอบเขตนี้','pr.setNoChange':'ทุกช่องในขอบเขตนี้เป็นราคานี้อยู่แล้ว','fl.setPrice':'✓ ใส่ราคา {price} ในช่องว่าง {a} ช่องแล้ว','fl.setPriceOver':'✓ ใส่ราคา {price} แล้ว — ใหม่ {a} ช่อง · เขียนทับ {o} ช่อง','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว: {name}','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'บันทึกไฟล์เมนูเป็น {fname} (เบราว์เซอร์นี้เลือกโฟลเดอร์เองไม่ได้ ใช้ Chrome/Edge เพื่อเลือก path)',
   'fl.savingEditor':'⏳ กำลังบันทึกไฟล์ Editor...','fl.savedEditor':'✅ บันทึกไฟล์ Editor แล้ว: {name}','fl.cancelEditor':'ยกเลิกการบันทึก — ยังไม่ได้บันทึกไฟล์','fl.fallbackEditor':'⚠️ เบราว์เซอร์นี้เขียนทับไฟล์โดยตรงไม่ได้ — บันทึกเป็นไฟล์ดาวน์โหลดแทน (ใช้ Chrome/Edge + เปิดผ่าน http เพื่อเขียนทับไฟล์เดิม)',
   'pnl.cancel':'ยกเลิก','pnl.delOk':'ลบ','pnl.delGroupOk':'ลบกลุ่ม','pnl.delGroupMsg':'ลบกลุ่ม <b>"{name}"</b> ทั้งกลุ่มใช่ไหม? เมนูทั้งหมดในกลุ่มนี้จะหาย — กู้คืนไม่ได้','pnl.delPageOk':'ลบหน้านี้','pnl.delPageMsg':'ลบหน้านี้ทั้งหน้าใช่ไหม? ทุกกลุ่มและเมนูในหน้านี้จะหาย — กู้คืนไม่ได้',
   'pnl.applyAllOk':'นำไปใช้','pnl.resetOk':'คืนค่า','pnl.resetMsg':'คืนค่าเริ่มต้นของ<b>{label}</b>ที่เลือกใช่ไหม? การปรับแต่งจะถูกล้าง',
-  'pnl.delPageLabel':'ลบหน้า:','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กู้คืนไม่ได้',
+  'pnl.delPageLabel':'ลบหน้า','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กู้คืนไม่ได้',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
   'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร'},
  en:{'tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File',
@@ -1280,13 +1300,13 @@ var I18N={
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'fl.needSel':'⚠️ No text selected — drag to highlight text first','fl.prNumOnly':'⚠️ Price accepts numbers only (use - for a range, e.g. 100-150)','fl.amtNumOnly':'⚠️ Amount accepts whole numbers only','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'✓ Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'✓ Decreased −{amt}{unit} · {n} items','fl.bulkPriceUpFill':'✓ Increased +{amt}{unit} · {n} items · {f} empty filled','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
-  'st.ready':'Ready','st.editText':'Text edit mode · Click the text to edit','st.priceMode':'Price mode · Only price cells can be edited','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
+  'st.ready':'Ready','pr.thisPage':'This page','pr.thisOne':'This item','sc.grpFallback':'Group {n}','st.overflow':'Content that overflows the A4 page will be cut off when printed. After editing, check that everything stays inside the A4 frame.','btn.addRow':'➕ Add item','btn.addGroup':'➕ Add group','btn.delThisPage':'🗑 Delete this page','img.allDone':'✓ Added the image to {n} pages','img.allNone':'Every page already has this image','typ.all':'All types','fl.setDefault':'✔ Default set for [{label}] — applies to new rows (existing unchanged)','fl.noHighlight':'⚠️ No text highlighted — drag over the text first','fl.paintRange':'Painted selection → {c}','fl.colorRange':'Selection color → {c}','fl.fontRange':'Selection font → {f}','fl.noCell':'⚠️ No cell selected — click in a text cell first','fl.clearedField':'🧹 Cleared formatting of the whole cell','fl.clearedRange':'Cleared formatting of the selection','fl.selInfo':'Selected: "{txt}" ({n} characters)','cp.noCustom':'No custom colors yet','cp.customLbl':'Custom colors','cp.addCustom':'+ Custom','cp.paint':'Paint','ttl.cpApply':'Paint the current color on the selection','ttl.cpCaret':'Choose another color','ttl.hex':'Type a HEX color code','ttl.cpAdd':'Pick a color and save it','ttl.cpPaint':'Apply this color to the selection','ttl.sizeDown':'Smaller','ttl.sizeUp':'Larger','ttl.underline':'Underline','ttl.strike':'Strikethrough','ln.dotted':'Dotted','ln.dashed':'Dashed','ln.solid':'Solid','btn.setDefault':'Set default','ttl.setDefault':'Use this formatting as the default for new rows','btn.clearSel':'Clear selected format','ttl.clearSel':'Clear formatting of the highlighted part only','btn.clearField':'Clear format','ttl.clearField':'Clear formatting of the whole cell','pk.hint':'Choose a group icon (click to use)','st.editText':'Text edit mode · Click the text to edit','st.priceMode':'Price mode · Only price cells can be edited','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted','fl.delPage':'🗑 Page deleted','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.applyAllNoFmt':'Nothing changed — the source still has the default style, nothing to copy','fl.applyAllNoMatch':'Nothing changed — per-character formatting copies only to cells with the same text · for the whole cell, select all its text (or click without selecting) then format','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','pr.onePage':'One page','sc.pageOpt':'Page {p}','pnl.pickGroup':'— Choose group —','pnl.pickPage':'— Choose page —','pnl.needGroup':'Choose a group first','pnl.needPage':'Choose a page first','pr.noItems':'No items in this scope','pr.allEmpty':'All {n} price cells in this scope are empty — set prices first','pr.adjSame':'No prices changed — results equal current prices (minimum 0 · % rounds to whole numbers)','pr.adjNoNum':'No numeric prices in this scope','pr.skipEmpty':'{n} empty skipped','pr.skipNonNum':'{n} non-numeric skipped','pr.skipSame':'{n} unchanged','pr.task':'Action','pr.setApply':'Set price','pr.fillLbl':'Fill','pr.fillEmpty':'Empty only','pr.fillAll':'Replace all','pr.priceLbl':'Price','pr.amtLbl':'Amount','pr.inclEmpty':'Include empty (as 0)','pr.inclEmptyNA':'Only for Increase in baht','pr.fillEmptyN':'{n} empty → {v}','pr.allEmptyTick':'All {n} price cells in this scope are empty — tick "Include empty" or set prices first','pr.needFill':'Choose which cells to fill first','pr.needPrice':'Enter a price first (number or range, e.g. 35-45)','pr.setAdd':'Fill {a} empty','pr.setOver':'Overwrite {o}','pr.setNoEmpty':'No empty price cells in this scope','pr.setNoChange':'Every cell in this scope already has this price','fl.setPrice':'✓ Set price {price} in {a} empty cells','fl.setPriceOver':'✓ Set price {price} — {a} new · {o} overwritten','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved: {name}','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'Menu saved as {fname} (this browser cannot pick a folder — use Chrome/Edge to choose the path)',
   'fl.savingEditor':'⏳ Saving editor file...','fl.savedEditor':'✅ Editor file saved: {name}','fl.cancelEditor':'Save cancelled — file not saved','fl.fallbackEditor':'⚠️ This browser cannot overwrite the file directly — saved as a download instead (use Chrome/Edge over http to overwrite the original)',
   'pnl.cancel':'Cancel','pnl.delOk':'Delete','pnl.delGroupOk':'Delete Group','pnl.delGroupMsg':'Delete the entire group <b>"{name}"</b>? All items in this group will be lost — cannot undo','pnl.delPageOk':'Delete This Page','pnl.delPageMsg':'Delete this whole page? All groups and items on it will be lost — cannot undo',
   'pnl.applyAllOk':'Apply','pnl.resetOk':'Reset','pnl.resetMsg':'Reset the selected <b>{label}</b> to default? Your customizations will be cleared',
-  'pnl.delPageLabel':'Delete pages:','pnl.delPageHint':'{total} pages total · Enter page numbers, e.g. 1,3,5-7','pnl.willDelete':'Will delete <b>{n} page(s)</b> · {remain} remaining','pnl.cannotDeleteAll':'Cannot delete all — at least 1 page must remain','pnl.notEntered':'No pages entered to delete','pnl.confirmDelOk':'Confirm Delete','pnl.confirmDelMsg':'Confirm deleting pages <b>{pages}</b> ({n} total) · {remain} remaining — cannot undo',
+  'pnl.delPageLabel':'Delete pages','pnl.delPageHint':'{total} pages total · Enter page numbers, e.g. 1,3,5-7','pnl.willDelete':'Will delete <b>{n} page(s)</b> · {remain} remaining','pnl.cannotDeleteAll':'Cannot delete all — at least 1 page must remain','pnl.notEntered':'No pages entered to delete','pnl.confirmDelOk':'Confirm Delete','pnl.confirmDelMsg':'Confirm deleting pages <b>{pages}</b> ({n} total) · {remain} remaining — cannot undo',
   'err.onlyNumbers':'Only digits, commas and hyphens, e.g. 1,3,5-7','err.badRange':'Invalid range: {p}','err.badPage':'Invalid page number: {p}','err.notExist':'Pages do not exist: {bad} ({total} pages total)',
   'typ.ln':'Dotted line','typ.noteh':'Note — heading','typ.notesub':'Note — description','typ.noteast':'Note — asterisk','typ.note':'Note','typ.nm':'Item name','typ.pr':'Price','typ.sechead':'Group name','typ.contacthdr':'Contact — heading','typ.contactph':'Contact — phone'}
 };
@@ -1297,6 +1317,7 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-title]').forEach(function(el){ el.title=t(el.getAttribute('data-i18n-title')); });
   var th=document.getElementById('langTH'), en=document.getElementById('langEN');
   if(th) th.className=(_lang==='th'?'on':''); if(en) en.className=(_lang==='en'?'on':'');
+  if(typeof _panelRelang==='function') _panelRelang();  /* panel ที่เปิดอยู่: ข้อความที่ JS ใส่ไว้ */
 }
 function setLang(l){
   _lang=(l==='en'?'en':'th');
@@ -1437,7 +1458,7 @@ function imgToAllPages(){
     added++;
   });
   markDirty(); checkOverflow();
-  if(vi) vi.textContent = added>0 ? ('✓ ใส่รูปไป '+added+' หน้าแล้ว') : 'ทุกหน้ามีรูปนี้อยู่แล้ว';
+  if(vi) vi.textContent = added>0 ? t('img.allDone',{n:added}) : t('img.allNone');
 }
 document.addEventListener('mousemove',function(e){
   if(!_imgMode||!_imgSel)return;
@@ -1696,7 +1717,7 @@ function _typoGroupOptsHtml(curSec){
   var secs=document.querySelectorAll('.sec'), pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
   var info=[], cnt={};
   for(var i=0;i<secs.length;i++){
-    var sh=secs[i].querySelector('.sechead'); var nm=sh?sh.textContent.trim():''; if(!nm) nm='กลุ่ม '+(i+1);
+    var sh=secs[i].querySelector('.sechead'); var nm=sh?sh.textContent.trim():''; if(!nm) nm=t('sc.grpFallback',{n:i+1});
     var pg=pages.indexOf(secs[i].closest('.page'))+1, key=pg+'|'+nm;
     cnt[key]=(cnt[key]||0)+1; info.push({i:i,nm:nm,pg:pg,key:key,k:cnt[key]});
   }
@@ -1718,13 +1739,13 @@ function typoApplyAllSame(){
     +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
     +'<span class="ep-seg">'
     +(_inSec?'<label><input type="radio" name="taScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>':'')
-    +'<label><input type="radio" name="taScope" value="page"><span>เฉพาะหน้านี้</span></label>'
+    +'<label><input type="radio" name="taScope" value="page"><span data-i18n="pr.thisPage">เฉพาะหน้านี้</span></label>'
     +'<label><input type="radio" name="taScope" value="all"><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'</span>'
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
   openPanel({mode:'custom',title:t('btn.applyAll')||'ใช้ทั้งประเภท',bodyHtml:body,activeBtn:'typoApplyAll',toggleBtn:'typoApplyAll',
-    okText:t('pnl.applyAllOk'),cancelText:t('pnl.cancel'),
+    okKey:'pnl.applyAllOk',cancelKey:'pnl.cancel',
     onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="taScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="taScope"]:checked'); },
     readValues:function(p){ return {scope:(p.querySelector('input[name="taScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
     validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },  /* ไม่มีค่าเริ่มต้น: ต้องเลือกขอบเขตก่อน (กัน Enter) */
@@ -1785,8 +1806,8 @@ function typoSetDefault(){
   if(style.color&&typeof _setCurrent==='function') _setCurrent(style.color);
   var _btn=document.getElementById('typoSetDefault'); if(_btn) _btn.classList.add('on');
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
-  var label=keys.length>1?'ทุกประเภท':(TYPO_TYPES.filter(function(t){return t.key===keys[0];})[0]||{label:keys[0]}).label;
-  flashStatus('info','✔ ตั้งค่าเริ่มต้น ['+label+'] แล้ว — ใช้กับ row ใหม่ต่อไป (ของเดิมไม่เปลี่ยน)');
+  var label=keys.length>1?t('typ.all'):_typoLabel(TYPO_TYPES.filter(function(x){return x.key===keys[0];})[0]||{label:keys[0]});
+  flashStatus('info',t('fl.setDefault',{label:label}));
 }
 function _typoScopeTargets(sel, scope, groupIdx){
   var all=Array.prototype.slice.call(document.querySelectorAll(sel));
@@ -1828,7 +1849,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
   }
   function selectionText(){ return savedRange ? savedRange.toString() : ''; }
   function hasRange(){ return savedRange && !savedRange.collapsed; }
-  function needSel(){ if(typeof flashStatus==='function') flashStatus('info','\u26a0\ufe0f ยังไม่ได้ highlight ข้อความ — ลากคลุมข้อความก่อน'); }
+  function needSel(){ if(typeof flashStatus==='function') flashStatus('info',t('fl.noHighlight')); }
 
   // Reflect current selection's font/size/color into the toolbar
   function reflectFromSelection(){
@@ -1934,9 +1955,9 @@ function _typoScopeTargets(sel, scope, groupIdx){
     var r=document.createRange(); r.selectNodeContents(span);
     sel.removeAllRanges(); sel.addRange(r);
     savedRange=r.cloneRange();
-    if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 '+hex);
+    if(typeof flashStatus==='function') flashStatus('info',t('fl.paintRange',{c:hex}));
   }
-  function t_needSel(){ return '\u26a0\ufe0f ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน'; }
+  function t_needSel(){ return t('fl.noHighlight'); }
   // Clear formatting via Range API — replace selection with plain text
   function clearFormatSel(){
     if(!hasRange()){ needSel(); return; }
@@ -1977,10 +1998,10 @@ function _typoScopeTargets(sel, scope, groupIdx){
   }
   function clearFormatField(){
     var ed = lastEditable || (document.querySelector('[contenteditable]:focus'));
-    if(!ed){ if(typeof flashStatus==='function') flashStatus('info','\u26a0\ufe0f ยังไม่ได้เลือกช่อง — คลิกในช่องข้อความก่อน'); return; }
+    if(!ed){ if(typeof flashStatus==='function') flashStatus('info',t('fl.noCell')); return; }
     ed.textContent = ed.textContent;
     savedRange=null;
-    if(typeof flashStatus==='function') flashStatus('info','\ud83e\uddf9 ล้างรูปแบบทั้งช่องแล้ว');
+    if(typeof flashStatus==='function') flashStatus('info',t('fl.clearedField'));
   }
 
   function syncButtons(){
@@ -1991,7 +2012,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
       document.getElementById('typoStrike').classList.toggle('on', document.queryCommandState('strikeThrough'));
     }catch(e){}
     var txt = selectionText();
-    if(txt) if(typeof flashStatus==='function') flashStatus('info','เลือกอยู่: "' + (txt.length>30?txt.slice(0,30)+'\u2026':txt) + '" (' + txt.length + ' ตัวอักษร)');
+    if(txt) if(typeof flashStatus==='function') flashStatus('info',t('fl.selInfo',{txt:(txt.length>30?txt.slice(0,30)+'\u2026':txt), n:txt.length}));
   }
 
   // ----- Color dropdown palette (focus-safe: popup lives inside #tbar) -----
@@ -2017,7 +2038,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
   function _renderCustom(){
     var row=document.getElementById('typoCpCustom'); if(!row) return;
     row.innerHTML=''; var arr=_loadCustom();
-    if(!arr.length){ var e=document.createElement('span'); e.className='cp-empty'; e.textContent='ยังไม่มีสีที่กำหนดเอง'; row.appendChild(e); return; }
+    if(!arr.length){ var e=document.createElement('span'); e.className='cp-empty'; e.textContent=t('cp.noCustom'); row.appendChild(e); return; }
     arr.forEach(function(c){ row.appendChild(_mkSw(c)); });
   }
   (function(){
@@ -2048,7 +2069,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
   document.getElementById('typoColor').addEventListener('input', function(){
     document.getElementById('typoHex').value=this.value.toUpperCase();
     applyColorRange(this.value);
-    if(typeof flashStatus==='function') flashStatus('info','เปลี่ยนสีช่วงที่เลือก \u2192 ' + this.value);
+    if(typeof flashStatus==='function') flashStatus('info',t('fl.colorRange',{c:this.value}));
   });
   function _normHex(s){ s=(s||'').trim(); if(s.charAt(0)!=='#') s='#'+s;
     if(/^#[0-9a-fA-F]{3}$/.test(s)){ s='#'+s.charAt(1)+s.charAt(1)+s.charAt(2)+s.charAt(2)+s.charAt(3)+s.charAt(3); }
@@ -2059,17 +2080,17 @@ function _typoScopeTargets(sel, scope, groupIdx){
     else { this.style.borderColor='#c0392b'; }
   });
   document.getElementById('typoHex').addEventListener('keydown', function(e){
-    if(e.key==='Enter'){ e.preventDefault(); var h=_normHex(this.value); if(h){ this.value=h; document.getElementById('typoColor').value=h; applyColorRange(h); if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 '+h); } }
+    if(e.key==='Enter'){ e.preventDefault(); var h=_normHex(this.value); if(h){ this.value=h; document.getElementById('typoColor').value=h; applyColorRange(h); if(typeof flashStatus==='function') flashStatus('info',t('fl.paintRange',{c:h})); } }
   });
   // Explicit apply of the CURRENT color (works even if color unchanged)
   document.getElementById('typoCpPaint').addEventListener('click', function(){
     var c = _normHex(document.getElementById('typoHex').value) || document.getElementById('typoColor').value;
     document.getElementById('typoColor').value=c; document.getElementById('typoHex').value=c.toUpperCase();
     applyColorRange(c);
-    if(typeof flashStatus==='function') flashStatus('info','ทาสีช่วงที่เลือก \u2192 ' + c);
+    if(typeof flashStatus==='function') flashStatus('info',t('fl.paintRange',{c:c}));
   });
   document.getElementById('typoFont').addEventListener('change', function(){
-    if(this.value){ applyExec('fontName', this.value); if(typeof flashStatus==='function') flashStatus('info','เปลี่ยนฟอนต์ช่วงที่เลือก \u2192 ' + this.value); }
+    if(this.value){ applyExec('fontName', this.value); if(typeof flashStatus==='function') flashStatus('info',t('fl.fontRange',{f:this.value})); }
   });
   document.getElementById('typoBold').addEventListener('click', function(){ applyExec('bold'); });
   document.getElementById('typoItalic').addEventListener('click', function(){ applyExec('italic'); });
@@ -2084,7 +2105,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
     typoSizeStep(-1);
   });
   document.getElementById('typoClearSel').addEventListener('click', function(){
-    clearFormatSel(); if(typeof flashStatus==='function') flashStatus('info','ล้างรูปแบบช่วงที่เลือกแล้ว');
+    clearFormatSel(); if(typeof flashStatus==='function') flashStatus('info',t('fl.clearedRange'));
   });
   document.getElementById('typoClearField').addEventListener('click', function(){
     clearFormatField(); 
@@ -2333,7 +2354,7 @@ function openPricePanel(){
     +'<label><input type="radio" name="bpFill" value="all"><span data-i18n="pr.fillAll">แทนที่ทุกช่อง</span></label>'
     +'</span></span>'
     /* เรียงให้อ่านเป็นประโยค: จำนวน · เพิ่ม|ลด · [ ] · บาท|% = "เพิ่ม 10 บาท" · ช่องว่างตอนเปิด (ไม่มีค่าที่ตั้งเอง) · ทั้งชุดซ่อนในโหมดใส่ราคา */
-    +'<span class="ep-pf"><span class="ep-adjwrap" style="display:inline-flex;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.amtLbl">จำนวน</span><span class="ep-seg">'
+    +'<span class="ep-pf"><span class="ep-adjwrap" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.amtLbl">จำนวน</span><span class="ep-seg">'
     +'<label><input type="radio" name="bpDir" value="up" checked><span data-i18n="pr.up">เพิ่ม</span></label>'
     +'<label><input type="radio" name="bpDir" value="down"><span data-i18n="pr.down">ลด</span></label>'
     +'</span>'
@@ -2346,7 +2367,7 @@ function openPricePanel(){
     +'</span>'
     +'<span class="ep-setwrap" style="display:none;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.priceLbl">ราคา</span><input class="ep-num ep-price" type="text" inputmode="numeric" autocomplete="off"></span>'  /* label นอกช่อง ไม่มี placeholder — ตัวอย่างอยู่ใน .ep-preview (UI_STANDARD ข้อ 6) */
     +'</span>';
-  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okText:t('pr.apply'), cancelText:t('pnl.cancel'),
+  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okKey:'pr.apply', cancelKey:'pnl.cancel',
     onCustom:_bulkPricePreview,
     onClose:function(){ _bulkPriceObsStop(); _priceModeOff(); },
     readValues:function(p){ _bulkPriceSync(p); return _bulkPriceRead(p); },  /* ตรวจหน้า/กลุ่มกับเอกสารปัจจุบันก่อนปรับราคา */
@@ -2435,15 +2456,15 @@ function typoResetSel(){
   var body=''
     +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
     +'<span class="ep-seg">'
-    +'<label><input type="radio" name="trScope" value="one"><span>เฉพาะอันนี้</span></label>'
+    +'<label><input type="radio" name="trScope" value="one"><span data-i18n="pr.thisOne">เฉพาะอันนี้</span></label>'
     +(_inSec?'<label><input type="radio" name="trScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>':'')
-    +'<label><input type="radio" name="trScope" value="page"><span>เฉพาะหน้านี้</span></label>'
+    +'<label><input type="radio" name="trScope" value="page"><span data-i18n="pr.thisPage">เฉพาะหน้านี้</span></label>'
     +'<label><input type="radio" name="trScope" value="all"><span data-i18n="pr.allPages">ทุกหน้า</span></label>'
     +'</span>'
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
   openPanel({mode:'custom',title:t('btn.reset')||'คืนค่า',bodyHtml:body,activeBtn:'typoResetBtn',toggleBtn:'typoResetBtn',
-    okText:t('pnl.resetOk'),cancelText:t('pnl.cancel'),
+    okKey:'pnl.resetOk',cancelKey:'pnl.cancel',
     onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="trScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="trScope"]:checked'); },
     readValues:function(p){ return {scope:(p.querySelector('input[name="trScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
     validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },
@@ -2517,8 +2538,8 @@ function deletePagesByRange(){
   if(total<=1){ setStatus('warning',t('st.min1page')); return; }
   openPanel({
     mode:'prompt', tone:'danger',
-    label:t('pnl.delPageLabel'), value:'',
-    okText:t('pnl.delOk'), cancelText:t('pnl.cancel'),
+    labelKey:'pnl.delPageLabel', value:'',
+    okKey:'pnl.delOk', cancelKey:'pnl.cancel',
     onInput:function(val,p){
       var pv=p.querySelector('.ep-preview'); if(!pv) return;
       var r=_parsePages(val,total);
@@ -2538,8 +2559,8 @@ function deletePagesByRange(){
       var r=_parsePages(val,total); var nums=r.nums; var remain=total-nums.length;
       /* confirm ชั้นสองก่อนลบจริง (กันลบพลาด — กู้คืนไม่ได้) */
       openPanel({
-        mode:'confirm', tone:'danger', okText:t('pnl.confirmDelOk'), cancelText:t('pnl.cancel'),
-        msg:t('pnl.confirmDelMsg',{pages:_compressRanges(nums),n:nums.length,remain:remain}),
+        mode:'confirm', tone:'danger', okKey:'pnl.confirmDelOk', cancelKey:'pnl.cancel',
+        msgKey:'pnl.confirmDelMsg', msgArgs:{pages:_compressRanges(nums),n:nums.length,remain:remain},
         onOk:function(){
           var pages=document.querySelectorAll('.page');
           for(var k=nums.length-1;k>=0;k--){ var idx=nums[k]-1; if(pages[idx]) pages[idx].remove(); }

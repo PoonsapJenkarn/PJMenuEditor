@@ -290,6 +290,9 @@ body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;curso
 @media print{.ed-del,.ed-add,.ed-dup{display:none !important;} .page.overflowed{outline:none;}}
 /* วิธี B: ซ่อนปุ่มแก้ไขชั่วคราวตอนวัด overflow (ให้ได้ความสูงเท่าตอนพิมพ์) */
 body.measuring .ed-add,body.measuring .ed-addgroup,body.measuring .ed-del,body.measuring .ed-dup,body.measuring .ed-delpage,body.measuring .ed-delgroup,body.measuring .ed-dupgroup,body.measuring .dh{display:none !important;}
+/* ตอนวัด ใช้ขนาด A4 จริงเสมอ: @media (max-width:720px) ทำให้หน้าเมนูบนจอเป็น 1 คอลัมน์ → วัดตรงๆ = เตือนล้นปลอม (ตอนพิมพ์เป็น 2 คอลัมน์ 210mm เสมอ) · ค่าเดียวกับกฎ .page/.grid หลัก · ทุก selector ใน @media width ต้องมีคู่ body.measuring (lint ข้อ 11) */
+body.measuring .page{width:210mm !important;padding:12mm 12mm 8mm !important;}
+body.measuring .grid{flex-direction:row !important;}
 /* ===== v59: drag-to-reorder handle ===== */
 .dh{cursor:grab;color:#b7bcc4;font-size:14px;line-height:1;padding:0 2px;user-select:none;flex:none;}
 .dh:hover{color:#217346;}

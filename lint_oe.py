@@ -140,6 +140,28 @@ def main():
     for _m in re.finditer(r'(?<![\w.])(okText|cancelText|msg|label)\s*:\s*t\(', txt):
         errors.append('openPanel: {}:t(...) ที่บรรทัด {} — ใช้ {} แทน (ดู UI_STANDARD.md ข้อ 6)'.format(_m.group(1), txt.count('\n', 0, _m.start()) + 1, {'okText':'okKey','cancelText':'cancelKey','msg':'msgKey+msgArgs','label':'labelKey'}[_m.group(1)]))
 
+    # ---- 13) ข้อความแถบล่างต้องใช้ tk()/tkj() ไม่ใช่ t() — ไม่งั้นกด TH/EN แล้วแถบล่างไม่เปลี่ยนภาษา (บั๊ก 3 ต.ค. 2026) ----
+    def _span13(x, i):
+        d = 0; j = i; n = len(x)
+        while j < n:
+            c = x[j]
+            if c in '\'"':
+                q = c; j += 1
+                while j < n and x[j] != q:
+                    if x[j] == '\\': j += 1
+                    j += 1
+            elif c == '(': d += 1
+            elif c == ')':
+                d -= 1
+                if d == 0: return j
+            j += 1
+        return -1
+    for _m in re.finditer(r'(?<![\w.])(setStatus|flashStatus|_renderStatus)\(', txt):
+        if 'function ' in txt[max(0, _m.start()-9):_m.start()]: continue
+        _b = _span13(txt, _m.end()-1)
+        if _b > 0 and re.search(r'(?<![\w.])t\(', txt[_m.end():_b]):
+            errors.append('{}(...t(...)) ที่บรรทัด {} — ข้อความแถบล่างใช้ tk()/tkj() (ดู UI_STANDARD.md ข้อ 6)'.format(_m.group(1), txt.count('\n', 0, _m.start()) + 1))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

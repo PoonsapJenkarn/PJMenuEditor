@@ -541,6 +541,7 @@ function openPanel(opts){
     if(okb) okb.textContent=_okT();
     if(cnb) cnb.textContent=_cnT();
     var pv=p.querySelector('.ep-preview'), wasErr=!!(pv && pv.classList.contains('ep-err'));
+    if(opts.onRelang) opts.onRelang(p);                  /* ตัวเลือกใน dropdown (เช่น "· หน้า 1" → "· Page 1") — ก่อน onCustom เพราะ preview อ่านค่าที่เลือก */
     if(inp && opts.onInput) opts.onInput(inp.value,p);   /* prompt: preview ใหม่ตามภาษา */
     if(opts.onCustom) opts.onCustom(p);                  /* custom: preview + ชื่อปุ่มตามงาน (เช่น ปรับราคา/ใส่ราคา) */
     if(wasErr && pv && opts.validate){                   /* ข้อความ error จากการกด Enter/ยืนยัน → แปลใหม่ ถ้ายัง error อยู่ */
@@ -1727,6 +1728,11 @@ function _typoVisualSig(el){
 }
 /* dropdown กลุ่ม: แสดง ชื่อกลุ่ม · หน้า N และต่อท้ายลำดับ k เฉพาะชื่อที่ซ้ำในหน้าเดียวกัน · เลือก curSec ไว้ก่อน
    ลำดับ: เรียงตามหน้า แล้วตามชื่อ (เลขในชื่อเรียงแบบตัวเลข (9) ก่อน (10)) · ชื่อซ้ำเรียงตามตำแหน่งในเอกสาร · value = index เดิมใน .sec */
+/* เปลี่ยนภาษาขณะ panel ใช้ทั้งประเภท/คืนค่า เปิด: สร้างตัวเลือกกลุ่มใหม่ คงกลุ่มที่เลือกไว้ (value = index ใน .sec ไม่เปลี่ยนตามภาษา) */
+function _typoGroupSelRelang(p){
+  var sel=p.querySelector('.ep-sel'); if(!sel) return;
+  var v=sel.value; sel.innerHTML=_typoGroupOptsHtml(null); sel.value=v;
+}
 function _typoGroupOptsHtml(curSec){
   var secs=document.querySelectorAll('.sec'), pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
   var info=[], cnt={};
@@ -1759,7 +1765,7 @@ function typoApplyAllSame(){
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
   openPanel({mode:'custom',title:t('btn.applyAll')||'ใช้ทั้งประเภท',bodyHtml:body,activeBtn:'typoApplyAll',toggleBtn:'typoApplyAll',
-    okKey:'pnl.applyAllOk',cancelKey:'pnl.cancel',
+    okKey:'pnl.applyAllOk',cancelKey:'pnl.cancel',onRelang:_typoGroupSelRelang,
     onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="taScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="taScope"]:checked'); },
     readValues:function(p){ return {scope:(p.querySelector('input[name="taScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
     validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },  /* ไม่มีค่าเริ่มต้น: ต้องเลือกขอบเขตก่อน (กัน Enter) */
@@ -2381,7 +2387,7 @@ function openPricePanel(){
     +'</span>'
     +'<span class="ep-setwrap" style="display:none;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.priceLbl">ราคา</span><input class="ep-num ep-price" type="text" inputmode="numeric" autocomplete="off"></span>'  /* label นอกช่อง ไม่มี placeholder — ตัวอย่างอยู่ใน .ep-preview (UI_STANDARD ข้อ 6) */
     +'</span>';
-  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okKey:'pr.apply', cancelKey:'pnl.cancel',
+  openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okKey:'pr.apply', cancelKey:'pnl.cancel', onRelang:_bulkPriceSync,  /* สร้างตัวเลือกกลุ่ม/หน้าใหม่ คงค่าที่เลือก (ตาม element) */
     onCustom:_bulkPricePreview,
     onClose:function(){ _bulkPriceObsStop(); _priceModeOff(); },
     readValues:function(p){ _bulkPriceSync(p); return _bulkPriceRead(p); },  /* ตรวจหน้า/กลุ่มกับเอกสารปัจจุบันก่อนปรับราคา */
@@ -2478,7 +2484,7 @@ function typoResetSel(){
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel">'+optsHtml+'</select></span>'
     +'</span>';
   openPanel({mode:'custom',title:t('btn.reset')||'คืนค่า',bodyHtml:body,activeBtn:'typoResetBtn',toggleBtn:'typoResetBtn',
-    okKey:'pnl.resetOk',cancelKey:'pnl.cancel',
+    okKey:'pnl.resetOk',cancelKey:'pnl.cancel',onRelang:_typoGroupSelRelang,
     onCustom:function(p){ var gw=p.querySelector('.ep-gwrap'); if(gw) gw.style.display=((p.querySelector('input[name="trScope"]:checked')||{}).value==='group'?'inline-flex':'none');  var ok=p.querySelector('.ep-ok'); if(ok) ok.disabled=!p.querySelector('input[name="trScope"]:checked'); },
     readValues:function(p){ return {scope:(p.querySelector('input[name="trScope"]:checked')||{}).value||'', gidx:parseInt((p.querySelector('.ep-sel')||{}).value||0,10)}; },  /* อ่านค่าก่อน panel ถูกปิด/ล้าง */
     validate:function(v){ return (v&&v.scope)?'':t('pnl.needScope'); },

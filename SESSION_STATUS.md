@@ -2,7 +2,14 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 3 ต.ค. 2026 (10:35) — ✅ commit แล้วใน bf88ba2 (i18n 42 key + panel แปลใหม่ตอนเปลี่ยนภาษา) · ส่วน (22:40) แถบล่างเปลี่ยนภาษา ยังไม่ commit
+## 4 ต.ค. 2026 (19:20) — commit 0873482 แล้ว
+- ผู้ใช้ทดสอบ (5 รูป): แถบล่าง Price mode EN ✓ · ผลปรับราคา TH→EN "✓ Increased +6 Baht · 7 items" ✓ · preview "7 items · 16→22" ✓ · ตำแหน่งรูป รูป 12 → Image 12 ✓ · ปุ่ม Adjust / Choose a scope first ✓
+- พบจากรูป (ยังไม่แก้): dropdown กลุ่ม/หน้าใน panel ยังเป็น "· หน้า 1" ตอน EN — ตัวเลือก (sc.grpOpt / sc.pageOpt) สร้างตอนเปิด panel ไม่ถูกสร้างใหม่ตอนเปลี่ยนภาษา (ชื่อกลุ่มเป็นเนื้อหาเมนู ไม่แปล)
+- (19:25) แก้ dropdown เปลี่ยนภาษา: openPanel option ใหม่ onRelang (เรียกใน _panelRelang ก่อน onCustom) · ใช้ทั้งประเภท/คืนค่า = _typoGroupSelRelang (สร้างตัวเลือกใหม่ คง value = index .sec) · ปรับราคา = _bulkPriceSync (คงค่าตาม element) · UI_STANDARD ข้อ 6 · ทดสอบตรรกะ 7 กรณีผ่าน (รอบแรก fail 4 เพราะตัวจำลอง select ไม่ถอด &amp; — ไม่ใช่โค้ด) · ไม่มี lint ตรวจข้อนี้ · ยังไม่ commit
+  - (19:26) ผู้ใช้ทดสอบในเบราว์เซอร์: ปรับราคา EN → dropdown "ข้าว & เส้น · Page 1" ✓ · แถบล่าง "Price mode · Only price cells can be edited" ✓ · preview "Enter amount to adjust" ✓ · ยังไม่เห็นผล One page / ใช้ทั้งประเภท / คืนค่า
+  - (19:43) ตัดสินใจ: แถบล่าง = โหมด/ผลการทำงานเท่านั้น · เลือกกลุ่ม/หน้าใน dropdown อัปเดตเฉพาะ preview ใน panel ไม่เขียนแถบล่าง (กันทับผลลัพธ์ + ไม่ซ้ำ preview)
+
+## 3 ต.ค. 2026 (10:35) — ✅ commit แล้วใน bf88ba2 (i18n 42 key + panel แปลใหม่ตอนเปลี่ยนภาษา) · ส่วน (22:40) แถบล่างเปลี่ยนภาษา ✅ commit แล้วใน 0873482
 - ป้าย "รวมช่องว่าง" ถูกตัดตอนหน้าต่างแคบ: .ep-adjwrap เพิ่ม flex-wrap:wrap
 - label panel ลบหน้า: "ลบหน้า:" → "ลบหน้า" / "Delete pages:" → "Delete pages"
 - i18n sweep: เพิ่ม 42 key (TH/EN ครบ 214/214, ตัวแปร {x} ตรงกันทุก key)

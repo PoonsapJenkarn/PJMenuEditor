@@ -53,3 +53,7 @@ _imgcheck2/
 *.one
 *.msg
 *.pst
+
+# ไฟล์ส่งออก / ข้อมูลอ้างอิงที่สร้างจากเมนู — ไม่ใช่ซอร์สของ editor
+*.pdf
+OEIsanHotpotMenu_items.txt

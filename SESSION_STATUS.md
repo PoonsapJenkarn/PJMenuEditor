@@ -2,7 +2,8 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 5 ต.ค. 2026 (08:55) — .gitignore ครอบคลุมไฟล์ MS Office ทุกชนิด (ยังไม่ commit)
+## 5 ต.ค. 2026 (08:55) — .gitignore ครอบคลุมไฟล์ MS Office ทุกชนิด ✅ commit 655d119
+- (08:52) ผู้ใช้เลือก ignore *.pdf + OEIsanHotpotMenu_items.txt (ไฟล์อยู่บนดิสก์เหมือนเดิม) · ยังไม่ commit
 - ตรวจแล้ว: ใน git ไม่มีไฟล์ Office ถูก track อยู่ (index 15 ไฟล์ ไม่มี .doc/.xls/.ppt ฯลฯ) · บนดิสก์มี .docx 11 ไฟล์ + ไฟล์ล็อก ~$ 2 ไฟล์ — ถูก ignore อยู่แล้ว ไม่เคยเข้า commit
 - ขยาย .gitignore จาก Word/Excel 5 แบบ → Word/Excel/PowerPoint/Visio/Access/Publisher/OneNote/Outlook (ไฟล์ HTML/MD/PY/PNG/SVG ที่ track อยู่ไม่โดนกฎใหม่)
 

@@ -162,6 +162,17 @@ def main():
         if _b > 0 and re.search(r'(?<![\w.])t\(', txt[_m.end():_b]):
             errors.append('{}(...t(...)) ที่บรรทัด {} — ข้อความแถบล่างใช้ tk()/tkj() (ดู UI_STANDARD.md ข้อ 6)'.format(_m.group(1), txt.count('\n', 0, _m.start()) + 1))
 
+    # ---- 14) ตอนพิมพ์ต้องล้าง padding ของ body ด้วย !important — syncBarHeight ใส่ body.style.paddingTop/Bottom แบบ inline (บั๊ก 5 ต.ค. 2026: หน้า 1 เลื่อนลง ~41mm + พิมพ์ 4 แผ่นแทน 2) ----
+    if re.search(r'body\.style\.padding(Top|Bottom)\s*=', txt):
+        _ok14 = False
+        for _pm in re.finditer(r'@media\s+print\s*\{((?:[^{}]*\{[^}]*\})*)[^}]*\}', _css):
+            for _sel, _body in re.findall(r'([^{}]+)\{([^}]*)\}', _pm.group(1)):
+                if re.search(r'(^|[\s,])body\s*$', _sel.strip()) or _sel.strip() == 'body':
+                    if re.search(r'padding-top\s*:\s*0\s*!important', _body) and re.search(r'padding-bottom\s*:\s*0\s*!important', _body):
+                        _ok14 = True
+        if not _ok14:
+            errors.append('@media print ต้องมี body{padding-top:0 !important;padding-bottom:0 !important} — syncBarHeight ใส่ padding แบบ inline (ดู UI_STANDARD.md ข้อ 7)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

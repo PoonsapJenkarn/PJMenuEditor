@@ -57,9 +57,9 @@ body{background:#e8e2d9;color:#2b2320;
 .sec-b{position:relative;}
 .page{position:relative;}
 .fimg{position:absolute;z-index:20;pointer-events:none;}.fimg>img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block;pointer-events:none;}
-body.imgmode .fimg{pointer-events:auto;cursor:move;outline:1.5px dashed #9aa4b0;outline-offset:3px;}
-body.imgmode .fimg.sel{outline:none;}
-body.imgmode .fimg.sel::before{content:'';position:absolute;inset:-4px;pointer-events:none;z-index:31;background:linear-gradient(#217346,#217346) 0 0/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 0 0/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 100% 0/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 100% 0/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 0 100%/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 0 100%/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 100% 100%/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 100% 100%/2.5px 17px no-repeat;}
+@media screen{body.imgmode .fimg{pointer-events:auto;cursor:move;outline:1.5px dashed #9aa4b0;outline-offset:3px;}}
+@media screen{body.imgmode .fimg.sel{outline:none;}}
+@media screen{body.imgmode .fimg.sel::before{content:'';position:absolute;inset:-4px;pointer-events:none;z-index:31;background:linear-gradient(#217346,#217346) 0 0/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 0 0/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 100% 0/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 100% 0/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 0 100%/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 0 100%/2.5px 17px no-repeat,linear-gradient(#217346,#217346) 100% 100%/17px 2.5px no-repeat,linear-gradient(#217346,#217346) 100% 100%/2.5px 17px no-repeat;}}
 .fimg .sizetag{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;background:rgba(0,0,0,.78);color:#fff;font:600 11px/1.3 monospace;padding:2px 6px;border-radius:5px;z-index:33;pointer-events:none;white-space:nowrap;}
 body.imgmode .fimg.sel .sizetag{display:block;}
 @media print{.fimg .sizetag{display:none !important;}}
@@ -67,7 +67,7 @@ body.imgmode .fimg.sel .sizetag{display:block;}
 .fimg .rz svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.2;}
 body.imgmode .fimg.sel .rz{display:flex;}
 .fimg .delbtn{display:none;pointer-events:auto;position:absolute;left:-26px;top:-26px;width:20px;height:20px;background:#db0000;color:#fff;border:2px solid #fff;border-radius:50%;cursor:pointer;z-index:32;font-size:13px;line-height:16px;text-align:center;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.4);}
-body.imgmode .fimg.sel .delbtn{display:flex;align-items:center;justify-content:center;}
+@media screen{body.imgmode .fimg.sel .delbtn{display:flex;align-items:center;justify-content:center;}}
 .btn-img{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
 #edbar .btn-img.on{background:#217346;color:#fff;border-color:#217346;}
 #imgbar{display:contents;}
@@ -247,8 +247,8 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #actlog .al-row.al-warning .al-msg{color:#b8860b;}
 #actlog .al-row.al-error .al-msg{color:#c0392b;}
 @media print{#actlog,#edstatus #actlogToggle{display:none !important;}}
-body.editmode .nm[contenteditable],body.editmode .pr[contenteditable],body.pricemode .pr[contenteditable]{outline:1px dashed #1592d9;
-  background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}
+@media screen{body.editmode .nm[contenteditable],body.editmode .pr[contenteditable],body.pricemode .pr[contenteditable]{outline:1px dashed #1592d9;
+  background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}}
 /* ช่องราคาว่าง (แถวใหม่) ในโหมดแก้: เป็นช่องว่างที่เห็นกรอบและคลิกกรอกได้ — เดิมกว้าง 0 มองไม่เห็น · พิมพ์แล้วลบหมด browser อาจเหลือ <br> จึงรวมกรณีนั้นด้วย · ไม่มีผลตอนพิมพ์/บันทึก (ไม่มี class editmode) */
 body.editmode .pr[contenteditable]:empty,body.editmode .pr[contenteditable]:has(> br:only-child),body.pricemode .pr[contenteditable]:empty,body.pricemode .pr[contenteditable]:has(> br:only-child){display:inline-block;min-width:3em;min-height:1.15em;}
 body{padding-top:56px;}
@@ -260,7 +260,7 @@ body{padding-top:56px;}
 .ed-dup{margin-left:4px;border:none;background:#1592d9;color:#fff;border-radius:50%;
   width:18px;height:18px;font-size:10px;line-height:1;cursor:pointer;padding:0;flex:none;}
 .page.overflowed{outline:3px solid #e8a020;outline-offset:-3px;}
-.ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:12px;cursor:pointer;}.sec-h .sechead{outline:none;flex:1 1 auto;}body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}@media print{.ed-delpage{display:none !important;}} body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:11px;color:#888;margin-bottom:6px;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
+.ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:12px;cursor:pointer;}.sec-h .sechead{outline:none;flex:1 1 auto;}@media screen{body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}}@media print{.ed-delpage{display:none !important;}} @media screen{body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:11px;color:#888;margin-bottom:6px;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
 
 /* --- v5 additions: add/del group, editable header, logo edit --- */
 .ed-addgroup{display:none;margin:4px 0 9px;border:1.5px dashed #4a8579;background:rgba(74,133,121,.07);
@@ -269,14 +269,14 @@ body{padding-top:56px;}
 body.editmode .ed-addgroup{display:block;}
 .ed-delgroup{margin-left:auto;border:none;background:#e0332a;color:#fff;border-radius:6px;
   width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
-body.editmode .ed-delgroup{display:inline-flex;align-items:center;justify-content:center;}
+@media screen{body.editmode .ed-delgroup{display:inline-flex;align-items:center;justify-content:center;}}
 .ed-dupgroup{margin-left:6px;border:none;background:#1592d9;color:#fff;border-radius:6px;
   width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
-body.editmode .ed-dupgroup{display:inline-flex;align-items:center;justify-content:center;}
-body.imgmode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}
-body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}
-body.headermode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}
-body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}
+@media screen{body.editmode .ed-dupgroup{display:inline-flex;align-items:center;justify-content:center;}}
+@media screen{body.imgmode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}}
+@media screen{body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}}
+@media screen{body.headermode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}}
+@media screen{body.headermode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}}
 #edbar #btnEditHeader.on,#edbar #btnBulkPrice.on{background:#217346;color:#fff;border-color:#217346;}
 #edbar #btnEditHeader.on svg,#edbar #btnBulkPrice.on svg{stroke:#fff;}
 #edbar #btnEditHeader.on span,#edbar #btnBulkPrice.on span{color:#fff;}

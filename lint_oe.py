@@ -173,6 +173,25 @@ def main():
         if not _ok14:
             errors.append('@media print ต้องมี body{padding-top:0 !important;padding-bottom:0 !important} — syncBarHeight ใส่ padding แบบ inline (ดู UI_STANDARD.md ข้อ 7)')
 
+    # ---- 15) เส้นประ/พื้นสี/padding ของโหมดแก้ (body.editmode/imgmode/headermode/pricemode) ต้องอยู่ใน @media screen — ไม่งั้น Ctrl+P ระหว่างอยู่ในโหมดแก้ จะพิมพ์เส้นประติดไป (บั๊ก 5 ต.ค. 2026) ----
+    _c15 = _css; _i = 0; _top = []
+    while _i < len(_c15):
+        if _c15[_i] == '@':
+            _j = _c15.find('{', _i)
+            if _j < 0: break
+            _d = 1; _j += 1
+            while _d and _j < len(_c15):
+                if _c15[_j] == '{': _d += 1
+                elif _c15[_j] == '}': _d -= 1
+                _j += 1
+            _i = _j; continue
+        _m = re.compile(r'([^{}@]+)\{([^}]*)\}').match(_c15, _i)
+        if _m: _top.append((_m.group(1).strip(), _m.group(2))); _i = _m.end(); continue
+        _i += 1
+    for _sel, _body in _top:
+        if re.search(r'body\.(editmode|imgmode|headermode|pricemode)', _sel) and re.search(r'outline|background|box-shadow|border(?!-radius)|(?<![-\w])content\s*:|padding', _body):
+            errors.append('กฎหน้าตาโหมดแก้ไม่ได้อยู่ใน @media screen: "{}" — จะติดไปตอนพิมพ์ (ดู UI_STANDARD.md ข้อ 7)'.format(_sel[:80]))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

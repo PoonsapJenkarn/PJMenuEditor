@@ -1415,6 +1415,7 @@ function _imgHideSync(){
 function toggleImgHide(){
   var h=!document.body.classList.contains('imghidden'), n=_imgHideCount();
   if(h && !n){ _imgHideSync(); return; }
+  if(h && document.body.classList.contains('imgmode')) toggleImgMode();  /* กดปุ่มไหนหลังสุดใช้ปุ่มนั้น: ซ่อนรูประหว่างแก้รูป = ออกจากแก้รูปก่อน (แก้รูปที่มองไม่เห็นไม่ได้) */
   document.body.classList.toggle('imghidden',h);
   _imgHideSync();
   flashStatus('info',tk(h?'fl.imgHidden':'fl.imgShown',{n:n}));

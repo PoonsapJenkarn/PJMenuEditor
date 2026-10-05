@@ -2,10 +2,19 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
+## 4 ต.ค. 2026 (21:05) — ยังไม่ commit (ต่อจาก 57b0f02)
+- ปุ่ม "ซ่อนรูป" (id=btnImgHide) แท็บ รูป กลุ่มใหม่ "มุมมอง" ต่อจาก จัดการรูป (นอก #imgbar → กดได้โดยไม่ต้องเข้าแก้รูป) · ลำดับปุ่ม จัดการรูป เดิมไม่เปลี่ยน
+  - ซ่อนเฉพาะ .page .fimg (12 รูป รวมรูปหัวเมนู hdr) · โลโก้ .logo ไม่ซ่อน · ผู้ใช้เลือก: เฉพาะจอ / เฉพาะรูปอาหาร / ในแท็บรูป
+  - body.imghidden + @media screen visibility:hidden · ไม่ markDirty ไม่มี undo · buildEditorHtml/buildMenuHtml เอา class ออก + รีเซ็ตปุ่ม
+  - .on เขียวตอนซ่อน · tooltip สลับ ttl.imgHide/ttl.imgShow · แถบล่าง fl.imgHidden/fl.imgShown (tk) · ไม่มีรูป+ไม่ซ่อน = ปุ่มปิด · ซ่อนอยู่ = กดได้เสมอ
+  - toggleImgMode เข้าโหมด → _imgHideOff · _imgHideSync ใน toggleImgMode/switchTab/_restorePages/โหลดหน้า
+  - ทดสอบตรรกะ 8 กรณีผ่าน · (21:13) ผู้ใช้ทดสอบในเบราว์เซอร์: ปุ่มอยู่กลุ่ม มุมมอง ✓ · กดแล้วรูปอาหาร+รูปหม้อหัวเมนูหาย โลโก้อยู่ ข้อความไม่ขยับ ปุ่มเขียว ✓ · รอทดสอบ: Ctrl+P มีรูป / แก้รูปแล้วรูปกลับ / ซ่อนแล้วแก้ข้อความ / EN
+- พบ (ยังไม่แก้): buildMenuHtml (ดาวน์โหลดเมนู) ไม่เอา imgmode/headermode ออกจาก body → ดาวน์โหลดตอนอยู่ในโหมดแก้รูป อาจติดเส้นประรอบรูปในไฟล์เมนู — ต้องตรวจ CSS ก่อน
+
 ## 4 ต.ค. 2026 (19:20) — commit 0873482 แล้ว
 - ผู้ใช้ทดสอบ (5 รูป): แถบล่าง Price mode EN ✓ · ผลปรับราคา TH→EN "✓ Increased +6 Baht · 7 items" ✓ · preview "7 items · 16→22" ✓ · ตำแหน่งรูป รูป 12 → Image 12 ✓ · ปุ่ม Adjust / Choose a scope first ✓
 - พบจากรูป (ยังไม่แก้): dropdown กลุ่ม/หน้าใน panel ยังเป็น "· หน้า 1" ตอน EN — ตัวเลือก (sc.grpOpt / sc.pageOpt) สร้างตอนเปิด panel ไม่ถูกสร้างใหม่ตอนเปลี่ยนภาษา (ชื่อกลุ่มเป็นเนื้อหาเมนู ไม่แปล)
-- (19:25) แก้ dropdown เปลี่ยนภาษา: openPanel option ใหม่ onRelang (เรียกใน _panelRelang ก่อน onCustom) · ใช้ทั้งประเภท/คืนค่า = _typoGroupSelRelang (สร้างตัวเลือกใหม่ คง value = index .sec) · ปรับราคา = _bulkPriceSync (คงค่าตาม element) · UI_STANDARD ข้อ 6 · ทดสอบตรรกะ 7 กรณีผ่าน (รอบแรก fail 4 เพราะตัวจำลอง select ไม่ถอด &amp; — ไม่ใช่โค้ด) · ไม่มี lint ตรวจข้อนี้ · ยังไม่ commit
+- (19:25) แก้ dropdown เปลี่ยนภาษา: openPanel option ใหม่ onRelang (เรียกใน _panelRelang ก่อน onCustom) · ใช้ทั้งประเภท/คืนค่า = _typoGroupSelRelang (สร้างตัวเลือกใหม่ คง value = index .sec) · ปรับราคา = _bulkPriceSync (คงค่าตาม element) · UI_STANDARD ข้อ 6 · ทดสอบตรรกะ 7 กรณีผ่าน (รอบแรก fail 4 เพราะตัวจำลอง select ไม่ถอด &amp; — ไม่ใช่โค้ด) · ไม่มี lint ตรวจข้อนี้ · ✅ commit 57b0f02 (20:24)
   - (19:26) ผู้ใช้ทดสอบในเบราว์เซอร์: ปรับราคา EN → dropdown "ข้าว & เส้น · Page 1" ✓ · แถบล่าง "Price mode · Only price cells can be edited" ✓ · preview "Enter amount to adjust" ✓ · ยังไม่เห็นผล One page / ใช้ทั้งประเภท / คืนค่า
   - (19:43) ตัดสินใจ: แถบล่าง = โหมด/ผลการทำงานเท่านั้น · เลือกกลุ่ม/หน้าใน dropdown อัปเดตเฉพาะ preview ใน panel ไม่เขียนแถบล่าง (กันทับผลลัพธ์ + ไม่ซ้ำ preview)
 

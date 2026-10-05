@@ -16,9 +16,40 @@ _imgall/
 _imgcheck/
 _imgcheck2/
 
-# ไฟล์ Word / Excel — ไม่เกี่ยวกับโปรเจกต์ OE Isan (โปรเจกต์นี้เป็น HTML ล้วน)
-*.docx
+# ไฟล์ Microsoft Office ทุกชนิด — ไม่เกี่ยวกับโปรเจกต์ OE Isan (โปรเจกต์นี้เป็น HTML ล้วน) · ไฟล์ล็อกชั่วคราว ~$* อยู่ด้านบนแล้ว
+# Word
 *.doc
-*.xlsx
+*.docx
+*.docm
+*.dot
+*.dotx
+*.dotm
+# Excel
 *.xls
+*.xlsx
 *.xlsm
+*.xlsb
+*.xlt
+*.xltx
+*.xltm
+# PowerPoint
+*.ppt
+*.pptx
+*.pptm
+*.pps
+*.ppsx
+*.ppsm
+*.pot
+*.potx
+*.potm
+# Visio / Access / Publisher / OneNote / Outlook
+*.vsd
+*.vsdx
+*.vsdm
+*.mdb
+*.accdb
+*.laccdb
+*.pub
+*.one
+*.msg
+*.pst

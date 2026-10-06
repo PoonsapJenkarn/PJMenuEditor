@@ -229,6 +229,21 @@ def main():
             _fn = re.match(r'\n(?:async )?function (\w+)', txt[_a:])
             errors.append('{} ที่บรรทัด {} ดาวน์โหลดไฟล์โดยไม่ให้เลือกที่เก็บ — ใช้ _saveAs() (ดู UI_STANDARD.md ข้อ 6)'.format(_fn.group(1) if _fn else '?', txt.count('\n', 0, _m.start()) + 1))
 
+    # ---- 19) ทางสำรองดาวน์โหลดต้องบอกว่าไฟล์อยู่ในโฟลเดอร์ดาวน์โหลด (บั๊ก 6 ต.ค. 2026: ข้อความ Save Menu/Editor ไม่บอกว่าไฟล์อยู่ไหน) ----
+    #   หลัง triggerDownload( ในฟังก์ชันเดียวกัน ข้อความแถบล่างถัดไปต้องเป็น key ที่ภาษาไทยมีคำว่า "โฟลเดอร์ดาวน์โหลด" · ดู UI_STANDARD.md ข้อ 6
+    _thA = txt.find('th:{', txt.find('var I18N={')); _enA = txt.find('en:{', _thA)
+    _TH19 = dict(re.findall(r"'([A-Za-z0-9_.]+)':'((?:[^'\\]|\\.)*)'", txt[_thA:_enA]))
+    for _m in re.finditer(r'triggerDownload\(', txt):
+        if txt[max(0, _m.start() - 9):_m.start()] == 'function ': continue
+        _body = txt[_m.start():txt.find('\n}', _m.start())]
+        _fm = re.search(r"flashStatus\([^;]*?tk\('([\w.]+)'", _body)
+        _ln = txt.count('\n', 0, _m.start()) + 1
+        if not _fm:
+            if "how:'download'" in _body: continue  # _saveAs: ผู้เรียกเป็นคนแจ้ง
+            errors.append('บรรทัด {} ดาวน์โหลดไฟล์แล้วไม่แจ้งผู้ใช้ว่าไฟล์อยู่ไหน (ดู UI_STANDARD.md ข้อ 6)'.format(_ln)); continue
+        if 'โฟลเดอร์ดาวน์โหลด' not in _TH19.get(_fm.group(1), ''):
+            errors.append("บรรทัด {} ข้อความ '{}' ไม่บอกว่าไฟล์อยู่ในโฟลเดอร์ดาวน์โหลด (ดู UI_STANDARD.md ข้อ 6)".format(_ln, _fm.group(1)))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

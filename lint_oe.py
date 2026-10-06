@@ -220,6 +220,15 @@ def main():
     if not re.search(r'var _PR_MAXDIG=\d+;', txt):
         errors.append('ไม่พบ _PR_MAXDIG — ราคาต้องจำกัดจำนวนหลัก (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 18) บันทึกไฟล์ออกจากแอปต้องให้ผู้ใช้เลือกที่เก็บก่อน (บั๊ก 6 ต.ค. 2026: ส่งออกบันทึกดาวน์โหลดเงียบๆ ผู้ใช้ไม่รู้ว่าไฟล์อยู่ไหน) ----
+    #   ทุกจุดที่เรียก triggerDownload( ต้องมี showSaveFilePicker ก่อนในฟังก์ชันเดียวกัน (ดาวน์โหลด = ทางสำรองเท่านั้น) · ดู UI_STANDARD.md ข้อ 6
+    for _m in re.finditer(r'triggerDownload\(', txt):
+        if txt[max(0, _m.start() - 9):_m.start()] == 'function ': continue
+        _a = max(txt.rfind('\nfunction ', 0, _m.start()), txt.rfind('\nasync function ', 0, _m.start()))
+        if 'showSaveFilePicker' not in txt[_a:_m.start()]:
+            _fn = re.match(r'\n(?:async )?function (\w+)', txt[_a:])
+            errors.append('{} ที่บรรทัด {} ดาวน์โหลดไฟล์โดยไม่ให้เลือกที่เก็บ — ใช้ _saveAs() (ดู UI_STANDARD.md ข้อ 6)'.format(_fn.group(1) if _fn else '?', txt.count('\n', 0, _m.start()) + 1))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

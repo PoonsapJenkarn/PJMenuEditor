@@ -2,7 +2,14 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 6 ต.ค. 2026 (21:15) — "ยังไม่มีบันทึกกิจกรรม" เปลี่ยนตาม TH/EN · ยังไม่ commit (ต่อจาก c681773)
+## 6 ต.ค. 2026 (21:35) — อีก 5 จุดเปลี่ยนตาม TH/EN + lint ข้อ 20 · ยังไม่ commit (ต่อจาก 022d51d)
+- data-i18n-title: ปุ่มลบแถว (ttl.delRow) · ปุ่มลบกลุ่ม (ttl.delGroup) · ที่จับย่อขยายรูป (ttl.resize)
+- data-i18n: "ยังไม่มีสีที่กำหนดเอง" (cp.noCustom)
+- ปุ่ม ✕ ปิดหน้าต่างบันทึก: เพิ่ม title + key ใหม่ ttl.closeLog (TH ปิดหน้าต่างบันทึก / EN Close the activity log) · keys 243/243
+- lint ข้อ 20: ข้อความที่ใส่ด้วย t() ต้องมี data-i18n / data-i18n-title · ยกเว้นข้อความใน panel (onCustom/onInput/onRelang) — ตรวจแล้ว pnl.delPageHint / pnl.cannotDeleteAll / pr.setApply ถูกสร้างใหม่ตอนกด TH/EN อยู่แล้ว (ไม่ใช่ bug)
+- ลองกับไฟล์ก่อนแก้ จับได้ 4 จุดพอดี · หลังแก้ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์
+
+## 6 ต.ค. 2026 (21:15) — "ยังไม่มีบันทึกกิจกรรม" เปลี่ยนตาม TH/EN · ✅ commit แล้วใน 022d51d · ผู้ใช้ทดสอบผ่าน (รูป 3 รูป) (ต่อจาก c681773)
 - สาเหตุ: _actlogRender ใส่ข้อความด้วย t() ครั้งเดียว ไม่มี data-i18n → applyLang ไม่แปลใหม่
 - แก้: ใส่ data-i18n='log.empty' ให้ .al-empty (applyLang แปลทุก [data-i18n] อยู่แล้ว) — ไม่เรียก _actlogRender จาก applyLang เพราะ applyLang() ถูกเรียกครั้งแรกก่อน var ACTLOG ถูกกำหนด
 - ข้อความในบันทึกแต่ละรายการคงภาษาเดิม (เป็นประวัติ) — ไม่เปลี่ยน

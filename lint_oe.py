@@ -244,6 +244,35 @@ def main():
         if 'โฟลเดอร์ดาวน์โหลด' not in _TH19.get(_fm.group(1), ''):
             errors.append("บรรทัด {} ข้อความ '{}' ไม่บอกว่าไฟล์อยู่ในโฟลเดอร์ดาวน์โหลด (ดู UI_STANDARD.md ข้อ 6)".format(_ln, _fm.group(1)))
 
+    # ---- 20) ข้อความที่ใส่ด้วย t() ต้องเปลี่ยนตาม TH/EN (บั๊ก 6 ต.ค. 2026: "ยังไม่มีบันทึกกิจกรรม", tooltip ปุ่มลบแถว/กลุ่ม/ที่จับย่อขยาย ไม่เปลี่ยนภาษา) ----
+    #   el.title=t('k') ต้องมี el.setAttribute('data-i18n-title','k') บรรทัดเดียวกัน · el.textContent=t('k') ต้องมี data-i18n='k'
+    #   ยกเว้น: ข้อความใน openPanel(...) และฟังก์ชันที่ส่งเป็น onCustom/onInput/onRelang (panel แปลใหม่เองตอนกด TH/EN) · ดู UI_STANDARD.md ข้อ 6
+    _i2 = txt.rfind('<script'); _js = txt[_i2:]; _off = txt.count('\n', 0, _i2)
+    _hooks = set(re.findall(r'\bon(?:Custom|Input|Relang)\s*:\s*(\w+)\b', _js)) - {'function'}
+    _fst = [(_x.start(), _x.group(1)) for _x in re.finditer(r'\nfunction\s+(\w+)\s*\(', _js)]
+    for _m in re.finditer(r"(\w+)\.(title|textContent)\s*=\s*t\('([\w.]+)'", _js):
+        _v, _pp, _k = _m.group(1), _m.group(2), _m.group(3)
+        _a = _js.rfind('\n', 0, _m.start()) + 1; _e = _js.find('\n', _m.end()); _line = _js[_a:_e]
+        _attr = 'data-i18n-title' if _pp == 'title' else 'data-i18n'
+        if re.search(re.escape(_v) + r"\.setAttribute\('" + _attr + r"',\s*'" + re.escape(_k) + r"'\)", _line): continue
+        _own = None
+        for _st, _nm in _fst:
+            if _st < _m.start(): _own = _nm
+            else: break
+        if _own in _hooks: continue
+        _po = _js.rfind('openPanel(', 0, _m.start()); _inpanel = False
+        if _po >= 0:
+            _d = 0; _q = _po + len('openPanel')
+            while _q < len(_js):
+                if _js[_q] == '(': _d += 1
+                elif _js[_q] == ')':
+                    _d -= 1
+                    if _d == 0: break
+                _q += 1
+            _inpanel = _q > _m.start()
+        if _inpanel: continue
+        errors.append("บรรทัด {} {}.{}=t('{}') ไม่มี {} — กด TH/EN แล้วไม่เปลี่ยนภาษา (ดู UI_STANDARD.md ข้อ 6)".format(_off + _js.count('\n', 0, _m.start()) + 1, _v, _pp, _k, _attr))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

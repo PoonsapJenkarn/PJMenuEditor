@@ -2836,7 +2836,7 @@ function _logSortBy(col){
 function _actlogRender(){
   var body=document.getElementById('actlogBody'); if(!body) return;
   body.innerHTML='';
-  if(!ACTLOG.length){ var em=document.createElement('div'); em.className='al-empty'; em.textContent=t('log.empty'); body.appendChild(em); }
+  if(!ACTLOG.length){ var em=document.createElement('div'); em.className='al-empty'; em.setAttribute('data-i18n','log.empty'); em.textContent=t('log.empty'); body.appendChild(em); }  /* data-i18n = applyLang แปลใหม่ตอนกด TH/EN */
   else { var arr=_actlogSorted(), frag=document.createDocumentFragment(); for(var i=0;i<arr.length;i++) frag.appendChild(_actlogRowEl(arr[i])); body.appendChild(frag); }
   _actlogUpdateCount();
   _actlogUpdateSortArrows();

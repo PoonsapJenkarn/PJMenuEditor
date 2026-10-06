@@ -2,7 +2,13 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 6 ต.ค. 2026 (21:05) — ชื่อไฟล์ Save Editor สะกดตรงกับปุ่มอื่น · ยังไม่ commit (ต่อจาก ee476a7)
+## 6 ต.ค. 2026 (21:15) — "ยังไม่มีบันทึกกิจกรรม" เปลี่ยนตาม TH/EN · ยังไม่ commit (ต่อจาก c681773)
+- สาเหตุ: _actlogRender ใส่ข้อความด้วย t() ครั้งเดียว ไม่มี data-i18n → applyLang ไม่แปลใหม่
+- แก้: ใส่ data-i18n='log.empty' ให้ .al-empty (applyLang แปลทุก [data-i18n] อยู่แล้ว) — ไม่เรียก _actlogRender จาก applyLang เพราะ applyLang() ถูกเรียกครั้งแรกก่อน var ACTLOG ถูกกำหนด
+- ข้อความในบันทึกแต่ละรายการคงภาษาเดิม (เป็นประวัติ) — ไม่เปลี่ยน
+- พบจุดแบบเดียวกัน (ยังไม่แก้): title ปุ่มลบแถว (ttl.delRow) · ลบกลุ่ม (ttl.delGroup) · ที่จับย่อขยายรูป (ttl.resize) · "ยังไม่มีสีที่กำหนดเอง" (cp.noCustom) · ปุ่ม ✕ ปิดหน้าต่างบันทึกไม่มี title
+
+## 6 ต.ค. 2026 (21:05) — ชื่อไฟล์ Save Editor สะกดตรงกับปุ่มอื่น · ✅ commit แล้วใน c681773 (21:05) · ผู้ใช้ทดสอบผ่าน (ต่อจาก ee476a7)
 - ผู้ใช้เห็นจากรูป: Save Editor เสนอชื่อ OEIsanHotPotMenuEditor_ (P ใหญ่) ต่างจาก Save Menu / ส่งออกบันทึก (OEIsanHotpotMenu…) และไฟล์หลัก
 - แก้ 2 จุดใน saveEditorFile (suggestedName + ชื่อไฟล์ทางสำรอง) → OEIsanHotpotMenuEditor_ · ไม่มี HotPot เหลือในไฟล์ · ไฟล์ที่บันทึกไว้แล้วไม่เปลี่ยน
 

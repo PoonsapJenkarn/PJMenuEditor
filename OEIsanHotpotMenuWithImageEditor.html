@@ -1039,7 +1039,7 @@ async function saveEditorFile(){
     try{
       // ถามที่เก็บทุกครั้ง (ไม่จำที่เดิม)
       var handle=await window.showSaveFilePicker({
-        suggestedName:'OEIsanHotPotMenuEditor_'+tsStamp()+'.html',
+        suggestedName:'OEIsanHotpotMenuEditor_'+tsStamp()+'.html',
         types:[{description:'HTML',accept:{'text/html':['.html']}}]
       });
       var w=await handle.createWritable();
@@ -1055,7 +1055,7 @@ async function saveEditorFile(){
     }
   }
   // Path 2: honest fallback — download the editor file (still a real save)
-  var fname='OEIsanHotPotMenuEditor_'+tsStamp()+'.html';
+  var fname='OEIsanHotpotMenuEditor_'+tsStamp()+'.html';
   triggerDownload(html, fname);
   clearDirty();
   flashStatus('warning',tk('fl.fallbackEditor',{fname:fname}));

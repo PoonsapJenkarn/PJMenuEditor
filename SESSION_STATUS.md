@@ -2,7 +2,11 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 6 ต.ค. 2026 (20:55) — Save Menu / Save Editor บอกว่าไฟล์อยู่ไหน · ยังไม่ commit (ต่อจาก 96762e8)
+## 6 ต.ค. 2026 (21:05) — ชื่อไฟล์ Save Editor สะกดตรงกับปุ่มอื่น · ยังไม่ commit (ต่อจาก ee476a7)
+- ผู้ใช้เห็นจากรูป: Save Editor เสนอชื่อ OEIsanHotPotMenuEditor_ (P ใหญ่) ต่างจาก Save Menu / ส่งออกบันทึก (OEIsanHotpotMenu…) และไฟล์หลัก
+- แก้ 2 จุดใน saveEditorFile (suggestedName + ชื่อไฟล์ทางสำรอง) → OEIsanHotpotMenuEditor_ · ไม่มี HotPot เหลือในไฟล์ · ไฟล์ที่บันทึกไว้แล้วไม่เปลี่ยน
+
+## 6 ต.ค. 2026 (20:55) — Save Menu / Save Editor บอกว่าไฟล์อยู่ไหน · ✅ commit แล้วใน ee476a7 (20:58) · ผู้ใช้ทดสอบ 2 ปุ่มผ่าน (ต่อจาก 96762e8)
 - ทำตามกฎ UI_STANDARD ข้อ 6 ที่ตั้งรอบ 20:45 กับปุ่มเดิม 2 ปุ่ม (หน้าต่าง Save มีอยู่แล้ว ขาดแค่ข้อความ)
 - fl.savedMenu / fl.savedEditor: "ไฟล์ {name} อยู่ในโฟลเดอร์ที่คุณเลือก"
 - fl.fallbackMenu / fl.fallbackEditor: "ไฟล์ {fname} อยู่ในโฟลเดอร์ดาวน์โหลดของเบราว์เซอร์ (กด Ctrl+J เพื่อดู)" · saveEditorFile ส่งชื่อไฟล์จริงเข้าข้อความ (เดิมไม่มีชื่อ)

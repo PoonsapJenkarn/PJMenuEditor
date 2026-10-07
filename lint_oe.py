@@ -273,6 +273,51 @@ def main():
         if _inpanel: continue
         errors.append("บรรทัด {} {}.{}=t('{}') ไม่มี {} — กด TH/EN แล้วไม่เปลี่ยนภาษา (ดู UI_STANDARD.md ข้อ 6)".format(_off + _js.count('\n', 0, _m.start()) + 1, _v, _pp, _k, _attr))
 
+    # ---- 21) ปุ่มในแถบจัดรูปแบบ (#typobar) ที่แก้เมนู ต้องสร้างจุด Undo (บั๊ก 7 ต.ค. 2026: "ล้างรูปแบบ" / "ล้างรูปแบบจุดที่เลือก" ไม่มี Undo + ไม่เตือนก่อนปิดแท็บ) ----
+    #   ทางที่นับว่าสร้างจุด Undo: markDirty( / _snapNow( / openPanel( (onOk ของ panel) / document.execCommand(คำสั่งแก้ข้อความ) (เบราว์เซอร์ยิง input → markDirty)
+    #   ไล่จาก onclick หรือ addEventListener('click') ของปุ่ม ลึก 4 ชั้น · ปุ่มที่ไม่ได้แก้เมนูต้องอยู่ใน _NOEDIT21 พร้อมเหตุผล · ดู UI_STANDARD.md ข้อ 6
+    _NOEDIT21 = {
+        'typoCpCaret': 'เปิด/ปิดกล่องเลือกสี',
+        'typoCpAdd': 'เปิดตัวเลือกสีของระบบ → เพิ่มสีที่กำหนดเอง (เก็บใน Local Storage ไม่ใช่เนื้อหาเมนู)',
+    }
+    _js21 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
+    def _blk21(src, k):
+        _d = 0; _j = k
+        while _j < len(src):
+            if src[_j] == '{': _d += 1
+            elif src[_j] == '}':
+                _d -= 1
+                if _d == 0: break
+            _j += 1
+        return src[k:_j + 1]
+    _F21 = {}
+    for _m in re.finditer(r'(?:^|[\n;{}])\s*function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{', _js21):
+        _F21.setdefault(_m.group(1), _blk21(_js21, _m.end() - 1))
+    def _dirty21(body, depth=0, seen=None):
+        seen = seen if seen is not None else set()
+        if re.search(r"\b(markDirty|_snapNow|openPanel)\s*\(|execCommand\(\s*(?!'styleWithCSS')", body): return True
+        if depth >= 4: return False
+        for _c in set(re.findall(r'\b([A-Za-z_$][\w$]*)\s*\(', body)):
+            if _c in _F21 and _c not in seen:
+                seen.add(_c)
+                if _dirty21(_F21[_c], depth + 1, seen): return True
+        return False
+    _tb = txt.find('id="typobar"')
+    if _tb < 0:
+        errors.append('ไม่พบ #typobar — lint ข้อ 21 ตรวจไม่ได้')
+    else:
+        _tbEnd = txt.find('</div>', txt.find('data-i18n="grp.format"', _tb))
+        for _m in re.finditer(r'<button\b[^>]*\bid="([\w-]+)"[^>]*>', txt[_tb:_tbEnd]):
+            _bid = _m.group(1)
+            _bodies = re.findall(r'onclick="([^"]*)"', _m.group(0))
+            _nOn = len(_bodies)
+            for _lm in re.finditer(r"getElementById\('" + re.escape(_bid) + r"'\)\.addEventListener\('click',\s*function\s*\([^)]*\)\s*\{", _js21):
+                _bodies.append(_blk21(_js21, _lm.end() - 1))
+            if _nOn and len(_bodies) > _nOn:
+                errors.append('ปุ่ม #{} ผูก click 2 ทาง (onclick + addEventListener) — กดครั้งเดียวทำงาน 2 รอบ (ดู UI_STANDARD.md ข้อ 6)'.format(_bid))
+            if _bid not in _NOEDIT21 and not any(_dirty21(_b) for _b in _bodies):
+                errors.append('ปุ่ม #{} ในแถบจัดรูปแบบไม่สร้างจุด Undo (ไม่ถึง markDirty/_snapNow) — ถ้าไม่ได้แก้เมนูให้ใส่ใน _NOEDIT21 พร้อมเหตุผล (ดู UI_STANDARD.md ข้อ 6)'.format(_bid))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

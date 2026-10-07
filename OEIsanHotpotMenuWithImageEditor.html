@@ -203,8 +203,8 @@ body:not(.editmode) #typobar .rgroup{opacity:.45;pointer-events:none;transition:
 #typobar .cp-add{height:28px;padding:0 8px;border:1px solid #d2d0ce;background:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:11px;white-space:nowrap;}
 #typobar .cp-add:hover{background:#eef7f1;border-color:#217346;color:#217346;}
 #typobar .cp-paint{flex:1 1 100%;height:28px;padding:0 10px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;}
-#typobar button.tbtn.clearsel,#typobar button.tbtn.clearfield{background:none;color:#323130;border-color:transparent;}
-#typobar button.tbtn.clearsel svg,#typobar button.tbtn.clearfield svg{stroke:#444;}
+#typobar button.tbtn.clearsel{background:none;color:#323130;border-color:transparent;}
+#typobar button.tbtn.clearsel svg{stroke:#444;}
 /* มาตรฐาน UI: สถานะ active (.on) ของปุ่ม typobar — ต้องอยู่หลังกฎพื้นฐาน/hover/สีเฉพาะปุ่มทั้งหมด และใช้ selector button.tbtn.on (specificity ไม่ต่ำกว่ากฎอื่น) ไม่อย่างนั้นพื้นจะไม่เขียวแต่ตัวอักษรขาว */
 #typobar button.tbtn.on{background:#217346;color:#fff;border-color:#217346;}
 #typobar button.tbtn.on:hover{background:#1a5c38;color:#fff;border-color:#1a5c38;}
@@ -425,8 +425,7 @@ body.measuring .grid{flex-direction:row !important;}
         <div class="rgroup"><div class="rgb">
         <button class="tbtn applyall" id="typoApplyAll" onclick="typoApplyAllSame()" title="ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน" data-i18n-title="ttl.applyAll" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span data-i18n="btn.applyAll">ใช้ทั้งประเภท</span></button>
         <button class="tbtn setdefault" id="typoSetDefault" onclick="typoSetDefault()" title="ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่" data-i18n-title="ttl.setDefault"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg><span data-i18n="btn.setDefault">ตั้งค่าเริ่มต้น</span></button><button class="tbtn reset" id="typoResetBtn" onclick="typoResetSel()" title="คืนค่าเริ่มต้นของอันที่เลือก" data-i18n-title="ttl.reset" disabled><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2"/><path d="M4 20v-5h5"/></svg><span data-i18n="btn.reset">คืนค่า</span></button>
-        <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ล้างรูปแบบเฉพาะจุดที่ไฮไลท์" data-i18n-title="ttl.clearSel"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span data-i18n="btn.clearSel">ล้างรูปแบบจุดที่เลือก</span></button>
-        <button class="tbtn clearfield" id="typoClearField" onclick="typoClearField()" title="ล้างรูปแบบทั้งช่อง" data-i18n-title="ttl.clearField" disabled><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/><path d="M8 9h8M8 13h5"/></svg><span data-i18n="btn.clearField">ล้างรูปแบบ</span></button>
+        <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ไฮไลท์ข้อความก่อน — ลากคลุมส่วนที่จะล้างรูปแบบ" data-i18n-title="ttl.clearSelNeed" disabled><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span data-i18n="btn.clearSel">ล้างรูปแบบจุดที่ไฮไลท์</span></button>
         </div><div class="rgl" data-i18n="grp.format">จัดรูปแบบ</div></div>
       </div>
     </div>
@@ -1428,7 +1427,7 @@ var I18N={
   'img.label':'รูป','img.header':'หัวเมนู','img.clickEdit':'คลิกรูปที่ต้องการแก้ไข','img.mode':'โหมดจัดการรูป',
   'fl.needSel':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.prNumOnly':'⚠️ ราคาใส่ได้เฉพาะตัวเลข (ช่วงราคาใช้ - เช่น 100-150)','fl.amtNumOnly':'⚠️ จำนวนใส่ได้เฉพาะตัวเลขจำนวนเต็ม','grp.header':'ส่วนหัว (ทุกหน้า)','btn.editHeader':'แก้ส่วนหัว','grp.price':'ราคา','btn.bulkPrice':'ปรับราคา','pr.scope':'ขอบเขต','pr.allPages':'ทุกหน้า','pr.oneGroup':'เฉพาะกลุ่ม','pr.baht':'บาท','pr.up':'เพิ่ม','pr.down':'ลด','pr.apply':'ปรับราคา','pr.enterAmt':'ใส่จำนวนที่ต้องการปรับ','pr.itemsUnit':'รายการ','pr.errAmt':'กรุณาใส่จำนวนมากกว่า 0','fl.bulkPrice':'💰 ปรับราคา {n} รายการแล้ว','fl.bulkPriceUp':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceDown':'✓ ลดราคา −{amt}{unit}แล้ว · {n} รายการ','fl.bulkPriceUpFill':'✓ เพิ่มราคา +{amt}{unit}แล้ว · {n} รายการ · ใส่ในช่องว่าง {f} ช่อง','hdr.flash':'แก้ส่วนหัวที่หน้าใดก็ได้ — มีผลทุกหน้าทันที','hdr.mode':'โหมดแก้ส่วนหัว','log.title':'บันทึกกิจกรรม','log.toggle':'บันทึกกิจกรรม (คลิกเพื่อเปิด/ปิด)','log.empty':'ยังไม่มีบันทึกกิจกรรม','log.colTime':'เวลา','log.colType':'ประเภท','log.colDetail':'รายละเอียด','log.fieldName':'ชื่อเมนู','log.fieldPrice':'ราคา','log.fieldGroup':'ชื่อกลุ่ม','log.fieldHeader':'ส่วนหัว','log.edited':'✏️ แก้{field} "{old}" → "{new}"','log.editedNew':'✏️ ใส่{field} "{new}"','log.editedClear':'✏️ ล้าง{field} (เดิม "{old}")','log.limitReached':'⚠️ ถึงขีดจำกัด Undo/Redo ที่ 1,000 แล้ว — ประวัติเก่าสุดถูกลบทีละรายการ',
   'ttl.dragReorder':'ลากเพื่อจัดลำดับ','ttl.color':'สี','ttl.size':'ขนาด (px)','ttl.bold':'ตัวหนา','ttl.italic':'ตัวเอียง','ttl.lineStyle':'แบบเส้น','ttl.applyAll':'ใช้รูปแบบนี้กับทุกอันประเภทเดียวกัน','ttl.reset':'คืนค่าเริ่มต้นของอันที่เลือก','ttl.delRow':'ลบรายการนี้','ttl.delGroup':'ลบกลุ่มนี้ทั้งกลุ่ม','ttl.dupRow':'คัดลอกรายการนี้','ttl.dupGroup':'คัดลอกกลุ่มนี้ทั้งกลุ่ม','fl.dupRow':'⧉ คัดลอกรายการแล้ว','fl.dupGroup':'⧉ คัดลอกกลุ่มแล้ว','ttl.resize':'ลากเพื่อขยาย/ย่อรูป','fl.undo':'↶ ย้อนกลับแล้ว','fl.redo':'↷ ทำซ้ำแล้ว','ttl.undo':'ย้อนกลับ (Ctrl+Z)','ttl.redo':'ทำซ้ำ (Ctrl+Y)',
-  'st.ready':'พร้อมใช้งาน','log.clear':'ล้าง','log.clearTtl':'ล้างบันทึกทั้งหมด (ย้อนไม่ได้)','log.clearNone':'ยังไม่มีบันทึกให้ล้าง','pnl.clearLogOk':'ล้างบันทึก','pnl.clearLogMsg':'ล้างบันทึกทั้งหมด <b>{n} รายการ</b> ใช่ไหม? กู้คืนไม่ได้ (Ctrl+Z ย้อนไม่ได้) — ถ้าต้องการเก็บไว้ ให้ส่งออกก่อน','pnl.clearLogExport':'ส่งออก JSON ก่อน','fl.logCleared':'✓ ล้างบันทึก {n} รายการแล้ว','ttl.closeLog':'ปิดหน้าต่างบันทึก','log.export':'ส่งออก','log.exportCsvTtl':'ส่งออกบันทึกเป็นไฟล์ CSV (เปิดใน Excel ได้) · เลือกที่เก็บไฟล์ได้ · เรียงตามที่แสดงอยู่','log.exportJsonTtl':'ส่งออกบันทึกเป็นไฟล์ JSON · เลือกที่เก็บไฟล์ได้ · เรียงตามที่แสดงอยู่','log.exportNone':'ยังไม่มีบันทึกให้ส่งออก','log.tInfo':'ข้อมูล','log.tWarning':'คำเตือน','log.tError':'ข้อผิดพลาด','log.tEdit':'แก้ไข','fl.logExported':'✓ ส่งออกบันทึก {n} รายการเป็น {fmt} แล้ว · ไฟล์ {f} อยู่ในโฟลเดอร์ที่คุณเลือก','fl.logExportCancel':'ยกเลิก — ยังไม่ได้ส่งออกบันทึก','fl.logExportDl':'⚠️ ส่งออกบันทึก {n} รายการเป็น {fmt} แล้ว · ไฟล์ {f} อยู่ในโฟลเดอร์ดาวน์โหลดของเบราว์เซอร์ (กด Ctrl+J เพื่อดู) — เบราว์เซอร์นี้ให้เลือกที่เก็บไม่ได้','fl.prTooLong':'⚠️ ราคาแต่ละตัวเลขใส่ได้ไม่เกิน 5 หลัก','fl.amtTooLong':'⚠️ จำนวนใส่ได้ไม่เกิน {n} หลัก','fl.pagesTooLong':'⚠️ มี {total} หน้า — เลขหน้าแต่ละตัวใส่ได้ {d} หลัก','fl.pagesFull':'⚠️ ช่องเลขหน้ายาวได้ไม่เกิน 50 ตัว','fl.hexOnly':'⚠️ รหัสสีใส่ได้เฉพาะ # 0-9 A-F เช่น #C0392B','fl.hexOnlyTh':'⚠️ รหัสสีใส่ได้เฉพาะ # 0-9 A-F · แป้นพิมพ์อยู่ภาษาไทย ให้เปลี่ยนเป็นภาษาอังกฤษก่อน','fl.txtTooLong':'⚠️ {field} ยาวได้ไม่เกิน {n} ตัวอักษร','fl.txtNoEnter':'⚠️ {field} ขึ้นบรรทัดใหม่ไม่ได้','fl.txtLines':'⚠️ {field} ได้ไม่เกิน {n} บรรทัด','fl.pagesOnly':'⚠️ เลขหน้าใส่ได้เฉพาะตัวเลข , และ - เช่น 1,3,5-7','fl.pagesOnlyTh':'⚠️ เลขหน้าใส่ได้เฉพาะตัวเลข , และ - · แป้นพิมพ์อยู่ภาษาไทย ให้เปลี่ยนเป็นภาษาอังกฤษก่อน','btn.imgHide':'ซ่อนรูป','grp.imgview':'มุมมอง','ttl.imgHide':'ซ่อนรูปอาหารบนจอ (พิมพ์/บันทึกยังมีรูป)','ttl.imgShow':'แสดงรูปอาหารกลับ','fl.imgHidden':'✓ ซ่อนรูป {n} รูปแล้ว (เฉพาะบนจอ · พิมพ์ยังมีรูป)','fl.imgShown':'✓ แสดงรูป {n} รูปแล้ว','pr.thisPage':'เฉพาะหน้านี้','pr.thisOne':'เฉพาะอันนี้','sc.grpFallback':'กลุ่ม {n}','st.overflow':'เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4','btn.addRow':'➕ เพิ่มรายการ','btn.addGroup':'➕ เพิ่มกลุ่ม','btn.delThisPage':'🗑 ลบหน้านี้','img.allDone':'✓ ใส่รูปไป {n} หน้าแล้ว','img.allNone':'ทุกหน้ามีรูปนี้อยู่แล้ว','typ.all':'ทุกประเภท','fl.setDefault':'✔ ตั้งค่าเริ่มต้น [{label}] แล้ว — ใช้กับ row ใหม่ต่อไป (ของเดิมไม่เปลี่ยน)','fl.noHighlight':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.paintRange':'ทาสีช่วงที่เลือก → {c}','fl.colorRange':'เปลี่ยนสีช่วงที่เลือก → {c}','fl.fontRange':'เปลี่ยนฟอนต์ช่วงที่เลือก → {f}','fl.noCell':'⚠️ ยังไม่ได้เลือกช่อง — คลิกในช่องข้อความก่อน','fl.clearedField':'🧹 ล้างรูปแบบทั้งช่องแล้ว','fl.clearedRange':'ล้างรูปแบบช่วงที่เลือกแล้ว','fl.selInfo':'เลือกอยู่: "{txt}" ({n} ตัวอักษร)','cp.noCustom':'ยังไม่มีสีที่กำหนดเอง','cp.customLbl':'สีที่กำหนดเอง','cp.addCustom':'+ กำหนดเอง','cp.paint':'ทาสี','ttl.cpApply':'ทาสีปัจจุบันลงช่วงที่เลือก','ttl.cpCaret':'เลือกสีอื่น','ttl.hex':'พิมพ์รหัสสี HEX','ttl.cpAdd':'เลือกสีเองแล้วบันทึก','ttl.cpPaint':'ใช้สีนี้กับช่วงที่เลือก','ttl.sizeDown':'เล็กลง','ttl.sizeUp':'ใหญ่ขึ้น','ttl.underline':'ขีดล่าง','ttl.strike':'ขีดกลาง','ln.dotted':'จุด','ln.dashed':'ขีด','ln.solid':'ทึบ','btn.setDefault':'ตั้งค่าเริ่มต้น','ttl.setDefault':'ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่','btn.clearSel':'ล้างรูปแบบจุดที่เลือก','ttl.clearSel':'ล้างรูปแบบเฉพาะจุดที่ไฮไลท์','btn.clearField':'ล้างรูปแบบ','ttl.clearField':'ล้างรูปแบบทั้งช่อง','pk.hint':'เลือกไอคอนหมวด (คลิกเพื่อใช้)','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.priceMode':'โหมดปรับราคา · แก้ได้เฉพาะช่องราคา','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
+  'st.ready':'พร้อมใช้งาน','log.clear':'ล้าง','log.clearTtl':'ล้างบันทึกทั้งหมด (ย้อนไม่ได้)','log.clearNone':'ยังไม่มีบันทึกให้ล้าง','pnl.clearLogOk':'ล้างบันทึก','pnl.clearLogMsg':'ล้างบันทึกทั้งหมด <b>{n} รายการ</b> ใช่ไหม? กู้คืนไม่ได้ (Ctrl+Z ย้อนไม่ได้) — ถ้าต้องการเก็บไว้ ให้ส่งออกก่อน','pnl.clearLogExport':'ส่งออก JSON ก่อน','fl.logCleared':'✓ ล้างบันทึก {n} รายการแล้ว','ttl.closeLog':'ปิดหน้าต่างบันทึก','log.export':'ส่งออก','log.exportCsvTtl':'ส่งออกบันทึกเป็นไฟล์ CSV (เปิดใน Excel ได้) · เลือกที่เก็บไฟล์ได้ · เรียงตามที่แสดงอยู่','log.exportJsonTtl':'ส่งออกบันทึกเป็นไฟล์ JSON · เลือกที่เก็บไฟล์ได้ · เรียงตามที่แสดงอยู่','log.exportNone':'ยังไม่มีบันทึกให้ส่งออก','log.tInfo':'ข้อมูล','log.tWarning':'คำเตือน','log.tError':'ข้อผิดพลาด','log.tEdit':'แก้ไข','fl.logExported':'✓ ส่งออกบันทึก {n} รายการเป็น {fmt} แล้ว · ไฟล์ {f} อยู่ในโฟลเดอร์ที่คุณเลือก','fl.logExportCancel':'ยกเลิก — ยังไม่ได้ส่งออกบันทึก','fl.logExportDl':'⚠️ ส่งออกบันทึก {n} รายการเป็น {fmt} แล้ว · ไฟล์ {f} อยู่ในโฟลเดอร์ดาวน์โหลดของเบราว์เซอร์ (กด Ctrl+J เพื่อดู) — เบราว์เซอร์นี้ให้เลือกที่เก็บไม่ได้','fl.prTooLong':'⚠️ ราคาแต่ละตัวเลขใส่ได้ไม่เกิน 5 หลัก','fl.amtTooLong':'⚠️ จำนวนใส่ได้ไม่เกิน {n} หลัก','fl.pagesTooLong':'⚠️ มี {total} หน้า — เลขหน้าแต่ละตัวใส่ได้ {d} หลัก','fl.pagesFull':'⚠️ ช่องเลขหน้ายาวได้ไม่เกิน 50 ตัว','fl.hexOnly':'⚠️ รหัสสีใส่ได้เฉพาะ # 0-9 A-F เช่น #C0392B','fl.hexOnlyTh':'⚠️ รหัสสีใส่ได้เฉพาะ # 0-9 A-F · แป้นพิมพ์อยู่ภาษาไทย ให้เปลี่ยนเป็นภาษาอังกฤษก่อน','fl.txtTooLong':'⚠️ {field} ยาวได้ไม่เกิน {n} ตัวอักษร','fl.txtNoEnter':'⚠️ {field} ขึ้นบรรทัดใหม่ไม่ได้','fl.txtLines':'⚠️ {field} ได้ไม่เกิน {n} บรรทัด','fl.pagesOnly':'⚠️ เลขหน้าใส่ได้เฉพาะตัวเลข , และ - เช่น 1,3,5-7','fl.pagesOnlyTh':'⚠️ เลขหน้าใส่ได้เฉพาะตัวเลข , และ - · แป้นพิมพ์อยู่ภาษาไทย ให้เปลี่ยนเป็นภาษาอังกฤษก่อน','btn.imgHide':'ซ่อนรูป','grp.imgview':'มุมมอง','ttl.imgHide':'ซ่อนรูปอาหารบนจอ (พิมพ์/บันทึกยังมีรูป)','ttl.imgShow':'แสดงรูปอาหารกลับ','fl.imgHidden':'✓ ซ่อนรูป {n} รูปแล้ว (เฉพาะบนจอ · พิมพ์ยังมีรูป)','fl.imgShown':'✓ แสดงรูป {n} รูปแล้ว','pr.thisPage':'เฉพาะหน้านี้','pr.thisOne':'เฉพาะอันนี้','sc.grpFallback':'กลุ่ม {n}','st.overflow':'เนื้อหาส่วนที่ล้นหน้าเพจ A4 จะถูกตัดไม่แสดงตอนพิมพ์ หลังการแก้ไขโปรดตรวจสอบว่าเนื้อหายังอยู่ในกรอบหน้าเพจ A4','btn.addRow':'➕ เพิ่มรายการ','btn.addGroup':'➕ เพิ่มกลุ่ม','btn.delThisPage':'🗑 ลบหน้านี้','img.allDone':'✓ ใส่รูปไป {n} หน้าแล้ว','img.allNone':'ทุกหน้ามีรูปนี้อยู่แล้ว','typ.all':'ทุกประเภท','fl.setDefault':'✔ ตั้งค่าเริ่มต้น [{label}] แล้ว — ใช้กับ row ใหม่ต่อไป (ของเดิมไม่เปลี่ยน)','fl.noHighlight':'⚠️ ยังไม่ได้ไฮไลท์ข้อความ — ลากคลุมข้อความก่อน','fl.paintRange':'ทาสีช่วงที่เลือก → {c}','fl.colorRange':'เปลี่ยนสีช่วงที่เลือก → {c}','fl.fontRange':'เปลี่ยนฟอนต์ช่วงที่เลือก → {f}','fl.clearedRange':'✓ ล้างรูปแบบจุดที่ไฮไลท์แล้ว','fl.clearSelNone':'⚠️ จุดที่ไฮไลท์ไม่มีรูปแบบเฉพาะจุดให้ล้าง — ถ้าตั้งรูปแบบไว้ทั้งช่อง ใช้ "คืนค่า"','fl.selInfo':'เลือกอยู่: "{txt}" ({n} ตัวอักษร)','cp.noCustom':'ยังไม่มีสีที่กำหนดเอง','cp.customLbl':'สีที่กำหนดเอง','cp.addCustom':'+ กำหนดเอง','cp.paint':'ทาสี','ttl.cpApply':'ทาสีปัจจุบันลงช่วงที่เลือก','ttl.cpCaret':'เลือกสีอื่น','ttl.hex':'พิมพ์รหัสสี HEX','ttl.cpAdd':'เลือกสีเองแล้วบันทึก','ttl.cpPaint':'ใช้สีนี้กับช่วงที่เลือก','ttl.sizeDown':'เล็กลง','ttl.sizeUp':'ใหญ่ขึ้น','ttl.underline':'ขีดล่าง','ttl.strike':'ขีดกลาง','ln.dotted':'จุด','ln.dashed':'ขีด','ln.solid':'ทึบ','btn.setDefault':'ตั้งค่าเริ่มต้น','ttl.setDefault':'ตั้งรูปแบบนี้เป็นค่าเริ่มต้นสำหรับ row ใหม่','btn.clearSel':'ล้างรูปแบบจุดที่ไฮไลท์','ttl.clearSel':'ล้างรูปแบบเฉพาะจุดที่ไฮไลท์','ttl.clearSelNeed':'ไฮไลท์ข้อความก่อน — ลากคลุมส่วนที่จะล้างรูปแบบ','pk.hint':'เลือกไอคอนหมวด (คลิกเพื่อใช้)','st.editText':'โหมดแก้ไขข้อความ · คลิกข้อความที่ต้องการแก้','st.priceMode':'โหมดปรับราคา · แก้ได้เฉพาะช่องราคา','st.clickText':'คลิกข้อความที่ต้องการแก้','st.min1page':'ต้องมีอย่างน้อย 1 หน้า — ลบไม่ได้','st.selImgFirst':'เลือกรูปก่อน แล้วกด "ใส่ทุกหน้า"',
   'fl.delGroup':'🗑 ลบกลุ่มแล้ว · กด Ctrl+Z เพื่อย้อน','fl.delPage':'🗑 ลบหน้าแล้ว · กด Ctrl+Z เพื่อย้อน','fl.addPage':'➕ เพิ่มหน้า {n} · ส่วนหัวคัดจากหน้า {from}','fl.reset':'↺ คืนค่าเริ่มต้นแล้ว','fl.applyAll':'✓ ใช้รูปแบบกับ{label} {n} ช่องแล้ว','fl.applyAllNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้มีรูปแบบเดียวกันอยู่แล้ว','fl.applyAllNoFmt':'ไม่มีช่องไหนเปลี่ยน — ช่องต้นทางยังเป็นรูปแบบเริ่มต้น ไม่มีรูปแบบให้คัดลอก','fl.applyAllNoMatch':'ไม่มีช่องไหนเปลี่ยน — รูปแบบที่ทาไว้บางตัวอักษร คัดลอกได้เฉพาะช่องที่มีข้อความเดียวกัน · ถ้าจะให้ทั้งช่อง ให้ไฮไลท์ทั้งข้อความ หรือคลิกโดยไม่ไฮไลท์ แล้วจัดรูปแบบ','fl.resetN':'↺ คืนค่าเริ่มต้น{label} {n} ช่องแล้ว','fl.resetNone':'ไม่มีช่องไหนเปลี่ยน — {label}ในขอบเขตนี้เป็นค่าเริ่มต้นอยู่แล้ว','sc.grpOpt':'{name} · หน้า {p}','pnl.needScope':'เลือกขอบเขตก่อน','pr.onePage':'เฉพาะหน้า','sc.pageOpt':'หน้า {p}','pnl.pickGroup':'— เลือกกลุ่ม —','pnl.pickPage':'— เลือกหน้า —','pnl.needGroup':'เลือกกลุ่มก่อน','pnl.needPage':'เลือกหน้าก่อน','pr.noItems':'ไม่มีรายการในขอบเขตนี้','pr.allEmpty':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ต้องใส่ราคาก่อน','pr.adjSame':'ไม่มีราคาที่เปลี่ยน — ผลที่ได้เท่าราคาเดิม (ราคาต่ำสุด 0 · % ปัดเป็นจำนวนเต็ม)','pr.adjNoNum':'ไม่มีราคาที่เป็นตัวเลขในขอบเขตนี้','pr.skipEmpty':'ข้ามช่องว่าง {n} ช่อง','pr.skipNonNum':'ข้ามช่องที่ไม่ใช่ตัวเลข {n} ช่อง','pr.skipSame':'ได้ราคาเดิม {n} ช่อง','pr.task':'งาน','pr.setApply':'ใส่ราคา','pr.fillLbl':'ใส่ในช่อง','pr.fillEmpty':'เฉพาะช่องว่าง','pr.fillAll':'แทนที่ทุกช่อง','pr.priceLbl':'ราคา','pr.amtLbl':'จำนวน','pr.inclEmpty':'รวมช่องว่าง (นับเป็น 0)','pr.inclEmptyNA':'ใช้ได้เฉพาะ เพิ่ม แบบ บาท','pr.fillEmptyN':'ช่องว่าง {n} ช่อง → {v}','pr.allEmptyTick':'ช่องราคาในขอบเขตนี้ยังว่างทั้ง {n} ช่อง — ติ๊ก "รวมช่องว่าง" หรือใส่ราคาก่อน','pr.needFill':'เลือกว่าจะใส่ในช่องไหนก่อน','pr.needPrice':'ใส่ราคาก่อน (ตัวเลข หรือช่วง เช่น 35-45)','pr.setAdd':'ใส่ใหม่ {a} ช่อง','pr.setOver':'เขียนทับ {o} ช่อง','pr.setNoEmpty':'ไม่มีช่องราคาว่างในขอบเขตนี้','pr.setNoChange':'ทุกช่องในขอบเขตนี้เป็นราคานี้อยู่แล้ว','fl.setPrice':'✓ ใส่ราคา {price} ในช่องว่าง {a} ช่องแล้ว','fl.setPriceOver':'✓ ใส่ราคา {price} แล้ว — ใหม่ {a} ช่อง · เขียนทับ {o} ช่อง','fl.deletedPages':'🗑 ลบแล้ว {n} หน้า เหลือ {remain} หน้า · กด Ctrl+Z เพื่อย้อน',
   'fl.savingMenu':'⏳ กำลังบันทึกไฟล์เมนู...','fl.savedMenu':'✅ บันทึกไฟล์เมนูแล้ว · ไฟล์ {name} อยู่ในโฟลเดอร์ที่คุณเลือก','fl.cancelMenu':'ยกเลิก — ยังไม่ได้บันทึกไฟล์เมนู','fl.fallbackMenu':'⚠️ บันทึกไฟล์เมนูแล้ว · ไฟล์ {fname} อยู่ในโฟลเดอร์ดาวน์โหลดของเบราว์เซอร์ (กด Ctrl+J เพื่อดู) — เบราว์เซอร์นี้ให้เลือกที่เก็บไม่ได้',
   'fl.savingEditor':'⏳ กำลังบันทึกไฟล์ Editor...','fl.savedEditor':'✅ บันทึกไฟล์ Editor แล้ว · ไฟล์ {name} อยู่ในโฟลเดอร์ที่คุณเลือก','fl.cancelEditor':'ยกเลิกการบันทึก — ยังไม่ได้บันทึกไฟล์','fl.fallbackEditor':'⚠️ บันทึกไฟล์ Editor แล้ว · ไฟล์ {fname} อยู่ในโฟลเดอร์ดาวน์โหลดของเบราว์เซอร์ (กด Ctrl+J เพื่อดู) — เบราว์เซอร์นี้ให้เลือกที่เก็บไม่ได้',
@@ -1445,7 +1444,7 @@ var I18N={
   'img.label':'Image','img.header':'Header','img.clickEdit':'Click an image to edit','img.mode':'Image mode',
   'fl.needSel':'⚠️ No text selected — drag to highlight text first','fl.prNumOnly':'⚠️ Price accepts numbers only (use - for a range, e.g. 100-150)','fl.amtNumOnly':'⚠️ Amount accepts whole numbers only','grp.header':'Header (all pages)','btn.editHeader':'Edit Header','grp.price':'Price','btn.bulkPrice':'Adjust Price','pr.scope':'Scope','pr.allPages':'All pages','pr.oneGroup':'One group','pr.baht':'Baht','pr.up':'Increase','pr.down':'Decrease','pr.apply':'Adjust','pr.enterAmt':'Enter amount to adjust','pr.itemsUnit':'items','pr.errAmt':'Please enter an amount greater than 0','fl.bulkPrice':'💰 Adjusted {n} items','fl.bulkPriceUp':'✓ Increased +{amt}{unit} · {n} items','fl.bulkPriceDown':'✓ Decreased −{amt}{unit} · {n} items','fl.bulkPriceUpFill':'✓ Increased +{amt}{unit} · {n} items · {f} empty filled','hdr.flash':'Edit the header on any page — it applies to all pages','hdr.mode':'Header mode','log.title':'Activity Log','log.toggle':'Activity log (click to open/close)','log.empty':'No activity yet','log.colTime':'Time','log.colType':'Type','log.colDetail':'Detail','log.fieldName':'item name','log.fieldPrice':'price','log.fieldGroup':'group name','log.fieldHeader':'header','log.edited':'✏️ Edited {field} "{old}" → "{new}"','log.editedNew':'✏️ Set {field} "{new}"','log.editedClear':'✏️ Cleared {field} (was "{old}")','log.limitReached':'⚠️ Reached Undo/Redo limit of 1,000 — oldest history dropped one by one',
   'ttl.dragReorder':'Drag to reorder','ttl.color':'Color','ttl.size':'Size (px)','ttl.bold':'Bold','ttl.italic':'Italic','ttl.lineStyle':'Line style','ttl.applyAll':'Apply this style to all of the same type','ttl.reset':'Reset the selected item to default','ttl.delRow':'Delete this item','ttl.delGroup':'Delete this entire group','ttl.dupRow':'Duplicate this item','ttl.dupGroup':'Duplicate this entire group','fl.dupRow':'⧉ Item duplicated','fl.dupGroup':'⧉ Group duplicated','ttl.resize':'Drag to resize the image','fl.undo':'↶ Undone','fl.redo':'↷ Redone','ttl.undo':'Undo (Ctrl+Z)','ttl.redo':'Redo (Ctrl+Y)',
-  'st.ready':'Ready','log.clear':'Clear','log.clearTtl':'Clear the whole log (cannot be undone)','log.clearNone':'Nothing to clear yet','pnl.clearLogOk':'Clear log','pnl.clearLogMsg':'Clear all <b>{n} log entries</b>? This cannot be undone (Ctrl+Z will not bring them back) — export first if you want to keep them','pnl.clearLogExport':'Export JSON first','fl.logCleared':'✓ Cleared {n} log entries','ttl.closeLog':'Close the activity log','log.export':'Export','log.exportCsvTtl':'Export log as CSV (opens in Excel) · you choose where to save · in the order shown','log.exportJsonTtl':'Export log as JSON · you choose where to save · in the order shown','log.exportNone':'Nothing to export yet','log.tInfo':'Info','log.tWarning':'Warning','log.tError':'Error','log.tEdit':'Edit','fl.logExported':'✓ Exported {n} log entries as {fmt} · file {f} is in the folder you chose','fl.logExportCancel':'Cancelled — log not exported','fl.logExportDl':'⚠️ Exported {n} log entries as {fmt} · file {f} is in the browser Downloads folder (press Ctrl+J to see) — this browser cannot choose a location','fl.prTooLong':'⚠️ Each price number can have at most 5 digits','fl.amtTooLong':'⚠️ Amount can have at most {n} digits','fl.pagesTooLong':'⚠️ {total} pages — each page number has at most {d} digit(s)','fl.pagesFull':'⚠️ Page list can be at most 50 characters','fl.hexOnly':'⚠️ Color code accepts # 0-9 A-F only, e.g. #C0392B','fl.hexOnlyTh':'⚠️ Color code accepts # 0-9 A-F only · keyboard is in Thai, switch to English first','fl.txtTooLong':'⚠️ {field}: up to {n} characters','fl.txtNoEnter':'⚠️ {field}: line breaks are not allowed','fl.txtLines':'⚠️ {field}: up to {n} lines','fl.pagesOnly':'⚠️ Page numbers accept digits, commas and hyphens only, e.g. 1,3,5-7','fl.pagesOnlyTh':'⚠️ Page numbers accept digits, commas and hyphens only · keyboard is in Thai, switch to English first','btn.imgHide':'Hide images','grp.imgview':'View','ttl.imgHide':'Hide food images on screen (print/save still include them)','ttl.imgShow':'Show food images again','fl.imgHidden':'✓ {n} images hidden (screen only · print still includes them)','fl.imgShown':'✓ {n} images shown','pr.thisPage':'This page','pr.thisOne':'This item','sc.grpFallback':'Group {n}','st.overflow':'Content that overflows the A4 page will be cut off when printed. After editing, check that everything stays inside the A4 frame.','btn.addRow':'➕ Add item','btn.addGroup':'➕ Add group','btn.delThisPage':'🗑 Delete this page','img.allDone':'✓ Added the image to {n} pages','img.allNone':'Every page already has this image','typ.all':'All types','fl.setDefault':'✔ Default set for [{label}] — applies to new rows (existing unchanged)','fl.noHighlight':'⚠️ No text highlighted — drag over the text first','fl.paintRange':'Painted selection → {c}','fl.colorRange':'Selection color → {c}','fl.fontRange':'Selection font → {f}','fl.noCell':'⚠️ No cell selected — click in a text cell first','fl.clearedField':'🧹 Cleared formatting of the whole cell','fl.clearedRange':'Cleared formatting of the selection','fl.selInfo':'Selected: "{txt}" ({n} characters)','cp.noCustom':'No custom colors yet','cp.customLbl':'Custom colors','cp.addCustom':'+ Custom','cp.paint':'Paint','ttl.cpApply':'Paint the current color on the selection','ttl.cpCaret':'Choose another color','ttl.hex':'Type a HEX color code','ttl.cpAdd':'Pick a color and save it','ttl.cpPaint':'Apply this color to the selection','ttl.sizeDown':'Smaller','ttl.sizeUp':'Larger','ttl.underline':'Underline','ttl.strike':'Strikethrough','ln.dotted':'Dotted','ln.dashed':'Dashed','ln.solid':'Solid','btn.setDefault':'Set default','ttl.setDefault':'Use this formatting as the default for new rows','btn.clearSel':'Clear selected format','ttl.clearSel':'Clear formatting of the highlighted part only','btn.clearField':'Clear format','ttl.clearField':'Clear formatting of the whole cell','pk.hint':'Choose a group icon (click to use)','st.editText':'Text edit mode · Click the text to edit','st.priceMode':'Price mode · Only price cells can be edited','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
+  'st.ready':'Ready','log.clear':'Clear','log.clearTtl':'Clear the whole log (cannot be undone)','log.clearNone':'Nothing to clear yet','pnl.clearLogOk':'Clear log','pnl.clearLogMsg':'Clear all <b>{n} log entries</b>? This cannot be undone (Ctrl+Z will not bring them back) — export first if you want to keep them','pnl.clearLogExport':'Export JSON first','fl.logCleared':'✓ Cleared {n} log entries','ttl.closeLog':'Close the activity log','log.export':'Export','log.exportCsvTtl':'Export log as CSV (opens in Excel) · you choose where to save · in the order shown','log.exportJsonTtl':'Export log as JSON · you choose where to save · in the order shown','log.exportNone':'Nothing to export yet','log.tInfo':'Info','log.tWarning':'Warning','log.tError':'Error','log.tEdit':'Edit','fl.logExported':'✓ Exported {n} log entries as {fmt} · file {f} is in the folder you chose','fl.logExportCancel':'Cancelled — log not exported','fl.logExportDl':'⚠️ Exported {n} log entries as {fmt} · file {f} is in the browser Downloads folder (press Ctrl+J to see) — this browser cannot choose a location','fl.prTooLong':'⚠️ Each price number can have at most 5 digits','fl.amtTooLong':'⚠️ Amount can have at most {n} digits','fl.pagesTooLong':'⚠️ {total} pages — each page number has at most {d} digit(s)','fl.pagesFull':'⚠️ Page list can be at most 50 characters','fl.hexOnly':'⚠️ Color code accepts # 0-9 A-F only, e.g. #C0392B','fl.hexOnlyTh':'⚠️ Color code accepts # 0-9 A-F only · keyboard is in Thai, switch to English first','fl.txtTooLong':'⚠️ {field}: up to {n} characters','fl.txtNoEnter':'⚠️ {field}: line breaks are not allowed','fl.txtLines':'⚠️ {field}: up to {n} lines','fl.pagesOnly':'⚠️ Page numbers accept digits, commas and hyphens only, e.g. 1,3,5-7','fl.pagesOnlyTh':'⚠️ Page numbers accept digits, commas and hyphens only · keyboard is in Thai, switch to English first','btn.imgHide':'Hide images','grp.imgview':'View','ttl.imgHide':'Hide food images on screen (print/save still include them)','ttl.imgShow':'Show food images again','fl.imgHidden':'✓ {n} images hidden (screen only · print still includes them)','fl.imgShown':'✓ {n} images shown','pr.thisPage':'This page','pr.thisOne':'This item','sc.grpFallback':'Group {n}','st.overflow':'Content that overflows the A4 page will be cut off when printed. After editing, check that everything stays inside the A4 frame.','btn.addRow':'➕ Add item','btn.addGroup':'➕ Add group','btn.delThisPage':'🗑 Delete this page','img.allDone':'✓ Added the image to {n} pages','img.allNone':'Every page already has this image','typ.all':'All types','fl.setDefault':'✔ Default set for [{label}] — applies to new rows (existing unchanged)','fl.noHighlight':'⚠️ No text highlighted — drag over the text first','fl.paintRange':'Painted selection → {c}','fl.colorRange':'Selection color → {c}','fl.fontRange':'Selection font → {f}','fl.clearedRange':'✓ Cleared formatting of the highlighted part','fl.clearSelNone':'⚠️ The highlighted part has no partial formatting to clear — for whole-cell formatting use "Reset"','fl.selInfo':'Selected: "{txt}" ({n} characters)','cp.noCustom':'No custom colors yet','cp.customLbl':'Custom colors','cp.addCustom':'+ Custom','cp.paint':'Paint','ttl.cpApply':'Paint the current color on the selection','ttl.cpCaret':'Choose another color','ttl.hex':'Type a HEX color code','ttl.cpAdd':'Pick a color and save it','ttl.cpPaint':'Apply this color to the selection','ttl.sizeDown':'Smaller','ttl.sizeUp':'Larger','ttl.underline':'Underline','ttl.strike':'Strikethrough','ln.dotted':'Dotted','ln.dashed':'Dashed','ln.solid':'Solid','btn.setDefault':'Set default','ttl.setDefault':'Use this formatting as the default for new rows','btn.clearSel':'Clear highlighted format','ttl.clearSel':'Clear formatting of the highlighted part only','ttl.clearSelNeed':'Highlight text first — drag over the part to clear','pk.hint':'Choose a group icon (click to use)','st.editText':'Text edit mode · Click the text to edit','st.priceMode':'Price mode · Only price cells can be edited','st.clickText':'Click the text to edit','st.min1page':'At least 1 page is required — cannot delete','st.selImgFirst':'Select an image first, then press "Apply to All Pages"',
   'fl.delGroup':'🗑 Group deleted · Press Ctrl+Z to undo','fl.delPage':'🗑 Page deleted · Press Ctrl+Z to undo','fl.addPage':'➕ Added page {n} · header copied from page {from}','fl.reset':'↺ Reset to default','fl.applyAll':'✓ Applied the style to {n} {label}','fl.applyAllNone':'Nothing changed — every {label} in this scope already has this style','fl.applyAllNoFmt':'Nothing changed — the source still has the default style, nothing to copy','fl.applyAllNoMatch':'Nothing changed — per-character formatting copies only to cells with the same text · for the whole cell, select all its text (or click without selecting) then format','fl.resetN':'↺ Reset {n} {label} to default','fl.resetNone':'Nothing changed — every {label} in this scope is already default','sc.grpOpt':'{name} · Page {p}','pnl.needScope':'Choose a scope first','pr.onePage':'One page','sc.pageOpt':'Page {p}','pnl.pickGroup':'— Choose group —','pnl.pickPage':'— Choose page —','pnl.needGroup':'Choose a group first','pnl.needPage':'Choose a page first','pr.noItems':'No items in this scope','pr.allEmpty':'All {n} price cells in this scope are empty — set prices first','pr.adjSame':'No prices changed — results equal current prices (minimum 0 · % rounds to whole numbers)','pr.adjNoNum':'No numeric prices in this scope','pr.skipEmpty':'{n} empty skipped','pr.skipNonNum':'{n} non-numeric skipped','pr.skipSame':'{n} unchanged','pr.task':'Action','pr.setApply':'Set price','pr.fillLbl':'Fill','pr.fillEmpty':'Empty only','pr.fillAll':'Replace all','pr.priceLbl':'Price','pr.amtLbl':'Amount','pr.inclEmpty':'Include empty (as 0)','pr.inclEmptyNA':'Only for Increase in baht','pr.fillEmptyN':'{n} empty → {v}','pr.allEmptyTick':'All {n} price cells in this scope are empty — tick "Include empty" or set prices first','pr.needFill':'Choose which cells to fill first','pr.needPrice':'Enter a price first (number or range, e.g. 35-45)','pr.setAdd':'Fill {a} empty','pr.setOver':'Overwrite {o}','pr.setNoEmpty':'No empty price cells in this scope','pr.setNoChange':'Every cell in this scope already has this price','fl.setPrice':'✓ Set price {price} in {a} empty cells','fl.setPriceOver':'✓ Set price {price} — {a} new · {o} overwritten','fl.deletedPages':'🗑 Deleted {n} page(s) · {remain} remaining · Press Ctrl+Z to undo',
   'fl.savingMenu':'⏳ Saving menu file...','fl.savedMenu':'✅ Menu file saved · file {name} is in the folder you chose','fl.cancelMenu':'Cancelled — menu file not saved','fl.fallbackMenu':'⚠️ Menu file saved · file {fname} is in the browser Downloads folder (press Ctrl+J to see) — this browser cannot choose a location',
   'fl.savingEditor':'⏳ Saving editor file...','fl.savedEditor':'✅ Editor file saved · file {name} is in the folder you chose','fl.cancelEditor':'Save cancelled — file not saved','fl.fallbackEditor':'⚠️ Editor file saved · file {fname} is in the browser Downloads folder (press Ctrl+J to see) — this browser cannot choose a location',
@@ -1728,7 +1727,8 @@ function typoSelect(el,type){
   var isLine=!!type.line;
   setStatus('info',_typoLabel(type));
   // เปิด controls
-  ['typoColor','typoCpApply','typoApplyAll','typoResetBtn','typoSetDefault','typoClearSel','typoClearField'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=false;});
+  ['typoColor','typoCpApply','typoApplyAll','typoResetBtn','typoSetDefault'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=false;});
+  _clearSelSync();  /* ล้างรูปแบบจุดที่ไฮไลท์: กดได้เฉพาะตอนมีไฮไลท์ */
   // update Set Default button glow based on whether this type already has a saved default
   var _sdb=document.getElementById('typoSetDefault');
   if(_sdb) _sdb.classList.toggle('on', !!(_defaultStyles[type.key]));
@@ -1760,13 +1760,14 @@ function typoClear(){
   if(_typoEl) _typoEl.classList.remove('typosel');
   _typoEl=null; _typoType=null;
   setStatus('info',tk('st.clickText'));
-  ['typoFont','typoColor','typoSize','typoBold','typoItalic','typoUnderline','typoStrike','typoSizeUp','typoSizeDown','typoApplyAll','typoResetBtn','typoSetDefault','typoClearSel','typoClearField','typoCpApply'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=true;});
+  ['typoFont','typoColor','typoSize','typoBold','typoItalic','typoUnderline','typoStrike','typoSizeUp','typoSizeDown','typoApplyAll','typoResetBtn','typoSetDefault','typoClearSel','typoCpApply'].forEach(function(id){var e=document.getElementById(id);if(e)e.disabled=true;});
   var _sdb2=document.getElementById('typoSetDefault'); if(_sdb2) _sdb2.classList.remove('on');
   document.getElementById('typoBold').classList.remove('on');
   document.getElementById('typoItalic').classList.remove('on');
   document.getElementById('typoLineSeg').style.display='none';
   document.getElementById('typoFont').style.display='';
   document.getElementById('typoSize').style.display='';
+  _clearSelSync();
 }
 /* wiring: new mockup-based apply functions (v81 — old typoApplySel/typoToggleSel removed) */
 function typoColorApply(){
@@ -1799,12 +1800,30 @@ function typoSizeStep(d){
   if(hasRange()){ applyFontSizePx(v); return; }
   if(_typoEl&&!(_typoType&&_typoType.line)){ _typoEl.style.fontSize=v+'px'; if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow(); }
 }
-function typoClearSel(){
-  if(!hasRange()){ if(typeof flashStatus==='function') flashStatus('warning',tk('fl.needSel')); return; }
-  clearFormatSel();
+/* ล้างรูปแบบจุดที่เลือก (แก้ 7 ต.ค. 2026): ผูกปุ่มครั้งเดียว (onclick) · มีจุด Undo · ข้อความตรงกับที่เกิดจริง
+   ล้างเฉพาะรูปแบบที่ทาไว้บางตัวอักษรในจุดที่ไฮไลท์ — รูปแบบที่ตั้งทั้งช่องล้างด้วย "คืนค่า" (ปุ่ม "ล้างรูปแบบ" ถูกลบเพราะซ้ำกับ คืนค่า·เฉพาะอันนี้) */
+/* ไฮไลท์ที่ใช้ได้จริง: มีช่วง ไม่ว่าง อยู่ในช่องที่ยังอยู่ในหน้า (หลัง Undo ช่องเก่าถูกแทน → ช่วงเก่าใช้ไม่ได้) */
+function _hlLive(){
+  return !!(hasRange() && lastEditable && lastEditable.isConnected && lastEditable.contains(savedRange.startContainer) && lastEditable.contains(savedRange.endContainer));
 }
-function typoClearField(){
-  clearFormatField();
+/* ปุ่มล้างรูปแบบจุดที่ไฮไลท์ กดได้เฉพาะตอนไฮไลท์ (ตกลงกับผู้ใช้ 7 ต.ค. 2026 · UI_STANDARD ข้อ 5) · ปุ่มจาง = tooltip บอกให้ไฮไลท์ก่อน */
+function _clearSelSync(){
+  var b=document.getElementById('typoClearSel'); if(!b) return;
+  var on=!!(_typoEl && !(_typoType && _typoType.line) && document.body.classList.contains('editmode') && _hlLive());
+  b.disabled=!on;
+  var k=on?'ttl.clearSel':'ttl.clearSelNeed';
+  if(b.getAttribute('data-i18n-title')!==k){ b.setAttribute('data-i18n-title',k); b.title=t(k); }  /* applyLang แปลใหม่จาก key นี้ */
+}
+function typoClearSel(){
+  if(!_hlLive()){ flashStatus('warning',tk('fl.needSel')); _clearSelSync(); return; }
+  var n=clearFormatSel();
+  if(n>0){
+    if(typeof markDirty==='function') markDirty();       /* จุด Undo + เตือนก่อนปิดแท็บ (เดิมไม่มี) */
+    if(typeof checkOverflow==='function') checkOverflow();
+    flashStatus('info',tk('fl.clearedRange'));
+  } else {
+    flashStatus('warning',tk('fl.clearSelNone'));      /* ไม่มีอะไรเปลี่ยน = ไม่บอกว่าล้างแล้ว */
+  }
 }
 /* ใช้ทั้งประเภท: เก็บรูปแบบช่องต้นทางแบบละเอียด = style ทั้งช่อง + ช่วงตัวอักษรที่ทาไว้ (เช่น 'นู' สีแดง) */
 var _TYPO_FMT_PROPS=['color','fontFamily','fontSize','fontWeight','fontStyle'];
@@ -2074,12 +2093,13 @@ function _typoScopeTargets(sel, scope, groupIdx){
       if(_typoEl && !(_typoType&&_typoType.line) && typeof window._setCurrent==='function') window._setCurrent(_typoColorAtCursor(_typoEl));
     }
   });
+  document.addEventListener('selectionchange', function(){ _clearSelSync(); });  /* หลัง listener บน (saveSelection) */
   /* clear stale savedRange when clicking outside toolbar (not on text drag) */
   document.addEventListener('mousedown',function(e){
     if(!document.body.classList.contains('editmode')) return;
     var _tg=e.target; if(_tg&&_tg.closest&&(_tg.closest('#typobar')||_tg.closest('#edbar')||_tg.closest('#edpanel')||_tg.closest('#edstatus')||_tg.closest('#actlog'))) return;
     if(_tg&&_tg.closest&&_tg.closest('[contenteditable]')) return;
-    savedRange=null;
+    savedRange=null; _clearSelSync();
   },true);
 
   // Toolbar must NOT steal focus — preventDefault keeps selection alive
@@ -2143,50 +2163,63 @@ function _typoScopeTargets(sel, scope, groupIdx){
     if(typeof flashStatus==='function') flashStatus('info',tk('fl.paintRange',{c:hex}));
   }
   function t_needSel(){ return tk('fl.noHighlight'); }
-  // Clear formatting via Range API — replace selection with plain text
-  function clearFormatSel(){
-    if(!hasRange()){ needSel(); return; }
-    lastEditable.focus(); restoreSelection();
-    var sel=window.getSelection(); if(!sel.rangeCount) return;
-    var range=sel.getRangeAt(0);
-    var text=range.toString();
-    // Delete the selected content, then split any styled ancestor spans so the
-    // replacement text is inserted as a PLAIN text node at field level (unwrapped).
-    range.deleteContents();
-    var tn=document.createTextNode(text);
-    // Walk up: if the insertion point is inside a styled <span> within the field,
-    // split that span at the caret and place the plain text between the halves.
-    var container=range.startContainer, offset=range.startOffset;
-    var field=lastEditable;
-    // Insert the text node at the current range first
-    range.insertNode(tn);
-    // Now lift tn out of any inline ancestor (span/b/i/font) up to the field
-    var node=tn;
-    while(node.parentNode && node.parentNode!==field){
-      var parent=node.parentNode;
-      // split parent into [before | node | after]
-      var after=parent.cloneNode(false);
-      var sib=node.nextSibling;
-      while(sib){ var nx=sib.nextSibling; after.appendChild(sib); sib=nx; }
-      // move node up before parent's next sibling
-      if(parent.nextSibling) parent.parentNode.insertBefore(node, parent.nextSibling);
-      else parent.parentNode.appendChild(node);
-      if(after.childNodes.length){ if(node.nextSibling) parent.parentNode.insertBefore(after, node.nextSibling); else parent.parentNode.appendChild(after); }
-      // remove now-empty parent if it has no children
-      if(!parent.childNodes.length) parent.parentNode.removeChild(parent);
-    }
-    // normalize to merge adjacent text nodes
-    if(field.normalize) field.normalize();
-    var r=document.createRange(); r.selectNode(tn);
-    sel.removeAllRanges(); sel.addRange(r);
-    savedRange=r.cloneRange();
+  /* ล้างรูปแบบเฉพาะจุดที่ไฮไลท์ (แก้ 7 ต.ค. 2026) — คืนจำนวนรูปแบบที่ล้างได้ (0 = ไม่มีอะไรให้ล้าง)
+     ทำทีละ text node ในจุดที่ไฮไลท์: ดึงออกจาก span สี/ตัวหนา/ฟอนต์ ที่ทาไว้ (ไม่มี class) โดยแยก span เป็น ก่อน | ข้อความ | หลัง
+     ไม่ดึงออกจากโครงสร้างของช่อง: element ที่มี class / ประเภทช่อง (TYPO_TYPES เช่น หัวข้อ·คำอธิบาย·ดอกจันในหมายเหตุ) / คุณไก๋ (.kai) / ตัวช่อง
+     เดิม: ลบช่วงแล้วใส่ข้อความล้วนที่ระดับช่อง → ไฮไลท์ข้ามหัวข้อกับคำอธิบายแล้วข้อความรวมกัน · คุณไก๋หลุดฟอนต์ */
+  function _clrIsStruct(d){
+    if(!d || d.nodeType!==1) return true;
+    if(d.className || d.hasAttribute('data-edit') || d.hasAttribute('contenteditable')) return true;
+    if(!/^(SPAN|B|STRONG|I|EM|U|S|STRIKE|FONT)$/.test(d.tagName)) return true;
+    return TYPO_TYPES.some(function(tt){ return d.matches && d.matches(tt.sel); });
   }
-  function clearFormatField(){
-    var ed = lastEditable || (document.querySelector('[contenteditable]:focus'));
-    if(!ed){ if(typeof flashStatus==='function') flashStatus('info',tk('fl.noCell')); return; }
-    ed.textContent = ed.textContent;
-    savedRange=null;
-    if(typeof flashStatus==='function') flashStatus('info',tk('fl.clearedField'));
+  function _clrRangeAt(el,start,end){
+    var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null), tn, off=0, r=document.createRange(), ok=false;
+    while((tn=w.nextNode())){
+      var l=tn.nodeValue.length;
+      if(!ok && start<=off+l){ r.setStart(tn,start-off); ok=true; }
+      if(ok && end<=off+l){ r.setEnd(tn,end-off); return r; }
+      off+=l;
+    }
+    return null;
+  }
+  function clearFormatSel(){
+    if(!hasRange()){ needSel(); return 0; }
+    var field=lastEditable; if(!field) return 0;
+    var range=savedRange.cloneRange();
+    if(!field.contains(range.commonAncestorContainer)) return 0;
+    var pre=document.createRange(); pre.selectNodeContents(field); pre.setEnd(range.startContainer,range.startOffset);
+    var st=pre.toString().length, len=range.toString().length;
+    var sc=range.startContainer, so=range.startOffset, ec=range.endContainer, eo=range.endOffset;
+    var w=document.createTreeWalker(field,NodeFilter.SHOW_TEXT,null), tn, list=[];
+    while((tn=w.nextNode())){ if(tn.nodeValue.length && range.intersectsNode(tn)) list.push(tn); }
+    var picked=[];
+    list.forEach(function(t0){
+      var a=(t0===sc)?so:0, b=(t0===ec)?eo:t0.nodeValue.length;
+      if(a>=b) return;
+      var mid=t0;
+      if(b<mid.nodeValue.length) mid.splitText(b);
+      if(a>0) mid=mid.splitText(a);
+      picked.push(mid);
+    });
+    var n=0;
+    picked.forEach(function(t1){
+      var p=t1.parentNode;
+      while(p && p!==field && field.contains(p) && !_clrIsStruct(p)){
+        var styled=(p.tagName!=='SPAN' || p.attributes.length>0);  /* span เปล่าไม่มีรูปแบบ = ไม่นับ */
+        var after=p.cloneNode(false), sib=t1.nextSibling;
+        while(sib){ var nx=sib.nextSibling; after.appendChild(sib); sib=nx; }
+        p.parentNode.insertBefore(t1, p.nextSibling);
+        if(after.childNodes.length) p.parentNode.insertBefore(after, t1.nextSibling);
+        if(!p.childNodes.length) p.parentNode.removeChild(p);
+        if(styled) n++;
+        p=t1.parentNode;
+      }
+    });
+    if(field.normalize) field.normalize();
+    var r=_clrRangeAt(field,st,st+len);
+    if(r){ try{ field.focus(); }catch(e){} var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r); savedRange=r.cloneRange(); }
+    return n;
   }
 
   function syncButtons(){
@@ -2292,12 +2325,6 @@ function _typoScopeTargets(sel, scope, groupIdx){
   });
   document.getElementById('typoSizeDown').addEventListener('click', function(){
     typoSizeStep(-1);
-  });
-  document.getElementById('typoClearSel').addEventListener('click', function(){
-    clearFormatSel(); if(typeof flashStatus==='function') flashStatus('info',tk('fl.clearedRange'));
-  });
-  document.getElementById('typoClearField').addEventListener('click', function(){
-    clearFormatField(); 
   });
 /* ===== END MOCKUP VERBATIM ===== */
 /* ===== Bulk price adjust (v63) ===== */

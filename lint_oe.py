@@ -318,6 +318,20 @@ def main():
             if _bid not in _NOEDIT21 and not any(_dirty21(_b) for _b in _bodies):
                 errors.append('ปุ่ม #{} ในแถบจัดรูปแบบไม่สร้างจุด Undo (ไม่ถึง markDirty/_snapNow) — ถ้าไม่ได้แก้เมนูให้ใส่ใน _NOEDIT21 พร้อมเหตุผล (ดู UI_STANDARD.md ข้อ 6)'.format(_bid))
 
+    # ---- 22) ผลการกระทำห้ามถูกข้อความสถานะทับ + ข้อความสถานะไม่จดบันทึก (บั๊ก 7 ต.ค. 2026: กดล้างรูปแบบแล้ว "เลือกอยู่" ทับผลภายใน 5ms ผู้ใช้เห็นว่าไม่ทำงาน · บันทึกเต็มไปด้วย "เลือกอยู่") ----
+    #   key ใน _HINT22 (ข้อความสถานะ) ต้องส่งผ่าน _statusHint() เท่านั้น — ห้ามผ่าน flashStatus/setStatus/logAdd (จะจดบันทึก/ทับผล)
+    #   flashStatus ต้องจำ selection ตอนแจ้งผล (_selHold=) · _statusHint ต้องเช็ค _selHold ก่อนแสดง · ดู UI_STANDARD.md ข้อ 6
+    _HINT22 = {'fl.selInfo'}
+    for _m in re.finditer(r"\b(flashStatus|setStatus|logAdd|_logFromFlash)\s*\([^;\n]*?tk\('([\w.]+)'", txt):
+        if _m.group(2) in _HINT22:
+            errors.append("บรรทัด {} ส่งข้อความสถานะ '{}' ผ่าน {}() — ใช้ _statusHint() (ไม่จดบันทึก ไม่ทับผล · ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1, _m.group(2), _m.group(1)))
+    _fs22 = re.search(r'\nfunction flashStatus\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _fs22 or '_selHold=' not in _fs22.group(0):
+        errors.append('flashStatus ไม่จำ selection ตอนแจ้งผล (_selHold=) — ข้อความสถานะจะทับผลได้ (ดู UI_STANDARD.md ข้อ 6)')
+    _sh22 = re.search(r'\nfunction _statusHint\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _sh22 or '_selHold' not in _sh22.group(0):
+        errors.append('ไม่พบ _statusHint() ที่เช็ค _selHold — ข้อความสถานะต้องไม่ทับผล (ดู UI_STANDARD.md ข้อ 6)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

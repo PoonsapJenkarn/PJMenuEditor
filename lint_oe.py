@@ -332,6 +332,39 @@ def main():
     if not _sh22 or '_selHold' not in _sh22.group(0):
         errors.append('ไม่พบ _statusHint() ที่เช็ค _selHold — ข้อความสถานะต้องไม่ทับผล (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 21b) ทุกทางที่แทรกรูปแบบลงช่อง (insertNode) ต้องมีจุด Undo ในทางนั้นเอง (บั๊ก 7 ต.ค. 2026: ทาสีเฉพาะส่วนที่ไฮไลท์ไม่ markDirty — lint ข้อ 21 ไม่จับเพราะเห็น markDirty ในทาง "ทั้งช่อง" ของฟังก์ชันเดียวกัน) ----
+    #   หลัง insertNode( ต้องมี markDirty( / _snapNow( ก่อนถึง return หรือท้ายฟังก์ชัน · ฟังก์ชันตัวช่วยที่ผู้เรียกเป็นคนสร้างจุด Undo ใส่ใน _HELPER21B พร้อมเหตุผล
+    #   _PENDING21B = รู้แล้วว่าขาด รอผู้ใช้ตัดสินใจ → เตือนทุกครั้งที่ commit (ไม่บล็อก) · ดู UI_STANDARD.md ข้อ 6
+    _HELPER21B = {'_typoWrapRange': 'ตัวช่วยของ ใช้ทั้งประเภท — typoApplyAllSame เรียก markDirty หลังทำครบทุกช่อง'}
+    _PENDING21B = {'applyFontSizePx': 'ขนาดตัวอักษรบางคำ — ผู้ใช้ตัดสินใจ 28 ก.ย. 2026 ให้ตัดออก แต่โค้ดยังเรียกจาก typoSizeStep และไม่มีจุด Undo'}
+    _js21b = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
+    for _m in re.finditer(r'(?:^|[\n;{}])\s*function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{', _js21b):
+        _nm = _m.group(1); _k = _m.end() - 1; _d = 0; _j = _k
+        while _j < len(_js21b):
+            if _js21b[_j] == '{': _d += 1
+            elif _js21b[_j] == '}':
+                _d -= 1
+                if _d == 0: break
+            _j += 1
+        _body = _js21b[_k:_j + 1]
+        if 'insertNode(' not in _body or _nm in _HELPER21B: continue
+        for _im in re.finditer(r'insertNode\(', _body):
+            _rest = _body[_im.end():]
+            _ret = re.search(r'\breturn\b', _rest)
+            _seg = _rest[:_ret.start()] if _ret else _rest
+            if not re.search(r'\b(markDirty|_snapNow)\s*\(', _seg):
+                _msg21b = '{}() แทรกรูปแบบลงช่อง (insertNode) แต่ทางนั้นไม่สร้างจุด Undo (markDirty/_snapNow) (ดู UI_STANDARD.md ข้อ 6)'.format(_nm)
+                if _nm in _PENDING21B: warnings.append(_msg21b + ' — รอตัดสินใจ: ' + _PENDING21B[_nm])
+                else: errors.append(_msg21b)
+                break
+
+    # ---- 23) คำว่า "บันทึก" ใช้กับ Save เท่านั้น — ประวัติ/log ใช้ "ประวัติ" (ตกลงกับผู้ใช้ 7 ต.ค. 2026: "ล้างบันทึก" อ่านเป็น ล้างไฟล์ที่ Save ไว้) ----
+    #   ข้อความภาษาไทยของ key ประวัติ (log.* · ttl.closeLog · pnl.clearLog* · fl.log*) ห้ามมีคำว่า "บันทึก" · ดู UI_STANDARD.md ข้อ 6
+    _thA23 = txt.find('th:{', txt.find('var I18N={')); _enA23 = txt.find('en:{', _thA23)
+    for _k, _v in re.findall(r"'([A-Za-z0-9_.]+)':'((?:[^'\\]|\\.)*)'", txt[_thA23:_enA23]):
+        if (_k.startswith('log.') or _k == 'ttl.closeLog' or _k.startswith('pnl.clearLog') or _k.startswith('fl.log')) and 'บันทึก' in _v.replace('บันทึกแล้วล้าง', ''):  # บันทึกแล้วล้าง = Save and Clear (กริยา Save · แบบ Windows Event Viewer) ไม่ใช่ log
+            errors.append("ข้อความ '{}' ใช้คำว่า \"บันทึก\" กับประวัติ — ใช้ \"ประวัติ\" (บันทึก = Save · ดู UI_STANDARD.md ข้อ 6)".format(_k))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

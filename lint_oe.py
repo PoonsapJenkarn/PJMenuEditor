@@ -365,6 +365,18 @@ def main():
         if (_k.startswith('log.') or _k == 'ttl.closeLog' or _k.startswith('pnl.clearLog') or _k.startswith('fl.log')) and 'บันทึก' in _v.replace('บันทึกแล้วล้าง', ''):  # บันทึกแล้วล้าง = Save and Clear (กริยา Save · แบบ Windows Event Viewer) ไม่ใช่ log
             errors.append("ข้อความ '{}' ใช้คำว่า \"บันทึก\" กับประวัติ — ใช้ \"ประวัติ\" (บันทึก = Save · ดู UI_STANDARD.md ข้อ 6)".format(_k))
 
+    # ---- 24) หน้าต่าง Save ทุกอันต้องไม่มี "All Files (*.*)" (ตกลงกับผู้ใช้ 7 ต.ค. 2026: เลือก All Files แล้วตั้งชื่อ .txt = ได้ไฟล์ที่ชื่อไม่ตรงกับเนื้อหา) ----
+    #   showSaveFilePicker({...}) ต้องมี excludeAcceptAllOption:true · และฟังก์ชันนั้นต้องตรวจนามสกุลของ .name ก่อนเขียน (หน้าเว็บไม่รู้ว่าผู้ใช้เลือก Save as type อันไหน) · ดู UI_STANDARD.md ข้อ 6
+    for _m in re.finditer(r'showSaveFilePicker\(\{', txt):
+        _q = txt.find('})', _m.end())
+        _ln = txt.count('\n', 0, _m.start()) + 1
+        if 'excludeAcceptAllOption:true' not in txt[_m.end():_q]:
+            errors.append('บรรทัด {} หน้าต่าง Save มี "All Files" (ไม่มี excludeAcceptAllOption:true) — ผู้ใช้ตั้งนามสกุลอะไรก็ได้ ไฟล์จะไม่ตรงกับเนื้อหา (ดู UI_STANDARD.md ข้อ 6)'.format(_ln))
+        _w = txt.find('createWritable(', _m.end())
+        _seg24 = txt[_q:_w] if _w > 0 else ''
+        if _w < 0 or not (re.search(r'\.name\b', _seg24) and re.search(r'\b(test|slice|endsWith)\(', _seg24)):
+            errors.append('บรรทัด {} เขียนไฟล์โดยไม่ตรวจนามสกุลของชื่อที่ผู้ใช้เลือก (ดู UI_STANDARD.md ข้อ 6)'.format(_ln))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

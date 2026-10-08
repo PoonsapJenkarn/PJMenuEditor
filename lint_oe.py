@@ -199,7 +199,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -278,7 +278,9 @@ def main():
     #   ไล่จาก onclick หรือ addEventListener('click') ของปุ่ม ลึก 4 ชั้น · ปุ่มที่ไม่ได้แก้เมนูต้องอยู่ใน _NOEDIT21 พร้อมเหตุผล · ดู UI_STANDARD.md ข้อ 6
     _NOEDIT21 = {
         'typoCpCaret': 'เปิด/ปิดกล่องเลือกสี',
-        'typoCpAdd': 'เปิดตัวเลือกสีของระบบ → เพิ่มสีที่กำหนดเอง (เก็บใน Local Storage ไม่ใช่เนื้อหาเมนู)',
+        'typoCpAdd': 'เปิดหน้าต่างสีที่กำหนดเอง (ตกลงในหน้าต่าง = ทาสีผ่าน applyColorRange ซึ่งมี markDirty)',
+        'typoCpDlgCancel': 'ปิดหน้าต่างสีโดยไม่เปลี่ยนอะไร',
+        'typoCpDlgEye': 'ดูดสีจากหน้าจอใส่หน้าต่างสี (ยังไม่ทาจนกว่าจะกดตกลง)',
     }
     _js21 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
     def _blk21(src, k):
@@ -471,6 +473,24 @@ def main():
         errors.append('flashStatus ไม่รวมผลกับคำเตือนตอนเพิ่งล้นหน้า (_ovfFresh/_ovfCombine) — ผลจะทับคำเตือนเต็ม (ดู UI_STANDARD.md ข้อ 7)')
     if not _co28b or '_ovfCombine' not in _co28b.group(0) or '_ovfFresh=true' not in _co28b.group(0):
         errors.append('checkOverflow ไม่รวมคำเตือนเต็มกับผลที่เพิ่งแสดง / ไม่ตั้ง _ovfFresh (ดู UI_STANDARD.md ข้อ 7)')
+
+    # ---- 30) เลือกสีเองต้องใช้หน้าต่างของแอป ไม่ใช่ตัวเลือกสีของเบราว์เซอร์ (ผู้ใช้ 8 ต.ค. 2026) ----
+    #   ตัวเลือกสีของเบราว์เซอร์: ตั้งให้ขึ้น HEX ไม่ได้ · ไม่มีตกลง/ยกเลิก · เดิมทาสีทุกครั้งที่ลาก (span ซ้อนกัน)
+    #   ห้ามเปิด <input type=color> (.click() / showPicker) · ห้ามผูก input/change กับ #typoColor
+    #   ระหว่างเลือกในหน้าต่างห้ามทาสี: applyColorRange เรียกได้เฉพาะใน _cpDlgOk · ดู UI_STANDARD.md ข้อ 6
+    if re.search(r"getElementById\('typoColor'\)\.(click|showPicker)\(", txt) or re.search(r"getElementById\('typoColor'\)\.addEventListener\('(input|change)'", txt):
+        errors.append('#typoColor ถูกเปิดหรือผูก input/change — เลือกสีเองต้องใช้หน้าต่างสีของแอป (HEX หลัก · ตกลง/ยกเลิก) (ดู UI_STANDARD.md ข้อ 6)')
+    if 'id="typoCpDlg"' not in txt:
+        errors.append('ไม่พบหน้าต่างสีที่กำหนดเอง #typoCpDlg (ดู UI_STANDARD.md ข้อ 6)')
+    for _fn30 in ('_cpDlgRender', '_cpDlgSetHex', '_cpDragAt', '_cpDlgOpen'):
+        _m30 = re.search(r'\n\s*function ' + _fn30 + r'\([^)]*\)\{[\s\S]*?\n  \}', txt)
+        if not _m30:
+            errors.append('ไม่พบ {} — lint ข้อ 30 ตรวจไม่ได้'.format(_fn30))
+        elif 'applyColorRange' in _m30.group(0) or 'markDirty' in _m30.group(0):
+            errors.append('{} ทาสี/แก้เมนูระหว่างเลือกในหน้าต่างสี — ต้องทาเฉพาะตอนกดตกลง (_cpDlgOk) (ดู UI_STANDARD.md ข้อ 6)'.format(_fn30))
+    _ok30 = re.search(r'\n\s*function _cpDlgOk\([^)]*\)\{[\s\S]*?\n  \}', txt)
+    if not _ok30 or 'applyColorRange' not in _ok30.group(0) or '_saveCustom' not in _ok30.group(0):
+        errors.append('_cpDlgOk ต้องทาสี (applyColorRange) และเก็บสี (_saveCustom) (ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- report ----
     print("=" * 54)

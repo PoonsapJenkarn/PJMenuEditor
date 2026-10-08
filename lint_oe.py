@@ -516,6 +516,18 @@ def main():
         _cs31 = re.search(r'\nfunction typoClearSel\([^)]*\)\{[\s\S]*?\n\}', txt)
         if not _cs31 or '_olSync(' not in _cs31.group(0):
             errors.append('typoClearSel ต้องเรียก _olRefresh/_olSync — ล้างสีบางคำแล้วปุ่มเส้นขอบไม่ตาม (ดู UI_STANDARD.md ข้อ 6)')
+        # 19:23 สีขอบเลือกเองได้ (data-ol-c): คงไว้เมื่อเปลี่ยนสีตัวอักษร · ใช้ทั้งประเภทคัดลอก · คืนค่าล้าง · ปุ่ม A ไม่ใส่ขอบที่มองไม่เห็น (เปิด ▾ ให้เลือกสี)
+        _rf31b = re.search(r'\nfunction _olRefresh\([^)]*\)\{[^\n]*', txt)
+        if not _rf31b or '_olEdgeFor(' not in _rf31b.group(0):
+            errors.append('_olRefresh ไม่ใช้ _olEdgeFor — สีขอบที่เลือกเองจะหายเมื่อเปลี่ยนสีตัวอักษร (ดู UI_STANDARD.md ข้อ 6)')
+        if not _af31 or 'data-ol-c' not in _af31.group(0):
+            errors.append('_typoApplyFormat ไม่คัดลอกสีขอบที่เลือกเอง (data-ol-c) — ใช้ทั้งประเภทแล้วสีขอบกลายเป็นอัตโนมัติ (ดู UI_STANDARD.md ข้อ 6)')
+        _rs31 = re.search(r'\nfunction typoResetSel\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _rs31 or "removeAttribute('data-ol-c')" not in _rs31.group(0):
+            errors.append('คืนค่าไม่ล้างสีขอบที่เลือกเอง (data-ol-c) (ดู UI_STANDARD.md ข้อ 6)')
+        _tgA = re.search(r'\nfunction typoOutlineToggle\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _tgA or '_olPopOpen(' not in _tgA.group(0) or 'st.cand' not in _tgA.group(0):
+            errors.append('typoOutlineToggle ต้องเปิด ▾ ให้เลือกสีขอบเมื่อขอบจะมองไม่เห็น (_olPopOpen · st.cand) — ห้ามใส่ขอบที่มองไม่เห็น (ดู UI_STANDARD.md ข้อ 6)')
         for _fn31 in ('typoOutlineToggle', 'typoOutlineSetWidth'):
             _tg31 = re.search(r'\nfunction ' + _fn31 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
             if not _tg31 or '_olState(' not in _tg31.group(0):

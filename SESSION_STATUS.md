@@ -2,7 +2,15 @@
 
 **อัปเดตล่าสุด:** 27 ก.ย. 2026, 16:14 — v74: align selection subsystem กับ mockup (แก้ไฮไลท์ไม่ activate + สีไม่ติด)
 
-## 8 ต.ค. 2026 (10:10) — ประวัติเปลี่ยนภาษาตาม TH/EN (แบบ Windows Event Viewer) · lint ข้อ 26 · ยังไม่ commit (ต่อจาก 23fc144)
+## 8 ต.ค. 2026 (10:45) — ตัดขนาดตัวอักษรบางคำออก · ไฮไลท์ + กด +/− = เปลี่ยนทั้งช่อง · lint ข้อ 27 · ยังไม่ commit (ต่อจาก 719d3f5)
+- ผู้ใช้ถามว่า "ตัดขนาดตัวอักษรบางคำออก" คืออะไร → อธิบาย → เลือก "เปลี่ยนทั้งช่อง"
+- เดิม: ไฮไลท์ + กด +/− = applyFontSizePx (span font-size) ไม่มี Undo ไม่ markDirty ไม่มีข้อความ — ทั้งที่ตกลงตัดออก 28 ก.ย.
+- typoSizeStep: ทั้งช่องเสมอ · ล้าง font-size/line-height ของ span ที่ไม่ใช่โครงสร้าง (_clrIsStruct) · markDirty · ข้อความ fl.sizeCell / fl.sizeCellHl (ตอนไฮไลท์) · ถึง 8/72 = fl.sizeLimit ไม่สร้างจุด Undo · เดิมไม่มีข้อความผลเลย
+- ลบ applyFontSizePx (ผู้เรียกมีที่เดียว) · _typoCaptureFormat ไม่เก็บ fontSize ใน runs
+- lint: _PENDING21B ว่าง (warning ขนาดบางคำหาย) · lint ข้อ 27 (ก่อนแก้จับได้ 2) · ทดสอบตรรกะ 9 กรณีผ่าน · ยังไม่ทดสอบในเบราว์เซอร์
+- ในเมนูตอนนี้ไม่มีคำที่ถูกเปลี่ยนขนาดบางคำค้างอยู่ (นับจากไฟล์ = 0)
+
+## 8 ต.ค. 2026 (10:10) — ประวัติเปลี่ยนภาษาตาม TH/EN (แบบ Windows Event Viewer) · lint ข้อ 26 · ✅ commit แล้วใน 719d3f5 · ผู้ใช้ทดสอบผ่าน (ต่อจาก 23fc144)
 - ผู้ใช้เลือก (8 ต.ค.): ประวัติเปลี่ยนภาษาตาม TH/EN · เดิมเก็บข้อความสำเร็จรูป → สลับภาษาแล้วประวัติปน 2 ภาษา
 - logAdd เก็บ e.m = _ttSer(tk/tkj) + e.msg สำรอง · _actlogText(e) แปลตอนแสดง (ถ้า key ทุกตัวยังมีใน I18N.th) · applyLang → _actlogRelang (ข้ามถ้า ACTLOG ยัง undefined ตอน applyLang ครั้งแรก)
 - แก้ทางที่ทำให้เสีย key: _logFromFlash String(msg) · _actlogDoClear String(m) · _actlogFieldType t() → tk() · ข้อความแก้เมนู log.edited/editedNew/editedClear t() → tk()

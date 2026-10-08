@@ -336,7 +336,7 @@ def main():
     #   หลัง insertNode( ต้องมี markDirty( / _snapNow( ก่อนถึง return หรือท้ายฟังก์ชัน · ฟังก์ชันตัวช่วยที่ผู้เรียกเป็นคนสร้างจุด Undo ใส่ใน _HELPER21B พร้อมเหตุผล
     #   _PENDING21B = รู้แล้วว่าขาด รอผู้ใช้ตัดสินใจ → เตือนทุกครั้งที่ commit (ไม่บล็อก) · ดู UI_STANDARD.md ข้อ 6
     _HELPER21B = {'_typoWrapRange': 'ตัวช่วยของ ใช้ทั้งประเภท — typoApplyAllSame เรียก markDirty หลังทำครบทุกช่อง'}
-    _PENDING21B = {'applyFontSizePx': 'ขนาดตัวอักษรบางคำ — ผู้ใช้ตัดสินใจ 28 ก.ย. 2026 ให้ตัดออก แต่โค้ดยังเรียกจาก typoSizeStep และไม่มีจุด Undo'}
+    _PENDING21B = {}  # 8 ต.ค. 2026: applyFontSizePx ถูกลบ (ผู้ใช้ตัดสินใจตัดขนาดตัวอักษรบางคำออก)
     _js21b = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
     for _m in re.finditer(r'(?:^|[\n;{}])\s*function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{', _js21b):
         _nm = _m.group(1); _k = _m.end() - 1; _d = 0; _j = _k
@@ -415,6 +415,24 @@ def main():
     _ft26 = re.search(r'\nfunction _actlogFieldType\([^)]*\)\{[\s\S]*?\n\}', txt)
     if _ft26 and re.search(r"return t\('", _ft26.group(0)):
         errors.append('_actlogFieldType คืน t(...) — ชื่อช่องในประวัติจะไม่เปลี่ยนภาษา ใช้ tk() (ดู UI_STANDARD.md ข้อ 6)')
+
+    # ---- 27) ไม่มีขนาดตัวอักษรบางคำ (ผู้ใช้ตัดสินใจ 28 ก.ย. 2026 · ยืนยัน 8 ต.ค. 2026: ไฮไลท์ + กด +/− = เปลี่ยนทั้งช่อง) ----
+    #   ห้ามสร้าง span แล้วตั้ง .style.fontSize ในฟังก์ชันเดียวกัน · "ใช้ทั้งประเภท" ต้องไม่คัดลอก fontSize เป็นช่วงตัวอักษร · ดู UI_STANDARD.md ข้อ 6
+    _js27 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
+    for _m in re.finditer(r'(?:^|[\n;{}])\s*function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{', _js27):
+        _k = _m.end() - 1; _d = 0; _j = _k
+        while _j < len(_js27):
+            if _js27[_j] == '{': _d += 1
+            elif _js27[_j] == '}':
+                _d -= 1
+                if _d == 0: break
+            _j += 1
+        _b = _js27[_k:_j + 1]
+        if "createElement('span')" in _b and re.search(r'\.style\.fontSize\s*=', _b):
+            errors.append('{}() สร้าง span แล้วตั้งขนาดตัวอักษร = ขนาดบางคำ (ตัดออกแล้ว · ดู UI_STANDARD.md ข้อ 6)'.format(_m.group(1)))
+    _cf27 = re.search(r'\nfunction _typoCaptureFormat\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _cf27 and "k!=='fontSize'" not in _cf27.group(0):
+        errors.append('_typoCaptureFormat คัดลอก fontSize เป็นช่วงตัวอักษร — ขนาดบางคำตัดออกแล้ว (ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- report ----
     print("=" * 54)

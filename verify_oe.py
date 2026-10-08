@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-verify_oe.py - ตรวจ OEIsanHotpotMenuWithImageEditor.html หลังแก้ทุกครั้ง (fail-closed)
+verify_oe.py - ตรวจ OEIsanHotpotMenuEditor.html หลังแก้ทุกครั้ง (fail-closed)
 
 รัน:
   python verify_oe.py               ตรวจครบ: lint + static + เทียบกับ HEAD + เปิดเบราว์เซอร์ headless ทดสอบจริง
@@ -15,7 +15,7 @@ exit code: 0 = PASS ครบทุกข้อ | 1 = FAIL | 2 = INCOMPLETE (ต
 import os, re, sys, json, html, difflib
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-TARGET = "OEIsanHotpotMenuWithImageEditor.html"
+TARGET = "OEIsanHotpotMenuEditor.html"  # เปลี่ยนชื่อจาก OEIsanHotpotMenuWithImageEditor.html (8 ต.ค. 2026)
 PATH = os.path.join(ROOT, TARGET)
 
 # ฟังก์ชันหลักที่ต้องมี "ครั้งเดียวพอดี"

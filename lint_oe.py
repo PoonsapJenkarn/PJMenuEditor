@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-pre-save lint สำหรับ OEIsanHotpotMenuWithImageEditor.html
+pre-save lint สำหรับ OEIsanHotpotMenuEditor.html
 จับบั๊ก pattern ที่เคยหลุดจริง — เปลี่ยน 'ความจำ' เป็น check อัตโนมัติ
 
 รันเอง:   python lint_oe.py
@@ -12,7 +12,7 @@ exit code: 0 = ผ่าน, 1 = พบ error (บล็อก commit ถ้า�
 import re, sys, os
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                    "OEIsanHotpotMenuWithImageEditor.html")
+                    "OEIsanHotpotMenuEditor.html")  # เปลี่ยนชื่อจาก OEIsanHotpotMenuWithImageEditor.html (8 ต.ค. 2026)
 
 def main():
     if not os.path.exists(PATH):

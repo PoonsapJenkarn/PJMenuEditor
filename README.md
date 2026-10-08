@@ -6,10 +6,7 @@
 
 | ไฟล์ | บทบาท | มีรูป | Editor UI |
 |---|---|---|---|
-| `OEIsanHotpotMenu.html` | เมนูสำหรับพิมพ์ (print) | ไม่มี | ไม่มี |
-| `OEIsanHotpotMenuEditor.html` | editor แก้ราคา/เมนู | ไม่มี | มี |
-| `OEIsanHotpotMenuWithImage.html` | เมนู + รูปอาหาร (print) | มี | ไม่มี |
-| `OEIsanHotpotMenuWithImageEditor.html` | editor + รูปอาหาร (ตัวหลัก) | มี | มี |
+| `OEIsanHotpotMenuEditor.html` | editor + รูปอาหาร | มี | มี |
 
 ## วิธีเปิด
 เปิดใน Chrome / Edge โดยตรง (ดับเบิลคลิก หรือวาง path ใน address bar)

@@ -542,6 +542,21 @@ def main():
         if not _rf31 or '_olWidthOf(' not in _rf31.group(0):
             errors.append('_olRefresh ไม่คงความหนาเดิม (_olWidthOf) — เปลี่ยนสีแล้วเส้นขอบกลับเป็น 2px (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 32) แถบสีหัวกลุ่ม (--accent) ต้องตามสีชื่อกลุ่มทุกเครื่องมือ (ผู้ใช้ 8 ต.ค. 2026 22:05) ----
+    #   ทาสีทั้งช่อง + ทาแบบไฮไลท์ (applyColorRange) · ล้างรูปแบบจุดที่ไฮไลท์ · ใช้ทั้งประเภท (_typoApplyFormat) → _secAccentFollow
+    #   คืนค่า (typoResetSel) → _secAccentReset (กลับเป็นสีเดิม data-acc0) · ดู UI_STANDARD.md ข้อ 6
+    def _fb32(name, ind):
+        _m = re.search(r'\n' + ind + r'function ' + name + r'\([^)]*\)\{[\s\S]*?\n' + ind + r'\}', txt)
+        return _m.group(0) if _m else ''
+    if 'function _secAccentFollow(' not in txt:
+        errors.append('ไม่พบ _secAccentFollow — แถบสีหัวกลุ่มจะไม่ตามสีชื่อกลุ่ม (ดู UI_STANDARD.md ข้อ 6)')
+    else:
+        if _fb32('applyColorRange', '  ').count('_secAccentFollow(') < 2:
+            errors.append('applyColorRange ต้องเรียก _secAccentFollow ทั้งทาทั้งช่องและทาแบบไฮไลท์ (ดู UI_STANDARD.md ข้อ 6)')
+        for _n32, _f32 in (('_typoApplyFormat', '_secAccentFollow('), ('typoClearSel', '_secAccentFollow('), ('typoResetSel', '_secAccentReset(')):
+            if _f32 not in _fb32(_n32, ''):
+                errors.append('{} ไม่เรียก {} — แถบสีหัวกลุ่มไม่ตาม (ดู UI_STANDARD.md ข้อ 6)'.format(_n32, _f32.rstrip('(')))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

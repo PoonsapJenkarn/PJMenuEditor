@@ -377,6 +377,27 @@ def main():
         if _w < 0 or not (re.search(r'\.name\b', _seg24) and re.search(r'\b(test|slice|endsWith)\(', _seg24)):
             errors.append('บรรทัด {} เขียนไฟล์โดยไม่ตรวจนามสกุลของชื่อที่ผู้ใช้เลือก (ดู UI_STANDARD.md ข้อ 6)'.format(_ln))
 
+    # ---- 25) เส้นคั่นกลุ่มในแถบเครื่องมือต้องมองเห็นทั้งตอนกลุ่มเปิดและปิด (ผู้ใช้ 7 ต.ค. 2026: เส้นจางมาก ตอนกลุ่มปิดแยกกลุ่มไม่ออก) ----
+    #   ห้ามตั้ง opacity ที่ตัว .rgroup (เส้นคั่น = border-right ของ .rgroup จะจางตาม) — ให้จางที่ .rgroup>* แทน
+    #   สีเส้นคั่น (#edribbon .rgroup border-right) ต้องต่างจากพื้น #faf9f8 อย่างน้อย 2:1 · ดู UI_STANDARD.md ข้อ 7
+    _css25 = '\n'.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt))
+    _css25 = re.sub(r'/\*[\s\S]*?\*/', '', _css25)
+    for _m in re.finditer(r'([^{}]+)\{([^{}]*)\}', _css25):
+        _sels = [x.strip() for x in _m.group(1).split(',')]
+        if re.search(r'(?<![\w-])opacity\s*:', _m.group(2)) and any(re.search(r'\.rgroup$', x) for x in _sels):
+            errors.append('opacity ตั้งที่ตัว .rgroup ({}) — เส้นคั่นกลุ่มจะจางตาม ใช้ .rgroup>* (ดู UI_STANDARD.md ข้อ 7)'.format(_m.group(1).strip()[:80]))
+    _sep = re.search(r'#edribbon \.rgroup\{[^}]*border-right:\s*1px solid (#[0-9a-fA-F]{6})', _css25)
+    if not _sep:
+        errors.append('ไม่พบสีเส้นคั่นกลุ่ม (#edribbon .rgroup border-right) — lint ข้อ 25 ตรวจไม่ได้')
+    else:
+        def _lum25(h):
+            _c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            _c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in _c]
+            return 0.2126 * _c[0] + 0.7152 * _c[1] + 0.0722 * _c[2]
+        _a, _b = sorted([_lum25(_sep.group(1)), _lum25('#faf9f8')], reverse=True)
+        if (_a + 0.05) / (_b + 0.05) < 2.0:
+            errors.append('เส้นคั่นกลุ่ม {} ต่างจากพื้นแค่ {:.2f}:1 (ต้อง ≥ 2:1 · ดู UI_STANDARD.md ข้อ 7)'.format(_sep.group(1), (_a + 0.05) / (_b + 0.05)))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -528,6 +528,9 @@ def main():
         _tgA = re.search(r'\nfunction typoOutlineToggle\([^)]*\)\{[\s\S]*?\n\}', txt)
         if not _tgA or '_olPopOpen(' not in _tgA.group(0) or 'st.cand' not in _tgA.group(0):
             errors.append('typoOutlineToggle ต้องเปิด ▾ ให้เลือกสีขอบเมื่อขอบจะมองไม่เห็น (_olPopOpen · st.cand) — ห้ามใส่ขอบที่มองไม่เห็น (ดู UI_STANDARD.md ข้อ 6)')
+        _sy31 = re.search(r'\nfunction _olSync\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if 'id="typoOlBar"' not in txt or not _sy31 or 'typoOlBar' not in _sy31.group(0):
+            errors.append('ปุ่ม A ต้องแสดงสีขอบที่จะใช้ (แถบ #typoOlBar อัปเดตใน _olSync) — ผู้ใช้ 8 ต.ค. 2026: กด A แล้วจู่ๆ ได้สีที่ไม่รู้ที่มา (ดู UI_STANDARD.md ข้อ 6)')
         for _fn31 in ('typoOutlineToggle', 'typoOutlineSetWidth'):
             _tg31 = re.search(r'\nfunction ' + _fn31 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
             if not _tg31 or '_olState(' not in _tg31.group(0):

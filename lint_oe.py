@@ -199,7 +199,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -463,6 +463,14 @@ def main():
     _rp29 = re.search(r'\nfunction _restorePages\([^)]*\)\{[\s\S]*?\n\}', txt)
     if 'secimg' in txt and (not _rp29 or '_badgeDecorate' not in _rp29.group(0)):
         errors.append('_restorePages ไม่เรียก _badgeDecorate — Undo ในโหมดแก้รูปแล้วปุ่ม × / + ป้าย หาย (ดู UI_STANDARD.md ข้อ 7)')
+
+    # ---- 28b) ครั้งแรกที่ล้นหน้า: ผลของปุ่ม + คำเตือนเต็มในข้อความเดียว จดประวัติครั้งเดียว (ผู้ใช้ 8 ต.ค. 2026 12:29) ----
+    _fs28b = re.search(r'\nfunction flashStatus\([^)]*\)\{[\s\S]*?\n\}', txt)
+    _co28b = re.search(r'\nfunction checkOverflow\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _fs28b or '_ovfFresh' not in _fs28b.group(0) or '_ovfCombine' not in _fs28b.group(0):
+        errors.append('flashStatus ไม่รวมผลกับคำเตือนตอนเพิ่งล้นหน้า (_ovfFresh/_ovfCombine) — ผลจะทับคำเตือนเต็ม (ดู UI_STANDARD.md ข้อ 7)')
+    if not _co28b or '_ovfCombine' not in _co28b.group(0) or '_ovfFresh=true' not in _co28b.group(0):
+        errors.append('checkOverflow ไม่รวมคำเตือนเต็มกับผลที่เพิ่งแสดง / ไม่ตั้ง _ovfFresh (ดู UI_STANDARD.md ข้อ 7)')
 
     # ---- report ----
     print("=" * 54)

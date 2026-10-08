@@ -398,6 +398,24 @@ def main():
         if (_a + 0.05) / (_b + 0.05) < 2.0:
             errors.append('เส้นคั่นกลุ่ม {} ต่างจากพื้นแค่ {:.2f}:1 (ต้อง ≥ 2:1 · ดู UI_STANDARD.md ข้อ 7)'.format(_sep.group(1), (_a + 0.05) / (_b + 0.05)))
 
+    # ---- 26) ประวัติต้องเปลี่ยนภาษาตาม TH/EN (ตกลงกับผู้ใช้ 8 ต.ค. 2026 · แบบ Windows Event Viewer เก็บ key + ค่า) ----
+    #   logAdd( ห้ามส่ง String(...) หรือ t(...) — ใช้ tk()/tkj() (String() ทำให้เสีย key แปลใหม่ไม่ได้)
+    #   logAdd ต้องเก็บ e.m (_ttSer) · แถว/CSV ต้องแสดงผ่าน _actlogText · applyLang ต้องเรียก _actlogRelang · ดู UI_STANDARD.md ข้อ 6
+    for _m in re.finditer(r'\blogAdd\(([^;\n]*)\)', txt):
+        if re.search(r'(?<![\w.])(String|t)\(', _m.group(1)):
+            errors.append('บรรทัด {} logAdd({}) — ส่งเป็นข้อความสำเร็จรูป ประวัติจะไม่เปลี่ยนภาษา ใช้ tk()/tkj() (ดู UI_STANDARD.md ข้อ 6)'.format(txt.count('\n', 0, _m.start()) + 1, _m.group(1)[:40]))
+    _la26 = re.search(r'\nfunction logAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _la26 or '_ttSer(' not in _la26.group(0):
+        errors.append('logAdd ไม่เก็บ key + ค่า (_ttSer) — ประวัติจะไม่เปลี่ยนภาษาตาม TH/EN (ดู UI_STANDARD.md ข้อ 6)')
+    if re.search(r"\.textContent=e\.msg\b|_logTypeLabel\(arr\[i\]\.type\),arr\[i\]\.msg\]", txt):
+        errors.append('แสดง/ส่งออกประวัติจาก e.msg ตรงๆ — ใช้ _actlogText(e) (ดู UI_STANDARD.md ข้อ 6)')
+    _al26 = re.search(r'\nfunction applyLang\(\)\{[\s\S]*?\n\}', txt)
+    if not _al26 or '_actlogRelang(' not in _al26.group(0):
+        errors.append('applyLang ไม่แปลประวัติใหม่ (_actlogRelang) (ดู UI_STANDARD.md ข้อ 6)')
+    _ft26 = re.search(r'\nfunction _actlogFieldType\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _ft26 and re.search(r"return t\('", _ft26.group(0)):
+        errors.append('_actlogFieldType คืน t(...) — ชื่อช่องในประวัติจะไม่เปลี่ยนภาษา ใช้ tk() (ดู UI_STANDARD.md ข้อ 6)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

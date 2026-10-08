@@ -1495,6 +1495,7 @@ function applyLang(){
   if(th) th.className=(_lang==='th'?'on':''); if(en) en.className=(_lang==='en'?'on':'');
   if(typeof _panelRelang==='function') _panelRelang();  /* panel ที่เปิดอยู่: ข้อความที่ JS ใส่ไว้ */
   if(typeof _statusShown!=='undefined' && _statusShown && _statusShown.msg && (_statusShown.msg._k||_statusShown.msg._parts)) _renderStatus(_statusShown.type,_statusShown.msg);  /* แถบล่าง: แปลข้อความที่แสดงอยู่ใหม่ */
+  if(typeof _actlogRelang==='function') _actlogRelang();  /* ประวัติ: รายการที่มี key แปลใหม่ (รายการเก่าคงภาษาเดิม) */
 }
 function setLang(l){
   _lang=(l==='en'?'en':'th');
@@ -2873,7 +2874,7 @@ function _actlogRowEl(e){
   var div=document.createElement('div'); div.className='al-row al-'+(e.type||'info');
   var ts=document.createElement('span'); ts.className='al-ts'; ts.textContent=_fmtTs(e.ts);
   var ic=document.createElement('span'); ic.className='al-ic'; ic.textContent=_actlogIcon(e.type);
-  var ms=document.createElement('span'); ms.className='al-msg'; ms.textContent=e.msg;
+  var ms=document.createElement('span'); ms.className='al-msg'; ms.textContent=_actlogText(e);
   div.appendChild(ts); div.appendChild(ic); div.appendChild(ms);
   return div;
 }
@@ -2927,7 +2928,7 @@ var _alSaving=false;  /* หน้าต่าง Save เปิดอยู่ 
 function _actlogDoClear(m){
   ACTLOG=[];
   try{ localStorage.removeItem(_actlogKey()); }catch(e){}
-  logAdd('info',String(m));                       /* 1 รายการหลักฐาน — จดตรง ไม่ผ่าน flashStatus (ถ้ามีคำเตือนล้นหน้าค้าง flashStatus จะไม่จด) */
+  logAdd('info',m);                               /* 1 รายการหลักฐาน — จดตรง ไม่ผ่าน flashStatus (ถ้ามีคำเตือนล้นหน้าค้าง flashStatus จะไม่จด) */
   if(!_overflowWarn) _renderStatus('info',m);    /* แถบล่าง: คำเตือนล้นหน้าสำคัญกว่า (กติกาเดิม) */
   _selHold=_selSnap();                            /* ผลนี้ต้องไม่ถูก "เลือกอยู่" ทับ (UI_STANDARD ข้อ 6 · lint ข้อ 22) */
 }
@@ -2994,12 +2995,12 @@ function _csvCell(v){  /* RFC 4180 · ขึ้นต้นด้วย = + - @ 
 }
 function _actlogCsv(arr){  /* BOM = Excel เปิดภาษาไทยถูก · หัวคอลัมน์ตามภาษาที่ใช้อยู่ */
   var rows=[[t('log.colTime'),t('log.colType'),t('log.colDetail')]];
-  for(var i=0;i<arr.length;i++) rows.push([_isoLocal(arr[i].ts,false),_logTypeLabel(arr[i].type),arr[i].msg]);
+  for(var i=0;i<arr.length;i++) rows.push([_isoLocal(arr[i].ts,false),_logTypeLabel(arr[i].type),_actlogText(arr[i])]);  /* ข้อความตามภาษาที่ใช้อยู่ */
   return '\ufeff'+rows.map(function(r){ return r.map(_csvCell).join(','); }).join('\r\n')+'\r\n';
 }
 function _actlogJson(arr){  /* type = ค่าดิบ (info/warning/error/edit) ใช้กรองต่อได้ · ts = มิลลิวินาที */
   return JSON.stringify({app:'OE Isan Menu Editor', exported:_isoLocal(Date.now(),true), count:arr.length,
-    entries:arr.map(function(e){ return {time:_isoLocal(e.ts,true), ts:e.ts, type:e.type||'info', msg:e.msg}; })},null,2)+'\n';
+    entries:arr.map(function(e){ var o={time:_isoLocal(e.ts,true), ts:e.ts, type:e.type||'info', msg:_actlogText(e)}; if(e.m && e.m.k){ o.key=e.m.k; if(e.m.a) o.args=e.m.a; } return o; })},null,2)+'\n';
 }
 /* บันทึกไฟล์ออกจากแอป: ให้ผู้ใช้เลือกที่เก็บเองในหน้าต่าง Save ทุกครั้ง → ผู้ใช้รู้ว่าไฟล์อยู่ไหน
    เบราว์เซอร์ที่ไม่มีหน้าต่างเลือกที่เก็บ = ดาวน์โหลดแทน แล้วข้อความต้องบอกว่าอยู่ในโฟลเดอร์ดาวน์โหลด (UI_STANDARD ข้อ 6 · lint ข้อ 18)
@@ -3042,9 +3043,37 @@ async function exportActLog(fmt){
   if(r.how==='picked') flashStatus('info',tk('fl.logExported',a));
   else flashStatus('warning',tk('fl.logExportDl',a));
 }
+/* ประวัติเปลี่ยนภาษาตาม TH/EN (ตกลงกับผู้ใช้ 8 ต.ค. 2026 · แบบ Windows Event Viewer: เก็บรหัสข้อความ + ค่า แล้วแปลตอนแสดง)
+   e.msg = ข้อความตามภาษาตอนที่เกิด (สำรอง) · e.m = key + ค่า (จาก tk/tkj) · รายการเก่าไม่มี e.m หรือ key ถูกลบไปแล้ว = แสดง e.msg เดิม
+   ค่าที่เป็นเนื้อหาเมนู (ชื่อเมนู ข้อความที่พิมพ์) เก็บเป็นข้อความ ไม่แปล · lint ข้อ 26 */
+function _ttSer(m){
+  if(m && m._parts) return {p:m._parts.map(_ttSer)};
+  if(m && m._k){ var a=null; if(m._a){ a={}; for(var x in m._a) a[x]=_ttSer(m._a[x]); } return a?{k:m._k,a:a}:{k:m._k}; }
+  return m==null?'':String(m);
+}
+function _ttDes(o){
+  if(o && typeof o==='object'){
+    if(o.p) return tkj(o.p.map(_ttDes));
+    if(o.k){ var a=null; if(o.a){ a={}; for(var x in o.a) a[x]=_ttDes(o.a[x]); } return tk(o.k,a); }
+  }
+  return o;
+}
+function _ttKnown(o){  /* key ทุกตัวยังมีในคำแปล (ภาษาไทยเป็นชุดหลัก) */
+  if(!o || typeof o!=='object') return true;
+  if(o.p) return o.p.every(_ttKnown);
+  if(o.k && !Object.prototype.hasOwnProperty.call(I18N.th,o.k)) return false;
+  if(o.a){ for(var x in o.a){ if(!_ttKnown(o.a[x])) return false; } }
+  return true;
+}
+function _actlogText(e){
+  if(e && e.m && typeof e.m==='object' && _ttKnown(e.m)){ try{ return _ttStr(_ttDes(e.m)); }catch(_){ } }
+  return (e && e.msg!=null)?String(e.msg):'';
+}
+function _actlogRelang(){ if(!ACTLOG || !ACTLOG.length) return; _actlogRender(); }  /* applyLang ครั้งแรกเรียกก่อนประกาศ ACTLOG (var = undefined) → ข้าม */
 function logAdd(type,msg){
   if(!msg) return;
   var e={ts:Date.now(), type:type||'info', msg:String(msg)};
+  var _m=_ttSer(msg); if(_m && typeof _m==='object') e.m=_m;
   ACTLOG.push(e);
   if(ACTLOG.length>_ACTLOG_CAP) ACTLOG.shift();
   _actlogSave();
@@ -3060,16 +3089,15 @@ function toggleActLog(force){
 }
 function _logFromFlash(type,msg){
   if(!msg) return;
-  var s=String(msg);
-  if(s.charAt(0)==='\u23f3') return;
-  logAdd(type,s);
+  if(String(msg).charAt(0)==='\u23f3') return;
+  logAdd(type,msg);  /* ส่ง tk ตรงๆ (เดิม String() = เสีย key → แปลใหม่ไม่ได้) */
 }
 function _actlogFieldType(el){
   if(!el||!el.classList) return null;
-  if(el.classList.contains('nm')) return t('log.fieldName');
-  if(el.classList.contains('pr')) return t('log.fieldPrice');
-  if(el.classList.contains('sechead')) return t('log.fieldGroup');
-  if(el.hasAttribute && el.hasAttribute('data-edit')) return t('log.fieldHeader');
+  if(el.classList.contains('nm')) return tk('log.fieldName');
+  if(el.classList.contains('pr')) return tk('log.fieldPrice');
+  if(el.classList.contains('sechead')) return tk('log.fieldGroup');
+  if(el.hasAttribute && el.hasAttribute('data-edit')) return tk('log.fieldHeader');
   return null;
 }
 document.addEventListener('focusin', function(e){
@@ -3081,9 +3109,9 @@ document.addEventListener('focusout', function(e){
     var nw=(_actlogEditCap.el.textContent||'').trim(), od=_actlogEditCap.old, fd=_actlogEditCap.field;
     if(nw!==od){
       var msg;
-      if(!od) msg=t('log.editedNew',{field:fd,'new':nw});
-      else if(!nw) msg=t('log.editedClear',{field:fd,old:od});
-      else msg=t('log.edited',{field:fd,old:od,'new':nw});
+      if(!od) msg=tk('log.editedNew',{field:fd,'new':nw});
+      else if(!nw) msg=tk('log.editedClear',{field:fd,old:od});
+      else msg=tk('log.edited',{field:fd,old:od,'new':nw});
       logAdd('edit',msg);
     }
     _actlogEditCap=null;

@@ -281,6 +281,7 @@ def main():
         'typoCpAdd': 'เปิดหน้าต่างสีที่กำหนดเอง (ตกลงในหน้าต่าง = ทาสีผ่าน applyColorRange ซึ่งมี markDirty)',
         'typoCpDlgCancel': 'ปิดหน้าต่างสีโดยไม่เปลี่ยนอะไร',
         'typoCpDlgEye': 'ดูดสีจากหน้าจอใส่หน้าต่างสี (ยังไม่ทาจนกว่าจะกดตกลง)',
+        'typoOlCaret': 'เปิด/ปิดรายการความหนาเส้นขอบ (เลือกความหนา = typoOutlineSetWidth ซึ่งมี markDirty)',
     }
     _js21 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
     def _blk21(src, k):
@@ -494,7 +495,8 @@ def main():
 
     # ---- 31) เส้นขอบตัวอักษร (text-shadow) ต้องตามทุกเครื่องมือจัดรูปแบบ (ผู้ใช้ 8 ต.ค. 2026) ----
     #   ใช้ทั้งประเภทคัดลอก (base มี textShadow) · สีขอบตามช่องปลายทาง (_typoApplyFormat เรียก _olRefresh) · คืนค่าล้าง (text-shadow)
-    #   ทาสีทั้งช่อง → สีขอบตาม (applyColorRange เรียก _olRefresh) · ปุ่มใช้ได้เฉพาะชื่อกลุ่มเมนู · ดู UI_STANDARD.md ข้อ 6
+    #   ทาสีทั้งช่อง → สีขอบตาม (applyColorRange เรียก _olRefresh) · ดู UI_STANDARD.md ข้อ 6
+    #   18:17 เปิดให้ทุกช่อง + เลือกความหนา: ปุ่มต้องเช็ค _olState (เส้นจุด / ขอบจะกลืนกับพื้น = จาง + เหตุผล) · _olRefresh ต้องคงความหนาเดิม (_olWidthOf)
     if 'id="typoOutline"' in txt:
         if not re.search(r"_TYPO_FMT_PROPS\.concat\(\[[^\]]*'textShadow'", txt):
             errors.append('ใช้ทั้งประเภทไม่คัดลอกเส้นขอบ (_typoCaptureFormat base ไม่มี textShadow) (ดู UI_STANDARD.md ข้อ 6)')
@@ -506,9 +508,24 @@ def main():
             errors.append('applyColorRange ไม่เรียก _olRefresh — เปลี่ยนสีทั้งช่องแล้วสีขอบไม่ตาม (ดู UI_STANDARD.md ข้อ 6)')
         if not re.search(r"\[[^\]]*'text-decoration-line','text-shadow'\]\.forEach\(function\(pp\)\{el\.style\.removeProperty\(pp\);\}\)", txt):
             errors.append('คืนค่าไม่ล้างเส้นขอบ (text-shadow) (ดู UI_STANDARD.md ข้อ 6)')
-        _tg31 = re.search(r'\nfunction typoOutlineToggle\([^)]*\)\{[\s\S]*?\n\}', txt)
-        if not _tg31 or "key!=='sechead'" not in _tg31.group(0):
-            errors.append('typoOutlineToggle ต้องใช้ได้เฉพาะชื่อกลุ่มเมนู (sechead) (ดู UI_STANDARD.md ข้อ 6)')
+        _cf31 = re.search(r'\nfunction _olColorOf\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _cf31 or 'createTreeWalker' not in _cf31.group(0):
+            errors.append('_olColorOf ต้องอ่านสีที่เห็นจริงจากตัวอักษรในช่อง (createTreeWalker) — ไฮไลท์แล้วทาสี สีอยู่ใน span ข้างใน (บั๊ก 8 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+        if _ac31 and _ac31.group(0).count('_olSync(') < 2:
+            errors.append('applyColorRange ต้องเรียก _olSync ทั้งทาทั้งช่องและทาแบบไฮไลท์ — ปุ่มเส้นขอบไม่ตามสีใหม่ (บั๊ก 8 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+        _cs31 = re.search(r'\nfunction typoClearSel\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _cs31 or '_olSync(' not in _cs31.group(0):
+            errors.append('typoClearSel ต้องเรียก _olRefresh/_olSync — ล้างสีบางคำแล้วปุ่มเส้นขอบไม่ตาม (ดู UI_STANDARD.md ข้อ 6)')
+        for _fn31 in ('typoOutlineToggle', 'typoOutlineSetWidth'):
+            _tg31 = re.search(r'\nfunction ' + _fn31 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+            if not _tg31 or '_olState(' not in _tg31.group(0):
+                errors.append('{} ไม่เช็ค _olState — ปุ่มจะใส่เส้นขอบที่มองไม่เห็น หรือใส่ให้เส้นจุด (ดู UI_STANDARD.md ข้อ 6)'.format(_fn31))
+        _st31 = re.search(r'\nfunction _olState\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _st31 or '.line' not in _st31.group(0) or '_olBgOf(' not in _st31.group(0):
+            errors.append('_olState ต้องเช็คเส้นจุด (.line) และพื้นจริงใต้ช่อง (_olBgOf) (ดู UI_STANDARD.md ข้อ 6)')
+        _rf31 = re.search(r'\nfunction _olRefresh\([^)]*\)\{[^\n]*', txt)
+        if not _rf31 or '_olWidthOf(' not in _rf31.group(0):
+            errors.append('_olRefresh ไม่คงความหนาเดิม (_olWidthOf) — เปลี่ยนสีแล้วเส้นขอบกลับเป็น 2px (ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- report ----
     print("=" * 54)

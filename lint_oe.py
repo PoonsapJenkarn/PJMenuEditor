@@ -434,6 +434,36 @@ def main():
     if _cf27 and "k!=='fontSize'" not in _cf27.group(0):
         errors.append('_typoCaptureFormat คัดลอก fontSize เป็นช่วงตัวอักษร — ขนาดบางคำตัดออกแล้ว (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 28) ตัวตรวจล้นหน้าต้องวัดแบบไม่มีโหมดแก้ + ผลของปุ่มต้องไม่หายตอนล้นหน้า (ผู้ใช้ 8 ต.ค. 2026) ----
+    #   checkOverflow ต้องเอา class editmode/imgmode/headermode/pricemode ออกระหว่างวัด และใส่คืนใน finally (โหมดแก้เพิ่มระยะ → เตือนล้นปลอม)
+    #   flashStatus / _statusHint / setStatus ห้ามหยุดเพราะ _overflowWarn (เดิมผลไม่แสดงและไม่จดประวัติ) — ล้นหน้าแสดงเป็นป้าย (_overflowPages) · ดู UI_STANDARD.md ข้อ 7
+    _co28 = re.search(r'\nfunction checkOverflow\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _co28:
+        errors.append('ไม่พบ checkOverflow — lint ข้อ 28 ตรวจไม่ได้')
+    else:
+        _b28 = _co28.group(0)
+        for _c in ('editmode', 'imgmode', 'headermode', 'pricemode'):
+            if "'" + _c + "'" not in _b28:
+                errors.append("checkOverflow ไม่เอา class '{}' ออกระหว่างวัด — โหมดแก้เพิ่มระยะ จะเตือนล้นปลอม (ดู UI_STANDARD.md ข้อ 7)".format(_c))
+        if 'finally' not in _b28:
+            errors.append('checkOverflow ไม่ใส่ class โหมดคืนใน finally — ถ้าวัดพังจะค้างนอกโหมดแก้ (ดู UI_STANDARD.md ข้อ 7)')
+    for _fn in ('flashStatus', '_statusHint', 'setStatus'):
+        _m28 = re.search(r'\nfunction ' + _fn + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if _m28 and re.search(r'_overflowWarn\s*\)\s*return|_overflowWarn\s*\|\||\|\|\s*_overflowWarn', _m28.group(0)):
+            errors.append('{}() หยุดทำงานตอนล้นหน้า (_overflowWarn) — ผลจะไม่แสดง/ไม่จดประวัติ ใช้ป้ายล้นหน้าแทน (ดู UI_STANDARD.md ข้อ 7)'.format(_fn))
+
+    # ---- 29) ปุ่มชั่วคราวของป้ายกลุ่ม (× / + ป้าย) ต้องไม่หลุดลงไฟล์ / snapshot / สำเนา (ผู้ใช้ 8 ต.ค. 2026) ----
+    #   ทุกรายการ querySelectorAll ที่ตัดปุ่มแก้ไข (มี .ed-delgroup) ต้องตัด .ed-badgeadd และ .ed-badgedel ด้วย
+    #   _restorePages ต้องเรียก _badgeDecorate (snapshot ไม่เก็บปุ่ม → undo ในโหมดแก้รูปต้องใส่ปุ่มคืน) · ดู UI_STANDARD.md ข้อ 7
+    for _m29 in re.finditer(r"querySelectorAll\('([^']*\.ed-delgroup[^']*)'\)", txt):
+        _l29 = txt.count('\n', 0, _m29.start()) + 1
+        for _c29 in ('.ed-badgeadd', '.ed-badgedel'):
+            if _c29 not in _m29.group(1):
+                errors.append('บรรทัด {}: รายการตัดปุ่มแก้ไขไม่มี {} — ปุ่มป้ายกลุ่มจะหลุดลงไฟล์/undo (ดู UI_STANDARD.md ข้อ 7)'.format(_l29, _c29))
+    _rp29 = re.search(r'\nfunction _restorePages\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if 'secimg' in txt and (not _rp29 or '_badgeDecorate' not in _rp29.group(0)):
+        errors.append('_restorePages ไม่เรียก _badgeDecorate — Undo ในโหมดแก้รูปแล้วปุ่ม × / + ป้าย หาย (ดู UI_STANDARD.md ข้อ 7)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

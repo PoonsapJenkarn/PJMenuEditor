@@ -492,6 +492,24 @@ def main():
     if not _ok30 or 'applyColorRange' not in _ok30.group(0) or '_saveCustom' not in _ok30.group(0):
         errors.append('_cpDlgOk ต้องทาสี (applyColorRange) และเก็บสี (_saveCustom) (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 31) เส้นขอบตัวอักษร (text-shadow) ต้องตามทุกเครื่องมือจัดรูปแบบ (ผู้ใช้ 8 ต.ค. 2026) ----
+    #   ใช้ทั้งประเภทคัดลอก (base มี textShadow) · สีขอบตามช่องปลายทาง (_typoApplyFormat เรียก _olRefresh) · คืนค่าล้าง (text-shadow)
+    #   ทาสีทั้งช่อง → สีขอบตาม (applyColorRange เรียก _olRefresh) · ปุ่มใช้ได้เฉพาะชื่อกลุ่มเมนู · ดู UI_STANDARD.md ข้อ 6
+    if 'id="typoOutline"' in txt:
+        if not re.search(r"_TYPO_FMT_PROPS\.concat\(\[[^\]]*'textShadow'", txt):
+            errors.append('ใช้ทั้งประเภทไม่คัดลอกเส้นขอบ (_typoCaptureFormat base ไม่มี textShadow) (ดู UI_STANDARD.md ข้อ 6)')
+        _af31 = re.search(r'\nfunction _typoApplyFormat\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _af31 or '_olRefresh(' not in _af31.group(0):
+            errors.append('_typoApplyFormat ไม่เรียก _olRefresh — เส้นขอบที่คัดลอกมาจะใช้สีขอบของช่องต้นทาง (ดู UI_STANDARD.md ข้อ 6)')
+        _ac31 = re.search(r'\n\s*function applyColorRange\([^)]*\)\{[\s\S]*?\n  \}', txt)
+        if not _ac31 or '_olRefresh(' not in _ac31.group(0):
+            errors.append('applyColorRange ไม่เรียก _olRefresh — เปลี่ยนสีทั้งช่องแล้วสีขอบไม่ตาม (ดู UI_STANDARD.md ข้อ 6)')
+        if not re.search(r"\[[^\]]*'text-decoration-line','text-shadow'\]\.forEach\(function\(pp\)\{el\.style\.removeProperty\(pp\);\}\)", txt):
+            errors.append('คืนค่าไม่ล้างเส้นขอบ (text-shadow) (ดู UI_STANDARD.md ข้อ 6)')
+        _tg31 = re.search(r'\nfunction typoOutlineToggle\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _tg31 or "key!=='sechead'" not in _tg31.group(0):
+            errors.append('typoOutlineToggle ต้องใช้ได้เฉพาะชื่อกลุ่มเมนู (sechead) (ดู UI_STANDARD.md ข้อ 6)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

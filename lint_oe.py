@@ -665,6 +665,27 @@ def main():
         if not re.search(r"r\.addEventListener\('change',function\(\)\{ _shdCommit\(", txt):
             errors.append('slider เงาไม่จดตอนปล่อย (change → _shdCommit) (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 36c) ใช้เงากับทุกรูป (ผู้ใช้ 9 ต.ค. 2026) — ขอบเขตแบบ ใช้ทั้งประเภท (UI_STANDARD ข้อ 4) ----
+    if 'id="btnShdAll"' in txt:
+        if len(re.findall(r'id="btnShdAll" onclick="imgShadowAllOpen\(\)"', txt)) != 1:
+            errors.append('ปุ่ม "ใช้กับทุกรูป" ต้องมี 1 ปุ่ม ผูก onclick imgShadowAllOpen() (ดู UI_STANDARD.md ข้อ 6)')
+        _sa36 = re.search(r'\nfunction imgShadowAllOpen\(\)\{[\s\S]*?\n\}', txt)
+        _sa36 = _sa36.group(0) if _sa36 else ''
+        for _need36, _why36 in (("activeBtn:'btnShdAll'", 'ปุ่มไม่เป็น .on ระหว่าง panel เปิด (UI_STANDARD ข้อ 2)'),
+                                ('_snapNow()', 'ใช้เงากับทุกรูปไม่มีจุด Undo'),
+                                ('validate:', 'ยังไม่เลือกขอบเขตแล้วกด Enter ได้ (UI_STANDARD ข้อ 4)'),
+                                ('ok.disabled=', 'ปุ่มนำไปใช้ไม่จางตอนยังไม่เลือกขอบเขต / ไม่มีอะไรเปลี่ยน (UI_STANDARD ข้อ 4)')):
+            if _need36 not in _sa36:
+                errors.append('imgShadowAllOpen ไม่มี {} — {} (ดู UI_STANDARD.md ข้อ 4)'.format(_need36, _why36))
+        if re.search(r'<input\b[^>]*name="shScope"[^>]*\bchecked\b', txt):  # เฉพาะในแท็ก <input> (ไม่ใช่ ':checked' ใน querySelector)
+            errors.append('ขอบเขตของ ใช้กับทุกรูป ถูกเลือกไว้ล่วงหน้า — ผู้ใช้ต้องเลือกเอง (ดู UI_STANDARD.md ข้อ 4)')
+        for _fn36, _why36 in (('_imgShdSync', 'ปุ่มไม่จางเมื่อไม่ได้เลือกรูป'),
+                              ('_restorePages', 'หลัง Undo panel ยังเปิดอยู่กับรูปที่ถูกแทนแล้ว'),
+                              ('toggleImgMode', 'ออกจากแก้รูปแล้ว panel ยังเปิดอยู่')):
+            _f36 = re.search(r'\nfunction ' + _fn36 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+            if not _f36 or 'btnShdAll' not in _f36.group(0):
+                errors.append('{} ไม่ดูแลปุ่ม btnShdAll — {} (ดู UI_STANDARD.md ข้อ 5)'.format(_fn36, _why36))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -199,7 +199,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -609,6 +609,61 @@ def main():
     _op35 = re.search(r'\n\s*function _cpDlgOpen\([^)]*\)\{[\s\S]*?\n  \}', txt)
     if 'id="typoOlPick"' in txt and (not _op35 or "'typoOlPick'" not in _op35.group(0)):
         errors.append('หน้าต่างสีที่กำหนดเองของสีขอบไม่ได้ขึ้นใต้ปุ่ม A (_cpDlgOpen ต้องย้ายไป #typoOlPick) (ดู UI_STANDARD.md ข้อ 5)')
+
+    # ---- 36) เงารูป (.fimg data-shadow) — ไม่มี / อ่อน / ชัด ต่อรูป (ผู้ใช้ 9 ต.ค. 2026) ----
+    #   ดู UI_STANDARD.md ข้อ 6 · ค่าเงาอยู่ใน CSS ที่เดียว · ห้าม box-shadow (กรอบสี่เหลี่ยมรอบรูปโปร่งใส)
+    #   ห้ามกฎ filter บน .fimg>img ที่ไม่มี [data-shadow] (ปุ่ม "ไม่มี" จะไม่มีผลจริง) · ใส่ทุกหน้าต้องคัดลอกเงา
+    #   Undo แทนรูปทั้งหน้า → รูปที่เลือกค้าง (หลุดจากหน้า) ต้องถูกยกเลิก ไม่งั้นปุ่มขึ้นว่าทำแล้วแต่หน้าไม่เปลี่ยน
+    _css36 = re.sub(r'/\*[\s\S]*?\*/', '', ''.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt)))
+    for _lv36 in ('soft', 'strong'):
+        if not re.search(r'\.fimg\[data-shadow="' + _lv36 + r'"\]>img\{[^}]*filter:(?:var\(--shd-' + _lv36 + r',\s*)?drop-shadow\(', _css36):
+            errors.append('ไม่มี CSS เงา "{}" (.fimg[data-shadow="{}"]>img filter:drop-shadow) (ดู UI_STANDARD.md ข้อ 6)'.format(_lv36, _lv36))
+    for _sel36, _body36 in re.findall(r'([^{}]+)\{([^{}]*)\}', _css36):
+        for _one36 in _sel36.split(','):
+            _one36 = _one36.strip()
+            if re.search(r'\.fimg(\[[^\]]*\])?(\s*>\s*img|\s+img)?$', _one36) and 'box-shadow' in _body36 and 'body.imgmode' not in _one36:  # ตัวรูป/กรอบรูป (ไม่รวมปุ่มจับ .rz/.delbtn)
+                errors.append("'{}' ใช้ box-shadow — รูปโปร่งใสจะเห็นกรอบสี่เหลี่ยม ใช้ data-shadow แทน (ดู UI_STANDARD.md ข้อ 6)".format(_one36))
+            if re.search(r'\.fimg\s*>\s*img$|\.fimg\s+img$', _one36) and re.search(r'(?<![-\w])filter\s*:', _body36):
+                errors.append("'{}' ใส่ filter ทุกรูป — ปุ่มเงา \"ไม่มี\" จะไม่มีผลจริง (ดู UI_STANDARD.md ข้อ 6)".format(_one36))
+    for _lv36 in ('none', 'soft', 'strong'):
+        if len(re.findall(r'id="btnShd_' + _lv36 + r'" onclick="imgShadow\(\'' + _lv36 + r'\'\)"', txt)) != 1:
+            errors.append('ปุ่มเงา "{}" ต้องมี 1 ปุ่ม ผูก onclick imgShadow(\'{}\') (ดู UI_STANDARD.md ข้อ 6)'.format(_lv36, _lv36))
+    _ta36 = re.search(r'\nfunction imgToAllPages\(\)\{[\s\S]*?\n\}', txt)
+    if not _ta36 or 'data-shadow' not in _ta36.group(0):
+        errors.append('ใส่ทุกหน้า (imgToAllPages) ไม่คัดลอกเงา data-shadow (ดู UI_STANDARD.md ข้อ 6)')
+    _rd36 = re.search(r'\nfunction _imgReadout\(el\)\{[\s\S]*?\n\}', txt)
+    if not _rd36 or '_imgShdSync()' not in _rd36.group(0):
+        errors.append('_imgReadout ไม่เรียก _imgShdSync — ปุ่มเงาไม่จาง/ไม่แสดงระดับของรูปที่เลือก (ดู UI_STANDARD.md ข้อ 5)')
+    _rp36 = re.search(r'\nfunction _restorePages\(html\)\{[\s\S]*?\n\}', txt)
+    if not _rp36 or 'document.contains(_imgSel)' not in _rp36.group(0):
+        errors.append('_restorePages ไม่ยกเลิกรูปที่เลือกที่หลุดจากหน้า — หลัง Undo ปุ่มรูปจะแก้รูปที่มองไม่เห็น (ดู UI_STANDARD.md ข้อ 5)')
+
+    # ---- 36b) ปรับค่าเงาอ่อน/ชัดทั้งเมนู (ผู้ใช้ 9 ต.ค. 2026 · แบบ ก) ----
+    #   ค่าเก็บเป็น --shd-soft/--shd-strong บน style ของ .page · ค่าสำรองใน CSS ต้องเท่า _SHD_DEF ใน JS (2 ที่ต้องตรงกัน)
+    #   ทุกจุดที่หน้าเปลี่ยน/ภาษาเปลี่ยน/ออกจากโหมด/บันทึก ต้องดูแลหน้าต่างปรับค่า · ปรับค่า/ค่าเริ่มต้น ต้องมีจุด Undo
+    if 'id="shdPop"' in txt:
+        _def36 = re.search(r'var _SHD_DEF=\{soft:\{y:([\d.]+),b:([\d.]+),a:(\d+)\},strong:\{y:([\d.]+),b:([\d.]+),a:(\d+)\}\};', txt)
+        if not _def36:
+            errors.append('ไม่พบ _SHD_DEF — ค่าเริ่มต้นเงาต้องประกาศที่เดียว (ดู UI_STANDARD.md ข้อ 6)')
+        else:
+            for _lv36, (_y, _b, _a) in (('soft', _def36.group(1, 2, 3)), ('strong', _def36.group(4, 5, 6))):
+                _fb36 = re.search(r'\.fimg\[data-shadow="' + _lv36 + r'"\]>img\{filter:var\(--shd-' + _lv36 + r',drop-shadow\(0 ([\d.]+)mm ([\d.]+)mm rgba\(60,40,20,(0?\.\d+)\)\)\);\}', _css36)
+                if not _fb36:
+                    errors.append('CSS เงา "{}" ไม่ได้ใช้ var(--shd-{},drop-shadow(...)) — ปรับค่าแล้วรูปจะไม่เปลี่ยน (ดู UI_STANDARD.md ข้อ 6)'.format(_lv36, _lv36))
+                elif (float(_fb36.group(1)), float(_fb36.group(2)), round(float(_fb36.group(3)) * 100)) != (float(_y), float(_b), int(_a)):
+                    errors.append('ค่าสำรองใน CSS เงา "{}" ไม่ตรงกับ _SHD_DEF — ปุ่ม "ค่าเริ่มต้น" จะไม่ตรงกับที่เห็น (ดู UI_STANDARD.md ข้อ 6)'.format(_lv36))
+        for _fn36, _need36, _why36 in (
+                ('_restorePages', '_shdPopRender', 'หลัง Undo ค่าในหน้าต่างปรับเงาไม่ตรงกับหน้า'),
+                ('toggleImgMode', '_shdPopClose', 'ออกจากโหมดแก้รูปแล้วหน้าต่างปรับเงาค้าง'),
+                ('applyLang', '_shdPopRender', 'กด TH/EN แล้วข้อความในหน้าต่างปรับเงาไม่เปลี่ยน'),
+                ('buildEditorHtml', '#shdPop', 'บันทึกแล้วหน้าต่างปรับเงาค้างเปิดในไฟล์'),
+                ('_shdCommit', '_snapNow()', 'ปรับค่าเงาไม่มีจุด Undo'),
+                ('_shdReset', '_snapNow()', 'ค่าเริ่มต้นเงาไม่มีจุด Undo')):
+            _f36 = re.search(r'\nfunction ' + _fn36 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+            if not _f36 or _need36 not in _f36.group(0):
+                errors.append('{} ไม่มี {} — {} (ดู UI_STANDARD.md ข้อ 6)'.format(_fn36, _need36, _why36))
+        if not re.search(r"r\.addEventListener\('change',function\(\)\{ _shdCommit\(", txt):
+            errors.append('slider เงาไม่จดตอนปล่อย (change → _shdCommit) (ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- report ----
     print("=" * 54)

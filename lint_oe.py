@@ -214,6 +214,7 @@ def main():
         errors.append('ไม่พบ _TXT_LIMITS — ช่องข้อความต้องกำหนดความยาวสูงสุด (ดู UI_STANDARD.md ข้อ 6)')
     else:
         _need = {'.nm', '.sec-h .sechead'} | {'[data-edit="%s"]' % _k for _k in set(re.findall(r'data-edit="([\w-]+)"', txt))}
+        if 'secnote' in txt: _need.add('.sec-b > .secnote')  # หมายเหตุกลุ่ม (9 ต.ค. 2026)
         for _sel in sorted(_need):
             if ("sel:'%s'" % _sel) not in _lim.group(1):
                 errors.append('ช่อง {} ไม่มีความยาวสูงสุดใน _TXT_LIMITS (ดู UI_STANDARD.md ข้อ 6)'.format(_sel))
@@ -460,9 +461,9 @@ def main():
     #   _restorePages ต้องเรียก _badgeDecorate (snapshot ไม่เก็บปุ่ม → undo ในโหมดแก้รูปต้องใส่ปุ่มคืน) · ดู UI_STANDARD.md ข้อ 7
     for _m29 in re.finditer(r"querySelectorAll\('([^']*\.ed-delgroup[^']*)'\)", txt):
         _l29 = txt.count('\n', 0, _m29.start()) + 1
-        for _c29 in ('.ed-badgeadd', '.ed-badgedel'):
+        for _c29 in ('.ed-badgeadd', '.ed-badgedel', '.ed-noteadd', '.ed-notedel'):  # + ปุ่มหมายเหตุกลุ่ม (9 ต.ค. 2026)
             if _c29 not in _m29.group(1):
-                errors.append('บรรทัด {}: รายการตัดปุ่มแก้ไขไม่มี {} — ปุ่มป้ายกลุ่มจะหลุดลงไฟล์/undo (ดู UI_STANDARD.md ข้อ 7)'.format(_l29, _c29))
+                errors.append('บรรทัด {}: รายการตัดปุ่มแก้ไขไม่มี {} — ปุ่มชั่วคราว (ป้าย / หมายเหตุกลุ่ม) จะหลุดลงไฟล์/undo (ดู UI_STANDARD.md ข้อ 7)'.format(_l29, _c29))
     _rp29 = re.search(r'\nfunction _restorePages\([^)]*\)\{[\s\S]*?\n\}', txt)
     if 'secimg' in txt and (not _rp29 or '_badgeDecorate' not in _rp29.group(0)):
         errors.append('_restorePages ไม่เรียก _badgeDecorate — Undo ในโหมดแก้รูปแล้วปุ่ม × / + ป้าย หาย (ดู UI_STANDARD.md ข้อ 7)')
@@ -556,6 +557,29 @@ def main():
         for _n32, _f32 in (('_typoApplyFormat', '_secAccentFollow('), ('typoClearSel', '_secAccentFollow('), ('typoResetSel', '_secAccentReset(')):
             if _f32 not in _fb32(_n32, ''):
                 errors.append('{} ไม่เรียก {} — แถบสีหัวกลุ่มไม่ตาม (ดู UI_STANDARD.md ข้อ 6)'.format(_n32, _f32.rstrip('(')))
+
+    # ---- 33) หมายเหตุกลุ่ม (.secnote) — เพิ่ม/แก้/ลบได้ทุกกลุ่ม (ผู้ใช้ 9 ต.ค. 2026) ----
+    #   เดิม: ข้อความตายตัวใต้กลุ่มเครื่องดื่ม แก้ไม่ได้ · แถวใหม่ไปต่อใต้หมายเหตุ (insertBefore ปุ่ม เพิ่มรายการ)
+    #   ต้อง: แก้ได้ในโหมดแก้ข้อความ + หลัง Undo · ปุ่ม + หมายเหตุ / × มาจาก decorate · แถวใหม่แทรกก่อนหมายเหตุ
+    #   ปุ่มไม่พิมพ์/ไม่นับตอนวัดล้นหน้า · อยู่ในแถบรูปแบบ (TYPO_TYPES + ค่าเริ่มต้น) · ดู UI_STANDARD.md ข้อ 7
+    if 'secnote' in txt:
+        def _fb33(name):
+            _m = re.search(r'\nfunction ' + name + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+            return _m.group(0) if _m else ''
+        for _n33 in ('toggleEdit', '_reapplyEditable'):
+            if '.sec-b > .secnote' not in _fb33(_n33):
+                errors.append('{} ไม่ทำให้หมายเหตุกลุ่ม (.secnote) แก้ได้ — หมายเหตุแก้ไม่ได้ / Undo แล้วแก้ไม่ได้ (ดู UI_STANDARD.md ข้อ 7)'.format(_n33))
+        if '_noteDecorate(' not in _fb33('decorate'):
+            errors.append('decorate ไม่เรียก _noteDecorate — ปุ่ม + หมายเหตุ / × ไม่ขึ้น หรือไม่หายตอนออกโหมดแก้ (ดู UI_STANDARD.md ข้อ 7)')
+        if re.search(r'body\.insertBefore\(_nr,\s*btn\)', txt):
+            errors.append('แถวใหม่แทรกก่อนปุ่ม เพิ่มรายการ ตรงๆ — จะไปอยู่ใต้หมายเหตุกลุ่ม ใช้ _secRowsEnd(body) (ดู UI_STANDARD.md ข้อ 7)')
+        for _css33, _w33 in ((r'@media print\{([^{}]*)\{display:none !important;\}\}', 'พิมพ์'), (r'(body\.measuring \.ed-add,[^{]*)\{display:none !important;\}', 'วัดล้นหน้า')):
+            if not any(('.ed-noteadd' in _m.group(1) and '.ed-notedel' in _m.group(1)) for _m in re.finditer(_css33, txt)):
+                errors.append('CSS ซ่อนปุ่มตอน{} ไม่มี .ed-noteadd / .ed-notedel (ดู UI_STANDARD.md ข้อ 7)'.format(_w33))
+        if not re.search(r"\{key:'secnote',\s*sel:'\.sec-b > \.secnote'", txt):
+            errors.append('TYPO_TYPES ไม่มี secnote — หมายเหตุกลุ่มใช้แถบรูปแบบไม่ได้ (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'var _defaultStyles=\{[^}]*\bsecnote:null', txt):
+            errors.append('_defaultStyles ไม่มี secnote — ตั้งค่าเริ่มต้นของหมายเหตุกลุ่มไม่ได้ (ดู UI_STANDARD.md ข้อ 7)')
 
     # ---- report ----
     print("=" * 54)

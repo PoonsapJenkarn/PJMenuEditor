@@ -715,6 +715,31 @@ def main():
         if not _f37 or _need37 not in _f37.group(0):
             errors.append('{} ไม่มี {} — {} (ดู UI_STANDARD.md ข้อ 6)'.format(_fn37, _need37, _why37))
 
+    # ---- 38) ขนาดตัวอักษรทีละ 0.5 (ผู้ใช้ 9 ต.ค. 2026 · แบบ ก) ----
+    #   ดู UI_STANDARD.md ข้อ 6 · ทุกที่ที่อ่าน/ตั้งขนาดต้องใช้ความละเอียดเดียวกัน (0.5) ไม่งั้นช่องแสดงค่าไม่ตรงกับที่ใช้จริง
+    _sc38 = re.search(r'\nfunction _sizeClean\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _sc38 or "(c==='.'&&!dot)" not in _sc38.group(0):  # เงื่อนไขรับจุด 1 จุด (ไม่ใช่แค่มีคำว่า c==='.')
+        errors.append('_sizeClean ไม่รับจุดทศนิยม — พิมพ์ 16.5 ไม่ได้ (ดู UI_STANDARD.md ข้อ 6)')
+    _sp38 = re.search(r'\nfunction _sizeParse\([^)]*\)\{[^\n]*\}', txt)
+    if not _sp38 or "bad:'step'" not in _sp38.group(0) or "bad:'range'" not in _sp38.group(0):
+        errors.append('ไม่พบ _sizeParse ที่ตรวจช่วง + ทีละ 0.5 (ดู UI_STANDARD.md ข้อ 6)')
+    _st38 = re.search(r'\nfunction typoSizeStep\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _st38 or '_typoCurSize(' not in _st38.group(0) or re.search(r'Math\.round\(parseFloat\(inp\.value\)', _st38.group(0)):
+        errors.append('typoSizeStep ต้องอ่านขนาดจริงด้วย _typoCurSize — ปัดเป็นจำนวนเต็มแล้ว 12.5 กด + ได้ 14 (ดู UI_STANDARD.md ข้อ 6)')
+    if re.search(r'Math\.round\(\s*parseFloat\([^)]*fontSize', txt) or re.search(r'parseInt\(\s*raw\s*,\s*10\s*\)', txt):
+        errors.append('มีที่อ่านขนาดตัวอักษรแบบปัดเป็นจำนวนเต็ม (Math.round(parseFloat(..fontSize)) / parseInt(raw,10)) — ใช้ _sizeHalf / _sizeParse (ดู UI_STANDARD.md ข้อ 6)')
+    for _k38 in ('fl.sizeStep', 'fl.sizeOnly', 'ttl.sizeType'):
+        _n38 = len(re.findall(r"'" + re.escape(_k38) + r"':'(?![\w.]+'\s*[),])", txt))  # ข้อความแปลจริง (ไม่นับ 'k':'อีกkey' ใน ternary)
+        if _n38 != 2:
+            errors.append("ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)".format(_k38, _n38))
+    #   ปุ่ม +/− ทีละ 0.5 (ผู้ใช้ 9 ต.ค. 2026 17:38 · แบบ ข แทนแบบ ก) — ปุ่มต้องไปถึงทุกค่าที่ช่องรับได้
+    if not re.search(r'typoSizeStep\(0\.5\)', txt) or not re.search(r'typoSizeStep\(-0\.5\)', txt) or re.search(r'typoSizeStep\(-?1\)', txt):
+        errors.append('ปุ่ม +/− ขนาดตัวอักษรต้องเรียก typoSizeStep(0.5) / typoSizeStep(-0.5) (ดู UI_STANDARD.md ข้อ 6)')
+    if not _st38 or '_sizeHalf(cur+d)' not in _st38.group(0):
+        errors.append('typoSizeStep ต้องปัดผลด้วย _sizeHalf(cur+d) — ขนาดต้องลงที่ทีละ 0.5 เสมอ (ดู UI_STANDARD.md ข้อ 6)')
+    if not re.search(r"tk\(pz\.bad==='step'\?'fl\.sizeStep'", txt):
+        errors.append("ช่องขนาดไม่เตือน fl.sizeStep เมื่อไม่ใช่ทีละ 0.5 (ดู UI_STANDARD.md ข้อ 6)")
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

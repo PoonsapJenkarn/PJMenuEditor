@@ -199,7 +199,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -596,6 +596,19 @@ def main():
         for _n34, _x34 in zip(('บน', 'ขวา', 'ล่าง', 'ซ้าย'), _v34):  # ทั้ง 4 ด้าน — เครื่องพิมพ์ร้านพิมพ์ไม่ได้ ~2.5 mm เท่ากันทุกด้าน (ผู้ใช้ 9 ต.ค. 2026)
             if _x34 is None or _x34 < 3:
                 errors.append('ขอบ{} ของ .page ต้องเป็น mm และไม่น้อยกว่า 3mm (ขอบที่เครื่องพิมพ์พิมพ์ไม่ได้) (ดู UI_STANDARD.md ข้อ 7)'.format(_n34))
+
+    # ---- 35) ช่องกรอกในแถบเครื่องมือต้องพิมพ์ได้ (ผู้ใช้ 9 ต.ค. 2026: ช่อง HEX สีขอบคลิกแล้วพิมพ์ไม่ได้) ----
+    #   #typobar mousedown → preventDefault (กันไม่ให้ไฮไลท์ในเมนูหาย) · ช่องกรอกต้องได้รับยกเว้น ไม่งั้นคลิกแล้วพิมพ์ไม่ได้
+    _md35 = re.search(r"getElementById\('typobar'\)\.addEventListener\('mousedown',[^\n]*\n(?:[^\n]*\n){0,3}?[^\n]*saveSelection\(\); return; \}", txt)
+    if not _md35:
+        errors.append('หาตัวยกเว้นช่องกรอกใน mousedown ของ #typobar ไม่พบ — lint ข้อ 35 ตรวจไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        for _id35 in sorted(set(re.findall(r'<input\b[^>]*\bid="(typo\w+)"', txt))):
+            if "'" + _id35 + "'" not in _md35.group(0):
+                errors.append('ช่องกรอก #{} ไม่อยู่ในตัวยกเว้น mousedown ของ #typobar — คลิกแล้วพิมพ์ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)'.format(_id35))
+    _op35 = re.search(r'\n\s*function _cpDlgOpen\([^)]*\)\{[\s\S]*?\n  \}', txt)
+    if 'id="typoOlPick"' in txt and (not _op35 or "'typoOlPick'" not in _op35.group(0)):
+        errors.append('หน้าต่างสีที่กำหนดเองของสีขอบไม่ได้ขึ้นใต้ปุ่ม A (_cpDlgOpen ต้องย้ายไป #typoOlPick) (ดู UI_STANDARD.md ข้อ 5)')
 
     # ---- report ----
     print("=" * 54)

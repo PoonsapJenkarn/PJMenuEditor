@@ -773,6 +773,15 @@ def main():
         _f39 = re.search(r'\nfunction ' + _fn39 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
         if not _f39 or ".fimg[title]" not in _f39.group(0):
             errors.append('{} ไม่ลบ tooltip ชื่อไฟล์ (.fimg[title]) — หลุดลง snapshot / ไฟล์ (ดู UI_STANDARD.md ข้อ 6)'.format(_fn39))
+    #   39c) ป้ายใต้รูป 2 แถว + ไม่ถูกปุ่มย่อขยายทับ (ผู้ใช้ 9 ต.ค. 2026 19:33)
+    _tg39 = re.search(r'\.fimg \.sizetag\{([^}]*)\}', _css)
+    _rz39 = re.search(r'\.fimg \.rz\{([^}]*)\}', _css)
+    _mt39 = re.search(r'margin-top:(\d+)px', _tg39.group(1)) if _tg39 else None
+    _bt39 = re.search(r'bottom:-(\d+)px', _rz39.group(1)) if _rz39 else None
+    if not (_mt39 and _bt39) or int(_mt39.group(1)) <= int(_bt39.group(1)):
+        errors.append('ป้ายใต้รูป (.sizetag margin-top) ต้องต่ำกว่าปุ่มย่อขยาย (.rz bottom) — ไม่งั้นปุ่มทับตัวเลขขนาด (ดู UI_STANDARD.md ข้อ 6)')
+    if not _tg39 or 'white-space:pre' not in _tg39.group(1) or not _rd39 or "_cutMid(fnm,30)+'\\n'" not in _rd39.group(0):
+        errors.append("ป้ายใต้รูปต้องเป็น 2 แถว (ชื่อ\\nขนาด + white-space:pre) (ดู UI_STANDARD.md ข้อ 6)")
     _pg39 = re.sub(r'<script[\s\S]*?</script>', '', txt)
     for _m39 in re.finditer(r'<div class="fimg"(?![^>]*data-fname=)[^>]*>', _pg39):
         warnings.append('รูปในหน้าเมนูไม่มีชื่อไฟล์ (data-fname): {}'.format(_m39.group(0)[:90]))

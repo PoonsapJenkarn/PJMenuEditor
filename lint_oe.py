@@ -581,7 +581,7 @@ def main():
         if not re.search(r'var _defaultStyles=\{[^}]*\bsecnote:null', txt):
             errors.append('_defaultStyles ไม่มี secnote — ตั้งค่าเริ่มต้นของหมายเหตุกลุ่มไม่ได้ (ดู UI_STANDARD.md ข้อ 7)')
 
-    # ---- 34) ระยะขอบหน้า: ตัวตรวจล้นหน้าต้องใช้ค่าเดียวกับหน้าจริง · บน/ล่างไม่น้อยกว่าขอบที่เครื่องพิมพ์พิมพ์ไม่ได้ (ผู้ใช้ 9 ต.ค. 2026) ----
+    # ---- 34) ระยะขอบหน้า: ตัวตรวจล้นหน้าต้องใช้ค่าเดียวกับหน้าจริง · ทั้ง 4 ด้านไม่น้อยกว่าขอบที่เครื่องพิมพ์พิมพ์ไม่ได้ (ผู้ใช้ 9 ต.ค. 2026) ----
     #   ผู้ใช้วัดจากการพิมพ์จริง ≈ 2.5 mm → เผื่อ 3 mm · .page กับ body.measuring .page มีค่า padding แยกกัน 2 ที่ — แก้ที่เดียว = วัดล้นหน้าผิด
     _pp34 = re.search(r'\n\.page\{[^}]*?padding:([^;]+);', txt)
     _mp34 = re.search(r'body\.measuring \.page\{[^}]*?padding:([^;!]+?)\s*!important', txt)
@@ -592,8 +592,8 @@ def main():
         if _a34 != _b34:
             errors.append('padding ของ .page ({}) ไม่เท่ากับ body.measuring .page ({}) — ตัวตรวจล้นหน้าจะวัดผิด (ดู UI_STANDARD.md ข้อ 7)'.format(' '.join(_a34), ' '.join(_b34)))
         _v34 = [float(x[:-2]) if x.endswith('mm') else None for x in _a34]
-        _top34, _bot34 = _v34[0], (_v34[2] if len(_v34) > 2 else _v34[0])
-        for _n34, _x34 in (('บน', _top34), ('ล่าง', _bot34)):
+        _v34 = (_v34 * 4)[:4] if len(_v34) == 1 else (_v34 + _v34)[:4] if len(_v34) == 2 else (_v34 + [_v34[1]])[:4] if len(_v34) == 3 else _v34[:4]  # บน ขวา ล่าง ซ้าย
+        for _n34, _x34 in zip(('บน', 'ขวา', 'ล่าง', 'ซ้าย'), _v34):  # ทั้ง 4 ด้าน — เครื่องพิมพ์ร้านพิมพ์ไม่ได้ ~2.5 mm เท่ากันทุกด้าน (ผู้ใช้ 9 ต.ค. 2026)
             if _x34 is None or _x34 < 3:
                 errors.append('ขอบ{} ของ .page ต้องเป็น mm และไม่น้อยกว่า 3mm (ขอบที่เครื่องพิมพ์พิมพ์ไม่ได้) (ดู UI_STANDARD.md ข้อ 7)'.format(_n34))
 

@@ -740,6 +740,43 @@ def main():
     if not re.search(r"tk\(pz\.bad==='step'\?'fl\.sizeStep'", txt):
         errors.append("ช่องขนาดไม่เตือน fl.sizeStep เมื่อไม่ใช่ทีละ 0.5 (ดู UI_STANDARD.md ข้อ 6)")
 
+    # ---- 39) ชื่อไฟล์รูป (.fimg data-fname) แสดงตอนแก้ (ผู้ใช้ 9 ต.ค. 2026) ----
+    #   ดู UI_STANDARD.md ข้อ 6 · เพิ่มรูปต้องจำชื่อ · ใส่ทุกหน้าคัดลอก · แถบล่าง + ป้ายใต้รูปแสดง · ไฟล์เมนูที่ดาวน์โหลดไม่มีชื่อ
+    _ia39 = re.search(r'\nfunction imgAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _ia39 or "setAttribute('data-fname'" not in _ia39.group(0):
+        errors.append('imgAdd ไม่จำชื่อไฟล์ (data-fname) — รูปที่เพิ่มใหม่จะไม่มีชื่อ (ดู UI_STANDARD.md ข้อ 6)')
+    _ta39 = re.search(r'\nfunction imgToAllPages\(\)\{[\s\S]*?\n\}', txt)
+    if not _ta39 or 'data-fname' not in _ta39.group(0):
+        errors.append('ใส่ทุกหน้า (imgToAllPages) ไม่คัดลอกชื่อไฟล์ data-fname (ดู UI_STANDARD.md ข้อ 6)')
+    _rd39 = re.search(r'\nfunction _imgReadout\(el\)\{[\s\S]*?\n\}', txt)
+    if not _rd39 or "tkj([nm].concat(fnm?" not in _rd39.group(0) or "tg.textContent=(fnm?" not in _rd39.group(0):  # แถบล่าง + ป้ายใต้รูป แยกกันตรวจ
+        errors.append('_imgReadout ไม่แสดงชื่อไฟล์ในแถบล่าง + ป้ายใต้รูป (ดู UI_STANDARD.md ข้อ 6)')
+    _bm39 = re.search(r'\nfunction buildMenuHtml\(\)\{[\s\S]*?\n\}', txt)
+    if not _bm39 or "removeAttribute('data-fname')" not in _bm39.group(0):
+        errors.append('buildMenuHtml ไม่ลบชื่อไฟล์รูป — ติดไปในไฟล์เมนูที่ดาวน์โหลด (ดู UI_STANDARD.md ข้อ 6)')
+    if re.search(r'innerHTML\s*=[^;\n]*_imgFname\(|innerHTML\s*=[^;\n]*\bfnm\b', txt):
+        errors.append('ชื่อไฟล์รูปใส่ผ่าน innerHTML — ต้องใช้ textContent (ชื่อไฟล์มี & ได้) (ดู UI_STANDARD.md ข้อ 6)')
+    #   39b) คัดลอกชื่อ + ชื่อยาว (ผู้ใช้ 9 ต.ค. 2026)
+    if len(re.findall(r'id="btnImgCopyName" onclick="imgCopyName\(\)"', txt)) != 1:
+        errors.append('ปุ่ม "คัดลอกชื่อ" ต้องมี 1 ปุ่ม ผูก onclick imgCopyName() (ดู UI_STANDARD.md ข้อ 6)')
+    if not _rd39 or '_imgCopySync(el)' not in _rd39.group(0):
+        errors.append('_imgReadout ไม่เรียก _imgCopySync — ปุ่มคัดลอกชื่อไม่จางเมื่อไม่ได้เลือกรูป (ดู UI_STANDARD.md ข้อ 5)')
+    _cp39 = re.search(r'\nfunction imgCopyName\(\)\{[\s\S]*?\n\}', txt)
+    _ct39 = re.search(r'\nfunction _copyText\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _cp39 or "'fl.imgCopyFail'" not in _cp39.group(0) or not _ct39 or '_copyFallback(' not in _ct39.group(0):
+        errors.append('คัดลอกชื่อต้องมีทางสำรอง (_copyFallback) และแจ้ง fl.imgCopyFail เมื่อคัดลอกไม่ได้ — ห้ามขึ้นว่าสำเร็จทั้งที่ไม่ได้คัดลอก (ดู UI_STANDARD.md ข้อ 6)')
+    if not _rd39 or 'tg.textContent=(fnm?_cutMid(' not in _rd39.group(0):
+        errors.append('ป้ายใต้รูปต้องตัดชื่อด้วย _cutMid (เก็บนามสกุล) (ดู UI_STANDARD.md ข้อ 6)')
+    if not re.search(r'#edstatus \.edstatus-msg\{[^}]*overflow-wrap:anywhere', txt):
+        errors.append('แถบล่าง .edstatus-msg ไม่ตัดคำยาว — ชื่อไฟล์ยาวไม่มีเว้นวรรคล้นจอ (ดู UI_STANDARD.md ข้อ 7)')
+    for _fn39 in ('_serializePages', 'buildEditorHtml', 'buildMenuHtml'):
+        _f39 = re.search(r'\nfunction ' + _fn39 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _f39 or ".fimg[title]" not in _f39.group(0):
+            errors.append('{} ไม่ลบ tooltip ชื่อไฟล์ (.fimg[title]) — หลุดลง snapshot / ไฟล์ (ดู UI_STANDARD.md ข้อ 6)'.format(_fn39))
+    _pg39 = re.sub(r'<script[\s\S]*?</script>', '', txt)
+    for _m39 in re.finditer(r'<div class="fimg"(?![^>]*data-fname=)[^>]*>', _pg39):
+        warnings.append('รูปในหน้าเมนูไม่มีชื่อไฟล์ (data-fname): {}'.format(_m39.group(0)[:90]))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

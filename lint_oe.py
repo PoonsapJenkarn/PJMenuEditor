@@ -686,6 +686,35 @@ def main():
             if not _f36 or 'btnShdAll' not in _f36.group(0):
                 errors.append('{} ไม่ดูแลปุ่ม btnShdAll — {} (ดู UI_STANDARD.md ข้อ 5)'.format(_fn36, _why36))
 
+    # ---- 37) โหมดแก้: หน้าเมนูยาวเกิน A4 ได้ + เส้นประขอบ A4 (ผู้ใช้ 9 ต.ค. 2026 · แบบ ก) ----
+    #   ดู UI_STANDARD.md ข้อ 7 · ขนาดพิมพ์ต้องคงเดิม · ส่วนขยายต้องอยู่ใน @media screen + :not(.measuring) ทุกโหมดแก้
+    _pg37 = re.search(r'\n\.page\{([^}]*)\}', txt)
+    if not _pg37 or not re.search(r'(?<![-\w])height:297mm', _pg37.group(1)) or 'overflow:hidden' not in _pg37.group(1):
+        errors.append('.page ต้องสูง 297mm + overflow:hidden (ขนาดพิมพ์ A4) — ส่วนขยายตอนแก้ใส่ได้เฉพาะในโหมดแก้ (ดู UI_STANDARD.md ข้อ 7)')
+    for _md37 in ('editmode', 'headermode', 'pricemode', 'imgmode'):
+        _sel37 = 'body.' + _md37 + ':not(.measuring) .page'
+        _i37 = txt.find(_sel37 + ',') if txt.find(_sel37 + ',') >= 0 else txt.find(_sel37 + '{')
+        if _i37 < 0:
+            errors.append('โหมด {} ไม่มีส่วนขยายหน้า ({}) — ปุ่มแก้ไขดันเนื้อหาเกิน A4 แล้วถูกตัด (ดู UI_STANDARD.md ข้อ 7)'.format(_md37, _sel37)); continue
+        _m37 = txt.rfind('@media', 0, _i37)
+        _seg37 = txt[_m37:_i37] if _m37 >= 0 else ''
+        if not _seg37.startswith('@media screen') or _seg37.count('{') - _seg37.count('}') != 1:
+            errors.append('ส่วนขยายหน้าของโหมด {} ไม่อยู่ใน @media screen — Ctrl+P ระหว่างแก้จะพิมพ์เกิน A4 (ดู UI_STANDARD.md ข้อ 7)'.format(_md37))
+        if (_sel37 + '::after') not in txt:
+            errors.append('โหมด {} ไม่มีเส้นประขอบ A4 ({}::after) (ดู UI_STANDARD.md ข้อ 7)'.format(_md37, _sel37))
+    _ru37 = re.search(r'body\.editmode:not\(\.measuring\) \.page,[^{]*\{([^}]*)\}', txt)
+    if _ru37 and not ('height:auto' in _ru37.group(1) and 'overflow:visible' in _ru37.group(1)):
+        errors.append('ส่วนขยายหน้าต้องเป็น height:auto + overflow:visible (ดู UI_STANDARD.md ข้อ 7)')
+    _af37 = re.search(r'body\.editmode:not\(\.measuring\) \.page::after,[^{]*\{([^}]*)\}', txt)
+    if not _af37 or 'var(--a4lbl' not in _af37.group(1) or 'top:297mm' not in _af37.group(1):
+        errors.append('เส้นประขอบ A4 ต้องอยู่ที่ top:297mm และป้ายใช้ var(--a4lbl) (เปลี่ยนตาม TH/EN) (ดู UI_STANDARD.md ข้อ 6)')
+    for _fn37, _need37, _why37 in (('applyLang', "setProperty('--a4lbl'", 'ป้ายขอบ A4 ไม่เปลี่ยนตาม TH/EN'),
+                                   ('buildEditorHtml', "removeProperty('--a4lbl')", 'ป้ายขอบ A4 หลุดลงไฟล์ที่บันทึก'),
+                                   ('buildMenuHtml', "removeProperty('--a4lbl')", 'ป้ายขอบ A4 หลุดลงไฟล์เมนูที่ดาวน์โหลด')):
+        _f37 = re.search(r'\nfunction ' + _fn37 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _f37 or _need37 not in _f37.group(0):
+            errors.append('{} ไม่มี {} — {} (ดู UI_STANDARD.md ข้อ 6)'.format(_fn37, _need37, _why37))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

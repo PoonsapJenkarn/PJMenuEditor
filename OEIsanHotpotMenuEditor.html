@@ -43,7 +43,7 @@ body{background:#e8e2d9;color:#2b2320;
 .secimg{margin-left:auto;height:26px;width:auto;}
 .sec-b{padding:5px 13px 7px;}
 .row{display:flex;align-items:flex-end;gap:5px;padding:2px 0;font-size:15px;}
-.nm{color:#2b3038;min-width:0;overflow-wrap:anywhere;word-break:break-word;font-size:16px;}  /* ชื่อเมนู 16px (ผู้ใช้ 8 ต.ค. 2026 21:41 · 17px ล้น A4 หน้า 1, 2 · เดิม 15px จาก .row · ราคายัง 15px) */
+.nm{color:#171a1e;min-width:0;overflow-wrap:anywhere;word-break:break-word;font-size:16px;}  /* ชื่อเมนู 16px (ผู้ใช้ 8 ต.ค. 2026 21:41 · 17px ล้น A4 หน้า 1, 2 · เดิม 15px จาก .row · ราคายัง 15px) */
 .nm i{color:#6f6456;font-size:12.5px;font-style:italic;}
 .ln{flex:1;border-bottom:1px dotted #cdbfa8;margin-bottom:4px;min-width:10px;}
 .pr{font-family:'Prompt',sans-serif;font-weight:600;color:#2b3038;
@@ -796,7 +796,7 @@ function newRow(){
     +'<span class="ln"></span><span class="pr" contenteditable="true"></span>';
   var _dnm=_defaultStyles.nm, _dpr=_defaultStyles.pr;
   if(_dnm&&(_dnm.fontFamily||_dnm.fontSize||_dnm.color||_dnm.outline)){var nm=r.querySelector('.nm');if(nm){if(_dnm.fontFamily)nm.style.fontFamily=_dnm.fontFamily;if(_dnm.fontSize)nm.style.fontSize=_dnm.fontSize;nm.style.fontWeight=_dnm.fontWeight||'';nm.style.fontStyle=_dnm.fontStyle||'';if(_dnm.color)nm.style.color=_dnm.color;
-    if(_dnm.outline){ nm.style.textShadow=_olShadow(_dnm.olc||_olEdge(String(_dnm.color||'#2B3038').toUpperCase()),_olDefW(_dnm.outline)); if(_dnm.olc) nm.setAttribute('data-ol-c',_dnm.olc); }}}  /* ยังไม่อยู่ในหน้า: สีค่าเริ่มต้น หรือสีชื่อเมนู #2B3038 */
+    if(_dnm.outline){ nm.style.textShadow=_olShadow(_dnm.olc||_olEdge(String(_dnm.color||'#171A1E').toUpperCase()),_olDefW(_dnm.outline)); if(_dnm.olc) nm.setAttribute('data-ol-c',_dnm.olc); }}}  /* ยังไม่อยู่ในหน้า: สีค่าเริ่มต้น หรือสีชื่อเมนู #171A1E (เดิม #2B3038 · ผู้ใช้ 9 ต.ค. 2026) */
   if(_dpr&&(_dpr.fontFamily||_dpr.fontSize||_dpr.color||_dpr.outline)){var prEl=r.querySelector('.pr');if(prEl){if(_dpr.fontFamily)prEl.style.fontFamily=_dpr.fontFamily;if(_dpr.fontSize)prEl.style.fontSize=_dpr.fontSize;prEl.style.fontWeight=_dpr.fontWeight||'';prEl.style.fontStyle=_dpr.fontStyle||'';if(_dpr.color)prEl.style.color=_dpr.color;
     if(_dpr.outline){ prEl.style.textShadow=_olShadow(_dpr.olc||_olEdge(String(_dpr.color||'#2B3038').toUpperCase()),_olDefW(_dpr.outline)); if(_dpr.olc) prEl.setAttribute('data-ol-c',_dpr.olc); }}}
   addDelBtn(r); return r;

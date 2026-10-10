@@ -8,6 +8,20 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - ยังไม่เคยรัน verify_oe.py บนเครื่อง / ยังไม่อยู่ใน pre-commit hook
 
+## 10 ต.ค. 2026 (17:30) — ✅ ย้ายข้อความเส้นจุดจากในช่อง → แถบล่าง · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก 633908e)
+- ผู้ใช้พบ (ภาพ): วางในช่องแล้วข้อความขาด (ช่องเส้นจุดแคบ อยู่ระหว่างชื่อ-ราคา) · decision 17:27 เลือก "แถบล่าง" (เต็มเสมอ ไม่ตัด ไม่ทับ)
+- ลบ: .ln.typosel::after (ในช่อง) + position:relative + --lnhint (setProperty ใน applyLang + removeProperty ใน build* 2 จุด)
+- เพิ่ม: _lnSelMsg(type)=tkj([_typoLabel, ' — '+(_lang EN/TH)]) · typoSelect: setStatus isLine?_lnSelMsg(type):_typoLabel(type) · applyLang: ถ้าเลือกเส้นจุดอยู่ → setStatus(_lnSelMsg(_typoType)) สร้างใหม่ตอนสลับภาษา
+- ข้อความ: "เปลี่ยนสีและแบบเส้นได้เท่านั้น" / "Change color and line style only" (ยัง inline ใน _lnSelMsg + applyLang ไม่ได้อยู่ I18N table เพราะ on-device write ยังล่ม)
+- lint ข้อ 44 เขียนใหม่ (status-bar): _lnSelMsg มี TH+EN · typoSelect ใช้ isLine?_lnSelMsg · applyLang re-render · ห้ามเหลือ ::after/--lnhint · ทดสอบไฟล์ที่ใส่บั๊ก 4 แบบ จับได้ครบ · html sha 76ef4a36f4680ee0
+- ⚠ on-device write (run_python_on_device_with_write) ยังล่ม error 500 ต่อเนื่อง (~11:19 ถึง 17:30+) — ทำผ่าน file_edit ทั้งหมด · read ปกติ
+
+## 10 ต.ค. 2026 (16:50) — ✅ ข้อความเส้นจุด: "เปลี่ยนสีและแบบเส้นได้เท่านั้น" + ย้ายมากลางช่อง · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (
+- ผู้ใช้เลือก (decision 16:50): ใส่ "เท่านั้น" (ตรงความจริง — เลือกเส้นจุดแล้วแก้ได้แค่สี+แบบเส้น ปุ่มอื่นจาง) + ย้ายข้อความจากลอยเหนือเส้น → กลางช่อง (เดิมลอยทับหัวกลุ่มแถวบน)
+- CSS .ln.typosel::after: bottom:100% → top:50% translate(-50%,-50%) · + max-width:100% box-sizing overflow:hidden text-overflow:ellipsis (ตัด … เมื่อช่องแคบ) · font:italic (คำแนะนำ ไม่ใช่เนื้อหา) · applyLang TH "เปลี่ยนสีและแบบเส้นได้เท่านั้น" / EN "Change color and line style only"
+- lint ข้อ 44 เพิ่มเช็ค: ต้องมี text-overflow:ellipsis + max-width · ห้าม bottom:100% (ทับแถวบน) · ทดสอบไฟล์ที่ใส่บั๊ก 2 แบบ จับได้ครบ · html sha f19f256493a950c0
+- ⚠ on-device write (run_python_on_device_with_write) ยังล่ม error 500 (ตั้งแต่ ~11:19 ถึง 16:50+) — ทำผ่าน file_edit ทั้งหมด · read-on-device ปกติ
+
 ## 10 ต.ค. 2026 (11:19) — ✅ ข้อความบอกเส้นจุด "เปลี่ยนสีและแบบเส้นได้" (ขึ้นจางเฉพาะเส้นที่เลือก) · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก 0a4c5d1)
 - CSS body.editmode .ln.typosel::after content var(--lnhint, ไทย) · .ln ได้ position:relative · @media screen · ::after ไม่อยู่ DOM = ไม่หลุดไฟล์/snapshot
 - ⚠ ช่อง on-device write (run_python_on_device_with_write) ล่ม error 500/timeout ตั้งแต่ ~11:19 ยาวถึง 15:36+ (ยังล่ม) — อ่านได้ · แก้ไฟล์ผ่าน file_edit (SNCS fs) ได้ · ทำส่วนที่เหลือทาง file_edit ทั้งหมด

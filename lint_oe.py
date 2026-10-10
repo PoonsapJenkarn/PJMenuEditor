@@ -884,12 +884,17 @@ def main():
             if 'background' in _b43 and re.search(r'#e1dfdd|#dce9e0', _b43) and ('.on' not in _s43) and ('.szbtn' not in _s43) and ('.qab' not in _s43):
                 errors.append("press state '{}' ตั้ง background แต่ไม่ได้กัน .on — อาจทับพื้นเขียวของปุ่ม toggle (ดู UI_STANDARD.md ข้อ 1)".format(_s43.strip()[:60]))
 
-    # ---- 44) ข้อความบอกเส้นจุดที่เลือก "เปลี่ยนสีและแบบเส้นได้เท่านั้น" ที่แถบล่าง (ผู้ใช้ 10 ต.ค. 2026) ----
-    #   ดู UI_STANDARD.md ข้อ 5-6 · ย้ายจากในช่อง (พื้นที่ไม่พอ ข้อความขาด) → แถบล่าง · _lnSelMsg สร้าง TH/EN · typoSelect ใช้ตอนเลือกเส้นจุด · applyLang สร้างใหม่ตอนสลับภาษา
+    # ---- 44) ข้อความบอกเส้นจุดที่เลือก "เปลี่ยนสีและแบบเส้นได้เท่านั้น" ที่แถบล่าง — อ่านจากตารางภาษา ln.hint (ผู้ใช้ 10 ต.ค. 2026) ----
+    #   ดู UI_STANDARD.md ข้อ 5-6 · ย้ายจากในช่อง → แถบล่าง (17:30) แล้ว migration เข้าตารางภาษา key ln.hint · _lnSelMsg อ่าน t('ln.hint') · typoSelect ใช้ตอนเลือกเส้นจุด · applyLang สร้างใหม่ตอนสลับภาษา · ห้ามเหลือ ::after/--lnhint (ของเก่าแบบในช่อง)
     if '_lnSelMsg' in txt:
         _lm44 = re.search(r'\nfunction _lnSelMsg\([^)]*\)\{[^\n]*\}', txt)
-        if not _lm44 or 'line style' not in _lm44.group(0) or 'เปลี่ยนสีและแบบเส้น' not in _lm44.group(0):
-            errors.append('_lnSelMsg ต้องมีข้อความทั้ง TH และ EN (ดู UI_STANDARD.md ข้อ 6)')
+        if not _lm44 or "t(\'ln.hint\')" not in _lm44.group(0):
+            errors.append("_lnSelMsg ต้องอ่านข้อความจากตารางภาษา t(\'ln.hint\') ไม่ใช่ inline (ดู UI_STANDARD.md ข้อ 6)")
+        _hints44 = re.findall(r"'ln\.hint':'([^']*)'", txt)
+        if len(_hints44) < 2:
+            errors.append('ตารางภาษาต้องมี key ln.hint ทั้ง TH และ EN (ดู UI_STANDARD.md ข้อ 6)')
+        elif not any('เปลี่ยนสีและแบบเส้น' in h for h in _hints44) or not any('line style' in h for h in _hints44):
+            errors.append('ln.hint ต้องมีทั้งข้อความไทย (เปลี่ยนสีและแบบเส้น) และอังกฤษ (line style) (ดู UI_STANDARD.md ข้อ 6)')
         _ts44 = re.search(r'\nfunction typoSelect\([^)]*\)\{[\s\S]*?\n\}', txt)
         if not _ts44 or 'isLine?_lnSelMsg(type)' not in _ts44.group(0):
             errors.append('typoSelect ไม่แสดงข้อความเส้นจุดที่แถบล่าง (isLine?_lnSelMsg(type)) (ดู UI_STANDARD.md ข้อ 6)')
@@ -899,7 +904,7 @@ def main():
         if 'body.editmode .ln.typosel::after' in txt:
             errors.append('ยังมี ::after ในช่อง (.ln.typosel::after) — ย้ายไปแถบล่างแล้ว ต้องลบออก (ไม่ทิ้งขยะ)')
         if "setProperty('--lnhint'" in txt or "removeProperty('--lnhint')" in txt:
-            errors.append('ยังมีโค้ด --lnhint ค้าง — ย้ายไปแถบล่างแล้ว ต้องลบออก (ไม่ทิ้งขยะ)')
+            errors.append('ยังมีโค้ด --lnhint ค้าง — ย้ายเข้าตารางภาษาแล้ว ต้องลบออก (ไม่ทิ้งขยะ)')
     else:
         errors.append('ไม่พบ _lnSelMsg — ข้อความบอกเส้นจุดที่แถบล่างหาย (ดู UI_STANDARD.md ข้อ 5)')
 

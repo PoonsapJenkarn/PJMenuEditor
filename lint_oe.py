@@ -729,7 +729,7 @@ def main():
     if re.search(r'Math\.round\(\s*parseFloat\([^)]*fontSize', txt) or re.search(r'parseInt\(\s*raw\s*,\s*10\s*\)', txt):
         errors.append('มีที่อ่านขนาดตัวอักษรแบบปัดเป็นจำนวนเต็ม (Math.round(parseFloat(..fontSize)) / parseInt(raw,10)) — ใช้ _sizeHalf / _sizeParse (ดู UI_STANDARD.md ข้อ 6)')
     for _k38 in ('fl.sizeStep', 'fl.sizeOnly', 'ttl.sizeType'):
-        _n38 = len(re.findall(r"'" + re.escape(_k38) + r"':'(?![\w.]+'\s*[),])", txt))  # ข้อความแปลจริง (ไม่นับ 'k':'อีกkey' ใน ternary)
+        _n38 = len(re.findall(r"'" + re.escape(_k38) + r"':'(?!\w+\.[\w.]+'\s*[),])", txt))  # ข้อความแปลจริง (ไม่นับ 'k':'อีกkey' ใน ternary)
         if _n38 != 2:
             errors.append("ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)".format(_k38, _n38))
     #   ปุ่ม +/− ทีละ 0.5 (ผู้ใช้ 9 ต.ค. 2026 17:38 · แบบ ข แทนแบบ ก) — ปุ่มต้องไปถึงทุกค่าที่ช่องรับได้
@@ -785,6 +785,45 @@ def main():
     _pg39 = re.sub(r'<script[\s\S]*?</script>', '', txt)
     for _m39 in re.finditer(r'<div class="fimg"(?![^>]*data-fname=)[^>]*>', _pg39):
         warnings.append('รูปในหน้าเมนูไม่มีชื่อไฟล์ (data-fname): {}'.format(_m39.group(0)[:90]))
+
+    # ---- 40) งานค้าง 6 ข้อ (ตรวจ 10 ต.ค. 2026 00:25 · แก้ 01:22) — ปุ่มต้องทำตามที่บอก และบอกผล ----
+    #   ดู UI_STANDARD.md ข้อ 5–6
+    _ac40 = re.search(r'\n\s*function applyColorRange\([^)]*\)\{[\s\S]*?\n  \}', txt)
+    if not _ac40 or not re.search(r"_typoType\.line\)\{[\s\S]{0,600}borderBottomColor=C[\s\S]{0,200}'fl\.lineColor'", _ac40.group(0)):
+        errors.append('applyColorRange ไม่ทาสีเส้นจุด (borderBottomColor + fl.lineColor) — กดสีแล้วไม่มีอะไรเกิดขึ้น (ดู UI_STANDARD.md ข้อ 6)')
+    if re.search(r"'typoCpApply'\][^\n]*disabled=isLine", txt):
+        errors.append('ปุ่มสี (typoCpApply) จางเมื่อเลือกเส้นจุด — เส้นจุดต้องเปลี่ยนสีได้ (ดู UI_STANDARD.md ข้อ 5)')
+    _cd40 = re.search(r'\n\s*function _cpDlgOk\(\)\{[\s\S]*?\n  \}', txt)
+    if _cd40 and '_typoEl && !line)?applyColorRange' in _cd40.group(0):
+        errors.append('หน้าต่าง + กำหนดเอง ข้ามเส้นจุด — ต้องทาสีเส้นจุดด้วย (ดู UI_STANDARD.md ข้อ 6)')
+    _la40 = re.search(r'\nfunction typoLineApply\(\)\{[\s\S]*?\n\}', txt)
+    if not _la40 or "'fl.lineStyle'" not in _la40.group(0) or "'fl.lineStyleSame'" not in _la40.group(0):
+        errors.append('typoLineApply ไม่แจ้งผล (fl.lineStyle / fl.lineStyleSame) (ดู UI_STANDARD.md ข้อ 6)')
+    if re.search(r'function typoColorApply\(|function typoColorLive\(', txt):
+        errors.append('typoColorApply / typoColorLive เป็น code ที่ไม่มีใครเรียก — ลบออก (ไม่ทิ้งขยะ)')
+    _rp40 = re.search(r'\nfunction _restorePages\(html\)\{[\s\S]*?\n\}', txt)
+    if not _rp40 or 'document.contains(_typoEl)' not in _rp40.group(0) or 'typoClear()' not in _rp40.group(0) or 'lastEditable.isConnected' not in _rp40.group(0):
+        errors.append('_restorePages ไม่ยกเลิกช่อง/ไฮไลท์ที่หลุดจากหน้า — หลัง Ctrl+Z แถบรูปแบบแก้ช่องที่มองไม่เห็นแล้วบอกว่าสำเร็จ (ดู UI_STANDARD.md ข้อ 5)')
+    if re.search(r"getElementById\('typoFont'\)\.addEventListener\('change'", txt) and 'id="typoFont" onchange=' in txt:
+        errors.append('ช่องฟอนต์ผูก 2 ทาง (onchange + addEventListener) — เลือกครั้งเดียวทำ 2 รอบ (ดู UI_STANDARD.md ข้อ 6)')
+    _fa40 = re.search(r'\nfunction typoFontApply\(\)\{[\s\S]*?\n\}', txt)
+    if not _fa40 or not all(k in _fa40.group(0) for k in ("'fl.fontRange'", "'fl.fontCell'", "'fl.fontSame'")):
+        errors.append('typoFontApply ต้องแจ้งผล fl.fontRange / fl.fontCell / fl.fontSame (ดู UI_STANDARD.md ข้อ 6)')
+    if not _rd39 or "if(!el){ if(document.body.classList.contains('imgmode')) setStatus(" not in _rd39.group(0):
+        errors.append('_imgReadout(null) ตั้งข้อความ "คลิกรูป…" นอกโหมดแก้รูป — ออกจากแก้รูปแล้วแถบล่างค้าง (ดู UI_STANDARD.md ข้อ 6)')
+    for _id40, _k40 in (('typoBold', 'sty.bold'), ('typoItalic', 'sty.italic'), ('typoUnderline', 'sty.underline'), ('typoStrike', 'sty.strike')):
+        if not re.search(r"getElementById\('" + _id40 + r"'\)\.addEventListener\('click', function\(\)\{ _styleExec\('\w+','" + re.escape(_k40) + r"'\); \}\);", txt):
+            errors.append('ปุ่ม {} ต้องเรียก _styleExec (มีข้อความผล) (ดู UI_STANDARD.md ข้อ 6)'.format(_id40))
+    _se40 = re.search(r'\n\s*function _styleExec\([^)]*\)\{[\s\S]*?\n  \}', txt)
+    if not _se40 or "'fl.styleOn'" not in _se40.group(0) or 'needSel()' not in _se40.group(0):
+        errors.append('_styleExec ต้องแจ้งผล fl.styleOn/fl.styleOff และบอกเมื่อไม่ได้ไฮไลท์ (ดู UI_STANDARD.md ข้อ 6)')
+    _db40 = re.search(r"d\.onclick=function\(ev\)\{[^\n]*\};", txt)
+    if not _db40 or "'fl.imgDel'" not in _db40.group(0) or '_imgHideSync()' not in _db40.group(0):
+        errors.append('ปุ่มลบรูป (×) ต้องแจ้งผล fl.imgDel และนับปุ่มซ่อนรูปใหม่ (_imgHideSync) (ดู UI_STANDARD.md ข้อ 6)')
+    for _k40 in ('fl.lineColor', 'fl.lineColorSame', 'fl.lineStyle', 'fl.lineStyleSame', 'fl.fontCell', 'fl.fontSame', 'fl.styleOn', 'fl.styleOff', 'sty.bold', 'sty.italic', 'sty.underline', 'sty.strike', 'fl.imgDel'):
+        _n40 = len(re.findall(r"'" + re.escape(_k40) + r"':'(?!\w+\.[\w.]+'\s*[),])", txt))
+        if _n40 != 2:
+            errors.append('ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)'.format(_k40, _n40))
 
     # ---- report ----
     print("=" * 54)

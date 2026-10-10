@@ -732,7 +732,7 @@ def main():
     if re.search(r'Math\.round\(\s*parseFloat\([^)]*fontSize', txt) or re.search(r'parseInt\(\s*raw\s*,\s*10\s*\)', txt):
         errors.append('มีที่อ่านขนาดตัวอักษรแบบปัดเป็นจำนวนเต็ม (Math.round(parseFloat(..fontSize)) / parseInt(raw,10)) — ใช้ _sizeHalf / _sizeParse (ดู UI_STANDARD.md ข้อ 6)')
     for _k38 in ('fl.sizeStep', 'fl.sizeOnly', 'ttl.sizeType'):
-        _n38 = len(re.findall(r"'" + re.escape(_k38) + r"':'(?!\w+\.[\w.]+'\s*[),])", txt))  # ข้อความแปลจริง (ไม่นับ 'k':'อีกkey' ใน ternary)
+        _n38 = len(re.findall(r"'" + re.escape(_k38) + r"':'(?!\w+\.[\w.]+'\s*[),;])", txt))  # ข้อความแปลจริง (ไม่นับ 'k':'อีกkey' ใน ternary)
         if _n38 != 2:
             errors.append("ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)".format(_k38, _n38))
     #   ปุ่ม +/− ทีละ 0.5 (ผู้ใช้ 9 ต.ค. 2026 17:38 · แบบ ข แทนแบบ ก) — ปุ่มต้องไปถึงทุกค่าที่ช่องรับได้
@@ -824,7 +824,7 @@ def main():
     if not _db40 or "'fl.imgDel'" not in _db40.group(0) or '_imgHideSync()' not in _db40.group(0):
         errors.append('ปุ่มลบรูป (×) ต้องแจ้งผล fl.imgDel และนับปุ่มซ่อนรูปใหม่ (_imgHideSync) (ดู UI_STANDARD.md ข้อ 6)')
     for _k40 in ('fl.lineColor', 'fl.lineColorSame', 'fl.lineStyle', 'fl.lineStyleSame', 'fl.fontCell', 'fl.fontSame', 'fl.styleOn', 'fl.styleOff', 'sty.bold', 'sty.italic', 'sty.underline', 'sty.strike', 'fl.imgDel'):
-        _n40 = len(re.findall(r"'" + re.escape(_k40) + r"':'(?!\w+\.[\w.]+'\s*[),])", txt))
+        _n40 = len(re.findall(r"'" + re.escape(_k40) + r"':'(?!\w+\.[\w.]+'\s*[),;])", txt))
         if _n40 != 2:
             errors.append('ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)'.format(_k40, _n40))
 
@@ -842,6 +842,30 @@ def main():
         _seg41 = txt[_wrap41:_mi41.start()] if _wrap41 >= 0 else ''
         if not _seg41.startswith('@media screen') or _seg41.count('{') - _seg41.count('}') != 1:
             errors.append('affordance เส้นจุด (.ln) ต้องอยู่ใน @media screen — ไม่งั้นกรอบติดตอนพิมพ์ (ดู UI_STANDARD.md ข้อ 7)')
+
+    # ---- 42) ปุ่มคัดลอกตำแหน่งรูป (ผู้ใช้ 10 ต.ค. 2026) ----
+    #   ดู UI_STANDARD.md ข้อ 5–6 · ตำแหน่ง mm คำนวณที่เดียว (_imgPos) ใช้ทั้งแถบล่างและคัดลอก · มีทางสำรอง · ไม่ขึ้นว่าสำเร็จถ้าคัดลอกไม่ได้
+    if 'id="btnImgCopyPos"' in txt:
+        if len(re.findall(r'id="btnImgCopyPos" onclick="imgCopyPos\(\)"', txt)) != 1:
+            errors.append('ปุ่ม "คัดลอกตำแหน่ง" ต้องมี 1 ปุ่ม ผูก onclick imgCopyPos() (ดู UI_STANDARD.md ข้อ 6)')
+        _ip42 = re.search(r'\nfunction _imgPos\(el\)\{[\s\S]*?\n\}', txt)
+        if not _ip42 or 'getBoundingClientRect' not in _ip42.group(0):
+            errors.append('ไม่พบ _imgPos (คำนวณตำแหน่ง mm จาก getBoundingClientRect) (ดู UI_STANDARD.md ข้อ 6)')
+        _rd42 = re.search(r'\nfunction _imgReadout\(el\)\{[\s\S]*?\n\}', txt)
+        if not _rd42 or '_imgPos(el)' not in _rd42.group(0):
+            errors.append('_imgReadout ต้องใช้ _imgPos(el) — ค่าตำแหน่งในแถบล่างกับที่คัดลอกต้องมาจากที่เดียวกัน (ดู UI_STANDARD.md ข้อ 6)')
+        if not _rd42 or '_imgCopyPosSync(el)' not in _rd42.group(0):
+            errors.append('_imgReadout ไม่เรียก _imgCopyPosSync — ปุ่มคัดลอกตำแหน่งไม่จางเมื่อไม่ได้เลือกรูป (ดู UI_STANDARD.md ข้อ 5)')
+        _cp42 = re.search(r'\nfunction imgCopyPos\(\)\{[\s\S]*?\n\}', txt)
+        if not _cp42 or "'fl.imgPosCopyFail'" not in _cp42.group(0) or '_copyText(' not in _cp42.group(0):
+            errors.append('imgCopyPos ต้องใช้ _copyText + แจ้ง fl.imgPosCopyFail เมื่อคัดลอกไม่ได้ (ห้ามขึ้นว่าสำเร็จ) (ดู UI_STANDARD.md ข้อ 6)')
+        _be42 = re.search(r'\nfunction buildEditorHtml\(\)\{[\s\S]*?\n\}', txt)
+        if not _be42 or 'btnImgCopyPos' not in _be42.group(0):
+            errors.append('buildEditorHtml ไม่ล้างสถานะปุ่มคัดลอกตำแหน่ง (btnImgCopyPos) (ดู UI_STANDARD.md ข้อ 6)')
+        for _k42 in ('btn.imgCopyPos', 'ttl.imgCopyPos', 'ttl.imgCopyPosNeed', 'fl.imgPosCopied', 'fl.imgPosCopyFail'):
+            _n42 = len(re.findall(r"'" + re.escape(_k42) + r"':'(?!\w+\.[\w.]+'\s*[),;])", txt))
+            if _n42 != 2:
+                errors.append('ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)'.format(_k42, _n42))
 
     # ---- report ----
     print("=" * 54)

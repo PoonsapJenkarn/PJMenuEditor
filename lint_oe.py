@@ -603,9 +603,12 @@ def main():
     if not _md35:
         errors.append('หาตัวยกเว้นช่องกรอกใน mousedown ของ #typobar ไม่พบ — lint ข้อ 35 ตรวจไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
     else:
-        for _id35 in sorted(set(re.findall(r'<input\b[^>]*\bid="(typo\w+)"', txt))):
-            if "'" + _id35 + "'" not in _md35.group(0):
-                errors.append('ช่องกรอก #{} ไม่อยู่ในตัวยกเว้น mousedown ของ #typobar — คลิกแล้วพิมพ์ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)'.format(_id35))
+        # <input> พิมพ์ไม่ได้ ถ้าไม่ยกเว้น · <select> (เช่น typoLineStyle) dropdown ไม่เปิด ถ้าไม่ยกเว้น (ผู้ใช้ 10 ต.ค. 2026) · typo* อยู่ใน #typobar ทั้งหมด
+        for _tag35 in ('input', 'select'):
+            for _id35 in sorted(set(re.findall(r'<' + _tag35 + r'\b[^>]*\bid="(typo\w+)"', txt))):
+                if "'" + _id35 + "'" not in _md35.group(0):
+                    _why35 = 'คลิกแล้วพิมพ์ไม่ได้' if _tag35 == 'input' else 'คลิกแล้ว dropdown ไม่เปิด เปลี่ยนค่าไม่ได้'
+                    errors.append('{} #{} ไม่อยู่ในตัวยกเว้น mousedown ของ #typobar — {} (ดู UI_STANDARD.md ข้อ 5)'.format(_tag35, _id35, _why35))
     _op35 = re.search(r'\n\s*function _cpDlgOpen\([^)]*\)\{[\s\S]*?\n  \}', txt)
     if 'id="typoOlPick"' in txt and (not _op35 or "'typoOlPick'" not in _op35.group(0)):
         errors.append('หน้าต่างสีที่กำหนดเองของสีขอบไม่ได้ขึ้นใต้ปุ่ม A (_cpDlgOpen ต้องย้ายไป #typoOlPick) (ดู UI_STANDARD.md ข้อ 5)')
@@ -824,6 +827,21 @@ def main():
         _n40 = len(re.findall(r"'" + re.escape(_k40) + r"':'(?!\w+\.[\w.]+'\s*[),])", txt))
         if _n40 != 2:
             errors.append('ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)'.format(_k40, _n40))
+
+    # ---- 41) เส้นจุด (.ln) ต้องโชว์ว่าคลิกแก้ได้ในโหมดแก้ (ผู้ใช้ 10 ต.ค. 2026 · แบบ ก) ----
+    #   ดู UI_STANDARD.md ข้อ 5 · element ที่แก้ได้ต้องมี affordance เหมือน .nm/.pr · @media screen เท่านั้น (ไม่พิมพ์)
+    _af41 = re.search(r'body\.editmode \.ln\{([^}]*)\}', _css)
+    if not _af41:
+        errors.append('เส้นจุด (.ln) ไม่มี affordance ในโหมดแก้ (body.editmode .ln) — ผู้ใช้ไม่รู้ว่าคลิกแก้ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        _b41 = _af41.group(1)
+        if 'outline' not in _b41 or 'background' not in _b41:
+            errors.append('affordance เส้นจุด (.ln) ต้องมี outline + background เหมือน .nm/.pr (ดู UI_STANDARD.md ข้อ 5)')
+        _mi41 = re.search(r'body\.editmode \.ln\{[^}]*\}', txt)
+        _wrap41 = txt.rfind('@media', 0, _mi41.start()) if _mi41 else -1
+        _seg41 = txt[_wrap41:_mi41.start()] if _wrap41 >= 0 else ''
+        if not _seg41.startswith('@media screen') or _seg41.count('{') - _seg41.count('}') != 1:
+            errors.append('affordance เส้นจุด (.ln) ต้องอยู่ใน @media screen — ไม่งั้นกรอบติดตอนพิมพ์ (ดู UI_STANDARD.md ข้อ 7)')
 
     # ---- report ----
     print("=" * 54)

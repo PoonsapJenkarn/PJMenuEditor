@@ -8,6 +8,19 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - ยังไม่เคยรัน verify_oe.py บนเครื่อง / ยังไม่อยู่ใน pre-commit hook
 
+## 10 ต.ค. 2026 (10:40) — ✅ แก้เสร็จ (10:45): รายการแบบเส้น (typoLineStyle) เปลี่ยนไม่ได้ · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (รวมกับงานเส้นจุด affordance 10:00 · ต่อจาก fad17bd)
+- แก้: เพิ่ม typoLineStyle ในรายการยกเว้น mousedown ของ #typobar · เสริม lint ข้อ 35 ตรวจทั้ง <input> และ <select> (เดิมแค่ <input>) ทดสอบ: ลบ typoLineStyle / typoFont ออกจากยกเว้น → จับได้ทั้งคู่ · UI_STANDARD ข้อ 5 · sha256 99af27d18ff63095
+- หมายเหตุ: ยังไม่ได้ commit 2 งาน (เส้นจุด affordance 10:00 + แก้นี้) — ทดสอบรวมแล้ว commit ทีเดียว
+- ผู้ใช้ 10:39: เส้นจุดเปลี่ยนได้แค่สี แบบเส้นเปลี่ยนไม่ได้ · สาเหตุ: #typobar mousedown preventDefault ยกเว้นเฉพาะ typoColor/Hex/OlHex/CpDlgHex/Size/Font + OPTION · ลืม typoLineStyle (select) → คลิกแล้ว dropdown ไม่เปิด · สีเปลี่ยนได้เพราะ typoColor อยู่ในรายการยกเว้น
+- แก้: เพิ่ม typoLineStyle ในรายการยกเว้น · เสริม lint ข้อ 35 ให้ตรวจ <select> ใน typobar ด้วย (เดิมตรวจแค่ <input>) · sha ก่อน 1992a237cb64ae17
+
+## 10 ต.ค. 2026 (10:00) — ✅ ทำเสร็จ (10:05): เส้นจุด (.ln) โชว์ว่าคลิกแก้ได้ (แบบ ก) · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก fad17bd)
+- CSS @media screen body.editmode .ln: outline 1px dashed #1592d9 + bg rgba(21,146,217,.08) + border-radius 3px + cursor:pointer + min-height:1.2em · เหมือน affordance .nm/.pr (บรรทัดก่อนหน้า) ต่างที่ cursor (ไม่ใช่ contenteditable) + min-height
+- ไม่แตะ JS (คลิกเลือกเส้นจุดทำงานอยู่แล้วผ่าน _typoFind closest(.ln) ที่ handler บรรทัด ~3758) · flex:1 เต็มช่องว่างอยู่แล้ว
+- lint ข้อ 41 (ทดสอบไฟล์ที่ใส่บั๊ก 3 แบบ จับได้ครบ: ไม่มี affordance / ไม่มี outline / ไม่อยู่ใน @media screen) · UI_STANDARD ข้อ 5 · sha256 1992a237cb64ae17
+- ผู้ใช้ 09:56: ไม่คลิกโดนเส้นก็ไม่รู้ว่าแก้ได้ · เลือกแบบ ก = กรอบเส้นประ+พื้นจางถาวรในโหมดแก้ เหมือน .nm/.pr + ขยายกล่องคลิก
+- CSS @media screen body.editmode .ln (คลิกไต่ closest(.ln) อยู่แล้ว · flex:1 เต็มกว้างอยู่แล้ว · เพิ่ม min-height) · cursor:pointer (ไม่ใช่ contenteditable) · วัด overflow strip editmode = ไม่กระทบ · lint ข้อ 41 · sha ก่อน 3cab3e8a7e83bb66
+
 ## 10 ต.ค. 2026 (01:22) — ✅ ทำเสร็จ (01:50): แก้งานค้าง 6 ข้อ + lint ข้อ 40 · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก d376244)
 - 1) เส้นจุด: applyColorRange ทาสีเส้น (+ fl.lineColor/Same) · ปุ่มสีไม่จางตอนเลือกเส้น · _cpDlgOk ทาเส้นด้วย (ลบ var line ที่ไม่ใช้ + key fl.cpStoredLine) · typoLineApply เปลี่ยนเฉพาะแบบ + แจ้งผล · ลบ typoColorApply/typoColorLive (ไม่มีใครเรียก)
 - 2) _restorePages: typoClear() เมื่อ _typoEl หลุด + ล้าง lastEditable/savedRange · 3) ลบ addEventListener change ของ typoFont · typoFontApply แจ้ง fl.fontRange/fontCell/fontSame

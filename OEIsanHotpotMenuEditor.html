@@ -352,6 +352,8 @@ body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opac
 @media print{#actlog,#edstatus #actlogToggle{display:none !important;}}
 @media screen{body.editmode .nm[contenteditable],body.editmode .pr[contenteditable],body.pricemode .pr[contenteditable]{outline:1px dashed #1592d9;
   background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}}
+/* เส้นจุด (.ln) ในโหมดแก้: กรอบ+พื้นจางถาวร + ขยายกล่องคลิก เหมือนชื่อ/ราคา (ผู้ใช้ 10 ต.ค. 2026 · lint ข้อ 41) · เส้นจุดไม่ใช่ contenteditable (คลิกเลือก) = cursor:pointer · @media screen เท่านั้น (ไม่พิมพ์) · min-height ให้คลิกง่าย · วัด overflow strip editmode จึงไม่กระทบ */
+@media screen{body.editmode .ln{outline:1px dashed #1592d9;background:rgba(21,146,217,.08);border-radius:3px;cursor:pointer;min-height:1.2em;}}
 /* ช่องราคาว่าง (แถวใหม่) ในโหมดแก้: เป็นช่องว่างที่เห็นกรอบและคลิกกรอกได้ — เดิมกว้าง 0 มองไม่เห็น · พิมพ์แล้วลบหมด browser อาจเหลือ <br> จึงรวมกรณีนั้นด้วย · ไม่มีผลตอนพิมพ์/บันทึก (ไม่มี class editmode) */
 body.editmode .pr[contenteditable]:empty,body.editmode .pr[contenteditable]:has(> br:only-child),body.pricemode .pr[contenteditable]:empty,body.pricemode .pr[contenteditable]:has(> br:only-child){display:inline-block;min-width:3em;min-height:1.15em;}
 body{padding-top:56px;}
@@ -2960,7 +2962,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
   document.getElementById('typobar').addEventListener('mousedown', function(e){
     // For focus-taking controls (HEX text input, color picker, font select): SNAPSHOT the
     // still-live selection NOW, before the browser moves focus and kills the highlight.
-    if(e.target.id==='typoColor' || e.target.id==='typoHex' || e.target.id==='typoOlHex' || e.target.id==='typoCpDlgHex' || e.target.id==='typoSize' || e.target.id==='typoFont' || e.target.tagName==='OPTION'){ saveSelection(); return; }  /* ช่องกรอกทุกช่องในแถบ (lint ข้อ 35) — ไม่อยู่ในนี้ = คลิกแล้ว preventDefault กันไม่ให้พิมพ์ได้ */
+    if(e.target.id==='typoColor' || e.target.id==='typoHex' || e.target.id==='typoOlHex' || e.target.id==='typoCpDlgHex' || e.target.id==='typoSize' || e.target.id==='typoFont' || e.target.id==='typoLineStyle' || e.target.tagName==='OPTION'){ saveSelection(); return; }  /* typoLineStyle (select แบบเส้น) — ลืมใส่ → คลิกแล้ว dropdown ไม่เปิด (ผู้ใช้ 10 ต.ค. 2026 · lint ข้อ 35) */  /* ช่องกรอกทุกช่องในแถบ (lint ข้อ 35) — ไม่อยู่ในนี้ = คลิกแล้ว preventDefault กันไม่ให้พิมพ์ได้ */
     e.preventDefault();
   });
 

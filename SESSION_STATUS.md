@@ -8,15 +8,21 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - ยังไม่เคยรัน verify_oe.py บนเครื่อง / ยังไม่อยู่ใน pre-commit hook
 
-## 10 ต.ค. 2026 (11:08) — ✅ ทำเสร็จ (11:15): press state ปุ่มกดครั้งเดียว (แบบ ก · :active) · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (รวมกับรอบ 10:56 · ต่อจาก e7f62ff)
+## 10 ต.ค. 2026 (11:19) — ✅ ข้อความบอกเส้นจุด "เปลี่ยนสีและแบบเส้นได้" (ขึ้นจางเฉพาะเส้นที่เลือก) · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก 0a4c5d1)
+- CSS body.editmode .ln.typosel::after content var(--lnhint, ไทย) · .ln ได้ position:relative · @media screen · ::after ไม่อยู่ DOM = ไม่หลุดไฟล์/snapshot
+- ⚠ ช่อง on-device write (run_python_on_device_with_write) ล่ม error 500/timeout ตั้งแต่ ~11:19 ยาวถึง 15:36+ (ยังล่ม) — อ่านได้ · แก้ไฟล์ผ่าน file_edit (SNCS fs) ได้ · ทำส่วนที่เหลือทาง file_edit ทั้งหมด
+- TH/EN: เลี่ยงบรรทัด i18n ยาว ~11,000 ตัว (file_edit ไม่ไหว) → ใส่ TH/EN inline ใน applyLang: setProperty('--lnhint', _lang==='en'?EN:TH) · strip --lnhint ใน buildEditorHtml + buildMenuHtml (คู่กับ --a4lbl) · ข้อยกเว้น: ข้อความนี้ไม่ได้อยู่ใน I18N table (inline แทน) เพราะช่อง write ล่ม — ถ้าจะย้ายเข้า table ภายหลัง ใช้ ln.hint
+- lint ข้อ 44 (ทดสอบไฟล์ที่ใส่บั๊ก 4 แบบ จับได้ครบ: no var / not @media screen / EN หาย / strip หาย) · html sha 5028b000ad19e121
+
+## 10 ต.ค. 2026 (11:08) — ✅ press state ปุ่มกดครั้งเดียว (แบบ ก · :active) · ผู้ใช้ทดสอบผ่าน (กดเทา ปล่อยปกติ · ปุ่มอ่อนเขียวยุบแล้วกลับ) · ✅ commit แล้วใน 0a4c5d1 (11:17)
 - CSS หลัง #typobar button.tbtn.on:hover: transform:translateY(1px) ทุกปุ่ม toolbar :active:not(:disabled) · พื้นเทา #e1dfdd (edbar/imgbar .b-lg · tbtn · shd-pop) :not(.on) · szbtn/qab พื้น #dce9e0 · ไม่ใช้เขียว
 - qab press เดิม border เขียว #217346 → lint ข้อ 43 (ที่เพิ่งเขียน) จับได้ → แก้เป็น #9db3a5 · lint #7 ไม่ false-positive (:not(.on) มี .on substring = ถูกข้าม)
 - lint ข้อ 43 (ทดสอบไฟล์ที่ใส่บั๊ก 4 แบบ จับได้ครบ: ไม่มี :active / เขียว / ไม่มี transform / background ไม่กัน .on) · UI_STANDARD ข้อ 1 · sha256 9d793961046ef531
-- ⚠ commit ถัดไปรวม 2 รอบ: 10:56 (Mortar1 + ย้าย Plapao17 + ปุ่มคัดลอกตำแหน่ง · lint #42) + 11:08 (press state · lint #43) — ทั้งคู่ยังไม่ browser-tested
+- commit: รอบ 10:56 = fa20690 (lint #42) · รอบ 11:08 = 0a4c5d1 (lint #43) · ผู้ใช้ทดสอบผ่านทั้งคู่ 11:17 · git สะอาด
 - ผู้ใช้ 11:05: ปุ่มกดครั้งเดียวควรแสดงจังหวะกด · agent ค้าน "เขียวแวบ" (ชนความหมายโหมด ข้อ 1) → เลือกแบบ ก = :active press (กดค้างยุบ+พื้นเข้มขึ้น ปล่อยกลับทันที ไม่ใช้เขียว)
 - ⚠ commit ถัดไปจะรวม 2 รอบ (10:56 + 11:08) แยกไม่ได้ · sha ก่อนเริ่ม d3869e726b100edd
 
-## 10 ต.ค. 2026 (10:56) — ✅ ทำเสร็จ (11:05): ใส่ Mortar1 หน้า 2 + ย้าย Plapao17 + ปุ่มคัดลอกตำแหน่งรูป · lint ผ่าน · ยังไม่ทดสอบในเบราว์เซอร์ · ยังไม่ commit (ต่อจาก e7f62ff)
+## 10 ต.ค. 2026 (10:56) — ✅ ใส่ Mortar1 หน้า 2 + ย้าย Plapao17 + ปุ่มคัดลอกตำแหน่งรูป · ผู้ใช้ทดสอบผ่าน (คัดลอกตำแหน่งวางใน Notepad ได้) · ✅ commit แล้วใน fa20690 (11:16)
 - Mortar1.png (500×584 · 303,164 B ไม่ย่อ) หน้า 2 data-num 6 ratio 0.856 (กรอบ 0.858 · crop ~0) เงา soft · data-fname Mortar1.png · แทรกหลัง Beverage17 ใน DOM
 - Plapao17: X155.1 Y278.3 → X154.6 Y276.7 (W/H เดิม) · ส่วนที่เห็น (alpha) ก่อนหน้าอยู่ล่างสุด ~293.2mm ตอนนี้ขยับขึ้น 1.6mm = ปลอดภัยขึ้น
 - ปุ่มคัดลอกตำแหน่ง #btnImgCopyPos (imgCopyPos) ต่อจากคัดลอกชื่อ · _imgPos/_imgPosStr/_imgCopyPosSync · readout refactor ใช้ _imgPos (แถบล่าง + คัดลอก ค่าตรงกัน) · รูปแบบ X=..mm Y=..mm Width=..mm Height=..mm (เท่าที่ผู้ใช้พิมพ์สั่ง) · _copyText + สำรอง · buildEditorHtml ล้างสถานะ

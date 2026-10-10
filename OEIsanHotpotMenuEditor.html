@@ -360,7 +360,8 @@ body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opac
 @media screen{body.editmode .nm[contenteditable],body.editmode .pr[contenteditable],body.pricemode .pr[contenteditable]{outline:1px dashed #1592d9;
   background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}}
 /* เส้นจุด (.ln) ในโหมดแก้: กรอบ+พื้นจางถาวร + ขยายกล่องคลิก เหมือนชื่อ/ราคา (ผู้ใช้ 10 ต.ค. 2026 · lint ข้อ 41) · เส้นจุดไม่ใช่ contenteditable (คลิกเลือก) = cursor:pointer · @media screen เท่านั้น (ไม่พิมพ์) · min-height ให้คลิกง่าย · วัด overflow strip editmode จึงไม่กระทบ */
-@media screen{body.editmode .ln{outline:1px dashed #1592d9;background:rgba(21,146,217,.08);border-radius:3px;cursor:pointer;min-height:1.2em;}}
+@media screen{body.editmode .ln{outline:1px dashed #1592d9;background:rgba(21,146,217,.08);border-radius:3px;cursor:pointer;min-height:1.2em;position:relative;}
+body.editmode .ln.typosel::after{content:var(--lnhint,"เปลี่ยนสีและแบบเส้นได้");position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:3px;background:rgba(21,146,217,.12);color:#1570a8;font:500 10px/1.3 'Prompt',sans-serif;padding:1px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:26;}}
 /* ช่องราคาว่าง (แถวใหม่) ในโหมดแก้: เป็นช่องว่างที่เห็นกรอบและคลิกกรอกได้ — เดิมกว้าง 0 มองไม่เห็น · พิมพ์แล้วลบหมด browser อาจเหลือ <br> จึงรวมกรณีนั้นด้วย · ไม่มีผลตอนพิมพ์/บันทึก (ไม่มี class editmode) */
 body.editmode .pr[contenteditable]:empty,body.editmode .pr[contenteditable]:has(> br:only-child),body.pricemode .pr[contenteditable]:empty,body.pricemode .pr[contenteditable]:has(> br:only-child){display:inline-block;min-width:3em;min-height:1.15em;}
 body{padding-top:56px;}
@@ -1191,7 +1192,7 @@ function buildEditorHtml(){
   /* Full-fidelity clone that KEEPS the editor (bar+css+script) so the saved
      file is itself a working editor. Only strips transient runtime state. */
   var clone=document.documentElement.cloneNode(true);
-  clone.style.removeProperty('--a4lbl'); if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ป้ายขอบ A4 เป็นของจอ ไม่บันทึก (applyLang ใส่ใหม่ตอนเปิด) */
+  clone.style.removeProperty('--a4lbl'); clone.style.removeProperty('--lnhint'); if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ป้ายขอบ A4 + ข้อความเส้นจุด เป็นของจอ ไม่บันทึก (applyLang ใส่ใหม่ตอนเปิด) */
   clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
@@ -1215,7 +1216,7 @@ function buildEditorHtml(){
 function buildMenuHtml(){
   /* Clean print-only menu: editor removed entirely. Used by ดาวน์โหลดเมนู. */
   var clone=document.documentElement.cloneNode(true);
-  clone.style.removeProperty('--a4lbl'); if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ป้ายขอบ A4 เป็นของจอ ไม่บันทึก (applyLang ใส่ใหม่ตอนเปิด) */
+  clone.style.removeProperty('--a4lbl'); clone.style.removeProperty('--lnhint'); if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ป้ายขอบ A4 + ข้อความเส้นจุด เป็นของจอ ไม่บันทึก (applyLang ใส่ใหม่ตอนเปิด) */
   ['#edbar','#edstatus','#editorUI','#editorScript','#actlog'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
   clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#edpanel,.rz,.delbtn,.sizetag,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
@@ -1853,6 +1854,7 @@ function applyLang(){
   if(typeof _statusShown!=='undefined' && _statusShown && _statusShown.msg && (_statusShown.msg._k||_statusShown.msg._parts)) _renderStatus(_statusShown.type,_statusShown.msg);  /* แถบล่าง: แปลข้อความที่แสดงอยู่ใหม่ */
   if(typeof _shdPopRender==='function') _shdPopRender();  /* หน้าต่างปรับค่าเงา: ข้อความจำนวนรูป */
   document.documentElement.style.setProperty('--a4lbl',JSON.stringify(t('pg.a4end')));  /* ป้ายขอบ A4 ตอนแก้ (CSS content อ่าน var — lint ข้อ 37) */
+  document.documentElement.style.setProperty('--lnhint',JSON.stringify(_lang==='en'?'Change color and line style':'เปลี่ยนสีและแบบเส้นได้'));  /* ข้อความบอกเส้นจุดที่เลือก — TH/EN inline ใน applyLang (บรรทัด i18n ยาวเกินแก้ผ่าน fs ขณะช่อง on-device write ล่ม 10 ต.ค.) · lint ข้อ 44 */
   if(typeof _actlogRelang==='function') _actlogRelang();  /* ประวัติ: รายการที่มี key แปลใหม่ (รายการเก่าคงภาษาเดิม) */
 }
 function setLang(l){

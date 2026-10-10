@@ -884,6 +884,27 @@ def main():
             if 'background' in _b43 and re.search(r'#e1dfdd|#dce9e0', _b43) and ('.on' not in _s43) and ('.szbtn' not in _s43) and ('.qab' not in _s43):
                 errors.append("press state '{}' ตั้ง background แต่ไม่ได้กัน .on — อาจทับพื้นเขียวของปุ่ม toggle (ดู UI_STANDARD.md ข้อ 1)".format(_s43.strip()[:60]))
 
+    # ---- 44) ข้อความบอกเส้นจุดที่เลือก "เปลี่ยนสีและแบบเส้นได้" (ผู้ใช้ 10 ต.ค. 2026) ----
+    #   ดู UI_STANDARD.md ข้อ 5-6 · ::after เฉพาะ .ln.typosel · @media screen (ไม่พิมพ์) · var(--lnhint) · applyLang ตั้ง TH/EN · build* ลบออก
+    if 'body.editmode .ln.typosel::after' in txt:
+        _h44 = re.search(r'body\.editmode \.ln\.typosel::after\{([^}]*)\}', _css)
+        if not _h44 or 'var(--lnhint' not in _h44.group(1):
+            errors.append('ข้อความเส้นจุด (.ln.typosel::after) ต้องใช้ content:var(--lnhint,...) (ดู UI_STANDARD.md ข้อ 6)')
+        _mi44 = re.search(r'body\.editmode \.ln\.typosel::after\{', txt)
+        _w44 = txt.rfind('@media', 0, _mi44.start()) if _mi44 else -1
+        _seg44 = txt[_w44:_mi44.start()] if _w44 >= 0 else ''
+        if not _seg44.startswith('@media screen') or _seg44.count('{') - _seg44.count('}') != 1:
+            errors.append('ข้อความเส้นจุดต้องอยู่ใน @media screen — ไม่งั้นติดตอนพิมพ์ (ดู UI_STANDARD.md ข้อ 7)')
+        _al44 = re.search(r'\nfunction applyLang\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _al44 or "setProperty('--lnhint'" not in _al44.group(0):
+            errors.append('applyLang ไม่ตั้ง --lnhint — ข้อความเส้นจุดไม่เปลี่ยน TH/EN (ดู UI_STANDARD.md ข้อ 6)')
+        elif not ('line style' in _al44.group(0) and 'เปลี่ยนสีและแบบเส้น' in _al44.group(0)):
+            errors.append('--lnhint ต้องมีทั้ง TH และ EN (ดู UI_STANDARD.md ข้อ 6)')
+        for _fn44 in ('buildEditorHtml', 'buildMenuHtml'):
+            _f44 = re.search(r'\nfunction ' + _fn44 + r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+            if not _f44 or "removeProperty('--lnhint')" not in _f44.group(0):
+                errors.append('{} ไม่ลบ --lnhint — หลุดลงไฟล์ (ดู UI_STANDARD.md ข้อ 6)'.format(_fn44))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

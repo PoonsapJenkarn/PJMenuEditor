@@ -302,6 +302,13 @@ body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opac
 /* มาตรฐาน UI: สถานะ active (.on) ของปุ่ม typobar — ต้องอยู่หลังกฎพื้นฐาน/hover/สีเฉพาะปุ่มทั้งหมด และใช้ selector button.tbtn.on (specificity ไม่ต่ำกว่ากฎอื่น) ไม่อย่างนั้นพื้นจะไม่เขียวแต่ตัวอักษรขาว */
 #typobar button.tbtn.on{background:#217346;color:#fff;border-color:#217346;}
 #typobar button.tbtn.on:hover{background:#1a5c38;color:#fff;border-color:#1a5c38;}
+/* ===== press state ปุ่มกดครั้งเดียว (ผู้ใช้ 10 ต.ค. 2026 · แบบ ก · lint ข้อ 43) =====
+   แสดงจังหวะ "กดติด" ด้วย :active เท่านั้น — กดค้าง = ยุบ 1px (+ พื้นเทาเข้มขึ้นสำหรับปุ่มที่ไม่ active) · ปล่อย = กลับทันที ไม่ค้าง
+   ไม่ใช้สีเขียว (เขียว = โหมด/ระดับที่เปิดอยู่เท่านั้น · ข้อ 1) · ปุ่ม .on (toggle) ยุบได้แต่พื้นคงเขียว (:not(.on) กันไม่ให้พื้นเทาทับเขียว · lint ข้อ 7) · ปุ่ม disabled ไม่มี press */
+#edbar button:active:not(:disabled),#edbar .b-lg:active:not(:disabled),#imgbar button:active:not(:disabled),#typobar button:active:not(:disabled),#typobar .sizebox .szbtn:active:not(:disabled),#edtabs .qab button:active:not(:disabled),#edtabs .edtab:active,#edtabs .langsw button:active{transform:translateY(1px);}
+#edbar .b-lg:active:not(:disabled):not(.on),#imgbar button.b-lg:active:not(:disabled):not(.on),#typobar button.tbtn:active:not(:disabled):not(.on),#imgbar .shd-pop button:active:not(:disabled):not(.on){background:#e1dfdd;border-color:#d0cdc9;}
+#typobar .sizebox .szbtn:active:not(:disabled){background:#dce9e0;}
+#edtabs .qab button:active:not(:disabled):not(.on){background:#dce9e0;border-color:#9db3a5;}
 #typobar button.tbtn.on svg{stroke:#fff;}
 
 .btn-print{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}

@@ -867,6 +867,23 @@ def main():
             if _n42 != 2:
                 errors.append('ข้อความ {} ต้องมีทั้ง TH และ EN (พบ {} ที่) (ดู UI_STANDARD.md ข้อ 6)'.format(_k42, _n42))
 
+    # ---- 43) press state ปุ่มกดครั้งเดียว (ผู้ใช้ 10 ต.ค. 2026 · แบบ ก) ----
+    #   ดู UI_STANDARD.md ข้อ 1 · :active เท่านั้น (กลับเองเมื่อปล่อย) · ห้ามเขียว (เขียว = โหมดเปิด) · ปุ่มพื้นเทาต้องกัน .on
+    _pa43 = re.findall(r'([^{}\n]*:active[^{}\n]*)\{([^}\n]*)\}', _css)
+    _pa43 = [(sel, body) for sel, body in _pa43 if 'dh' not in sel]  # .dh:active = grab cursor (ไม่เกี่ยว)
+    if not _pa43:
+        errors.append('ไม่มี press state (:active) ของปุ่ม — ปุ่มกดครั้งเดียวไม่แสดงจังหวะกด (ดู UI_STANDARD.md ข้อ 1)')
+    else:
+        if not any('transform' in _b for _s, _b in _pa43):
+            errors.append('press state ปุ่มควรยุบด้วย transform (:active) (ดู UI_STANDARD.md ข้อ 1)')
+        for _s43, _b43 in _pa43:
+            for _grn in ('#217346', '#1a5c38', '#1a5c38'):
+                if _grn in _b43:
+                    errors.append("press state '{}' ใช้สีเขียว {} — เขียวสงวนไว้สำหรับโหมดที่เปิดอยู่ (ดู UI_STANDARD.md ข้อ 1)".format(_s43.strip()[:60], _grn))
+            # ปุ่มพื้นเทาตอนกด ต้องกัน .on (ไม่ทับพื้นเขียวของ toggle)
+            if 'background' in _b43 and re.search(r'#e1dfdd|#dce9e0', _b43) and ('.on' not in _s43) and ('.szbtn' not in _s43) and ('.qab' not in _s43):
+                errors.append("press state '{}' ตั้ง background แต่ไม่ได้กัน .on — อาจทับพื้นเขียวของปุ่ม toggle (ดู UI_STANDARD.md ข้อ 1)".format(_s43.strip()[:60]))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

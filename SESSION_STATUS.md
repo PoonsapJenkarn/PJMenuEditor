@@ -6,7 +6,13 @@
 - งานล่าสุด: ช่อง HEX สีขอบ + หน้าต่างสีขึ้นใต้ปุ่มที่เปิด + "สีมาตรฐาน" + lint #35 — ผู้ใช้ทดสอบผ่าน (11:37) · ✅ commit แล้วใน 4a7174f (11:44) · git สะอาด (ตรวจ 9 ต.ค. 11:51)
 - ไฟล์: C:\OE\OEIsanHotpotMenuEditor.html · ไม่ล้น A4 · พิมพ์ 2 แผ่น · ขอบหน้า 8/12/8 mm · เครื่องพิมพ์พิมพ์ไม่ได้ ~2.5 mm ทุกด้าน (เผื่อ 3 mm, lint #34)
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
-- ยังไม่เคยรัน verify_oe.py บนเครื่อง / ยังไม่อยู่ใน pre-commit hook
+- verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
+
+## 11 ต.ค. 2026 (14:16) — ✅ ลบ dead CSS 7 ตัว + แก้ verify ไม่ให้เตือน al-* · lint ผ่าน · ยังไม่ commit · html sha 5f0dc3b39dc95280 → 3a4115cea9ca8618
+- ผู้ใช้เลือก (decision 14:16): ลบ dead CSS 7 (footer, imgstatus, jaew, pmeta, tinfo, tlabel, who) + แก้ verify section 7 allowlist al- (al-error/al-warning สร้างแบบ 'al-'+e.type ใน log — false positive ลบไม่ได้)
+- ก่อนลบ: ตรวจทุก occurrence ของ 7 class ใน <style> ว่าเป็น standalone rule ไม่ใช่ selector-list ร่วมกับ class ที่ใช้งาน (footer เจอ selector 3×, imgstatus 2× — ต้องดูทุกจุด)
+- วิธี: ทำบน workspace (menu_out4→out5 · verify) แล้ว copy กลับ · lint + verify static ยืนยัน · device python ยัง timeout 65s
+- ผล: ลบ 10 rule (footer×3, imgstatus×2, jaew, pmeta, tinfo, tlabel, who) −964 ไบต์ · al- ครบ (al-row, 'al-'+e.type, .al-error/.al-warning) · braces 2453:2453 · lint PASS · verify section 7 เพิ่ม _DYN_CLS=("al-",) ทดสอบ 3 เคสผ่าน (ไม่เตือน CSS ใหม่ · ยังจับ dead จริง · al-ghost ไม่เตือน)
 
 ## 11 ต.ค. 2026 (13:06) — ✅ เก็บงานบ้าน B ชุดปลอดภัย (ซ่อม verify_oe.py + ลบ _wtest.txt + gitignore mockup) · ยังไม่ commit
 - ออดิตพบ (จากไฟล์จริง commit 07469bd): verify_oe.py REQUIRED_FUNCS ยังมี typoColorApply ที่ถูกลบไปแล้ว (lint #40 ย้ายไป applyColorRange) → verify จะ FAIL ทันทีถ้ารัน · เช็กครบ 34 ตัว ขาดแค่ตัวนี้ตัวเดียว

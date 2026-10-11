@@ -151,7 +151,8 @@ def static_checks(cur, head):
     rest = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", cur)
     rest = re.sub(r"data:[\w/+.-]+;base64,[A-Za-z0-9+/=]+", "", rest)   # ตัดรูป base64 ออก (เร็วขึ้นมาก)
     tokens = set(re.findall(r"[\w-]+", rest))
-    unused = sorted(c for c in cls if c not in tokens)
+    _DYN_CLS = ("al-",)  # คลาสที่สร้างแบบต่อสตริงใน JS (เช่น 'al-row al-'+e.type ใน log) — verify มองไม่เห็นชื่อเต็ม จึงไม่เตือน
+    unused = sorted(c for c in cls if c not in tokens and not c.startswith(_DYN_CLS))
     if unused: W.append("CSS class ไม่มีใครใช้: " + ", ".join(unused))
     return E, W, I
 

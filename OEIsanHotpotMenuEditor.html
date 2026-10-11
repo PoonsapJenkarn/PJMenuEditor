@@ -19,13 +19,11 @@ body{background:#e8e2d9;color:#2b2320;
 .contact{text-align:right;flex:none;}
 .contact .lbl{font-family:'Prompt',sans-serif;font-size:12px;color:#6b5d4e;letter-spacing:.3px;}
 .contact .ph{font-family:'Prompt',sans-serif;font-weight:700;font-size:15px;color:#2b2f36;margin-top:3px;line-height:1.5;}
-.contact .ph .who{font-weight:400;font-size:12.5px;color:#6b5d4e;}
 /* โลโก้ (9 ต.ค. 2026): ตัดขอบโปร่งใสออกจากไฟล์ SVG แล้ว (viewBox 11.5 18 510.5 253.5) · เปลี่ยนโลโก้ใหม่ต้องตัดขอบโปร่งใสของรูปใหม่ด้วย
    กว้าง 173px = สูง ~22.8mm ≈ ความสูงข้อความติดต่อ (ผู้ใช้ 9 ต.ค. 2026: โลโก้อยู่ระดับเดียวกับ ติดต่อสอบถาม · เดิม 232px สูงกว่าข้อความ จึงยื่นขึ้นไปชิดขอบบน) */
 .logo{display:block;flex:none;max-width:100%;width:173px;height:auto;}
 .brand h1{font-family:'Prompt',sans-serif;font-weight:700;font-size:34px;margin:0;
   color:#5a2b23;letter-spacing:.5px;}
-.brand .jaew{font-family:'Prompt',sans-serif;font-weight:600;font-size:20px;color:#a06a12;letter-spacing:2px;}
 .rule{height:2px;background:linear-gradient(90deg,transparent,#c9a227,transparent);margin:6px auto 8px;max-width:70%;}
 .noterow{display:flex;align-items:center;gap:16px;margin:2px 0 8px;}
 .crab{display:flex;align-items:center;gap:12px;background:#ffffff;border:1.5px solid #d8ccb8;border-radius:10px;padding:6px 16px;flex:1;box-shadow:0 1px 4px rgba(0,0,0,.06);}
@@ -34,7 +32,6 @@ body{background:#e8e2d9;color:#2b2320;
 .crab .body{font-family:'Sarabun',sans-serif;color:#2b3038;line-height:1.3;}
 .crab b{display:inline;font-family:'Prompt',sans-serif;font-weight:700;font-size:16px;color:#2b3038;margin-right:8px;}
 .crab .sub{display:inline;font-weight:400;font-size:12.5px;color:#5a6068;}
-.pmeta{text-align:center;font-family:'Prompt',sans-serif;font-size:11px;color:#9c8f80;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
 .grid{display:flex;gap:16px;align-items:flex-start;}.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;}
 .sec{break-inside:avoid;border:1px solid #e3d8c6;border-radius:10px;overflow:hidden;
   margin-bottom:9px;background:#fff;box-shadow:0 1px 3px rgba(90,60,30,.06);}
@@ -60,9 +57,6 @@ body{background:#e8e2d9;color:#2b2320;
 @media screen{body.editmode .ed-notedel{display:inline-flex;align-items:center;justify-content:center;float:right;margin:6px 0 0 6px;border:none;background:#e0332a;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:1;cursor:pointer;padding:0;}}
 @media screen{body.editmode .ed-notedel:hover{background:#b8231b;}}
 @media screen{body.editmode .sec-b > .ed-add{clear:both;}}
-.footer{margin-top:16px;text-align:center;border-top:2px dashed #d8ccb8;padding-top:12px;}
-.footer .lbl{font-family:'Prompt',sans-serif;font-size:13px;color:#6b5d4e;letter-spacing:.5px;}
-.footer .phone{font-family:'Prompt',sans-serif;font-weight:700;font-size:18px;color:#2b2f36;margin-top:2px;}
 .kai{font-family:'Noto Sans Thai',sans-serif;font-weight:700;}
 @media print{body{background:#fff;}.page{margin:0;box-shadow:none;}}
 @media (max-width:720px){.page{width:auto;min-height:0;padding:20px;}.grid{flex-direction:column;}}
@@ -96,8 +90,6 @@ body:not(.imgmode) #imgbar .rgroup,body:not(.editmode) #typobar .rgroup{pointer-
 body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opacity:.45;transition:opacity .15s;}
 /* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
 #typobar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;width:100%;}
-#typobar .tlabel{font-size:12px;color:#605e5c;font-weight:600;}
-#typobar .tinfo{font-size:12px;color:#217346;font-weight:600;min-width:90px;}
 #typobar select,#typobar input[type=color]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:12px;height:30px;vertical-align:middle;}
 #typobar input[type=color]{width:34px;padding:2px;cursor:pointer;}
 #typobar button.tbtn{font-size:12px;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;font-weight:600;}
@@ -113,8 +105,6 @@ body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opac
 @media print{#typobar{display:none !important;}.typosel{outline:none !important;}}
 #imgbar select{padding:5px;border:1px solid #ccc;border-radius:6px;font-size:12px;}
 #imgbar button{font-size:12px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;}
-#imgbar .imgstatus{font-family:monospace;font-size:11.5px;color:#605e5c;display:inline-flex;align-items:center;gap:5px;margin-left:8px;}
-#imgbar .imgstatus::before{content:'ℹ️';font-size:13px;}
 #imgbar button:disabled{background:#555;color:#9aa0a8;cursor:not-allowed;opacity:.65;}
 @media print{.fimg .rz,.fimg .delbtn{display:none!important;} .fimg{pointer-events:none!important;} .fimg.sel{outline:none!important;}}
 </style>

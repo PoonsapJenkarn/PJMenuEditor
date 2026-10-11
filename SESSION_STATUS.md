@@ -8,6 +8,11 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 11 ต.ค. 2026 (21:30) — ✅ ยุบ function p ซ้ำ 2 ตัว → pad2 กลางตัวเดียว (warning function 'p' หายแล้ว) · lint ผ่านสะอาด 0 warning · ยังไม่ commit · html sha 3a4115cea9ca8618 → 24a09fbf40f6907b
+- ผู้ใช้เลือก (decision 21:29): ทาง ก — ยุบเป็น pad2 (แก้ที่ต้นเหตุ ไม่ทิ้งขยะ) · warning เป็น false positive (p nested คนละ scope ใน tsStamp/_fmtTs โค้ดเหมือนกันเป๊ะ)
+- ทำ: เพิ่ม function pad2(n){return (n<10?'0':'')+n;} กลาง 1 ตัวก่อน tsStamp · ลบ function p ใน tsStamp + _fmtTs · เปลี่ยน p(→pad2( เฉพาะใน 2 ฟังก์ชันนั้น (replace ทั้งก้อน ไม่ global)
+- วิธี: workspace menu_out5→out6 · lint ยืนยัน warning หาย · copy กลับ · device python ยัง timeout 65s
+
 ## 11 ต.ค. 2026 (14:16) — ✅ ลบ dead CSS 7 ตัว + แก้ verify ไม่ให้เตือน al-* · lint ผ่าน · ยังไม่ commit · html sha 5f0dc3b39dc95280 → 3a4115cea9ca8618
 - ผู้ใช้เลือก (decision 14:16): ลบ dead CSS 7 (footer, imgstatus, jaew, pmeta, tinfo, tlabel, who) + แก้ verify section 7 allowlist al- (al-error/al-warning สร้างแบบ 'al-'+e.type ใน log — false positive ลบไม่ได้)
 - ก่อนลบ: ตรวจทุก occurrence ของ 7 class ใน <style> ว่าเป็น standalone rule ไม่ใช่ selector-list ร่วมกับ class ที่ใช้งาน (footer เจอ selector 3×, imgstatus 2× — ต้องดูทุกจุด)

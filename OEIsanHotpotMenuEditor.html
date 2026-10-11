@@ -1225,10 +1225,11 @@ function triggerDownload(html, fname, mime){
   a.href=url; a.download=fname; document.body.appendChild(a); a.click();
   setTimeout(function(){URL.revokeObjectURL(url); a.remove();},1000);
 }
+/* pad2: เติม 0 หน้าเลขหลักเดียว (9→09) · helper กลาง ใช้ร่วม tsStamp + _fmtTs (ยุบ function p ซ้ำ 11 ต.ค. 2026) */
+function pad2(n){return (n<10?'0':'')+n;}
 function tsStamp(){
-  function p(n){return (n<10?'0':'')+n;}
   var d=new Date();
-  return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());
+  return d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate())+'-'+pad2(d.getHours())+pad2(d.getMinutes())+pad2(d.getSeconds());
 }
 async function downloadMenu(){
   var html=buildMenuHtml();
@@ -3891,7 +3892,7 @@ function _actlogSave(){
   catch(e){ try{ ACTLOG=ACTLOG.slice(Math.floor(ACTLOG.length*0.2)); localStorage.setItem(_actlogKey(), JSON.stringify(ACTLOG)); }catch(e2){} }
 }
 function _actlogIcon(type){ return type==='warning'?'\u26a0\ufe0f':(type==='error'?'\u26d4':(type==='edit'?'\u270f\ufe0f':'\u2022')); }
-function _fmtTs(ms){ var d=new Date(ms); function p(n){return (n<10?'0':'')+n;} return p(d.getDate())+'/'+p(d.getMonth()+1)+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
+function _fmtTs(ms){ var d=new Date(ms); return pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+' '+pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds()); }
 var _logSort={col:'ts', dir:'desc'};
 function _actlogRowEl(e){
   var div=document.createElement('div'); div.className='al-row al-'+(e.type||'info');

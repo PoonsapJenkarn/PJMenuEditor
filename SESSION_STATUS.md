@@ -8,6 +8,14 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 11 ต.ค. 2026 (23:45) — ✅ กันโน้ต (ราคาตามไซส์) ถูกรื้อตอน "ใช้ทั้งประเภท" · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 24a09fbf40f6907b → 90ac96e84d27c666
+- บั๊กจริง (ผู้ใช้จับได้ภาพ 23:35): _typoClearInner รื้อแท็ก `<i>` เปล่า (เงื่อนไข `if(isType || d.className) return;` + /^(B|I|EM|...)$/ && !attributes.length → unwrap) → โน้ตหลุดกฎ .nm i (สี+ขนาด+เอียง) แล้วรับ format ต้นทางเต็ม (ฟอนต์+ขนาด+สี+style)
+- agent ยอมรับ: เคยบอกผิดว่า "เก็บ <i> ไว้ style ไม่หาย" เพราะอ่าน _typoClearInner มาไม่ครบ (output truncated ตรง `if(isType |`) แล้วเดาส่วนที่เหลือ — ผิดหลักห้ามเดา
+- โจทย์ผู้ใช้ (3 ข้อ): (1) เปลี่ยนเฉพาะ font → โน้ตเปลี่ยน font ตาม style เดิม (2) ใช้ทั้งประเภท inherit → เปลี่ยน font ตาม style เดิม (3) ไฮไลท์โน้ตตรงๆ → เปลี่ยนตามแก้
+- แก้: ใส่ class="note" ให้แท็กโน้ต (className truthy → _typoClearInner ข้าม ไม่รื้อ) · ย้าย .nm i → .nm .note (สี+ขนาด+เอียง ไม่มี font-family → font ยัง inherit จาก cell) · โน้ตกลุ่มเช่นกัน · lint ใหม่กันหลุด
+- หมายเหตุ: เอียงใน Prompt ยังต้องโหลด ital axis แยก (คนละเรื่อง ค้างไว้) · ตัว strip ครบ build* ต้องเช็ก class="note" ไม่หลุดลงไฟล์เมนู (ปกติ textContent คงอยู่)
+- วิธี: workspace menu_out6→out7 · lint + copy กลับ · device python ยัง timeout 65s
+
 ## 11 ต.ค. 2026 (21:30) — ✅ ยุบ function p ซ้ำ 2 ตัว → pad2 กลางตัวเดียว (warning function 'p' หายแล้ว) · lint ผ่านสะอาด 0 warning · ยังไม่ commit · html sha 3a4115cea9ca8618 → 24a09fbf40f6907b
 - ผู้ใช้เลือก (decision 21:29): ทาง ก — ยุบเป็น pad2 (แก้ที่ต้นเหตุ ไม่ทิ้งขยะ) · warning เป็น false positive (p nested คนละ scope ใน tsStamp/_fmtTs โค้ดเหมือนกันเป๊ะ)
 - ทำ: เพิ่ม function pad2(n){return (n<10?'0':'')+n;} กลาง 1 ตัวก่อน tsStamp · ลบ function p ใน tsStamp + _fmtTs · เปลี่ยน p(→pad2( เฉพาะใน 2 ฟังก์ชันนั้น (replace ทั้งก้อน ไม่ global)

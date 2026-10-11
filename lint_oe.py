@@ -929,6 +929,25 @@ def main():
         if 'p._wasSet' in _b45 or 'p._wasFill' in _b45:
             errors.append('ยังมีโค้ดเก่า p._wasSet/p._wasFill ค้าง — เปลี่ยนเป็นเช็ก selector ครบแล้ว ต้องลบออก (ไม่ทิ้งขยะ)')
 
+    # ---- 46) โน้ต (ราคาตามไซส์) ต้องรอดจาก "ใช้ทั้งประเภท" / เปลี่ยนฟอนต์ (ผู้ใช้ 11 ต.ค. 2026) ----
+    #   โน้ตต้องใช้ <i class="note"> (ไม่ใช่ <i> เปล่า — _typoClearInner รื้อแท็กเปล่าที่ไม่มี class) · .nm .note คุมสี/ขนาด/เอียง แต่ไม่มี font-family (ให้ font inherit ตามช่อง) · _typoClearInner ต้องคง guard d.className
+    if '<i>(' in txt:
+        errors.append('พบโน้ตแบบ <i>(...) ไม่มี class — ต้องใช้ <i class="note"> ไม่งั้น "ใช้ทั้งประเภท" รื้อทิ้ง (ดู UI_STANDARD.md ข้อ 6)')
+    _note46 = re.search(r'\.nm\s+\.note\s*\{([^}]*)\}', _css)
+    if not _note46:
+        errors.append('ไม่พบกฎ .nm .note — โน้ต (ราคาตามไซส์) จะไม่มีสไตล์ (ดู UI_STANDARD.md ข้อ 6)')
+    else:
+        _nb46 = _note46.group(1).replace(' ', '')
+        if 'font-style:italic' not in _nb46:
+            errors.append('.nm .note ต้องมี font-style:italic (โน้ตต้องเอียง) (ดู UI_STANDARD.md ข้อ 6)')
+        if 'font-family' in _nb46:
+            errors.append('.nm .note ต้องไม่มี font-family — ให้ฟอนต์ inherit จากช่อง (เปลี่ยนฟอนต์แล้วโน้ตเปลี่ยนตาม style เดิม) (ดู UI_STANDARD.md ข้อ 6)')
+    _tci46 = re.search(r'\nfunction _typoClearInner\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _tci46:
+        errors.append('ไม่พบ _typoClearInner (ดู UI_STANDARD.md ข้อ 5)')
+    elif 'd.className' not in _tci46.group(0):
+        errors.append('_typoClearInner ต้องคง guard d.className (ข้าม element ที่มี class) ไม่งั้นโน้ต <i class="note"> ถูกรื้อตอนใช้ทั้งประเภท (ดู UI_STANDARD.md ข้อ 6)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

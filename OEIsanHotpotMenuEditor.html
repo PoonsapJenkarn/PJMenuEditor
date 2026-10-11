@@ -3568,6 +3568,9 @@ function _bulkPricePreview(p){
   show('.ep-gwrap',v.scope==='group'); show('.ep-pwrap',v.scope==='page');
   show('.ep-adjwrap',!isSet); show('.ep-fwrap',isSet);
   show('.ep-setwrap',isSet);
+  /* โฟกัสช่องกรอกของโหมดนั้นเมื่อ selector ครบ (scope + dropdown ถ้าเฉพาะกลุ่ม/หน้า) — ปรับราคา→.ep-amt(จำนวน) · ใส่ราคา→.ep-price(ราคา) · เพิ่ม/ลด·บาท/% มี default = ครบเสมอ · ครบเมื่อไร focus เมื่อนั้น (ทุกการเลือก · ยังไม่เลือกกลุ่ม = ยังไม่ครบ จึงไม่แย่ง dropdown) · setTimeout 0 ให้พ้น event · document.contains กัน element ที่ถูกลบ · ผู้ใช้ 11 ต.ค. 2026 · lint ข้อ 45 */
+  var _selDone=(!!v.scope) && !(v.scope==='group'&&v.gidx<0) && !(v.scope==='page'&&v.pidx<0);
+  if(_selDone){ var _fsel=isSet?'.ep-price':'.ep-amt'; setTimeout(function(){ var fi=p.querySelector(_fsel); if(fi && document.contains(fi) && fi.focus){ fi.focus(); } },0); }
   var _ic=p.querySelector('input[name="bpIncl"]');
   if(_ic){ var _ia=(v.dir==='up' && v.mode==='baht'); _ic.disabled=!_ia; if(!_ia) _ic.checked=false; var _il=_ic.closest?_ic.closest('label'):null; if(_il) _il.title=_ia?'':t('pr.inclEmptyNA'); }  /* ใช้ไม่ได้ = ปิด + ไม่ติ๊ก (ไม่แสดงติ๊กที่ไม่มีผล) */  /* .ep-amt อยู่ใน .ep-adjwrap · .ep-price อยู่ใน .ep-setwrap — ซ่อน/แสดงทั้งชุด */
   var ok=p.querySelector('.ep-ok'), pv=p.querySelector('.ep-preview');

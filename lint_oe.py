@@ -908,6 +908,27 @@ def main():
     else:
         errors.append('ไม่พบ _lnSelMsg — ข้อความบอกเส้นจุดที่แถบล่างหาย (ดู UI_STANDARD.md ข้อ 5)')
 
+    # ---- 45) โฟกัสช่องกรอกเมื่อ selector ครบ (ปรับราคา→.ep-amt · ใส่ราคา→.ep-price) (ผู้ใช้ 11 ต.ค. 2026) ----
+    #   จับที่ตัวโค้ดจริง (var _selDone + if(_selDone){...}) ไม่ใช่คำในคอมเมนต์ · _selDone = v.scope + v.gidx/v.pidx ครบ · focus เฉพาะใน if(_selDone) (ไม่แย่ง dropdown) · ช่องตามโหมด isSet?.ep-price:.ep-amt · setTimeout + document.contains · ห้ามเหลือ _wasSet/_wasFill
+    _pp45 = re.search(r'\nfunction _bulkPricePreview\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _pp45:
+        errors.append('ไม่พบ _bulkPricePreview — โฟกัสช่องกรอกหาย (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        _b45 = _pp45.group(0)
+        _def45 = re.search(r'var _selDone\s*=[^\n]*', _b45)
+        _foc45 = re.search(r'if\(_selDone\)\{[^\n]*\}', _b45)
+        _fl45 = _foc45.group(0).replace(' ', '') if _foc45 else ''
+        if not _def45 or 'v.scope' not in _def45.group(0) or 'v.gidx' not in _def45.group(0) or 'v.pidx' not in _def45.group(0):
+            errors.append('_bulkPricePreview ต้องมี var _selDone เช็ก selector ครบ (v.scope + v.gidx + v.pidx) ก่อนโฟกัส (ดู UI_STANDARD.md ข้อ 6)')
+        elif not _foc45:
+            errors.append('_bulkPricePreview ต้องโฟกัสภายใน if(_selDone){...} — focus เฉพาะตอน selector ครบ ไม่แย่ง dropdown (ดู UI_STANDARD.md ข้อ 6)')
+        elif "isSet?'.ep-price':'.ep-amt'" not in _fl45:
+            errors.append('โฟกัสต้องเลือกช่องตามโหมด: isSet?.ep-price:.ep-amt (ปรับราคา→.ep-amt · ใส่ราคา→.ep-price) (ดู UI_STANDARD.md ข้อ 6)')
+        elif 'setTimeout' not in _fl45 or 'document.contains' not in _fl45 or '.focus()' not in _fl45:
+            errors.append('โฟกัสต้องใช้ setTimeout + document.contains + .focus() ในประโยคเดียว (กัน focus element ที่ถูกลบ) (ดู UI_STANDARD.md ข้อ 6)')
+        if 'p._wasSet' in _b45 or 'p._wasFill' in _b45:
+            errors.append('ยังมีโค้ดเก่า p._wasSet/p._wasFill ค้าง — เปลี่ยนเป็นเช็ก selector ครบแล้ว ต้องลบออก (ไม่ทิ้งขยะ)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

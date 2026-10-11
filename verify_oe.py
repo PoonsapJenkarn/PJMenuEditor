@@ -24,7 +24,7 @@ REQUIRED_FUNCS = [
     "undo", "redo", "markDirty", "_snapNow", "decorate", "checkOverflow", "renumber",
     "newRow", "newSection", "saveEditorFile", "downloadMenu", "addPage",
     "typoSelect", "typoClear", "typoSetDefault", "typoApplyAllSame", "typoResetSel",
-    "typoClearSel", "typoFontApply", "typoColorApply", "typoSizeStep",
+    "typoClearSel", "typoFontApply", "applyColorRange", "typoSizeStep",
     "_typoFind", "_typoTypeDef", "_rgbToHex", "toggleActLog", "logAdd", "flashStatus", "setStatus",
 ]
 TABS = ["image", "page", "view", "home"]

@@ -8,6 +8,13 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (12:00) — ✅ ปุ่ม "คืนขนาด" รูป (คืนขนาดฐาน) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 6b42d031e2d12505 → 320e3e26af51356f (ต่อจากปุ่มเพิ่มรูป commit 02cbe5a)
+- ผู้ใช้สั่ง (decision 12:00): รูปที่ยืด/หดไปมา คืนขนาดเดิมได้ · เลือก "ทำปุ่มคืนขนาดเดิม (ถาวร)"
+- การวิเคราะห์: รูปไม่เคยเพี้ยนสัดส่วน (imgScale + ลากมุม ล็อก height=width/ratio) · แต่ไม่มี baseline เก็บไว้ → ต้องสร้าง · imgScale (ขยาย/ย่อ) ไม่ได้ markDirty = ช่องว่างเดิม ไม่ใช่งานนี้ (ไม่แตะ)
+- แก้: (1) ฝัง data-w0/data-h0 ลงทุก .fimg (6 รูป = ขนาด commit ล่าสุด) (2) ปุ่ม btnImgReset ในกลุ่มจัดการรูปต่อจาก ย่อ (3) imgResetSize: set w/h=dataset.w0/h0 + markDirty (undo กฎ #6) · เท่าเดิม=ไม่นับแก้ · ไม่มี baseline=แจ้งเตือน (4) _imgResetSync wire ใน _imgReadout (enable/disable+tooltip) (5) imgAdd เก็บ baseline รูปใหม่ (w px/120px) (6) i18n btn.resetSize/ttl.imgReset/ttl.imgResetNeed/fl.imgSizeReset/fl.imgSizeSame/fl.imgNoBaseline TH+EN
+- data-w0/h0 เก็บทั้ง build* เหมือน data-ratio (ไม่ตัด) · gate ปกติ (ไม่ใช่ imgalways — ทำงานกับรูปที่เลือก) · lint ข้อ 48 ใหม่ (จับใน _imgReadout scope กันชนชื่อ fn) ทดสอบบั๊ก 6 แบบจับครบ
+- วิธี: workspace menu_out9→out10 · lint_oe8→oe9 · copy กลับ · device python ยัง timeout 65s
+
 ## 12 ต.ค. 2026 (11:18) — ✅ ปุ่ม "เพิ่มรูป" กดได้ตลอด + เข้าโหมดแก้รูปอัตโนมัติ · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d6b833b6691645b8 → 6b42d031e2d12505 (ต่อจาก A4 commit 31405d3)
 - ผู้ใช้สั่ง (ภาพ 12 ต.ค.): "เพิ่มรูป" ควร enabled ตลอดไม่ต้องเข้าโหมดแก้รูปก่อน + เพิ่มรูป+เข้าโหมดพร้อมกัน เหมือน "ซ่อนรูป" · ปุ่มอยู่ที่เดิม (กลุ่มจัดการรูป) แค่เปลี่ยน behavior
 - แก้ 3 จุด: (1) ปุ่มเพิ่มรูป +class imgalways (2) gate #imgbar แยกจาก #typobar: dim รายปุ่ม .rgl + .rgb>*:not(.imgalways) ไม่ dim .rgb ทั้งกล่อง + .rgroup pointer-events:none + .imgalways pointer-events:auto (ปุ่มสว่าง+กดได้จริง ไม่หลอกตา) (3) imgAdd: ถ้าไม่ใช่ imgmode → toggleImgMode() หลังอ่านไฟล์สำเร็จ (ยกเลิก/ไฟล์ผิด = ไม่เข้าโหมด)

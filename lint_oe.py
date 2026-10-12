@@ -960,6 +960,34 @@ def main():
     elif "classList.contains('imgmode')" not in _ia47.group(0) or 'toggleImgMode()' not in _ia47.group(0):
         errors.append('imgAdd ต้องเข้าโหมดแก้รูปอัตโนมัติ (ถ้ายังไม่ imgmode → toggleImgMode()) (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 48) ปุ่ม "คืนขนาด" รูป — คืนเป็นขนาดฐาน data-w0/h0 (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   รูปทุก .fimg ต้องมี data-w0/data-h0 (ขนาดฐาน) · ปุ่ม btnImgReset + imgResetSize ใช้ dataset.w0/h0 + markDirty (undo กฎ #6) · _imgReadout wire _imgResetSync · imgAdd เก็บ baseline รูปใหม่
+    if '_imgResetSync' in txt or 'btnImgReset' in txt or 'imgResetSize' in txt:
+        _nobl48 = re.findall(r'<div class="fimg"(?![^>]*data-w0)[^>]*>', txt)
+        if _nobl48:
+            errors.append('มี .fimg {} ตัวไม่มี data-w0/h0 (ขนาดฐาน) — ปุ่มคืนขนาดจะใช้ไม่ได้ (ดู UI_STANDARD.md ข้อ 6)'.format(len(_nobl48)))
+        if not re.search(r'id="btnImgReset"[^>]*>(?:(?!</button>)[\s\S])*?btn\.resetSize', txt):
+            errors.append('ไม่พบปุ่มคืนขนาด (id=btnImgReset + btn.resetSize) (ดู UI_STANDARD.md ข้อ 6)')
+        _irs48 = re.search(r'\nfunction imgResetSize\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _irs48:
+            errors.append('ไม่พบ imgResetSize (ดู UI_STANDARD.md ข้อ 5)')
+        else:
+            _b48=_irs48.group(0)
+            if 'dataset.w0' not in _b48 or 'dataset.h0' not in _b48:
+                errors.append('imgResetSize ต้องคืนขนาดจาก dataset.w0/h0 (ขนาดฐาน) (ดู UI_STANDARD.md ข้อ 6)')
+            if 'markDirty()' not in _b48:
+                errors.append('imgResetSize ต้อง markDirty() = จุด undo เมื่อเปลี่ยนขนาดจริง (กฎ #6) (ดู UI_STANDARD.md ข้อ 6)')
+        _rd48 = re.search(r'\nfunction _imgReadout\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _rd48 or '_imgResetSync(el)' not in _rd48.group(0):
+            errors.append('_imgReadout ไม่ได้เรียก _imgResetSync(el) — ปุ่มคืนขนาดจะไม่ enable/disable ตามการเลือกรูป (ดู UI_STANDARD.md ข้อ 6)')
+        _ia48 = re.search(r'\nfunction imgAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if _ia48 and 'dataset.w0' not in _ia48.group(0):
+            errors.append('imgAdd ไม่ได้เก็บ data-w0/h0 ให้รูปใหม่ — รูปที่เพิ่มจะคืนขนาดไม่ได้ (ดู UI_STANDARD.md ข้อ 6)')
+        if txt.count("'btn.resetSize':'") < 2:
+            errors.append('btn.resetSize ต้องมีทั้ง TH และ EN ในตารางภาษา (ดู UI_STANDARD.md ข้อ 6)')
+    else:
+        errors.append('ไม่พบระบบปุ่มคืนขนาดรูป (btnImgReset/imgResetSize/_imgResetSync) (ดู UI_STANDARD.md ข้อ 5)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -943,6 +943,23 @@ def main():
     elif 'd.className' not in _tci46.group(0):
         errors.append('_typoClearInner ต้องคง guard d.className (ข้าม element ที่มี class) ไม่งั้นโน้ต <i class="note"> ถูกรื้อตอนใช้ทั้งประเภท (ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 47) ปุ่ม "เพิ่มรูป" กดได้ตลอด + เข้าโหมดแก้รูปอัตโนมัติ (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   เพิ่มรูปเป็น action สร้างรูปใหม่ (ไม่ขึ้นกับรูปที่เลือก) จึงกดได้นอกโหมดแก้รูป เหมือน "ซ่อนรูป" · ปุ่ม = <button class="...imgalways"> · gate imgbar dim รายปุ่ม .rgb>*:not(.imgalways) ไม่ dim .rgb ทั้งกล่อง · imgAdd เข้า imgmode อัตโนมัติ · typobar ต้องไม่พังตาม
+    _addbtn47 = re.search(r'<button[^>]*\bclass="[^"]*\bimgalways\b[^"]*"[^>]*>(?:(?!</button>)[\s\S])*?btn\.addImage', txt)
+    if not _addbtn47:
+        errors.append('ปุ่มเพิ่มรูป (btn.addImage) ต้องมี class imgalways เพื่อยกเว้นจาก gate (กดได้นอกโหมดแก้รูป) (ดู UI_STANDARD.md ข้อ 6)')
+    if 'body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}' not in txt:
+        errors.append('ต้องมี body:not(.imgmode) #imgbar .imgalways{pointer-events:auto} — ไม่งั้นปุ่มเพิ่มรูปกดไม่ได้นอกโหมดแก้รูป (ดู UI_STANDARD.md ข้อ 6)')
+    if '#imgbar .rgb>*:not(.imgalways)' not in txt:
+        errors.append('gate imgbar ต้อง dim รายปุ่ม (.rgb>*:not(.imgalways)) ไม่ใช่ dim .rgb ทั้งกล่อง — ไม่งั้นเพิ่มรูปจะจางทั้งที่กดได้ (หลอกผู้ใช้ · ดู UI_STANDARD.md ข้อ 6)')
+    if 'body:not(.editmode) #typobar .rgroup{pointer-events:none;}' not in txt or 'body:not(.editmode) #typobar .rgroup>*{opacity:.45' not in txt:
+        errors.append('gate #typobar (แก้ข้อความ) หาย/เปลี่ยน — ต้องคง pointer-events:none ที่ .rgroup + opacity ที่ .rgroup>* (ดู UI_STANDARD.md ข้อ 6)')
+    _ia47 = re.search(r'\nfunction imgAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _ia47:
+        errors.append('ไม่พบ imgAdd (ดู UI_STANDARD.md ข้อ 5)')
+    elif "classList.contains('imgmode')" not in _ia47.group(0) or 'toggleImgMode()' not in _ia47.group(0):
+        errors.append('imgAdd ต้องเข้าโหมดแก้รูปอัตโนมัติ (ถ้ายังไม่ imgmode → toggleImgMode()) (ดู UI_STANDARD.md ข้อ 6)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

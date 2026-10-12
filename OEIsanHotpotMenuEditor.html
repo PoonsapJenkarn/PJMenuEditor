@@ -86,8 +86,12 @@ body.imgmode .fimg.sel .rz{display:flex;}
 /* ===== Parent-Child Activation (v21) — เมนูลูก active เฉพาะเมื่อ parent เข้าโหมดแก้ไข ===== */
 /* imgbar/typobar เป็น display:contents จึง gate ที่ .rgroup ลูก (opacity ไม่ทำงานบน display:contents)
    จางที่เนื้อใน (.rgroup>*) ไม่ใช่ตัว .rgroup — เส้นคั่นกลุ่ม (border-right ของ .rgroup) ต้องชัดเท่าเดิมตอนกลุ่มถูกปิด (ผู้ใช้ 7 ต.ค. 2026 · lint ข้อ 25) */
-body:not(.imgmode) #imgbar .rgroup,body:not(.editmode) #typobar .rgroup{pointer-events:none;}
-body:not(.imgmode) #imgbar .rgroup>*,body:not(.editmode) #typobar .rgroup>*{opacity:.45;transition:opacity .15s;}
+body:not(.editmode) #typobar .rgroup{pointer-events:none;}
+body:not(.editmode) #typobar .rgroup>*{opacity:.45;transition:opacity .15s;}
+/* imgbar: gate ทั้งกลุ่มด้วย pointer-events ที่ .rgroup · dim รายปุ่ม (.rgl + .rgb>* ยกเว้น .imgalways) ไม่ dim ที่ .rgb ทั้งกล่อง เพื่อให้ 'เพิ่มรูป' สว่าง/กดได้ตลอด (ผู้ใช้ 12 ต.ค. 2026) · opacity ไม่ตั้งที่ .rgroup (lint ข้อ 25) */
+body:not(.imgmode) #imgbar .rgroup{pointer-events:none;}
+body:not(.imgmode) #imgbar .rgl,body:not(.imgmode) #imgbar .rgb>*:not(.imgalways){opacity:.45;transition:opacity .15s;}
+body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 /* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
 #typobar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;width:100%;}
 #typobar select,#typobar input[type=color]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:12px;height:30px;vertical-align:middle;}
@@ -554,7 +558,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
       </div><div class="rgl" data-i18n="grp.mode">โหมด</div></div>
       <div id="imgbar">
         <div class="rgroup"><div class="rgb">
-        <button class="b-lg" onclick="document.getElementById('imgFile').click()"><svg viewBox="0 0 24 24"><path d="M4 5h5l2 2h9v12H4z"/><path d="M12 11v5M9.5 13.5h5"/></svg><span data-i18n="btn.addImage">เพิ่มรูป</span></button>
+        <button class="b-lg imgalways" onclick="document.getElementById('imgFile').click()"><svg viewBox="0 0 24 24"><path d="M4 5h5l2 2h9v12H4z"/><path d="M12 11v5M9.5 13.5h5"/></svg><span data-i18n="btn.addImage">เพิ่มรูป</span></button>
         <button class="b-lg" id="btnImgAll" onclick="imgToAllPages()" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="12" rx="1"/><path d="M8 8h12v12H8z"/></svg><span data-i18n="btn.applyToAll">ใส่ทุกหน้า</span></button>
         <button class="b-lg" id="btnImgBigger" onclick="imgScale(10)" disabled><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 8v8M8 12h8"/></svg><span data-i18n="btn.enlarge">ขยาย</span></button>
         <button class="b-lg" id="btnImgSmaller" onclick="imgScale(-10)" disabled><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/><path d="M8 12h8"/></svg><span data-i18n="btn.shrink">ย่อ</span></button>
@@ -2217,6 +2221,7 @@ function imgScale(pct){
 function imgAdd(ev){
   var f=ev.target.files[0]; ev.target.value=''; if(!f)return;  /* ยกเลิกหน้าเลือกไฟล์ = ไม่มีอะไรเปลี่ยน (รูปที่ซ่อนอยู่ยังซ่อน) */
   _readImageFile(f, function(uri, im){  /* ไม่ใช่ไฟล์รูป / เปิดไม่ได้ = แจ้ง ไม่เปลี่ยน (8 ต.ค. 2026) */
+      if(!document.body.classList.contains('imgmode')) toggleImgMode();  /* เพิ่มรูปนอกโหมดแก้รูป → เข้าโหมดแก้รูปอัตโนมัติ (กดครั้งเดียวได้ทั้งเพิ่ม+เข้าโหมด · ผู้ใช้ 12 ต.ค. 2026) · ยกเลิกเลือกไฟล์ = ไม่ถึงจุดนี้ ไม่เข้าโหมด */
       var r=(im.width/im.height).toFixed(3);
       var el=document.createElement('div');
       var innerImg=document.createElement('img');

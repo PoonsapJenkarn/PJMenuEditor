@@ -8,6 +8,13 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (13:40) — ✅ refresh ไฟล์รูปใหม่ 6 จุด (5 ไฟล์ต้นทาง) ใช้ตำแหน่งเดิม · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 320e3e26af51356f → 0484d6c233181bd4
+- ผู้ใช้สั่ง (13:26–13:36): เปลี่ยน base64 รูปใหม่จาก C:\AmazonQuickTempFiles\OE_ISAN_Image\ImageEdit\ImageSelected\ · header p1+p2 ← HotpotHeader1-H500.png (ผู้ใช้แก้คำสั่งล่าสุด: HotpotHeader2.png ไม่มีในโฟลเดอร์ → ใช้ HotpotHeader1-H500.png) · PlaPaoPaiFai2-H500.png (p1) · Plapao17-H500.png (p1) · Mortar1-H500.png (p2) · Beverage17→Beverage19-Soda-H500.png (p2)
+- เหตุผลผู้ใช้: รูปเดิมคืนขนาด (Reset Size) ไม่ได้ → ตั้ง baseline ใหม่สะอาดจากขนาดจริงรูปใหม่
+- สัดส่วนรูปใหม่ตรงกรอบเดิมเกือบเป๊ะทุกจุด (ครอป ~0% วัดด้วย PIL) → คงตำแหน่ง+กรอบเดิม (top/left/width/height) · อัปเดต data-ratio (header 2.154, plapaopaifai 3.754, plapao17 2.006, beverage 1.816, mortar 0.856) · data-w0/h0 = กรอบเดิม · data-fname + alt อัปเดตตรงไฟล์จริง (HotpotHeader2→HotpotHeader1-H500, Beverage17→Beverage19-Soda-H500)
+- ไฟล์โต 4.35MB→5.37MB (รูปใหม่ base64 ใหญ่กว่า) · ยังเปิด/พิมพ์ออฟไลน์ได้ · braces 2463:2463 · lint PASS 0 warning · ไม่แตะ lint (งาน content) · เปลี่ยน 2 ไฟล์: html + SESSION_STATUS
+- วิธี: copy 5 PNG เครื่อง→workspace · PIL วัด ratio · ฝัง base64 ทั้ง 6 .fimg (reverse-index splice) · copy กลับ sha ตรง 0484d6c233181bd4 · device python ยัง timeout 65s (ใช้ workspace)
+
 ## 12 ต.ค. 2026 (12:00) — ✅ ปุ่ม "คืนขนาด" รูป (คืนขนาดฐาน) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 6b42d031e2d12505 → 320e3e26af51356f (ต่อจากปุ่มเพิ่มรูป commit 02cbe5a)
 - ผู้ใช้สั่ง (decision 12:00): รูปที่ยืด/หดไปมา คืนขนาดเดิมได้ · เลือก "ทำปุ่มคืนขนาดเดิม (ถาวร)"
 - การวิเคราะห์: รูปไม่เคยเพี้ยนสัดส่วน (imgScale + ลากมุม ล็อก height=width/ratio) · แต่ไม่มี baseline เก็บไว้ → ต้องสร้าง · imgScale (ขยาย/ย่อ) ไม่ได้ markDirty = ช่องว่างเดิม ไม่ใช่งานนี้ (ไม่แตะ)

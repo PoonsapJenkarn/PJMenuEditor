@@ -1016,6 +1016,69 @@ def main():
     else:
         errors.append('ไม่พบระบบปุ่มขนาดจริง (btnImgActual/imgActualSize) (ดู UI_STANDARD.md ข้อ 5)')
 
+    # ---- 50) ขนาดเริ่มรูปใหม่ = cap ไม่เกิน 100mm คงสัดส่วน ไม่ขยายเกินจริง (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   imgAdd: เริ่มจากขนาดจริงไฟล์ (im.width/height) แล้ว _sc=Math.min(_CAPpx/w,_CAPpx/h,1) โดย _CAPpx=100*96/25.4 (100mm@96dpi)
+    #   · ด้านยาวสุดชน 100mm อีกด้านย่อตามสัดส่วน · min(...,1)=รูปเล็กกว่า 100mm ไม่ถูกขยาย · baseline data-w0/h0 = ขนาดหลัง cap
+    #   · ห้ามกลับไปใช้กรอบเพดาน _HMAX/_WMAX หรือ fixed 120*r
+    _ia50 = re.search(r'\nfunction imgAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _ia50:
+        errors.append('ไม่พบ imgAdd (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        _b50=_ia50.group(0)
+        if '_HMAX' in _b50 or '_WMAX' in _b50 or 'Math.round(120*r)' in _b50:
+            errors.append('imgAdd ยังมีโค้ดเพดานเดิม (_HMAX/_WMAX/120*r) — ต้องเปลี่ยนเป็น cap 100mm (ดู UI_STANDARD.md ข้อ 6)')
+        elif 'im.width' not in _b50 or 'im.height' not in _b50:
+            errors.append('imgAdd ต้องเริ่มจากขนาดจริงไฟล์ (im.width/im.height) (ดู UI_STANDARD.md ข้อ 6)')
+        elif '100*96/25.4' not in _b50:
+            errors.append('imgAdd ต้อง cap 100mm โดยแปลงหน่วย 100*96/25.4 (px@96dpi) (ดู UI_STANDARD.md ข้อ 6)')
+        elif not re.search(r'Math\.min\([^)]*,\s*1\s*\)', _b50):
+            errors.append('imgAdd ต้องใช้ Math.min(...,1) กัน upscale เกินขนาดจริง (ดู UI_STANDARD.md ข้อ 6)')
+        elif not (re.search(r'w=Math\.round\(w\*_sc\)', _b50) and re.search(r'h=Math\.round\(h\*_sc\)', _b50)):
+            errors.append('imgAdd ต้องย่อ w/h ตาม _sc (Math.round(w*_sc)/Math.round(h*_sc)) (ดู UI_STANDARD.md ข้อ 6)')
+        elif "el.dataset.w0=w+'px';el.dataset.h0=h+'px';" not in _b50:
+            errors.append('imgAdd baseline (data-w0/h0) ต้อง = ขนาดหลัง cap (w/h) (ดู UI_STANDARD.md ข้อ 6)')
+
+    # ---- 51) ป้ายใต้รูป 3 บรรทัด (ชื่อ / ต้นฉบับ px / ปัจจุบัน mm) + bake baseline ตอน save (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   sizetag: Original = naturalWidth×naturalHeight px (ความละเอียดไฟล์) · Current = wmm×hmm mm (ขนาดพิมพ์) · คนละหน่วยโดยตั้งใจ (แบบ InDesign/Photoshop)
+    #   buildEditorHtml: ตอน save ต้อง bake data-w0/h0 = ขนาดปัจจุบัน (el.style.width/height) → ปุ่มคืนขนาด = ขนาด ณ ครั้ง save ล่าสุด
+    #   คีย์ img.origSize/img.curSize ต้องมีทั้ง th + en
+    _st = re.search(r"querySelector\('\.sizetag'\);\s*if\(tg\)\{[\s\S]*?\}", txt)
+    if not _st:
+        errors.append('ไม่พบการสร้างป้าย .sizetag (textContent) (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _bst=_st.group(0)
+        _need=['naturalWidth','naturalHeight',"t('img.origSize')","t('img.curSize')"," px"," mm"]
+        _miss=[x for x in _need if x not in _bst]
+        if _miss:
+            errors.append('ป้ายใต้รูปต้องมี: '+', '.join(_miss)+' (ต้นฉบับ px + ปัจจุบัน mm) (ดู UI_STANDARD.md ข้อ 7)')
+    _be = re.search(r'function buildEditorHtml\(\)\{[\s\S]*?\n\}', txt)
+    if not _be:
+        errors.append('ไม่พบ buildEditorHtml (ดู UI_STANDARD.md ข้อ 7)')
+    elif not re.search(r"querySelectorAll\('\.fimg'\)\.forEach\([\s\S]*?dataset\.w0=el\.style\.width", _be.group(0)):
+        errors.append('buildEditorHtml ต้อง bake data-w0/h0 = ขนาดปัจจุบัน (el.style.width/height) ตอน save (ดู UI_STANDARD.md ข้อ 7)')
+    _iobj = txt.find("var I18N={")
+    if _iobj>=0:
+        _ths=txt.find("th:{",_iobj); _ens=txt.find("en:{",_iobj)
+        _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
+        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        for _k in ('img.origSize','img.curSize'):
+            if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
+            if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
+
+    # ---- 52) ป้ายใต้รูป (ขนาดต้นฉบับ/ปัจจุบัน) ต้องเปลี่ยนภาษาตาม TH/EN (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   applyLang ต้อง re-render ป้ายของรูปที่เลือกค้างอยู่ (เรียก _imgReadout(_imgSel)) ไม่งั้นคำ "ขนาดต้นฉบับ/ขนาดปัจจุบัน" ค้างภาษาเดิมจนคลิกรูปใหม่
+    #   ต้องมี guard: typeof _imgSel + document.contains(_imgSel) (โหลดหน้าแรก var ยังไม่ assign · รูปถูกลบหลัง Undo)
+    _al = re.search(r'function applyLang\(\)\{[\s\S]*?\n\}', txt)
+    if not _al:
+        errors.append('ไม่พบ applyLang (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _bal=_al.group(0)
+        if '_imgReadout(_imgSel)' not in _bal:
+            errors.append('applyLang ต้องเรียก _imgReadout(_imgSel) เพื่อให้ป้ายใต้รูปเปลี่ยนภาษาตาม TH/EN (ดู UI_STANDARD.md ข้อ 7)')
+        elif 'document.contains(_imgSel)' not in _bal:
+            errors.append('applyLang re-render ป้ายรูปต้องมี guard document.contains(_imgSel) กันรูปที่ถูกลบหลัง Undo (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

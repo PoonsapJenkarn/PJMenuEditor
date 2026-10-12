@@ -8,6 +8,30 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (19:05) — ✅ ป้ายใต้รูปเปลี่ยนภาษาตาม TH/EN · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha f05dc184fc7984b1 → d77638f659c74751
+- ผู้ใช้สั่ง (19:04 + ภาพยืนยันป้าย 3 แถวทำงาน): "เอาให้เปลี่ยนภาษาด้วยได้ไหม" — คำ ขนาดต้นฉบับ/ขนาดปัจจุบัน ค้างภาษาเดิมตอนสลับ TH/EN (ป้าย render เฉพาะตอน _imgReadout)
+- วิเคราะห์: applyLang ไม่ได้ re-render ป้ายรูปของรูปที่เลือก (แถบล่าง re-render อยู่แล้วที่บรรทัด _statusShown key/parts · ป้าย sizetag คือช่องโหว่)
+- แก้ html 1 จุด: applyLang +บรรทัด `if(typeof _imgReadout==='function' && typeof _imgSel!=='undefined' && _imgSel && document.contains(_imgSel)) _imgReadout(_imgSel);` ท้ายฟังก์ชัน · guard: typeof (โหลดแรก var ยังไม่ assign — function hoisted ปลอดภัย) + document.contains (รูปถูกลบหลัง Undo) · imgmode/editmode แยกกัน ไม่ชนเส้นจุด (บรรทัด _typoType.line)
+- lint #52 ใหม่ (applyLang ต้องมี _imgReadout(_imgSel) + guard document.contains) · V0 ผ่าน · ทดสอบบั๊ก 2 แบบจับครบ
+- git: layer ต่อจากงาน 18:40 (cap 100mm + ป้าย 3 แถว + bake) ที่ยังไม่ commit · เปลี่ยน 3 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS · ⚠ งานนี้รวมกับ 18:40 ควร commit เป็นชุดเดียว (ป้าย 3 แถว + เปลี่ยนภาษา = ฟีเจอร์เดียวกัน)
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง d77638f659c74751 · device python timeout/sandbox ไม่เสถียร (ใช้ workspace + file_copy)
+
+## 12 ต.ค. 2026 (18:40) — ✅ รูป add ใหม่ cap 100mm + ป้ายใต้รูป 3 แถว (ต้นฉบับ px / ปัจจุบัน mm) + bake baseline ตอน save · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha f05dc184fc7984b1
+- ผู้ใช้สั่ง (18:34, 3 ข้อ + decision 18:39): (1) รูป add ใหม่ cap W/H ไม่เกิน 100mm (ผู้ใช้วัดเองว่าเหมาะกับ A4) (2) ป้ายใต้รูปแสดง Original (px) + Current (mm) (3) ปุ่มคืนขนาด = คืนค่าจากที่ save ไฟล์ไปแล้ว
+- agent ท้วง 2 จุด (ผู้ใช้เห็นด้วย ทั้ง 2): Current คง mm ไม่ใช่ px (Original=ความละเอียด px / Current=ขนาดพิมพ์ mm คนละมิติ แบบ InDesign Link / Photoshop Image Size — ห้ามรวมหน่วย) · ข้อ 3 เดิมคืนขนาดออกแบบ ไม่ตรงคำ "ที่ save ไปแล้ว" → bake-on-save
+- แก้ html 4 จุด: (1) imgAdd: `var w=im.width,h=im.height` +`_CAPpx=100*96/25.4` +`_sc=Math.min(_CAPpx/w,_CAPpx/h,1)` + `w/h=Math.round(*_sc)` (2) sizetag 2→3 แถว (ชื่อ / Original naturalW×H px / Current wmm×hmm mm) (3) buildEditorHtml bake `data-w0/h0=el.style.width/height` ทุก .fimg ตอน save (4) i18n `img.origSize`/`img.curSize` TH+EN
+- lint: rewrite #50 (fit-box 120×200 → cap 100mm: ห้าม _HMAX/_WMAX/120*r · ต้องมี 100*96/25.4 · Math.min(...,1) · w/h=Math.round(*_sc) · baseline) + เพิ่ม #51 (sizetag 3 แถว: naturalWidth/Height + t('img.origSize')+t('img.curSize') + px + mm · buildEditorHtml bake · i18n origSize/curSize th+en) · V0 ผ่าน · ทดสอบบั๊ก 8 แบบจับครบ · ไฟล์ 5.37MB
+- git: base = งาน add-ขนาดจริง (ไม่มี cap) ที่แก้ตรงเครื่อง 17:02 (ยังไม่ commit) · รอบนี้ layer ทับเป็น cap 100mm · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS · ⚠ ตรวจ git log/status ก่อน commit (สถานะ fit-cap 39d855 เดิมยังไม่ยืนยัน)
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง f05dc184fc7984b1 · device python timeout 65s (ใช้ workspace + file_copy)
+
+## 12 ต.ค. 2026 (15:10) — ✅ ขนาดเริ่มรูปใหม่ = fit ขนาดจริงเข้ากรอบเพดาน คงสัดส่วน · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d9e622b311a441b2 → 39d855317166b59d (ต่อจาก actual-size commit 1e816ee)
+- ผู้ใช้สั่ง (decision 15:05): default ตอนเพิ่มรูป = "ขนาดจริง + cap พอดีเมนู" (ถาม pro/enterprise ใช้เท่าไหร่ → agent ตอบ Word/PPT แทรกขนาดจริงแล้ว fit · ผู้ใช้เลือกแนวนี้)
+- แก้ imgAdd: เดิม fixed สูง 120px (w=120*r) → _sc=Math.min(Hmax/im.height, Wmax/im.width, 1) · w=im.width*_sc h=im.height*_sc · Hmax=120px(≈36mm) Wmax=200px(≈60mm) · top ใช้ h/2 (เดิม 60 คงที่) · baseline data-w0/h0 = ขนาดที่ fit
+- ผล: รูป ratio≤~1.67 สูง 36mm เท่าเดิมเป๊ะ (ไฟล์ H500 → _sc=0.24) · ratio>1.67 ชนเพดานกว้าง 60mm (เดิมบานเกิน) · รูปเล็กกว่าเพดาน=ขนาดจริง (min 1) · เฉพาะ add ใหม่ · รูปเดิม 6 จุด baseline ไม่กระทบ
+- lint ข้อ 50 ใหม่ (ห้าม 120*r · ต้อง im.width/height+Math.min · cap มี 1 ท้าย · baseline=w/h) ทดสอบบั๊ก 4 แบบจับครบ · braces 2473:2473 · ไฟล์ 5.37MB
+- git: disk สะอาดที่ 1e816ee ก่อนเริ่ม · งานนี้เป็น commit แยก · เปลี่ยน 3 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_out12→out13 · lint_oe10→oe11 · copy กลับ sha ตรง 39d855317166b59d · device python ยัง timeout 65s (ใช้ workspace)
+
 ## 12 ต.ค. 2026 (14:50) — ✅ ปุ่ม "ขนาดจริง" (ปุ่มที่ 2 คืนขนาด pixel จริงไฟล์) + honest-dim ทั้ง 2 ปุ่ม · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 0484d6c233181bd4 → d9e622b311a441b2 (ต่อจาก image-refresh commit c09813a)
 - ผู้ใช้สั่ง (14:35): ทำ 2 ปุ่ม · ปุ่ม 1 คืนขนาดที่ออกแบบ (มีอยู่แล้ว) · ปุ่ม 2 คืนขนาด original pixel ของไฟล์ · "เตรียมเครื่องมือให้ครบ อย่าบังคับผู้ใช้ว่าต้องขนาดไหน" (agent เคยค้านปุ่ม 2 ว่ารูปล้นหน้า — ผู้ใช้ท้วงว่าเป็นสิทธิ์ผู้ใช้เลือก · agent ยอมรับ)
 - แก้: (1) ปุ่ม btnImgActual ต่อจาก btnImgReset ในกลุ่มจัดการรูป (2) imgActualSize: w/h = img.naturalWidth/naturalHeight + markDirty (undo) + guard อ่านไม่ได้ (3) _imgResetSync เขียนใหม่คุม 2 ปุ่ม honest-dim: คืนขนาดจางเมื่อ style===w0/h0 · ขนาดจริงจางเมื่อ style===naturalW/H px (4) i18n: btn.actualSize/ttl.imgActual/ttl.imgActualAt/ttl.imgActualNeed/fl.imgSizeActual/fl.imgSizeAtActual/fl.imgNoNatural TH+EN · ttl.imgReset/imgResetAt ปรับคำ "ขนาดที่ออกแบบไว้"

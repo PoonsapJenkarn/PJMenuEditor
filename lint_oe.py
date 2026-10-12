@@ -988,6 +988,34 @@ def main():
     else:
         errors.append('ไม่พบระบบปุ่มคืนขนาดรูป (btnImgReset/imgResetSize/_imgResetSync) (ดู UI_STANDARD.md ข้อ 5)')
 
+    # ---- 49) ปุ่ม "ขนาดจริง" (actual/original pixel size) + honest-dim ทั้ง 2 ปุ่ม (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   ปุ่มที่ 2 = คืนรูปเป็นขนาด pixel จริงของไฟล์ (ผู้ใช้เลือกเองว่าจะเอาขนาดไหน — เตรียมเครื่องมือ ไม่บังคับ) · btnImgActual + imgActualSize (naturalWidth/Height) + markDirty · _imgResetSync จางปุ่มเมื่อรูปอยู่ขนาดนั้นแล้ว (เทียบ style string) ทั้งคู่ (กฎ #6 ไม่หลอกตา)
+    if '_imgResetSync' in txt or 'btnImgActual' in txt or 'imgActualSize' in txt:
+        if not re.search(r'id="btnImgActual"[^>]*>(?:(?!</button>)[\s\S])*?btn\.actualSize', txt):
+            errors.append('ไม่พบปุ่มขนาดจริง (id=btnImgActual + btn.actualSize) (ดู UI_STANDARD.md ข้อ 6)')
+        _ias49 = re.search(r'\nfunction imgActualSize\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _ias49:
+            errors.append('ไม่พบ imgActualSize (ดู UI_STANDARD.md ข้อ 5)')
+        else:
+            _b49=_ias49.group(0)
+            if 'naturalWidth' not in _b49 or 'naturalHeight' not in _b49:
+                errors.append('imgActualSize ต้องใช้ naturalWidth/naturalHeight (ขนาด pixel จริงของไฟล์) (ดู UI_STANDARD.md ข้อ 6)')
+            if 'markDirty()' not in _b49:
+                errors.append('imgActualSize ต้อง markDirty() = จุด undo (กฎ #6) (ดู UI_STANDARD.md ข้อ 6)')
+        _rs49 = re.search(r'\nfunction _imgResetSync\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _rs49:
+            errors.append('ไม่พบ _imgResetSync (ดู UI_STANDARD.md ข้อ 5)')
+        else:
+            _rb49=_rs49.group(0)
+            if 'btnImgActual' not in _rb49:
+                errors.append('_imgResetSync ต้องคุมปุ่ม btnImgActual ด้วย (ดู UI_STANDARD.md ข้อ 6)')
+            if 'el.style.width===el.dataset.w0' not in _rb49 or 'el.style.width===ow' not in _rb49:
+                errors.append('_imgResetSync ต้องเทียบขนาดปัจจุบันกับขนาดเป้า (honest-dim: จางเมื่อรูปอยู่ขนาดนั้นแล้ว ทั้ง 2 ปุ่ม · กฎ #6) (ดู UI_STANDARD.md ข้อ 6)')
+        if txt.count("'btn.actualSize':'") < 2:
+            errors.append('btn.actualSize ต้องมีทั้ง TH และ EN (ดู UI_STANDARD.md ข้อ 6)')
+    else:
+        errors.append('ไม่พบระบบปุ่มขนาดจริง (btnImgActual/imgActualSize) (ดู UI_STANDARD.md ข้อ 5)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

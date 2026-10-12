@@ -8,6 +8,13 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (14:50) — ✅ ปุ่ม "ขนาดจริง" (ปุ่มที่ 2 คืนขนาด pixel จริงไฟล์) + honest-dim ทั้ง 2 ปุ่ม · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 0484d6c233181bd4 → d9e622b311a441b2 (ต่อจาก image-refresh commit c09813a)
+- ผู้ใช้สั่ง (14:35): ทำ 2 ปุ่ม · ปุ่ม 1 คืนขนาดที่ออกแบบ (มีอยู่แล้ว) · ปุ่ม 2 คืนขนาด original pixel ของไฟล์ · "เตรียมเครื่องมือให้ครบ อย่าบังคับผู้ใช้ว่าต้องขนาดไหน" (agent เคยค้านปุ่ม 2 ว่ารูปล้นหน้า — ผู้ใช้ท้วงว่าเป็นสิทธิ์ผู้ใช้เลือก · agent ยอมรับ)
+- แก้: (1) ปุ่ม btnImgActual ต่อจาก btnImgReset ในกลุ่มจัดการรูป (2) imgActualSize: w/h = img.naturalWidth/naturalHeight + markDirty (undo) + guard อ่านไม่ได้ (3) _imgResetSync เขียนใหม่คุม 2 ปุ่ม honest-dim: คืนขนาดจางเมื่อ style===w0/h0 · ขนาดจริงจางเมื่อ style===naturalW/H px (4) i18n: btn.actualSize/ttl.imgActual/ttl.imgActualAt/ttl.imgActualNeed/fl.imgSizeActual/fl.imgSizeAtActual/fl.imgNoNatural TH+EN · ttl.imgReset/imgResetAt ปรับคำ "ขนาดที่ออกแบบไว้"
+- lint ข้อ 49 ใหม่ (btnImgActual+imgActualSize naturalWidth+markDirty · _imgResetSync คุม 2 ปุ่ม + honest compare) ทดสอบบั๊ก 4 แบบจับครบ · braces 2473:2473 · ไฟล์ 5.37MB
+- git: image-refresh commit แล้ว c09813a (ผู้ใช้ 14:50) · งานปุ่มนี้ลงเครื่องเป็น commit ที่ 2 แยก · เปลี่ยน 3 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_out11→out12 · lint_oe9→oe10 · copy กลับ sha ตรง d9e622b311a441b2 · device python ยัง timeout 65s (ใช้ workspace)
+
 ## 12 ต.ค. 2026 (13:40) — ✅ refresh ไฟล์รูปใหม่ 6 จุด (5 ไฟล์ต้นทาง) ใช้ตำแหน่งเดิม · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 320e3e26af51356f → 0484d6c233181bd4
 - ผู้ใช้สั่ง (13:26–13:36): เปลี่ยน base64 รูปใหม่จาก C:\AmazonQuickTempFiles\OE_ISAN_Image\ImageEdit\ImageSelected\ · header p1+p2 ← HotpotHeader1-H500.png (ผู้ใช้แก้คำสั่งล่าสุด: HotpotHeader2.png ไม่มีในโฟลเดอร์ → ใช้ HotpotHeader1-H500.png) · PlaPaoPaiFai2-H500.png (p1) · Plapao17-H500.png (p1) · Mortar1-H500.png (p2) · Beverage17→Beverage19-Soda-H500.png (p2)
 - เหตุผลผู้ใช้: รูปเดิมคืนขนาด (Reset Size) ไม่ได้ → ตั้ง baseline ใหม่สะอาดจากขนาดจริงรูปใหม่

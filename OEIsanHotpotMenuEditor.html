@@ -2288,7 +2288,10 @@ function imgAdd(ev){
       var _sc=Math.min(_CAPpx/w,_CAPpx/h,1); w=Math.round(w*_sc); h=Math.round(h*_sc);
       var prc=pg.getBoundingClientRect();
       var leftMM=((prc.width/2 - w/2)/prc.width*210).toFixed(1);
-      el.style.cssText='top:'+Math.round(prc.height/2 - h/2)+'px;left:'+leftMM+'mm;width:'+w+'px;height:'+h+'px;';
+      /* วางกลางหน้า A4 คงที่ (297mm) + clamp ให้อยู่ในพื้นที่พิมพ์ (ขอบ 8mm) — ห้ามใช้ prc.height เพราะโหมดแก้หน้ายืดเกิน 297mm → รูปตกใต้เส้นตัดหายตอนออกโหมด/เปิดไฟล์ (ผู้ใช้ 12 ต.ค. 2026 · lint ข้อ 53) */
+      var _A4px=297*96/25.4, _padPx=8*96/25.4;
+      var _topPx=Math.round(Math.max(_padPx, Math.min(_A4px/2 - h/2, _A4px - _padPx - h)));
+      el.style.cssText='top:'+_topPx+'px;left:'+leftMM+'mm;width:'+w+'px;height:'+h+'px;';
       el.dataset.w0=w+'px';el.dataset.h0=h+'px';  /* ขนาดฐาน = คืนขนาดได้ (ผู้ใช้ 12 ต.ค. 2026) */
       var wasHidden=document.body.classList.contains('imghidden');
       _imgHideOff();  /* ซ่อนรูปอยู่ = แสดงกลับ เพื่อให้เห็นรูปใหม่ (ผู้ใช้ 8 ต.ค. 2026) */

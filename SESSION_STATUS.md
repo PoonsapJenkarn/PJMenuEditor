@@ -8,6 +8,15 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (19:50) — ✅ แก้บั๊กรูป add ใหม่หายตอนออกโหมด/เปิดไฟล์ (วางกลางหน้า A4 + clamp) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d77638f659c74751 → 99f3f3d051d56d99
+- ผู้ใช้แจ้งบั๊ก (19:25): add รูปใหม่ → ออก edit mode บางทีรูปหาย (กด edit ยังอยู่) · save ไฟล์ editor .html → เปิดใหม่รูปหาย
+- ไล่ตรวจ root cause: imgAdd วาง top=Math.round(prc.height/2-h/2) · prc.height = ความสูง render จริง ซึ่งในโหมดแก้ .page เป็น height:auto;min-height:297mm;overflow:visible (ยืดได้) → prc.height เกิน 297mm → รูปวางใต้เส้น 297mm · ออกโหมด/เปิดไฟล์ .page กลับเป็น height:297mm;overflow:hidden → ส่วนเลย 297mm ถูกตัดหาย
+- ยืนยัน NOT ไฟล์เสีย/src หาย: _readImageFile ใช้ readAsDataURL = base64 ฝังในไฟล์ (createObjectURL ใช้แค่ตอน logo swap บรรทัด 1230 ไม่เกี่ยว) · ไม่มี CSS ซ่อน .fimg ทั้งรูปตามโหมด · box-sizing:border-box ทั้งเอกสาร
+- แก้ html 1 จุด (บรรทัด top ใน imgAdd): อ้าง A4 คงที่ `_A4px=297*96/25.4` + `_padPx=8*96/25.4` → `_topPx=Math.round(Math.max(_padPx, Math.min(_A4px/2-h/2, _A4px-_padPx-h)))` · clamp กันรูปสูงล้นขอบพิมพ์ · วางกลางหน้าเสมอ (decision ผู้ใช้ 19:46) · left เดิมใช้ prc.width=210mm คงที่ ไม่แตะ
+- lint #53 ใหม่ (ห้าม top จาก prc.height · ต้องมี 297*96/25.4 · ต้อง clamp Math.max/Math.min) · V0 ผ่าน · ทดสอบบั๊ก 3 แบบจับครบ · (เงื่อนไข clamp เขียนผิดรอบแรก ternary precedence + split _topPx ตัวท้าย → V0 fail → แก้เป็น Math.max/min in _b53 ตรงๆ)
+- git: layer ต่อจาก commit 9bb73d3 (cap+ป้าย+relang) · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง 99f3f3d051d56d99 · device python/sandbox ไม่เสถียร (ใช้ workspace + file_copy)
+
 ## 12 ต.ค. 2026 (19:05) — ✅ ป้ายใต้รูปเปลี่ยนภาษาตาม TH/EN · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha f05dc184fc7984b1 → d77638f659c74751
 - ผู้ใช้สั่ง (19:04 + ภาพยืนยันป้าย 3 แถวทำงาน): "เอาให้เปลี่ยนภาษาด้วยได้ไหม" — คำ ขนาดต้นฉบับ/ขนาดปัจจุบัน ค้างภาษาเดิมตอนสลับ TH/EN (ป้าย render เฉพาะตอน _imgReadout)
 - วิเคราะห์: applyLang ไม่ได้ re-render ป้ายรูปของรูปที่เลือก (แถบล่าง re-render อยู่แล้วที่บรรทัด _statusShown key/parts · ป้าย sizetag คือช่องโหว่)

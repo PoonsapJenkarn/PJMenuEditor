@@ -1079,6 +1079,25 @@ def main():
             errors.append('applyLang re-render ป้ายรูปต้องมี guard document.contains(_imgSel) กันรูปที่ถูกลบหลัง Undo (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 53) รูป add ใหม่ต้องวางในกรอบ A4 คงที่ ไม่ใช่ prc.height ที่ยืดในโหมดแก้ (ผู้ใช้ 12 ต.ค. 2026) ----
+    #   บั๊ก: imgAdd เดิมวาง top=prc.height/2-h/2 · prc.height ในโหมดแก้ยืดเกิน 297mm → รูปตกใต้เส้น 297mm → ออกโหมด/เปิดไฟล์ (overflow:hidden) รูปถูกตัดหาย
+    #   แก้: top อ้าง A4 คงที่ (297*96/25.4) + clamp ด้วย padding (8*96/25.4) ให้อยู่ในพื้นที่พิมพ์เสมอ · ห้ามใช้ prc.height ในสูตร top
+    _ia53 = re.search(r'\nfunction imgAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _ia53:
+        errors.append('ไม่พบ imgAdd (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        _b53=_ia53.group(0)
+        _mtop=re.search(r"top:'\+([^+]+)\+'px", _b53)  # นิพจน์ที่ใช้คำนวณ top ของรูปใหม่
+        if not _mtop:
+            errors.append("imgAdd ต้องตั้ง top เป็น px ของรูปใหม่ (ดู UI_STANDARD.md ข้อ 6)")
+        elif 'prc.height' in _mtop.group(1):
+            errors.append("imgAdd ห้ามวาง top จาก prc.height (โหมดแก้หน้ายืดเกิน A4 → รูปตกใต้เส้นตัดหาย) ต้องอ้าง A4 คงที่ (ดู UI_STANDARD.md ข้อ 6)")
+        elif '297*96/25.4' not in _b53:
+            errors.append("imgAdd ต้องอ้างกรอบ A4 คงที่ (297*96/25.4) ในการวาง top (ดู UI_STANDARD.md ข้อ 6)")
+        elif ('Math.max' not in _b53) or ('Math.min' not in _b53):
+            errors.append("imgAdd ต้อง clamp top ด้วย Math.max/Math.min ให้อยู่ในพื้นที่พิมพ์ (ดู UI_STANDARD.md ข้อ 6)")
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

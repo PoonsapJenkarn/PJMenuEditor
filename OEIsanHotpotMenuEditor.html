@@ -2563,6 +2563,12 @@ var _TYPO_FMT_PROPS=['color','fontFamily','fontSize','fontWeight','fontStyle'];
 var _OL_DARK='#2B2320', _OL_LIGHT='#FFFFFF';
 var _OL_OFFS=[[-2,0],[2,0],[0,-2],[0,2],[-1.4,-1.4],[1.4,-1.4],[-1.4,1.4],[1.4,1.4],[-2,-1],[2,-1],[-2,1],[2,1],[-1,-2],[1,-2],[-1,2],[1,2]];  /* รูปแบบที่ความหนา 2px · ความหนาอื่น = คูณตามสัดส่วน */
 var _OL_WIDTHS=[0.5,1,1.5,2,2.5,3], _olLastW=null, _olLastC=null;  /* _olLastC = สีขอบที่เลือกเองล่าสุด (null = อัตโนมัติ) — ปุ่ม A ใช้สีนี้ (ผู้ใช้ 8 ต.ค. 2026) */  /* _olLastW = ความหนาล่าสุดที่ใช้ (ปุ่ม A ใช้ค่านี้) · null = ยังไม่เคยเลือก → แอปเลือกตามตัวอักษร */
+var OL_LAST_KEY='oe_outline_last';  /* จำสีขอบ/ความหนาล่าสุดข้าม reload (ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 57) */
+function _olPersistLast(){ try{ localStorage.setItem(OL_LAST_KEY, JSON.stringify({c:_olLastC,w:_olLastW})); }catch(e){} }
+function _olLoadLast(){ try{ var o=JSON.parse(localStorage.getItem(OL_LAST_KEY)); if(!o) return; if(o.c===null||(typeof o.c==='string'&&/^#[0-9A-Fa-f]{6}$/.test(o.c))) _olLastC=(o.c===null?null:String(o.c).toUpperCase()); if(o.w===null||_OL_WIDTHS.indexOf(o.w)>=0) _olLastW=(o.w===null?null:o.w); }catch(e){} }  /* validate hex + ค่าความหนาที่ถูกก่อนรับ */
+function _olSetLastC(v){ _olLastC=v; _olPersistLast(); }
+function _olSetLastW(v){ _olLastW=v; _olPersistLast(); }
+_olLoadLast();
 function _olLum(h){ h=String(h).replace('#',''); var c=[0,2,4].map(function(i){ var x=parseInt(h.substr(i,2),16)/255; return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4); }); return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; }
 function _olCr(a,b){ var x=_olLum(a), y=_olLum(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
 function _olEdge(hex){ return _olCr(hex,_OL_DARK)>=_olCr(hex,_OL_LIGHT)?_OL_DARK:_OL_LIGHT; }
@@ -2606,14 +2612,14 @@ function typoOutlineSetColor(c){
   var el=_typoEl, lbl=_typoLabel(_typoType), cell=_cut30(el.textContent), w=st.on?st.w:(_olLastW||_olAuto(el));
   if(c==='auto'){
     if(!st.autoVis){ flashStatus('warning',tk('fl.olAutoInvisible')); _olSync(); return; }  /* ตัวเลือกจางอยู่แล้ว */
-    if(st.on && !st.custom){ _olLastC=null; flashStatus('info',tk('fl.olAutoSame')); return; }
+    if(st.on && !st.custom){ _olSetLastC(null); flashStatus('info',tk('fl.olAutoSame')); return; }
     _olApply(el,w,st.auto,null); _olSync();
     if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
     flashStatus('info',tk(st.on?'fl.olColorAuto':'fl.olOnW',{label:lbl,cell:cell,w:w}));
     return;
   }
   var h=(typeof _normHex==='function')?_normHex(c):null; if(!h) return;
-  if(st.on && st.custom===h){ _olLastC=h; flashStatus('info',tk('fl.olColorSame',{c:h})); return; }  /* ไม่มีอะไรเปลี่ยน = ไม่มีจุด Undo */
+  if(st.on && st.custom===h){ _olSetLastC(h); flashStatus('info',tk('fl.olColorSame',{c:h})); return; }  /* ไม่มีอะไรเปลี่ยน = ไม่มีจุด Undo */
   _olApply(el,w,h,h); _olSync();
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
   var res=tk(st.on?'fl.olColor':'fl.olOnWC',{label:lbl,cell:cell,w:w,c:h});
@@ -2697,7 +2703,7 @@ function _olApply(el,w,edge,custom){
   /* ใส่ / เปลี่ยนเส้นขอบ · custom = สีที่เลือกเอง (เก็บใน data-ol-c) · null = อัตโนมัติ · จำความหนาและสีล่าสุดให้ปุ่ม A */
   el.style.textShadow=_olShadow(edge,w);
   if(custom) el.setAttribute('data-ol-c',custom); else el.removeAttribute('data-ol-c');
-  _olLastW=w; _olLastC=custom||null;
+  _olSetLastW(w); _olSetLastC(custom||null);
 }
 function _olOff(el){ el.style.removeProperty('text-shadow'); el.removeAttribute('data-ol-c'); if(!el.getAttribute('style')) el.removeAttribute('style'); }
 function typoOutlineToggle(){
@@ -2705,7 +2711,7 @@ function typoOutlineToggle(){
   if(!st.usable){ flashStatus('warning',tk(st.fl)); _olSync(); return; }
   if(!st.on && !st.cand){ _olPopOpen(); return; }  /* ขอบที่ใส่ได้จะกลืนกับพื้น = ไม่ใส่ขอบที่มองไม่เห็น → เปิด ▾ ให้เลือกสีขอบ (ผู้ใช้ 8 ต.ค. 2026) · ไม่มีอะไรเปลี่ยน */
   var el=_typoEl, lbl=_typoLabel(_typoType), cell=_cut30(el.textContent), w;
-  if(st.on){ _olLastW=st.w; _olLastC=st.custom; _olOff(el); }
+  if(st.on){ _olSetLastW(st.w); _olSetLastC(st.custom); _olOff(el); }
   else { w=_olLastW||_olAuto(el); _olApply(el,w,st.cand.c,st.cand.custom); }
   _olSync();
   if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();  /* จุด Undo + เตือนก่อนปิดแท็บ */
@@ -2720,7 +2726,7 @@ function typoOutlineSetWidth(w){
   if(!st.usable){ flashStatus('warning',tk(st.fl)); _olSync(); return; }
   if(_OL_WIDTHS.indexOf(w)<0) return;
   var el=_typoEl, lbl=_typoLabel(_typoType), cell=_cut30(el.textContent);
-  if(st.on && st.w===w){ _olLastW=w; flashStatus('info',tk('fl.olSame',{w:w})); return; }  /* ไม่มีอะไรเปลี่ยน = ไม่มีจุด Undo */
+  if(st.on && st.w===w){ _olSetLastW(w); flashStatus('info',tk('fl.olSame',{w:w})); return; }  /* ไม่มีอะไรเปลี่ยน = ไม่มีจุด Undo */
   if(!st.on && !st.cand){ _olPopOpen(); return; }  /* ยังไม่มีสีที่มองเห็นได้ = เลือกสีขอบก่อน (ปุ่มความหนาจางอยู่แล้ว) */
   if(st.on) _olApply(el,w,st.edge,st.custom); else _olApply(el,w,st.cand.c,st.cand.custom);
   _olSync();
@@ -3382,7 +3388,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
     var mode=_cpMode;
     if(mode==='edge'){  /* สีขอบ: ใส่ครั้งเดียวตอนตกลง (1 จุด Undo · 1 รายการประวัติ) · ไม่เปลี่ยนสีตัวอักษรปัจจุบัน */
       _cpDlgClose();
-      if(_olState().usable) typoOutlineSetColor(h); else { _olLastC=h; flashStatus('info',tk('fl.cpEdgeStoredOnly',{c:h})); }
+      if(_olState().usable) typoOutlineSetColor(h); else { _olSetLastC(h); flashStatus('info',tk('fl.cpEdgeStoredOnly',{c:h})); }
       return;
     }
     _setCurrent(h);

@@ -1162,6 +1162,34 @@ def main():
             errors.append('newSection: data-acc0 (คืนค่าสี) ต้อง = #171A1E ให้ตรง baseline ใหม่ (ดู UI_STANDARD.md ข้อ 6)')
 
 
+    # ---- 57) จำสีขอบ/ความหนาล่าสุด (_olLastC/_olLastW) ข้าม reload ผ่าน localStorage (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   persist ผ่าน setter เดียว (_olSetLastC/_olSetLastW → _olPersistLast) ไม่กระจาย setItem ทุกจุด (defense-in-depth แบบ lint #54)
+    #   โหลดกลับด้วย _olLoadLast() (validate hex + ค่าความหนาที่ถูกต้องก่อนรับ) · key = OL_LAST_KEY
+    #   จุด set _olLastC/_olLastW (นอกประกาศ/setter/loader) ต้องเรียกผ่าน setter — ห้าม raw assignment หลุดที่ action sites
+    if 'OL_LAST_KEY' not in txt:
+        errors.append('ไม่พบ OL_LAST_KEY (จำสีขอบล่าสุดข้าม reload) (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _pl=re.search(r'function _olPersistLast\([^)]*\)\{[^\n]*\}', txt)
+        if not _pl or 'localStorage.setItem(OL_LAST_KEY' not in _pl.group(0):
+            errors.append('_olPersistLast ต้องเขียน localStorage.setItem(OL_LAST_KEY,...) (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'function _olLoadLast\(', txt):
+            errors.append('ไม่พบ _olLoadLast (อ่านสีขอบล่าสุดกลับตอนโหลด) (ดู UI_STANDARD.md ข้อ 7)')
+        elif not re.search(r'(?<!function )_olLoadLast\(\)\s*;', txt):
+            errors.append('_olLoadLast ต้องถูกเรียกตอนโหลด (ไม่ใช่แค่ประกาศ) (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'function _olSetLastC\([^)]*\)\{[^}]*_olPersistLast\(\)', txt):
+            errors.append('_olSetLastC ต้อง set แล้วเรียก _olPersistLast (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'function _olSetLastW\([^)]*\)\{[^}]*_olPersistLast\(\)', txt):
+            errors.append('_olSetLastW ต้อง set แล้วเรียก _olPersistLast (ดู UI_STANDARD.md ข้อ 7)')
+        # chokepoint หลัก (_olApply) ต้อง persist ผ่าน setter
+        if '_olSetLastC(custom||null)' not in txt.replace(' ',''):
+            errors.append('_olApply ต้องเก็บสีขอบล่าสุดผ่าน setter (_olSetLastC(custom||null)) (ดู UI_STANDARD.md ข้อ 7)')
+        # ห้าม raw assignment หลุดที่ action sites: _olLastC=/_olLastW= ต้องเหลือแค่ประกาศ+setter+loader (อย่างละ 3)
+        if len(re.findall(r'_olLastC=', txt))>3:
+            errors.append('มี raw assignment _olLastC= หลุดนอก setter — ต้องเรียกผ่าน _olSetLastC (จำไม่ครบข้าม reload) (ดู UI_STANDARD.md ข้อ 7)')
+        if len(re.findall(r'_olLastW=', txt))>3:
+            errors.append('มี raw assignment _olLastW= หลุดนอก setter — ต้องเรียกผ่าน _olSetLastW (จำไม่ครบข้าม reload) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

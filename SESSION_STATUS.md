@@ -8,6 +8,14 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 13 ต.ค. 2026 (11:30) — ✅ จำสีขอบ/ความหนาล่าสุด (_olLastC/_olLastW) ข้าม reload · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 888b803edce46363 → a889e9d68e2b430e
+- ผู้ใช้เลือกจาก backlog (decision 11:27): จำสีขอบล่าสุดข้าม reload · agent บอกตรงว่าคุณค่าต่ำ (สีที่ใส่แล้วอยู่ในไฟล์ · จานสี custom จำแล้ว) เหลือแค่ความสะดวก _olLastC/_olLastW ที่ reset ตอน reload — ผู้ใช้เลือกทำ
+- วิเคราะห์: _olLastC/_olLastW set กระจาย 6 จุด (auto 2609 / color-same 2616 / _olApply 2700 / toggle-off 2708 / width-same 2723 / HEX-stored 3385) · ถ้าใส่ setItem ทีละจุด = เปราะแบบ _msgT (เผลอตก) → เลือก setter เดียว
+- แก้ html: (1) เพิ่ม OL_LAST_KEY='oe_outline_last' + _olPersistLast (setItem JSON {c,w}) + _olLoadLast (validate hex #RRGGBB + ค่าใน _OL_WIDTHS ก่อนรับ) + _olSetLastC/_olSetLastW (set→persist) + เรียก _olLoadLast() ตอนโหลด · (2) แทนจุด set ทั้ง 6 ให้เรียกผ่าน setter · raw _olLastC=/_olLastW= เหลืออย่างละ 3 (ประกาศ+setter+loader) ยืนยันไม่มีหลุด
+- lint #57 ใหม่ (OL_LAST_KEY + persist เขียน localStorage + _olLoadLast ถูกเรียก + setter เรียก persist + _olApply ผ่าน setter + ห้าม raw assignment หลุด >3) · V0 ผ่าน · ทดสอบบั๊ก 4 แบบจับครบ
+- git: layer ต่อจาก commit b7a58e7 (สีกลุ่มใหม่ #171A1E) · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง a889e9d68e2b430e · device python/sandbox ไม่เสถียร (ใช้ workspace + file_copy)
+
 ## 13 ต.ค. 2026 (10:40) — ✅ สี default กลุ่มเมนูใหม่ #4a8579 → #171A1E (เท่าสีชื่อเมนู) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha ad70758f3c77f762 → 888b803edce46363
 - ผู้ใช้เลือกจาก backlog: กลุ่มใหม่โผล่มาเป็นเขียวเทา #4a8579 ไม่เข้าชุด 9 กลุ่มที่มีสีเฉพาะ · agent ชี้ว่าแอปไม่มี theme สี (ไม่มี :root vars · แต่ละกลุ่มฝัง --accent ตายตัว) → ไม่มีชุดสีให้ match
 - ผู้ใช้เลือก #171A1E (= สีชื่อรายการเมนู .nm) เหตุผล: พิมพ์ default ออกมาเข้ากับตัวหนังสือเมนู ไม่อ่อนไม่แก่กว่า

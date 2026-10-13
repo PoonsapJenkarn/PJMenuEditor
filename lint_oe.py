@@ -1098,6 +1098,39 @@ def main():
             errors.append("imgAdd ต้อง clamp top ด้วย Math.max/Math.min ให้อยู่ในพื้นที่พิมพ์ (ดู UI_STANDARD.md ข้อ 6)")
 
 
+    # ---- 54) client-side XSS: ล็อก pattern ปลอดภัย (defense-in-depth · ผู้ใช้ 12 ต.ค. 2026) ----
+    #   app นี้เป็น HTML ไฟล์เดียว รันในเครื่อง — ความเสี่ยงจริงต่ำ แต่ user content (ชื่อเมนู/กลุ่ม/ไฟล์รูป) ไหลเข้า DOM ได้
+    #   ล็อกจุดที่ "ปลอดภัยเพราะ pattern" ไม่ให้ถอยหลัง: (ก) epEsc escape ครบ (ข) _renderStatus ใช้ textContent
+    #   (ค) _typoGroupOptsHtml escape ชื่อกลุ่ม (ง) dialog ลบกลุ่ม pre-escape (จ) ไม่มี sink อันตราย
+    # (ก) epEsc ต้อง escape & < > " ครบทั้ง 4
+    _ep54 = re.search(r'function epEsc\([^)]*\)\{[^\n]*\}', txt)
+    if not _ep54:
+        errors.append('ไม่พบ epEsc (ตัว escape HTML กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
+    elif not all(x in _ep54.group(0) for x in ['&amp;','&lt;','&gt;','&quot;']):
+        errors.append('epEsc ต้อง escape & < > " ให้ครบทั้ง 4 (กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
+    # (ข) _renderStatus: ข้อความสถานะต้องลงด้วย textContent ไม่ใช่ innerHTML (ชื่อกลุ่ม/ไฟล์ไหลผ่าน t() แบบไม่ escape)
+    _rs54 = re.search(r'function _renderStatus\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _rs54:
+        _rsb=_rs54.group(0)
+        if 'msgEl.textContent=' not in _rsb:
+            errors.append('_renderStatus ต้องตั้งข้อความสถานะด้วย textContent (กัน XSS จากชื่อกลุ่ม/ไฟล์) (ดู UI_STANDARD.md ข้อ 7)')
+        elif re.search(r'msgEl\.innerHTML', _rsb):
+            errors.append('_renderStatus ห้ามใส่ข้อความสถานะด้วย innerHTML — ใช้ textContent (กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
+    # (ค) _typoGroupOptsHtml: ชื่อกลุ่ม (user content) ต้องผ่าน epEsc ก่อนลง innerHTML
+    _tg54 = re.search(r'function _typoGroupOptsHtml\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _tg54 and 'epEsc(' not in _tg54.group(0):
+        errors.append('_typoGroupOptsHtml ต้อง escape ชื่อกลุ่มด้วย epEsc ก่อนลง innerHTML (กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
+    # (ง) dialog ลบกลุ่ม: ชื่อกลุ่มที่ส่งเข้า msgArgs ต้อง pre-escape (เพราะ _msgT ลง innerHTML โดยไม่ escape)
+    if "msgKey:'pnl.delGroupMsg'" in txt:
+        _dg54 = re.search(r"msgKey:'pnl\.delGroupMsg'[^}]*\}", txt)
+        if not _dg54 or 'epEsc(' not in _dg54.group(0):
+            errors.append('dialog ลบกลุ่ม: ชื่อกลุ่มต้อง epEsc ก่อนส่งเข้า msgArgs (_msgT ลง innerHTML ไม่ escape ในตัว) (ดู UI_STANDARD.md ข้อ 7)')
+    # (จ) ห้ามมี sink อันตราย
+    for _pat,_lbl in [(r'\beval\s*\(','eval()'),(r'new\s+Function','new Function'),(r'document\.write','document.write'),(r'javascript:','javascript:')]:
+        if re.search(_pat, txt):
+            errors.append('พบ sink อันตราย "'+_lbl+'" ใน HTML — ห้ามใช้ (กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

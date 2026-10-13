@@ -8,6 +8,15 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 12 ต.ค. 2026 (22:40) — ✅ lint #54 ล็อก pattern กัน XSS (defense-in-depth) · ไม่แก้ HTML · lint ผ่าน · ยังไม่ commit · html คงที่ 99f3f3d (commit 5cbfb2c)
+- ผู้ใช้ถาม security assessment ของ app เมนู (ไม่ใช่งาน AEON) → agent ไล่ตรวจ XSS: innerHTML 27 จุด + sink อื่นทั้งหมด → ไม่พบช่องโหว่ใช้โจมตีได้จริง (โค้ด pattern ถูกต้องอยู่แล้ว)
+- ผลตรวจ: (1) ข้อความแถบล่าง _renderStatus ใช้ textContent (บรรทัด 1125) (2) ชื่อกลุ่มใน dropdown _typoGroupOptsHtml ผ่าน epEsc (บรรทัด 2861) (3) dialog ลบกลุ่ม pre-escape epEsc(nm) (บรรทัด 1054) (4) อัปโหลดรูปเช็ก f.type=image/* + data: URL (5) save ใช้ cloneNode→outerHTML · ไม่มี eval/new Function/document.write/javascript:/on*=
+- จุดเปราะ (ไม่ใช่บั๊ก): openPanel→_msgT() ลง innerHTML ไม่ escape ในตัว — ปลอดภัยเพราะ caller เดียวที่ส่ง user content (ลบกลุ่ม) pre-escape ไว้ · ถ้ามี caller ใหม่ส่งชื่อเมนู/ไฟล์ดิบ = ช่องโหว่ → lint ล็อกไว้
+- แก้ lint_oe.py: เพิ่ม #54 (5 ข้อย่อย ก-จ: epEsc ครบ 4 · _renderStatus textContent · _typoGroupOptsHtml epEsc · delGroup pre-escape · ไม่มี sink อันตราย) · V0 ผ่าน · ทดสอบบั๊ก 6 แบบจับครบ
+- แก้ UI_STANDARD.md: เพิ่มหัวข้อ 'ความปลอดภัย (client-side XSS)' อธิบาย pattern + จุดเปราะ _msgT
+- git: ไม่แตะ html (คงที่ 99f3f3d = commit 5cbfb2c) · เปลี่ยน 3 ไฟล์: lint_oe.py + UI_STANDARD + SESSION_STATUS · commit แยกเป็นงาน lint/docs ล้วน
+- วิธี: workspace lint_oe_cur.py · copy กลับ · ไม่ต้อง copy html (ไม่เปลี่ยน)
+
 ## 12 ต.ค. 2026 (19:50) — ✅ แก้บั๊กรูป add ใหม่หายตอนออกโหมด/เปิดไฟล์ (วางกลางหน้า A4 + clamp) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d77638f659c74751 → 99f3f3d051d56d99
 - ผู้ใช้แจ้งบั๊ก (19:25): add รูปใหม่ → ออก edit mode บางทีรูปหาย (กด edit ยังอยู่) · save ไฟล์ editor .html → เปิดใหม่รูปหาย
 - ไล่ตรวจ root cause: imgAdd วาง top=Math.round(prc.height/2-h/2) · prc.height = ความสูง render จริง ซึ่งในโหมดแก้ .page เป็น height:auto;min-height:297mm;overflow:visible (ยืดได้) → prc.height เกิน 297mm → รูปวางใต้เส้น 297mm · ออกโหมด/เปิดไฟล์ .page กลับเป็น height:297mm;overflow:hidden → ส่วนเลย 297mm ถูกตัดหาย

@@ -1131,6 +1131,20 @@ def main():
             errors.append('พบ sink อันตราย "'+_lbl+'" ใน HTML — ห้ามใช้ (กัน XSS) (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 55) ปุ่มขยาย/ย่อรูป (imgScale) ต้องสร้างจุด Undo (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   บั๊กเดิม: imgScale ไม่เรียก markDirty → กดขยาย/ย่อแล้ว Ctrl+Z ไม่คืน (ลากมุมคืนได้เพราะ mouseup → markDirty)
+    #   แก้: imgScale เรียก markDirty() (debounced เหมือน resize-drag · กดรัวรวมเป็น 1 undo) + guard ไม่เปลี่ยน (ชนขอบ 30px) = ไม่สร้างจุด Undo
+    _is55 = re.search(r'\nfunction imgScale\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _is55:
+        errors.append('ไม่พบ imgScale (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _b55=_is55.group(0)
+        if 'markDirty(' not in _b55:
+            errors.append('imgScale ต้องเรียก markDirty() เพื่อสร้างจุด Undo (กดขยาย/ย่อแล้วต้อง Ctrl+Z คืนได้ · กฎ #6) (ดู UI_STANDARD.md ข้อ 7)')
+        elif 'nw===cw' not in _b55:
+            errors.append('imgScale ต้องมี guard ไม่เปลี่ยน (nw===cw ชนขอบ 30px) = ไม่สร้างจุด Undo (กฎ #6) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

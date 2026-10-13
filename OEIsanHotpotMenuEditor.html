@@ -2220,8 +2220,11 @@ document.addEventListener('mousedown',function(e){
 function imgScale(pct){
   if(!_imgSel)return;
   var cs=getComputedStyle(_imgSel),r=parseFloat(_imgSel.dataset.ratio)||1;
-  var nw=Math.max(30,Math.round(parseInt(cs.width)*(1+pct/100)));
-  _imgSel.style.width=nw+'px';_imgSel.style.height=Math.round(nw/r)+'px';_imgReadout(_imgSel);
+  var cw=parseInt(cs.width);
+  var nw=Math.max(30,Math.round(cw*(1+pct/100)));
+  if(nw===cw){ _imgReadout(_imgSel); return; }  /* ไม่เปลี่ยน (ชนขอบ 30px ย่อไม่ลง) = ไม่สร้างจุด Undo (กฎ #6) */
+  _imgSel.style.width=nw+'px';_imgSel.style.height=Math.round(nw/r)+'px';
+  _imgReadout(_imgSel); markDirty();  /* จุด Undo (กฎ #6) · debounced เหมือนลากมุมรีไซส์ (ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 55) */
 }
 /* คืนขนาดรูปที่เลือกเป็นขนาดฐาน (data-w0/h0 = ขนาดตอน commit/ตอนเพิ่ม) · สัดส่วนล็อกด้วย data-ratio อยู่แล้ว รูปไม่เพี้ยน · ผู้ใช้ 12 ต.ค. 2026 */
 function imgResetSize(){

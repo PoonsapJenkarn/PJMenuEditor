@@ -1145,6 +1145,23 @@ def main():
             errors.append('imgScale ต้องมี guard ไม่เปลี่ยน (nw===cw ชนขอบ 30px) = ไม่สร้างจุด Undo (กฎ #6) (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 56) สี default กลุ่มเมนูใหม่ = #171A1E (เท่าสีชื่อเมนู .nm · ผู้ใช้ 13 ต.ค. 2026) ----
+    #   เดิมกลุ่มใหม่ (newSection) ใช้ --accent:#4a8579 (เขียวเทา theme เดิม) ไม่เข้าชุดกับ 9 กลุ่มที่มีสีเฉพาะ
+    #   ผู้ใช้เลือก #171A1E (= สีชื่อรายการเมนู .nm) → พิมพ์ออกมาเข้ากัน · ต้อง consistent ทั้ง baseline + ตัวเทียบ override + data-acc0 (คืนค่าสี) + fallback outline
+    #   ปุ่ม '+ เพิ่มกลุ่ม' (.ed-addgroup) คง #4a8579 ไว้ (ปุ่ม editor บนจอ ไม่พิมพ์ · คนละเรื่อง)
+    _ns56 = re.search(r'function newSection\(\)\{[\s\S]*?\n\}', txt)
+    if not _ns56:
+        errors.append('ไม่พบ newSection (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _b56=_ns56.group(0)
+        if '--accent:#171A1E' not in _b56:
+            errors.append('newSection baseline --accent ต้อง = #171A1E (ไม่ใช่ #4a8579) (ดู UI_STANDARD.md ข้อ 6)')
+        elif '4a8579' in _b56.lower():
+            errors.append('newSection ยังมี #4a8579 ค้าง — ต้องเปลี่ยนเป็น #171A1E ให้ครบ (baseline/ตัวเทียบ/data-acc0/fallback outline) (ดู UI_STANDARD.md ข้อ 6)')
+        elif "data-acc0','#171A1E'" not in _b56:
+            errors.append('newSection: data-acc0 (คืนค่าสี) ต้อง = #171A1E ให้ตรง baseline ใหม่ (ดู UI_STANDARD.md ข้อ 6)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

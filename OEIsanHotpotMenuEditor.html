@@ -890,13 +890,13 @@ function _renumberDupGroup(sec){
 }
 function newSection(){
   var sec=document.createElement('section'); sec.className='sec';
-  sec.innerHTML='<div class="sec-h" style="--accent:#4a8579">'
+  sec.innerHTML='<div class="sec-h" style="--accent:#171A1E">'
     +'<span class="em">🍽️</span><span class="sechead" contenteditable="true">หมวดใหม่ ('+_nextNewGroupNo()+')</span></div>'
     +'<div class="sec-b"></div>';
   var _dss=_defaultStyles.sechead;
-  if(_dss&&_dss.color){ var _sh0=sec.querySelector('.sec-h'); if(_sh0 && String(_dss.color).toUpperCase()!=='#4A8579'){ _sh0.setAttribute('data-acc0','#4A8579'); _sh0.style.setProperty('--accent',String(_dss.color).toUpperCase()); } }  /* ค่าเริ่มต้นมีสี = แถบหัวกลุ่มตาม */
+  if(_dss&&_dss.color){ var _sh0=sec.querySelector('.sec-h'); if(_sh0 && String(_dss.color).toUpperCase()!=='#171A1E'){ _sh0.setAttribute('data-acc0','#171A1E'); _sh0.style.setProperty('--accent',String(_dss.color).toUpperCase()); } }  /* ค่าเริ่มต้นมีสี = แถบหัวกลุ่มตาม */
   if(_dss&&(_dss.fontFamily||_dss.fontSize||_dss.color||_dss.outline)){var sh=sec.querySelector('.sechead');if(sh){if(_dss.fontFamily)sh.style.fontFamily=_dss.fontFamily;if(_dss.fontSize)sh.style.fontSize=_dss.fontSize;sh.style.fontWeight=_dss.fontWeight||'';sh.style.fontStyle=_dss.fontStyle||'';if(_dss.color)sh.style.color=_dss.color;
-    if(_dss.outline){ sh.style.textShadow=_olShadow(_dss.olc||_olEdge(String(_dss.color||'#4a8579').toUpperCase()),_olDefW(_dss.outline)); if(_dss.olc) sh.setAttribute('data-ol-c',_dss.olc); }  /* ยังไม่อยู่ในหน้า: ใช้สีค่าเริ่มต้น หรือสีกลุ่มใหม่ #4a8579 */
+    if(_dss.outline){ sh.style.textShadow=_olShadow(_dss.olc||_olEdge(String(_dss.color||'#171A1E').toUpperCase()),_olDefW(_dss.outline)); if(_dss.olc) sh.setAttribute('data-ol-c',_dss.olc); }  /* ยังไม่อยู่ในหน้า: ใช้สีค่าเริ่มต้น หรือสีกลุ่มใหม่ #171A1E */
   }}
   return sec;
 }

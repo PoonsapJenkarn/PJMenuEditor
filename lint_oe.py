@@ -1190,6 +1190,71 @@ def main():
             errors.append('มี raw assignment _olLastW= หลุดนอก setter — ต้องเรียกผ่าน _olSetLastW (จำไม่ครบข้าม reload) (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 58) ตรวจล้นหน้าครั้งแรกต้องรอฟอนต์เว็บโหลดเสร็จ (document.fonts.ready) (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   บั๊ก: window.load เรียก checkOverflow() ทันที → ฟอนต์เว็บ (display=swap) ยังไม่มา วัดด้วย fallback ระบบ (สูงกว่า)
+    #   → เตือนล้น + กรอบทองผิดทั้งที่ยังไม่ล้น · พอฟอนต์ swap เข้ามาเนื้อหาหด แต่ไม่ตรวจซ้ำ = คำเตือนค้าง
+    #   แก้: ครั้งแรกเรียกผ่าน document.fonts.ready.then(checkOverflow) + fallback checkOverflow ตรงถ้าไม่มี document.fonts
+    _lh = re.search(r"window\.addEventListener\('load',\s*function\(\)\{[\s\S]*?\n\}\);", txt)
+    if not _lh:
+        errors.append('ไม่พบ window load handler (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _blh=_lh.group(0)
+        if 'document.fonts.ready' not in _blh:
+            errors.append('ตรวจล้นหน้าครั้งแรกต้องรอ document.fonts.ready ก่อน (กันเตือนล้นผิดตอนฟอนต์ยังไม่โหลด) (ดู UI_STANDARD.md ข้อ 7)')
+        elif not re.search(r'document\.fonts\.ready\.then\(function\(\)\{\s*checkOverflow\(\)', _blh):
+            errors.append('document.fonts.ready.then ต้องเรียก checkOverflow() (ดู UI_STANDARD.md ข้อ 7)')
+        elif 'else checkOverflow()' not in _blh:
+            errors.append('load handler ต้องมี fallback checkOverflow() ตรงเมื่อไม่มี document.fonts (เบราว์เซอร์เก่า) (ดู UI_STANDARD.md ข้อ 7)')
+
+
+    # ---- 59) section สุดท้ายในคอลัมน์ต้องตัด margin ล่าง (กันเตือนล้นหน้าจากระยะเกินท้ายหน้า · ผู้ใช้ 13 ต.ค. 2026) ----
+    #   .sec มี margin-bottom:9px (2.38mm) · section สุดท้ายในคอลัมน์ทิ้งระยะนี้ท้ายหน้า → ตัวตรวจเตือนล้นทั้งที่ขอบหน้า 8mm ให้ที่ว่างอยู่แล้ว
+    #   แก้: .col section.sec:last-of-type{margin-bottom:0} · ใช้ :last-of-type (ปุ่มเพิ่มกลุ่ม .ed-addgroup เป็น child ท้ายสุด → :last-child ผิดตัว)
+    _m59 = re.search(r'\.col\s+section\.sec:last-of-type\s*\{[^}]*margin-bottom:\s*0', txt)
+    if not _m59:
+        errors.append('ต้องมี .col section.sec:last-of-type{margin-bottom:0} (ตัดระยะเกินท้ายคอลัมน์ กันเตือนล้นผิด) (ดู UI_STANDARD.md ข้อ 7)')
+
+
+    # ---- 60) เตือนล้นหน้า: tolerance 3mm + เตือนเฉพาะตอนแก้ไข (ยังไม่ save) + หมายเหตุเล็กตอนเปิดไฟล์ (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   (ก) tolerance 3mm: var _OVF_TOL=Math.round(3*96/25.4) · เทียบ scrollHeight > clientHeight + _OVF_TOL (ไม่ใช่ +2)
+    #   (ข) กรอบทอง .overflowed + คำเตือนเต็ม เฉพาะตอน _dirty (แก้ไขยังไม่ save) · เปิดไฟล์/หลัง save = ไม่เตือน
+    #   (ค) หมายเหตุเล็ก (st.overflowNote + class ovfnote) ตอนไม่ dirty · (ง) clearDirty refresh checkOverflow · (จ) i18n + CSS ครบ
+    _co60 = re.search(r'\nfunction checkOverflow\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _co60:
+        errors.append('ไม่พบ checkOverflow — lint ข้อ 60 ตรวจไม่ได้')
+    else:
+        _b60=_co60.group(0)
+        if 'Math.round(3*96/25.4)' not in txt:
+            errors.append('ต้องมี _OVF_TOL=Math.round(3*96/25.4) (ผ่อนปรนล้นหน้า 3mm) (ดู UI_STANDARD.md ข้อ 7)')
+        if 'clientHeight + _OVF_TOL' not in _b60:
+            errors.append('checkOverflow ต้องเทียบ clientHeight + _OVF_TOL (3mm) ไม่ใช่ +2 (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'if\(_dirty\)\s*pg\.classList\.add\(', _b60):
+            errors.append('checkOverflow: กรอบทอง .overflowed ต้องใส่เฉพาะตอน _dirty (เปิดไฟล์ไม่ขึ้นกรอบ) (ดู UI_STANDARD.md ข้อ 7)')
+        if not re.search(r'if\(bad\.length\)\{\s*if\(_dirty\)\{', _b60):
+            errors.append('checkOverflow: คำเตือนเต็มต้อง gate ด้วย if(_dirty) (เตือนเฉพาะตอนแก้ไข) (ดู UI_STANDARD.md ข้อ 7)')
+    # (ค) หมายเหตุเล็กใน _renderStatus
+    _rs60 = re.search(r'function _renderStatus\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _rs60:
+        _rb=_rs60.group(0)
+        if "st.overflowNote" not in _rb or "ovfnote" not in _rb:
+            errors.append('_renderStatus ต้องมีหมายเหตุเล็ก (st.overflowNote + class ovfnote) ตอนไม่เตือนเต็ม (ดู UI_STANDARD.md ข้อ 7)')
+    # (ง) clearDirty refresh
+    _cd60 = re.search(r'function clearDirty\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _cd60 or 'checkOverflow()' not in _cd60.group(0):
+        errors.append('clearDirty ต้องเรียก checkOverflow() (หลัง save เอากรอบทอง/คำเตือนออก) (ดู UI_STANDARD.md ข้อ 7)')
+    # (จ) i18n + CSS
+    _iobj60 = txt.find("var I18N={")
+    if _iobj60>=0:
+        _ths=txt.find("th:{",_iobj60); _ens=txt.find("en:{",_iobj60)
+        _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
+        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        for _k in ('st.overflowNote','st.overflowNoteTtl'):
+            if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
+            if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
+    if '.edstatus-meta.ovfnote' not in txt:
+        errors.append('ขาด CSS .edstatus-meta.ovfnote (สไตล์หมายเหตุเล็ก) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

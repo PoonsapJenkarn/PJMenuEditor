@@ -8,6 +8,25 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 13 ต.ค. 2026 (12:55) — ✅ เตือนล้นหน้า: tolerance 3mm + เตือนเฉพาะตอนแก้ไข + หมายเหตุเล็กตอนเปิดไฟล์ · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d667219bb396a2fe → ddde2a62670a3dc7
+- ผู้ใช้วัดจริง (Console): หน้า1 เกิน 0.00mm · หน้า2 เกิน 11px=2.91mm → หน้า2 ล้นจริง (ไม่ใช่ false positive จากฟอนต์ · #58 แก้ผิดจุด สมมติฐานฟอนต์ผิด) · #59 (margin section ท้าย) ลดเหลือ ~0.5-2px
+- ผู้ใช้สั่ง 3 ข้อ: (1) ขอบล่าง ~3mm — เกิน 3mm ค่อยเตือน (2) เตือนเฉพาะตอนแก้ไขที่ยังไม่ save · เปิดไฟล์/หลัง save = พร้อมใช้งาน (3) มี * หรือหมายเหตุเล็กบอกหน้าที่เกินขอบ
+- แก้ html 7 จุด: (1) var _OVF_TOL=Math.round(3*96/25.4)=11px (2) checkOverflow เทียบ +_OVF_TOL + กรอบทอง if(_dirty) (3) chain bad.length gate ด้วย if(_dirty){เตือนเต็ม}else{_overflowWarn=false·หมายเหตุเล็ก} (4) _renderStatus pill: _overflowWarn→ovf(ส้ม) / ไม่→ovfnote(จางเอียง) · แสดงเมื่อ _overflowPages.length (5) CSS .edstatus-meta.ovfnote (6) i18n st.overflowNote/NoteTtl TH+EN (7) clearDirty เรียก checkOverflow() refresh หลัง save
+- ไม่แตะสูตรวัด: #28/#28b (_ovfFresh=true/_ovfCombine/mode strings/finally ยังอยู่) · #34 padding คงเดิม · #58/#59 ยังอยู่ (layer ร่วมกัน)
+- lint #60 ใหม่ (ก tolerance 3mm · ข กรอบทอง+คำเตือน gate _dirty · ค หมายเหตุเล็ก ovfnote · ง clearDirty refresh · จ i18n+CSS) · V0 ผ่าน · ทดสอบบั๊ก 8 แบบจับครบ
+- ผล: เปิดไฟล์ → หน้า2 (~0.5-2px < 3mm) ไม่ flag เลย = พร้อมใช้งาน ไม่มีกรอบ/คำเตือน/pill · หน้าที่เกิน >3mm → เปิดไฟล์ขึ้นหมายเหตุเล็ก · แก้ไข → เตือนเต็ม
+- git: layer ต่อจาก #59 (ยังไม่ commit · disk d667219b) → รวมเป็น commit เดียวหรือแยก? เปลี่ยน 4 ไฟล์ · ⚠ ขอผู้ใช้วัดซ้ำ Console ยืนยันก่อน commit (เคยเดาผิด 2 รอบ)
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง ddde2a62670a3dc7
+
+## 13 ต.ค. 2026 (12:00) — ✅ แก้ false positive เตือนล้นหน้าตอนเปิด (รอ document.fonts.ready) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha a889e9d68e2b430e → 2060d74d3c30f7c1
+- ผู้ใช้แจ้ง (ภาพ 2 ใบ): เปิดไฟล์มา warning เด้งทันทีว่าหน้า 2 จะล้น ทั้งที่ยังไม่ล้น (มีที่ว่างท้ายหน้า) + กรอบทอง 3mm ดูไม่เรียบร้อย → อยากให้เตือนเฉพาะตอนล้นจริง
+- root cause: window.load (บรรทัด 1793) เรียก checkOverflow() ทันที · ฟอนต์เว็บ (Google Fonts display=swap) โหลด async ยังไม่มา → วัดด้วย fallback ระบบ (ตัวไทยสูงกว่า Sarabun) → เกิน 297mm → เตือน+กรอบทองผิด · ฟอนต์ swap มาเนื้อหาหด แต่ไม่ตรวจซ้ำ = ค้าง · โค้ดไม่เคยมี document.fonts/fonts.ready (count=0)
+- แก้ html 1 จุด (window.load handler): แยก checkOverflow() ครั้งแรกออกจาก init อื่น → เรียกผ่าน document.fonts.ready.then(checkOverflow) · fallback else checkOverflow() ถ้าไม่มี document.fonts (เบราว์เซอร์เก่า) · init อื่น (renumber/_lastSnap/_updateUndoButtons/_initDragReorder) คงรันทันที
+- กรอบทอง 3mm (.overflowed outline #e8a020) ผูกกับผลตรวจเดียวกัน → false positive หายไปด้วย (ไม่ขึ้นตอนไม่ล้นจริง) · ไม่แตะสูตรวัด/กรอบทอง
+- lint #58 ใหม่ (load handler ต้องมี document.fonts.ready + .then(checkOverflow) + else fallback) · V0 ผ่าน · ทดสอบบั๊ก 2 แบบจับครบ
+- git: layer ต่อจาก commit b7f998c (จำสีขอบล่าสุด) · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง 2060d74d3c30f7c1 · (คอมเมนต์ไทยพิมพ์ escape ผิดรอบแรก fail ก่อนเขียน → แก้เป็นอักษรไทยตรงๆ)
+
 ## 13 ต.ค. 2026 (11:30) — ✅ จำสีขอบ/ความหนาล่าสุด (_olLastC/_olLastW) ข้าม reload · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 888b803edce46363 → a889e9d68e2b430e
 - ผู้ใช้เลือกจาก backlog (decision 11:27): จำสีขอบล่าสุดข้าม reload · agent บอกตรงว่าคุณค่าต่ำ (สีที่ใส่แล้วอยู่ในไฟล์ · จานสี custom จำแล้ว) เหลือแค่ความสะดวก _olLastC/_olLastW ที่ reset ตอน reload — ผู้ใช้เลือกทำ
 - วิเคราะห์: _olLastC/_olLastW set กระจาย 6 จุด (auto 2609 / color-same 2616 / _olApply 2700 / toggle-off 2708 / width-same 2723 / HEX-stored 3385) · ถ้าใส่ setItem ทีละจุด = เปราะแบบ _msgT (เผลอตก) → เลือก setter เดียว

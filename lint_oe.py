@@ -1288,6 +1288,45 @@ def main():
         errors.append('_logFromFlash ต้องข้าม logAdd เมื่อ msg._k อยู่ใน _NOLOG (แนว B) (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 63) autosave ร่างกันงานหาย (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   เก็บ _lastSnap (HTML บีบอัด pool-id) ลง localStorage ทุกครั้งที่แก้ (_draftSave ใน _takeSnapshot) · บันทึกสำเร็จ=ลบร่าง (_draftClear ใน clearDirty)
+    #   เปิดไฟล์เจอร่าง=เสนอกู้คืน (_draftOffer ใน load) · กู้คืนใช้ _restorePages + ดรอปรูปที่ POOL ไม่มี (รูปเพิ่มใหม่ที่ยังไม่บันทึก)
+    #   แถบ #draftBar เป็นของจอ ต้องถูก strip ใน buildEditorHtml + buildMenuHtml · i18n draft.* + fl.draft* ครบ th+en
+    for _fn63 in ('_draftKey','_draftSave','_draftClear','_draftRestore','_draftOffer'):
+        if ('function '+_fn63+'(') not in txt:
+            errors.append('ไม่พบ '+_fn63+' (autosave ร่างกันงานหาย) (ดู UI_STANDARD.md ข้อ 7)')
+    _ts63 = re.search(r'function _takeSnapshot\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _ts63 or '_draftSave()' not in _ts63.group(0):
+        errors.append('_takeSnapshot ต้องเรียก _draftSave() (autosave ทุกครั้งที่แก้) (ดู UI_STANDARD.md ข้อ 7)')
+    _cd63 = re.search(r'function clearDirty\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _cd63 or '_draftClear()' not in _cd63.group(0):
+        errors.append('clearDirty ต้องเรียก _draftClear() (บันทึกสำเร็จ=ลบร่าง) (ดู UI_STANDARD.md ข้อ 7)')
+    _lh63 = re.search(r"window\.addEventListener\('load',\s*function\(\)\{[\s\S]*?\n\}\);", txt)
+    if not _lh63 or '_draftOffer()' not in _lh63.group(0):
+        errors.append('load handler ต้องเรียก _draftOffer() (เสนอกู้คืนร่าง) (ดู UI_STANDARD.md ข้อ 7)')
+    _dr63 = re.search(r'function _draftRestore\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _dr63 and '_restorePages(' not in _dr63.group(0):
+        errors.append('_draftRestore ต้องใช้ _restorePages (กลไกเดียวกับ Undo) (ดู UI_STANDARD.md ข้อ 7)')
+    # #draftBar ต้องถูก strip ทั้ง 2 build (เป็นของจอ ไม่ลงไฟล์)
+    _be63 = re.search(r'function buildEditorHtml\(\)\{[\s\S]*?\n\}', txt)
+    if _be63 and '#draftBar' not in _be63.group(0):
+        errors.append('buildEditorHtml ต้อง strip #draftBar (แถบกู้คืนเป็นของจอ) (ดู UI_STANDARD.md ข้อ 7)')
+    _bm63 = re.search(r'function buildMenuHtml\(\)\{[\s\S]*?\n\}', txt)
+    if _bm63 and '#draftBar' not in _bm63.group(0):
+        errors.append('buildMenuHtml ต้อง strip #draftBar (แถบกู้คืนเป็นของจอ) (ดู UI_STANDARD.md ข้อ 7)')
+    # i18n ครบ th+en
+    _iobj63 = txt.find("var I18N={")
+    if _iobj63>=0:
+        _ths=txt.find("th:{",_iobj63); _ens=txt.find("en:{",_iobj63)
+        _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
+        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        for _k in ('draft.found','draft.restore','draft.discard','fl.draftRestored','fl.draftRestoredLost','fl.draftDiscarded'):
+            if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
+            if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
+    if '#draftBar{' not in txt:
+        errors.append('ขาด CSS #draftBar (สไตล์แถบกู้คืน) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -8,6 +8,16 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 13 ต.ค. 2026 (19:40) — ✅ Autosave ร่างกันงานหาย · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 4bc422453b4f15ea → 7de77705639f7e30
+- ผู้ใช้เลือก (decision 19:20): ทำ autosave กันงานหาย (ข้อ 1 จากที่ agent เสนอ · เป็นสิ่งเดียวที่แนะนำว่าคุ้ม)
+- ดีไซน์: ต่อยอดระบบ snapshot เดิม · _serializePages คืน HTML บีบอัด (รูป=data-pool id ไม่เก็บ base64 → KB) · ตอนโหลด _lastSnap=_serializePages เติม POOL ด้วย base64 ของไฟล์ → ร่างกู้รูปกลับได้
+- แก้ html 6 กลุ่ม: (1) +ฟังก์ชัน _draftKey/_draftSave/_draftClear/_draftRestore/_draftDiscard/_draftOffer ท้าย _takeSnapshot (2) hook _draftSave() ใน _takeSnapshot (3) _draftClear() ใน clearDirty (4) _draftOffer() ใน load handler (5) strip #draftBar ใน buildEditorHtml+buildMenuHtml (6) i18n draft.*/fl.draft* th+en + CSS #draftBar (แถบล่างกลางจอ กู้คืน/ละทิ้ง · @media print ซ่อน)
+- กลไก: เก็บร่างทุกครั้งที่แก้ (ผ่าน _takeSnapshot debounce 500ms) key oe_draft_<ไฟล์> · บันทึกไฟล์สำเร็จ=ลบร่าง · เปิดไฟล์เจอร่าง=เสนอกู้คืน (ไม่ auto) · กู้คืนใช้ _restorePages + ดรอปรูปที่ POOL ไม่มี (รูปเพิ่มใหม่ยังไม่บันทึก) แจ้งจำนวน
+- จุดจำกัด (บอกผู้ใช้แล้ว): รูปเพิ่มใหม่ระหว่างยังไม่บันทึกแล้วเครื่องดับ กู้พิกเซลไม่ได้ (base64 ไม่อยู่ในไฟล์) · กู้ข้อความ/ตำแหน่ง/โครงสร้างได้ครบ
+- lint #63 ใหม่ (5 ฟังก์ชัน + hook 3 จุด + strip 2 build + _restorePages + i18n th+en + CSS) · V0 ผ่าน · ทดสอบบั๊ก 6 แบบจับครบ · brace 2529:2529
+- git: layer ต่อจาก commit 48af6f4 (docs verify_oe) · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง 7de77705639f7e30
+
 ## 13 ต.ค. 2026 (19:05) — ✅ ปิดเรื่อง verify_oe.py (ตัดสินใจ: ไม่เอาเข้า pre-commit hook) · ไม่แตะโค้ด/lint · เปลี่ยนเฉพาะ SESSION_STATUS
 - ผู้ใช้ยืนยัน (decision 19:01): ไม่เอา verify_oe.py เข้า pre-commit hook ตามที่ agent แนะนำ
 - เหตุผล: (1) หนัก — ต้อง Chrome headless + subprocess ทุก commit (2) fail-closed — Chrome ไม่พร้อม = บล็อก commit ทั้งที่โค้ดไม่ผิด (3) ซ้ำซ้อน — lint 62 ข้อจับ regression เชิงโครงสร้างครบแล้ว

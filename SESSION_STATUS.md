@@ -8,6 +8,25 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ยังไม่อยู่ใน pre-commit hook (ยังไม่ตัดสินใจเอาเข้า)
 
+## 13 ต.ค. 2026 (17:30) — ✅ แนว B: คำเตือนกรอกช่อง input ไม่จดประวัติ (แสดงแถบล่างอย่างเดียว) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 70f9f8e4f4896b60 → 4bc422453b4f15ea
+- ผู้ใช้ถามเรื่อง log ซ้ำ (3 แถวเวลาเดียว) → agent ยืนยันว่าแสดงตามจำนวนครั้งจริง ไม่ใช่บั๊ก (1 keystroke = 1 warning = 1 แถว · log ล้นหน้ามี guard _was/_prev) · ผู้ใช้เสนอ coalesce ต่อ run → agent เสนอ 2 แนว (A coalesce / B ไม่ log) → ผู้ใช้เลือก B
+- หลักการ B: การพิมพ์ตัวที่ช่องไม่รับ = input validation ไม่ใช่ action → ไม่จดประวัติ (เหมือน Word/Excel/form validation) · ประวัติเก็บเฉพาะการกระทำจริง
+- ตรวจก่อนแก้: ไล่ call context ทุกคีย์เตือน input-filter → ยืนยันแต่ละคีย์ใช้เฉพาะใน filter (prWarn/_bulkPriceCleanInput/hex input×3/size input/shd input/txtWarn/pages onFiltered) ไม่ซ้ำ action จริง → denylist by key ปลอดภัย
+- แก้ html 1 จุด: เพิ่ม var _NOLOG={20 คีย์} + guard ใน _logFromFlash: if(msg._k && _NOLOG[msg._k]) return; ก่อน logAdd · คำเตือนยังแสดงแถบล่าง (flashStatus→_renderStatus) แค่ไม่ logAdd · ไม่แตะ call site ไหนเลย (จุดเดียว centralized)
+- _NOLOG: prNumOnly/prTooLong/amtNumOnly/amtTooLong/hexOnly/hexOnlyTh/sizeOnly/sizeOnlyTh/sizeRange/sizeStep/shdOnly/shdOnlyTh/shdRange/pagesOnly/pagesOnlyTh/pagesFull/pagesTooLong/txtLines/txtNoEnter/txtTooLong · ข้อยกเว้น fl.sizeLimit (ปุ่ม +/− = action ปุ่ม คงจด)
+- lint #62 ใหม่ (_NOLOG มีครบ 20 คีย์ + ไม่มี sizeLimit + _logFromFlash มี guard) · V0 ผ่าน · ทดสอบบั๊ก 4 แบบจับครบ
+- git: layer ต่อจาก #61 (⚠ ซ้ำ · ยังไม่ commit · disk 70f9f8e4) → #61+#62 ควร commit รวมเป็นชุด activity-log refinement · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง 4bc422453b4f15ea
+
+## 13 ต.ค. 2026 (16:10) — ✅ แก้ไอคอน ⚠ ซ้ำในแถบล่าง/ประวัติ (เอา ⚠️ ออกจากข้อความ i18n) · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha ddde2a62670a3dc7 → 70f9f8e4f4896b60
+- ผู้ใช้เลือกจาก backlog (decision 16:04): แก้ ⚠ ซ้ำ (ข้อ 1 จาก 3 ข้อเก่า 9 ต.ค. · ข้อ 3 ชื่อเมนู 17px = ไม่ใช่บั๊ก ปิดไป · ข้อ 2 ประวัติถี่ = รอ user ระบุเคส)
+- root cause: แถบล่าง (_renderStatus edstatusIc) + ประวัติ (_actlogIcon บรรทัด 3970/3976) ต่าง render ไอคอนตามชนิดเอง (warning→⚠️ error→⛔ edit→✏️ อื่น→•) · แต่ข้อความ i18n 44 คีย์ (88 ค่า TH+EN) ขึ้นต้นด้วย ⚠️ อีก = ซ้ำทั้ง 2 ที่ (สามเหลี่ยม 2 อัน)
+- ตรวจ call type ทุกคีย์ก่อนแก้: ส่วนใหญ่ flashStatus('warning') · fl.imgCopyFail/imgPosCopyFail = ok?'info':'warning' (เคส fail=warning) · fl.noHighlight = info-type (ไอคอนวงกลม+⚠️ = ขัดกัน)
+- แก้ html: เอา ⚠️/⛔ นำหน้าออกจากทุกค่า i18n ยกเว้น st.overflowPill (แสดงในป้าย edstatus-meta ที่ไม่มี element ไอคอน → ⚠️ เป็นเครื่องหมายตัวเดียว) · regex strip 88 instances/44 keys · st.overflow ไม่มี ⚠️ อยู่แล้ว (pattern ถูก) · fl.noHighlight เอาออกด้วย (กฎ #6)
+- lint #61 ใหม่: scan ค่า i18n ห้ามขึ้นต้น ⚠️/⛔ ยกเว้น allowlist {st.overflowPill} · V0 ผ่าน · ทดสอบบั๊ก 3 แบบจับครบ (⚠️ กลับมา 2 คีย์ + ⛔)
+- delta -264 bytes · braces สมดุล · git: layer ต่อจาก commit c0dbfb4 (#59/#60) · เปลี่ยน 4 ไฟล์: html + lint_oe.py + UI_STANDARD + SESSION_STATUS
+- วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง 70f9f8e4f4896b60
+
 ## 13 ต.ค. 2026 (12:55) — ✅ เตือนล้นหน้า: tolerance 3mm + เตือนเฉพาะตอนแก้ไข + หมายเหตุเล็กตอนเปิดไฟล์ · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha d667219bb396a2fe → ddde2a62670a3dc7
 - ผู้ใช้วัดจริง (Console): หน้า1 เกิน 0.00mm · หน้า2 เกิน 11px=2.91mm → หน้า2 ล้นจริง (ไม่ใช่ false positive จากฟอนต์ · #58 แก้ผิดจุด สมมติฐานฟอนต์ผิด) · #59 (margin section ท้าย) ลดเหลือ ~0.5-2px
 - ผู้ใช้สั่ง 3 ข้อ: (1) ขอบล่าง ~3mm — เกิน 3mm ค่อยเตือน (2) เตือนเฉพาะตอนแก้ไขที่ยังไม่ save · เปิดไฟล์/หลัง save = พร้อมใช้งาน (3) มี * หรือหมายเหตุเล็กบอกหน้าที่เกินขอบ

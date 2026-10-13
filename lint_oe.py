@@ -1255,6 +1255,39 @@ def main():
         errors.append('ขาด CSS .edstatus-meta.ovfnote (สไตล์หมายเหตุเล็ก) (ดู UI_STANDARD.md ข้อ 7)')
 
 
+    # ---- 61) ข้อความ I18N ห้ามขึ้นต้นด้วยไอคอนเตือน ⚠️/⛔ (ไอคอนซ้ำ · ผู้ใช้ 13 ต.ค. 2026) ----
+    #   แถบล่าง (_renderStatus) + ประวัติ (_actlogIcon) render ไอคอนตามชนิดเองแล้ว (warning→⚠️ error→⛔)
+    #   → ถ้าข้อความขึ้นต้นด้วย ⚠️ อีก = ไอคอนซ้ำ (เห็นสามเหลี่ยม 2 อัน) · ข้อยกเว้นเดียว: st.overflowPill (แสดงในป้าย edstatus-meta ที่ไม่มีไอคอน)
+    _OVF_PILL_OK={'st.overflowPill'}
+    for _m61 in re.finditer(r"'([A-Za-z][A-Za-z0-9_.]*)':'(?:\u26a0|\u26d4)", txt):
+        if _m61.group(1) not in _OVF_PILL_OK:
+            errors.append('ข้อความ i18n "'+_m61.group(1)+'" ขึ้นต้นด้วย ⚠️/⛔ — ไอคอนซ้ำกับ _renderStatus/_actlogIcon ให้เอาออก (ยกเว้น st.overflowPill) (ดู UI_STANDARD.md ข้อ 7)')
+
+
+    # ---- 62) คำเตือนกรอกช่อง input (input validation) ไม่จดประวัติ — แสดงแถบล่างอย่างเดียว (แนว B · ผู้ใช้ 13 ต.ค. 2026) ----
+    #   พิมพ์ตัวที่ช่องไม่รับ / เกินช่วง = ไม่ใช่การกระทำกับเมนู → _logFromFlash ข้าม (ไม่ logAdd) ด้วย denylist _NOLOG ตาม i18n key
+    #   _NOLOG ต้องมีคีย์ input-filter ครบ (price/amount/hex/size/shadow/pages/text) · guard: if(msg._k && _NOLOG[msg._k]) return; ก่อน logAdd
+    _need62=['fl.prNumOnly','fl.prTooLong','fl.amtNumOnly','fl.amtTooLong','fl.hexOnly','fl.hexOnlyTh',
+             'fl.sizeOnly','fl.sizeOnlyTh','fl.sizeRange','fl.sizeStep','fl.shdOnly','fl.shdOnlyTh','fl.shdRange',
+             'fl.pagesOnly','fl.pagesOnlyTh','fl.pagesFull','fl.pagesTooLong','fl.txtLines','fl.txtNoEnter','fl.txtTooLong']
+    _m62 = re.search(r'var _NOLOG=\{([^}]*)\}', txt)
+    if not _m62:
+        errors.append('ไม่พบ _NOLOG (ชุดคีย์คำเตือน input ที่ไม่จดประวัติ · แนว B) (ดู UI_STANDARD.md ข้อ 7)')
+    else:
+        _body62=_m62.group(1)
+        _miss62=[k for k in _need62 if ("'"+k+"'") not in _body62]
+        if _miss62:
+            errors.append('_NOLOG ขาดคีย์ input-filter: '+', '.join(_miss62)+' (ดู UI_STANDARD.md ข้อ 7)')
+        # sizeLimit ต้อง NOT อยู่ใน NOLOG (เป็น action ปุ่ม +/−)
+        if "'fl.sizeLimit'" in _body62:
+            errors.append('_NOLOG ไม่ควรมี fl.sizeLimit (ปุ่ม +/− ชนขีด = action ปุ่ม ต้องจดประวัติ) (ดู UI_STANDARD.md ข้อ 7)')
+    _lf62 = re.search(r'function _logFromFlash\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if not _lf62:
+        errors.append('ไม่พบ _logFromFlash (ดู UI_STANDARD.md ข้อ 7)')
+    elif not re.search(r'_NOLOG\[msg\._k\]\s*\)\s*return', _lf62.group(0)):
+        errors.append('_logFromFlash ต้องข้าม logAdd เมื่อ msg._k อยู่ใน _NOLOG (แนว B) (ดู UI_STANDARD.md ข้อ 7)')
+
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

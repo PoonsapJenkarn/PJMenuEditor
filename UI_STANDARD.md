@@ -259,6 +259,19 @@
     - ซ่อนระหว่างแก้รูป = ยังอยู่ในโหมด · รูปอาหารคลิกไม่ได้ (`pointer-events:none`) · รูปที่เลือกค้าง = ยกเลิกการเลือก · ข้อความโหมด `img.clickEditHidden`
     - เข้าแก้รูปตอนซ่อนอยู่ = คงซ่อน · เพิ่มรูปตอนซ่อนอยู่ = แสดงรูปกลับหลังได้ไฟล์รูปจริง (ยกเลิก/ไฟล์ผิด = ยังซ่อน) + บอกผลว่าแสดงกลับแล้ว
 
+## 8. ฟอนต์ offline (ฝังในไฟล์) — lint ข้อ 64 (ผู้ใช้ 13 ต.ค. 2026)
+
+ฟอนต์ฝังในไฟล์เป็น base64 TTF ใน `@font-face` — ทำงาน offline จริง ไม่พึ่ง Google CDN (privacy: ไม่ส่ง IP ผู้ใช้ไป Google ทุกครั้ง · ใช้ได้แม้ Google เปลี่ยน/ปิด endpoint · สำคัญกับ publish GitHub)
+
+- **ห้ามมี** `fonts.googleapis.com` / `fonts.gstatic.com` / `<link>` preconnect/stylesheet ไป Google Fonts
+- **ต้องมี** `@font-face{font-family:'...'}` ครบ 3 ฟอนต์ที่โค้ดใช้จริง: **Prompt** (เนื้อหาหลัก) · **Sarabun** (หมายเหตุ `.crab`) · **Noto Sans Thai** (แก้วรรณยุกต์ลอย `.kai`)
+- weight ที่ฝัง: Prompt 400/500/600/700 · Sarabun 400/600/700 · Noto 400/500/700
+- **ไม่ใส่ `unicode-range`** — ฝัง TTF เต็ม (ครอบ latin+thai) · ถ้าใส่ range ตัวอังกฤษ/เลขจะ fallback
+- dropdown `#typoFont` เสนอเฉพาะฟอนต์ที่ฝังจริง — **ห้ามเสนอ Kanit/Mitr/Bai Jamjuree** (ตัดออก 13 ต.ค. 2026: ทรงซ้ำ Prompt/Sarabun · วัดความกว้างต่างกันแค่ ~6% · อยู่ใน dropdown เฉยๆ ไม่มีจุด CSS อ้าง · ไม่คุ้มน้ำหนักไฟล์ ~1.9MB) — ปุ่มที่เลือกแล้ว fallback = ผิดหลักข้อ 5
+- **ประสิทธิภาพ lint:** @font-face แต่ละบล็อก = บรรทัดเดียวยาว ~220KB (base64 ไม่มี newline) → regex ที่ exclude `\n` (เช่น `[^{}\n]*`) จะ backtrack O(n²) ระเบิด · ดังนั้น `_css`/`_css25`/`_css36` ต้อง `re.sub(r'@font-face\{[^{}]*\}','',...)` ตัดฟอนต์ฝังออกก่อนวิเคราะห์ layout (ฟอนต์ฝังไม่ใช่ CSS จัดหน้า)
+- ฟอนต์ emoji **ไม่ฝัง** — Noto Color Emoji 24MB แพงเกิน · ระบบ OS วาด emoji ให้เอง (Segoe/Apple) · พิมพ์ด้วย Win+. ได้
+- license: ฟอนต์ทั้ง 6 เป็น OFL — ฝัง/แจกได้ฟรีรวมเชิงพาณิชย์ · ต้องแนบ OFL.txt + เครดิตผู้สร้าง
+
 ## ความปลอดภัย (client-side XSS) — lint ข้อ 54 (ผู้ใช้ 12 ต.ค. 2026)
 app เป็น HTML ไฟล์เดียว รันในเครื่อง ใช้คนเดียว — ความเสี่ยงจริงต่ำ (ไม่มี server/backend/login/network ขาเข้า) แต่ user content (ชื่อเมนู/ชื่อกลุ่ม/ชื่อไฟล์รูป) ไหลเข้า DOM ได้ จึงล็อก pattern ที่ปลอดภัยไว้ไม่ให้ถอยหลัง:
 - **`epEsc(s)`** = ตัว escape กลาง ต้อง escape `& < > "` ให้ครบทั้ง 4 (ครอบคลุมทั้ง element content และ attribute ใน `"`) · ทุกจุดที่ต่อ string ชื่อ (user content) ลง `innerHTML` ต้องผ่าน `epEsc()` ก่อน

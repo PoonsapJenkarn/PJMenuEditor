@@ -8,6 +8,20 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 13 ต.ค. 2026 (23:18) — ✅ เสร็จ: ฝังฟอนต์ offline (TTF base64) + ตัด dropdown เหลือ 3 ฟอนต์ (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit)
+- เป้าหมาย: ทำให้ฟอนต์ offline จริง (ไม่พึ่ง Google CDN) สำหรับ publish GitHub · README จะเขียน "offline" ได้เต็มปาก
+- ตัดสินใจ (user, 13 ต.ค.): ฝัง 3 ฟอนต์ที่มีหน้าที่จริงในโค้ด — Prompt (เนื้อหาหลัก) · Sarabun (หมายเหตุ .crab) · Noto Sans Thai (แก้วรรณยุกต์ลอย .kai) · ตัด Kanit/Mitr/Bai Jamjuree (ทรงซ้ำ Prompt/Sarabun, อยู่ใน dropdown เฉยๆ ไม่มีจุด CSS อ้าง) · ไม่ฝัง emoji (Color Emoji 24MB แพงเกิน, ระบบ OS วาดเอง)
+- วิธี: (1) ลบ <link> fonts.googleapis/gstatic 3 เส้น (2) ฝัง @font-face 10 บล็อก base64 TTF ต้น <style> — Prompt 400/500/600/700 · Sarabun 400/600/700 · Noto 400/500/700 (3) ตัด option Kanit/Mitr/Bai Jamjuree ใน #typoFont เหลือ 3 (4) ไม่ใส่ unicode-range (ฝัง TTF เต็ม ครอบ latin+thai)
+- ที่มาฟอนต์: TTF จาก C:\OE\Fonts\ (user โหลดจาก fonts.google.com ปุ่ม Download family) · ยืนยัน sfnt tag ถูกต้องทั้ง 10 · base64 รวม 1.355MB
+- sha ก่อนแก้: 7de77705639f7e30 (5,468,894 bytes, LF) · ไฟล์ประเมินหลังฝัง ~6.57MB
+- lint ใหม่ #64 (offline fonts: ห้ามมี googleapis/gstatic · ต้องมี @font-face Prompt/Sarabun/Noto · dropdown ห้ามมี Kanit/Mitr/Bai Jamjuree)
+- next: build menu_out.html → lint V0+variants → UI_STANDARD + SESSION_STATUS → file_copy กลับเครื่อง → git commit (ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit)
+- ✅ ผล: menu_out.html = 6,890,318 bytes · sha fbc21d9149217d36 · lint V0 ผ่าน 4.1s (0 error 0 warning) · 5 variant (googleapis/gstatic/Kanit-opt/no-Prompt-face/no-Noto-opt) FAIL ถูกต้องที่ #64
+- ⚡ แก้ประสิทธิภาพ lint: ฝัง @font-face แล้ว lint เดิม timeout (>200s) เพราะ rule 43 (`[^{}\n]*:active`) backtrack O(n²) บนบรรทัด base64 220KB → แก้โดยตัด @font-face ออกจาก `_css`/`_css25`/`_css36` 3 จุด (ฟอนต์ฝังไม่ใช่ CSS จัดหน้า) → lint กลับมา 4s
+- lint ข้อ 64 ใหม่: ห้าม googleapis/gstatic · ต้องมี @font-face Prompt/Sarabun/Noto · dropdown ห้ามมี Kanit/Mitr/Bai Jamjuree + ต้องมี 3 ตัวที่เก็บ · UI_STANDARD เพิ่มข้อ 8
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "offline fonts: embed 3 TTF base64, drop Google CDN link, trim font dropdown to 3 (lint #64 + perf fix)"
+- ⚠ กด F5 ก่อนทดสอบ (อย่ากด Save จากหน้าเดิม) · เทียบหน้าตาฟอนต์ให้เหมือนเดิม · git ย้อนได้ถ้าไม่โอเค
+
 ## 13 ต.ค. 2026 (19:40) — ✅ Autosave ร่างกันงานหาย · lint ผ่าน · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · html sha 4bc422453b4f15ea → 7de77705639f7e30
 - ผู้ใช้เลือก (decision 19:20): ทำ autosave กันงานหาย (ข้อ 1 จากที่ agent เสนอ · เป็นสิ่งเดียวที่แนะนำว่าคุ้ม)
 - ดีไซน์: ต่อยอดระบบ snapshot เดิม · _serializePages คืน HTML บีบอัด (รูป=data-pool id ไม่เก็บ base64 → KB) · ตอนโหลด _lastSnap=_serializePages เติม POOL ด้วย base64 ของไฟล์ → ร่างกู้รูปกลับได้

@@ -87,6 +87,7 @@ def main():
     #   ดู UI_STANDARD.md ข้อ 1: กฎ .on ต้องใช้ selector ที่ specificity ไม่ต่ำกว่ากฎอื่น และวางไว้หลังสุด
     _css = ''.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt))
     _css = re.sub(r'/\*[\s\S]*?\*/', '', _css)
+    _css = re.sub(r'@font-face\{[^{}]*\}', '', _css) # ตัดฟอนต์ฝัง (base64 บรรทัดยาว) ออกจาก CSS วิเคราะห์ layout — กัน regex O(n^2) (ผู้ใช้ 13 ต.ค. 2026)
     _rules = []
     for _i, (_sel, _body) in enumerate(re.findall(r'([^{}]+)\{([^{}]*)\}', _css)):
         for _one in _sel.split(','):
@@ -386,6 +387,7 @@ def main():
     #   สีเส้นคั่น (#edribbon .rgroup border-right) ต้องต่างจากพื้น #faf9f8 อย่างน้อย 2:1 · ดู UI_STANDARD.md ข้อ 7
     _css25 = '\n'.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt))
     _css25 = re.sub(r'/\*[\s\S]*?\*/', '', _css25)
+    _css25 = re.sub(r'@font-face\{[^{}]*\}', '', _css25)
     for _m in re.finditer(r'([^{}]+)\{([^{}]*)\}', _css25):
         _sels = [x.strip() for x in _m.group(1).split(',')]
         if re.search(r'(?<![\w-])opacity\s*:', _m.group(2)) and any(re.search(r'\.rgroup$', x) for x in _sels):
@@ -618,6 +620,7 @@ def main():
     #   ห้ามกฎ filter บน .fimg>img ที่ไม่มี [data-shadow] (ปุ่ม "ไม่มี" จะไม่มีผลจริง) · ใส่ทุกหน้าต้องคัดลอกเงา
     #   Undo แทนรูปทั้งหน้า → รูปที่เลือกค้าง (หลุดจากหน้า) ต้องถูกยกเลิก ไม่งั้นปุ่มขึ้นว่าทำแล้วแต่หน้าไม่เปลี่ยน
     _css36 = re.sub(r'/\*[\s\S]*?\*/', '', ''.join(re.findall(r'<style[^>]*>([\s\S]*?)</style>', txt)))
+    _css36 = re.sub(r'@font-face\{[^{}]*\}', '', _css36)
     for _lv36 in ('soft', 'strong'):
         if not re.search(r'\.fimg\[data-shadow="' + _lv36 + r'"\]>img\{[^}]*filter:(?:var\(--shd-' + _lv36 + r',\s*)?drop-shadow\(', _css36):
             errors.append('ไม่มี CSS เงา "{}" (.fimg[data-shadow="{}"]>img filter:drop-shadow) (ดู UI_STANDARD.md ข้อ 6)'.format(_lv36, _lv36))
@@ -1325,6 +1328,28 @@ def main():
             if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
     if '#draftBar{' not in txt:
         errors.append('ขาด CSS #draftBar (สไตล์แถบกู้คืน) (ดู UI_STANDARD.md ข้อ 7)')
+
+
+    # ---- 64) ฟอนต์ offline: ฝัง @font-face ครบ 3 · ห้ามพึ่ง Google CDN · dropdown เหลือ 3 (ผู้ใช้ 13 ต.ค. 2026) ----
+    #   ฝัง Prompt/Sarabun/Noto Sans Thai เป็น base64 TTF ใน @font-face (offline จริง) · ตัด Kanit/Mitr/Bai Jamjuree ออกจาก dropdown
+    #   base64 ไม่มีอักขระ . หรือ ' จึงไม่ชน false positive กับ fonts.gstatic.com / 'Kanit' ฯลฯ
+    for _cdn64 in ("fonts.googleapis.com","fonts.gstatic.com"):
+        if _cdn64 in txt:
+            errors.append("พบ "+_cdn64+" — ฟอนต์ต้องฝัง offline ห้ามพึ่ง Google CDN (ดู UI_STANDARD.md ข้อ 8)")
+    for _ff64 in ("'Prompt'","'Sarabun'","'Noto Sans Thai'"):
+        if ("@font-face{font-family:"+_ff64) not in txt:
+            errors.append("ขาด @font-face ฝังฟอนต์ "+_ff64+" (offline) (ดู UI_STANDARD.md ข้อ 8)")
+    _sel64=re.search(r'<select id="typoFont"[\s\S]*?</select>', txt)
+    if _sel64:
+        _sb64=_sel64.group(0)
+        for _rm64 in ("'Kanit'","'Mitr'","'Bai Jamjuree'"):
+            if _rm64 in _sb64:
+                errors.append("dropdown #typoFont ยังมี "+_rm64+" — ต้องตัดฟอนต์ที่ไม่ได้ฝังออก (ดู UI_STANDARD.md ข้อ 8)")
+        for _keep64 in ("'Prompt'","'Sarabun'","'Noto Sans Thai'"):
+            if _keep64 not in _sb64:
+                errors.append("dropdown #typoFont ขาด "+_keep64+" (ดู UI_STANDARD.md ข้อ 8)")
+    else:
+        errors.append("ไม่พบ <select id=\"typoFont\"> — lint ข้อ 64 ตรวจไม่ได้")
 
 
     # ---- report ----

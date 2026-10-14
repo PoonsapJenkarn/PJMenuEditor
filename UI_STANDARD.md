@@ -272,6 +272,17 @@
 - ฟอนต์ emoji **ไม่ฝัง** — Noto Color Emoji 24MB แพงเกิน · ระบบ OS วาด emoji ให้เอง (Segoe/Apple) · พิมพ์ด้วย Win+. ได้
 - license: ฟอนต์ทั้ง 6 เป็น OFL — ฝัง/แจกได้ฟรีรวมเชิงพาณิชย์ · ต้องแนบ OFL.txt + เครดิตผู้สร้าง
 
+### 8.1 อัปโหลดฟอนต์เอง + ทะเบียนฟอนต์ (Phase 0+1) — lint ข้อ 65 (ผู้ใช้ 14 ต.ค. 2026)
+
+ผู้ใช้เพิ่มฟอนต์ของตัวเองได้ (.ttf/.otf/.woff/.woff2) → ฝัง base64 ในไฟล์ → **offline + เดินทางไปกับไฟล์ที่บันทึก + หน้าตาตรงทุกเครื่อง** (ตอบกลุ่มผู้ใช้ที่ใส่ใจฟอนต์ ตรงกับงาน publish)
+
+- **ฐาน (Phase 0):** `<style id="userFonts">` ใน `<head>` เก็บ `@font-face` ของฟอนต์อัปโหลดทั้งหมด · อยู่ใน `<head>` → เดินทางไปกับไฟล์อัตโนมัติ เพราะ `buildMenuHtml`/`buildEditorHtml` ใช้ `documentElement.cloneNode(true)` · **ห้าม** 2 ฟังก์ชันนี้ลบ/แตะ `#userFonts` · `<optgroup id="typoFontUser">` ใน `#typoFont` เก็บ option ฟอนต์ที่เพิ่ม (label ผ่าน `data-i18n-label` → applyLang)
+- **อัปโหลด (Phase 1):** ปุ่ม `#btnAddFont` (ในกลุ่มฟอนต์) → `fontUploadPick()` เปิด `#fontInput` (hidden file input, accept .ttf/.otf/.woff/.woff2) → `_fontUploadFile(f)`: ตรวจชนิดด้วย `_fontFmt()` (ปฏิเสธไฟล์ที่ไม่ใช่ฟอนต์ = `fl.fontBadType`) → อ่าน base64 → ฝัง `@font-face` ใน `#userFonts` (ตั้ง `font-display:swap`, format() ตามชนิด) → เพิ่ม `<option>` ใน optgroup → `document.fonts.load` วอร์ม → `markDirty()` (จุด Undo/บันทึก) → `flashStatus` รายงานชื่อฟอนต์ที่เพิ่ม
+- **ตั้งชื่อ family:** จากชื่อไฟล์ (ตัดนามสกุล) sanitize (A-Z0-9 ไทย เว้นวรรค _ -) + กันซ้ำกับ option เดิม (ต่อเลข)
+- **ปุ่ม `#btnAddFont` อยู่ใน `_NOEDIT21`** (เปิด dialog ไม่ได้แก้เมนูทันที · markDirty อยู่ใน `_fontUploadFile` ตอนไฟล์โหลดเสร็จ แบบ async — lint #65 บังคับ markDirty ในนั้นแทน)
+- **ข้อจำกัด (บอกผู้ใช้แล้ว):** ฟอนต์อัปโหลด**เดินทางไปกับไฟล์ที่บันทึกเท่านั้น** · ถ้าอัปโหลดแล้ว browser crash ก่อนกดบันทึก Editor → ฟอนต์หาย เพราะ `_serializePages`/POOL (autosave ร่าง) เก็บเฉพาะ `.page` ไม่เก็บ `<head>` · เหมือนรูปที่เพิ่งเพิ่ม (lint #63) — ยอมรับ ไม่ over-engineer
+- **ยังไม่ทำ (Phase 2/3):** ฟอนต์ในเครื่อง Windows (`queryLocalFonts` Chromium / `local()`) + online Google (`<link>` รันไทม์) — คนละ commit · ทั้งคู่ "ไม่เดินทางไปกับไฟล์" ต้องมีคำเตือน
+
 ## ความปลอดภัย (client-side XSS) — lint ข้อ 54 (ผู้ใช้ 12 ต.ค. 2026)
 app เป็น HTML ไฟล์เดียว รันในเครื่อง ใช้คนเดียว — ความเสี่ยงจริงต่ำ (ไม่มี server/backend/login/network ขาเข้า) แต่ user content (ชื่อเมนู/ชื่อกลุ่ม/ชื่อไฟล์รูป) ไหลเข้า DOM ได้ จึงล็อก pattern ที่ปลอดภัยไว้ไม่ให้ถอยหลัง:
 - **`epEsc(s)`** = ตัว escape กลาง ต้อง escape `& < > "` ให้ครบทั้ง 4 (ครอบคลุมทั้ง element content และ attribute ใน `"`) · ทุกจุดที่ต่อ string ชื่อ (user content) ลง `innerHTML` ต้องผ่าน `epEsc()` ก่อน

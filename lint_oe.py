@@ -284,6 +284,7 @@ def main():
         'typoCpDlgCancel': 'ปิดหน้าต่างสีโดยไม่เปลี่ยนอะไร',
         'typoCpDlgEye': 'ดูดสีจากหน้าจอใส่หน้าต่างสี (ยังไม่ทาจนกว่าจะกดตกลง)',
         'typoOlCaret': 'เปิด/ปิดรายการความหนาเส้นขอบ (เลือกความหนา = typoOutlineSetWidth ซึ่งมี markDirty)',
+        'btnAddFont': 'เปิด dialog เลือกไฟล์ฟอนต์ — markDirty อยู่ใน _fontUploadFile ตอนไฟล์โหลดเสร็จ (async · lint #65 บังคับ markDirty ในนั้น)',
     }
     _js21 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
     def _blk21(src, k):
@@ -1350,6 +1351,49 @@ def main():
                 errors.append("dropdown #typoFont ขาด "+_keep64+" (ดู UI_STANDARD.md ข้อ 8)")
     else:
         errors.append("ไม่พบ <select id=\"typoFont\"> — lint ข้อ 64 ตรวจไม่ได้")
+
+
+    # ---- 65) อัปโหลดฟอนต์เอง + ฐานทะเบียนฟอนต์ (Phase 0+1 · ผู้ใช้ 14 ต.ค. 2026) ----
+    #   ฟอนต์อัปโหลดฝังเป็น @font-face ใน <style id="userFonts"> (อยู่ใน <head> → เดินทางไปกับไฟล์ผ่าน cloneNode ทั้ง 2 build)
+    #   buildMenuHtml/buildEditorHtml ห้ามแตะ/ลบ #userFonts (ไม่งั้นฟอนต์ที่อัปโหลดจะไม่ติดไปกับไฟล์ที่บันทึก)
+    if '<style id="userFonts">' not in txt:
+        errors.append('ไม่พบ <style id="userFonts"> — ฐานฟอนต์อัปโหลด (ดู UI_STANDARD.md ข้อ 8)')
+    _bm65=re.search(r'\nfunction buildMenuHtml\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _bm65 and 'userFonts' in _bm65.group(0):
+        errors.append('buildMenuHtml แตะ #userFonts — ฟอนต์อัปโหลดต้องเดินทางไปกับไฟล์ ห้าม strip (ดู UI_STANDARD.md ข้อ 8)')
+    _be65=re.search(r'\nfunction buildEditorHtml\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _be65 and 'userFonts' in _be65.group(0):
+        errors.append('buildEditorHtml แตะ #userFonts — ฟอนต์อัปโหลดต้องเดินทางไปกับไฟล์ ห้าม strip (ดู UI_STANDARD.md ข้อ 8)')
+    for _fn65 in ('fontUploadPick','_fontUploadFile'):
+        if ('function '+_fn65+'(') not in txt:
+            errors.append('ไม่พบ '+_fn65+' (อัปโหลดฟอนต์เอง) (ดู UI_STANDARD.md ข้อ 8)')
+    _uf65=re.search(r'\nfunction _fontUploadFile\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _uf65:
+        _b65=_uf65.group(0)
+        if '_fontFmt(' not in _b65 or 'fl.fontBadType' not in _b65:
+            errors.append('_fontUploadFile ไม่ได้ตรวจชนิดไฟล์ (_fontFmt + fl.fontBadType) — ปุ่มต้องปฏิเสธไฟล์ที่ไม่ใช่ฟอนต์ (ดู UI_STANDARD.md ข้อ 8)')
+        if 'markDirty' not in _b65:
+            errors.append('_fontUploadFile ไม่เรียก markDirty — อัปโหลดฟอนต์ต้องเป็นจุด Undo/บันทึก (ดู UI_STANDARD.md ข้อ 6)')
+        if '@font-face' not in _b65 or 'format(' not in _b65 or 'data:' not in _b65:
+            errors.append('_fontUploadFile ไม่ได้ฝังเป็น @font-face base64 (data: + format()) (ดู UI_STANDARD.md ข้อ 8)')
+    else:
+        errors.append('ไม่พบตัว _fontUploadFile — lint ข้อ 65 ตรวจไม่ได้')
+    _fi65=re.search(r'<input\b[^>]*id="fontInput"[^>]*>', txt)
+    if not _fi65:
+        errors.append('ไม่พบ <input id="fontInput"> (เลือกไฟล์ฟอนต์) (ดู UI_STANDARD.md ข้อ 8)')
+    elif '.ttf' not in _fi65.group(0):
+        errors.append('<input id="fontInput"> ไม่ได้จำกัดชนิดฟอนต์ (.ttf/.otf/.woff/.woff2) (ดู UI_STANDARD.md ข้อ 8)')
+    _sel65=re.search(r'<select id="typoFont"[\s\S]*?</select>', txt)
+    if _sel65 and 'id="typoFontUser"' not in _sel65.group(0):
+        errors.append('dropdown #typoFont ขาด <optgroup id="typoFontUser"> (กลุ่มฟอนต์ที่อัปโหลด) (ดู UI_STANDARD.md ข้อ 8)')
+    _i65=txt.find("var I18N={")
+    if _i65>=0:
+        _th65=txt.find("th:{",_i65); _en65=txt.find("en:{",_i65)
+        _thb65=txt[_th65:_en65] if (_th65>=0 and _en65>_th65) else ""
+        _enb65=txt[_en65:_en65+30000] if _en65>=0 else ""
+        for _k65 in ('btn.addFont','font.userGroup','ttl.addFont','fl.fontAdded','fl.fontBadType','fl.fontAddErr'):
+            if ("'"+_k65+"'") not in _thb65: errors.append('i18n '+_k65+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
+            if ("'"+_k65+"'") not in _enb65: errors.append('i18n '+_k65+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
 
 
     # ---- report ----

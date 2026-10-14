@@ -8,7 +8,23 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
-## 13 ต.ค. 2026 (23:18) — ✅ เสร็จ: ฝังฟอนต์ offline (TTF base64) + ตัด dropdown เหลือ 3 ฟอนต์ (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit)
+## 14 ต.ค. 2026 (13:09) — ✅ เสร็จ Phase 0+1: ฐานทะเบียนฟอนต์ + อัปโหลด .ttf ฝังเอง (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit)
+- ตัดสินใจ (user, 14 ต.ค.): ทำครบ 3 แหล่งฟอนต์ (อัปโหลดเอง + ฟอนต์ในเครื่อง Windows + online Google) · agent แบ่ง 4 phase, ทำทีละ commit · เริ่ม Phase 0+1 ก่อน
+- Phase 0 (ฐาน): เพิ่ม <style id="userFonts"> ใน <head> ว่างๆ (ฟอนต์อัปโหลดไปอยู่ที่นี่ · เดินทางไปกับไฟล์ผ่าน cloneNode ทั้ง buildMenuHtml/buildEditorHtml ที่ยืนยันแล้วว่า clone documentElement) + <optgroup id="typoFontUser"> ใน #typoFont
+- Phase 1 (อัปโหลด): ปุ่ม btn.addFont "﹢ ฟอนต์" ในกลุ่ม fontgrp + <input type=file id=fontInput accept .ttf/.otf/.woff/.woff2> ซ่อน · fontUploadPick()+_fontUploadFile(f): validate ชนิด → อ่าน base64 → ฝัง @font-face ใน #userFonts → เพิ่ม <option> ใน optgroup → document.fonts.load → apply กับ selection → markDirty + flashStatus
+- ที่มา baseline: commit bb61d86 (sha fbc21d9149217d36, 6,890,318 bytes, LF) — ยืนยันตรงแล้ว
+- การ serialize: ฟอนต์ฝังอยู่ใน <head> ไม่ใช่ .page → _serializePages/POOL (autosave ร่าง) ไม่เก็บ bytes ฟอนต์ → crash ก่อนบันทึก Editor = ฟอนต์หาย (เหมือนรูปที่เพิ่งเพิ่ม lint #63) — ข้อจำกัดที่ยอมรับ บอก user แล้ว
+- naming: ชื่อจากชื่อไฟล์ (ตัดนามสกุล) sanitize + กันซ้ำกับ option เดิม
+- lint ใหม่ #65: <style id="userFonts"> ต้องมี + ห้ามถูก strip ใน build ทั้งสอง + fontUploadPick/_fontUploadFile ต้องมี + validate ชนิด + markDirty + <input id=fontInput> + i18n btn.addFont/ttl.addFont/fl.fontAdded/fl.fontBadType/fl.fontAddErr/font.userGroup ครบ th+en
+- next: build menu_fontout.html → lint V0+variants → UI_STANDARD ข้อ 8 (เพิ่มส่วนอัปโหลด) + SESSION_STATUS → file_copy กลับ → git commit (ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit)
+- ✅ ผล: menu_fontout.html sha b601ce2c81cde5d0 · 6,894,394 bytes (6.575MB) · lint V0 ผ่าน 2.9s (0/0) · 8 variant (userFonts style/buildMenu strip/no markDirty/no optgroup/no type-check/en key/fontInput .ttf/no fontUploadPick) FAIL ถูกต้องที่ #65
+- โครงที่เพิ่ม: <style id=userFonts> หลัง </style> หลัก · <optgroup id=typoFontUser data-i18n-label=font.userGroup> ใน #typoFont · ปุ่ม #btnAddFont + <input id=fontInput> หลัง </select> · applyLang +handler [data-i18n-label] · ฟังก์ชัน fontUploadPick/_fontUploadChange/_fontFmt/_fontFamFromName/_fontUploadFile หลัง typoFontApply · i18n 6 key (btn.addFont/font.userGroup/ttl.addFont/fl.fontAdded/fl.fontBadType/fl.fontAddErr) th+en
+- lint: เพิ่ม #65 + ใส่ btnAddFont ใน _NOEDIT21 (เปิด dialog · markDirty อยู่ใน _fontUploadFile) · UI_STANDARD เพิ่มหัวข้อ 8.1
+- ข้อจำกัด: ฟอนต์อัปโหลดเดินทางกับไฟล์ที่บันทึกเท่านั้น · crash ก่อนบันทึก = หาย (เหมือนรูป lint #63) — บอก user แล้ว
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 0+1: upload-your-own TTF/OTF/WOFF embed (travels with file) + font registry (userFonts style + optgroup); lint #65"
+- ⚠ กด F5 ก่อนทดสอบ · ลองกดปุ่ม ﹢ฟอนต์ เลือก .ttf → ต้องเพิ่มใน dropdown ใช้ได้ · บันทึก Editor แล้วเปิดใหม่ ฟอนต์ต้องยังอยู่ · Phase 2/3 (ฟอนต์เครื่อง/online) ยังไม่ทำ
+
+## 13 ต.ค. 2026 (23:18) — ✅ เสร็จ+COMMITTED bb61d86 (14 ต.ค. 13:07): ฝังฟอนต์ offline (TTF base64) + ตัด dropdown เหลือ 3 ฟอนต์ (lint ผ่าน 0/0 · user ยืนยัน dropdown 3 ตัว+สลับฟอนต์ทำงาน · ยังรอทดสอบ airplane-mode offline)
 - เป้าหมาย: ทำให้ฟอนต์ offline จริง (ไม่พึ่ง Google CDN) สำหรับ publish GitHub · README จะเขียน "offline" ได้เต็มปาก
 - ตัดสินใจ (user, 13 ต.ค.): ฝัง 3 ฟอนต์ที่มีหน้าที่จริงในโค้ด — Prompt (เนื้อหาหลัก) · Sarabun (หมายเหตุ .crab) · Noto Sans Thai (แก้วรรณยุกต์ลอย .kai) · ตัด Kanit/Mitr/Bai Jamjuree (ทรงซ้ำ Prompt/Sarabun, อยู่ใน dropdown เฉยๆ ไม่มีจุด CSS อ้าง) · ไม่ฝัง emoji (Color Emoji 24MB แพงเกิน, ระบบ OS วาดเอง)
 - วิธี: (1) ลบ <link> fonts.googleapis/gstatic 3 เส้น (2) ฝัง @font-face 10 บล็อก base64 TTF ต้น <style> — Prompt 400/500/600/700 · Sarabun 400/600/700 · Noto 400/500/700 (3) ตัด option Kanit/Mitr/Bai Jamjuree ใน #typoFont เหลือ 3 (4) ไม่ใส่ unicode-range (ฝัง TTF เต็ม ครอบ latin+thai)

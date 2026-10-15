@@ -8,6 +8,26 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 15 ต.ค. 2026 (18:55) — ✅ เสร็จ: แก้หัว popover ให้ตรง tooltip + ใส่ tooltip โหลดฟอนต์บนปุ่ม "＋ ฟอนต์" (ผู้ใช้เลือกทั้ง 2)
+- (1) gfont.title (หัว popover): → "เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)" · EN "Add fonts from Google over the internet (Thai–English-capable fonts only)" — ตรงกับ ttl.addGFont (tooltip ปุ่ม ＋ Google)
+- (2) ttl.addFont (tooltip ปุ่ม ＋ ฟอนต์ อัปโหลด): → "เลือกไฟล์ฟอนต์ (.ttf/.otf/.woff/.woff2) ที่โหลดไว้ในเครื่อง · โหลดฟอนต์ฟรีเพิ่มได้จาก fonts.google.com" · EN "Choose a font file ... download free fonts at fonts.google.com" — บอกที่มาฟอนต์ (ผู้ใช้กังวลว่าคนใช้จะงงว่าหาฟอนต์ที่ไหน) · ลิงก์เป็นข้อความ hover (คลิกไม่ได้)
+- แก้แค่ข้อความ i18n TH+EN (ไม่แตะ lint · #66 เช็ก key มีอยู่ ไม่ล็อกข้อความ) · lint PASS 0/0 · sha d9082d2dbcd37179 · 6,912,315 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 15 ต.ค. 2026 (18:05) — ✅ เสร็จ: เปลี่ยนข้อความ tooltip ปุ่ม "＋ Google" (ผู้ใช้เลือกประโยคเอง)
+- ttl.addGFont: เดิม "เพิ่มฟอนต์จาก Google (ต่อเน็ตตอนเพิ่ม · ฝังในไฟล์ · ใช้ต่อออฟไลน์ได้)" → ใหม่ "เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)" · EN "Add fonts from Google over the internet (Thai–English-capable fonts only)"
+- แก้แค่ข้อความ i18n TH+EN (lint #66 เช็ก key มีอยู่ ไม่ล็อกข้อความ · ไม่แตะ lint) · gfont.title (หัว popover) ยังเป็นคำเดิม — ยังไม่แตะ
+- lint PASS 0/0 · sha 2edd87fcaecc86e0 · 6,912,227 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 15 ต.ค. 2026 (18:00) — ✅ เสร็จ: ลบโน้ต "ฟอนต์ทุกตัว...ฝังในไฟล์" ใต้แถบฟอนต์ (ผู้ใช้)
+- เหตุ: ผู้ใช้แจ้งว่าโน้ตกินพื้นที่ส่วนอื่น · ลบ `.fontembed-note` (markup + CSS + i18n font.embedNote th+en) ทั้งหมด · ไม่มี JS อ้างถึง (เช็ก ripgrep: เหลือ 0)
+- lint #67: ลบ check (b) embedNote + เอา font.embedNote ออกจาก i18n loop · กฎที่เหลือ (optgroup typoFontBase · upload dup _gfontFamExists · i18n baseGroup/fontDup) ยืนยันด้วย 3 variant ยัง FAIL ครบ · V0 PASS 0/0
+- sha 420a5d9844fae2fd · 6,912,221 bytes · LF · อัปเดต UI_STANDARD §8.3 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 15 ต.ค. 2026 (14:54) — ✅ เสร็จ: เปลี่ยนชื่อกลุ่ม dropdown "ฟอนต์ในไฟล์" → "ฟอนต์มากับแอป" (ผู้ใช้เลือก)
+- เหตุ: ใต้แถบมีโน้ต "ฟอนต์ทุกตัวฝังในไฟล์" → ฟอนต์ที่เพิ่มก็อยู่ในไฟล์เหมือนกัน คำว่า "ฟอนต์ในไฟล์" จึงไม่แยกความต่าง + ขัดโน้ตตัวเอง · ความต่างจริงคือ "มากับแอป" vs "เพิ่มเอง" (เทียบ Word/PowerPoint "Theme Fonts")
+- แก้ 3 จุด: label HTML (optgroup typoFontBase) + i18n TH 'ฟอนต์มากับแอป' + i18n EN 'Built-in fonts' · อัปเดต comment lint #67 + UI_STANDARD §8.3 ให้ตรงคำใหม่
+- lint PASS 0/0 · sha 405c79218da3fdcf · 6,912,917 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 15 ต.ค. 2026 (12:50) — ✅ เสร็จ: โน้ต OFL มีลิงก์ไปหน้า SIL OFL (ผู้ใช้ · รวม Phase 3)
 - เปลี่ยน '— ใช้/ฝัง/แจกฟรีได้' → '(SIL Open Font License ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี)' · 'SIL Open Font License' เป็นลิงก์
 - ข้อจำกัด: โน้ตเดิมใช้ textContent (data-i18n) ใส่ `<a>` ไม่ได้ → รื้อเป็น 3 ชิ้น: span oflPre + a.oflink oflName + span oflPost · ลบคีย์ gfont.note ทิ้ง (ไม่มี caller)

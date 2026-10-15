@@ -106,14 +106,14 @@ body:not(.imgmode) #imgbar .rgl,body:not(.imgmode) #imgbar .rgb>*:not(.imgalways
 body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 /* ===== Typography toolbar (คลิกเลือกอิสระ) ===== */
 #typobar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;width:100%;}
-#typobar select,#typobar input[type=color]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:12px;height:30px;vertical-align:middle;}
+#typobar select,#typobar input[type=color]{padding:4px;border:1px solid #ccc;border-radius:6px;font-size:16px;height:30px;vertical-align:middle;}
 #typobar input[type=color]{width:34px;padding:2px;cursor:pointer;}
-#typobar button.tbtn{font-size:12px;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;font-weight:600;}
+#typobar button.tbtn{font-size:14px;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;font-weight:600;}
 #typobar button.tbtn.reset{background:#8a6d1a;}
 #typobar button.tbtn.applyall{background:#2f8a57;}
 #typobar button.tbtn:disabled{background:#555;color:#999;cursor:not-allowed;}
 #typobar .seg{display:inline-flex;gap:3px;align-items:center;padding:0 6px;border-left:1px solid #555;}
-#typobar .ttoggle{width:30px;height:30px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;}
+#typobar .ttoggle{width:30px;height:30px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:16px;}
 #typobar .ttoggle.on{background:#217346;color:#fff;border-color:#217346;}
 #typobar .ttoggle:disabled{opacity:.4;cursor:not-allowed;}
 /* highlight element ที่กำลังเลือกแก้ */
@@ -141,13 +141,13 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #edbar .btn-dl{background:#217346;color:#fff;}.btn-save{background:#1a5c38;color:#fff;position:relative;}.btn-save.dirty::after{content:'';position:absolute;top:5px;right:6px;width:8px;height:8px;background:#ffd23f;border:1px solid #fff;border-radius:50%;}
 #edtabs{display:flex;align-items:center;gap:2px;padding:0 8px;background:#f3f2f1;border-bottom:1px solid #e1dfdd;flex-wrap:wrap;}
 #edtabs .edbrand{display:inline-flex;align-items:center;padding:5px 10px;}
-#edtabs .edtab{font-family:'Prompt',sans-serif;font-size:13px;color:#444;padding:9px 15px;cursor:pointer;font-weight:500;border:none;border-radius:0;background:none;position:relative;}
+#edtabs .edtab{font-family:'Prompt',sans-serif;font-size:16px;color:#444;padding:9px 15px;cursor:pointer;font-weight:500;border:none;border-radius:0;background:none;position:relative;}
 #edtabs .edtab:hover{background:#eceae9;}
 #edtabs .edtab.active{color:#217346;font-weight:600;background:#fff;}
 #edtabs .edtab.active::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2.5px;background:#217346;}
-#edtabs .hint{margin-left:auto;margin-right:0;font-size:11.5px;color:#8a8886;font-weight:400;}
+#edtabs .hint{margin-left:auto;margin-right:0;font-size:13.5px;color:#8a8886;font-weight:400;}
 #edtabs .langsw{display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-right:6px;}
-#edtabs .langsw button{font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;border:none;background:#fff;color:#605e5c;padding:5px 11px;cursor:pointer;}
+#edtabs .langsw button{font-family:'Prompt',sans-serif;font-size:14px;font-weight:600;border:none;background:#fff;color:#605e5c;padding:5px 11px;cursor:pointer;}
 #edtabs .langsw button.on{background:#217346;color:#fff;}
 #edtabs .qab{display:inline-flex;gap:2px;margin-right:8px;}
 #edtabs .qab button{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #d2d0ce;background:#fff;border-radius:6px;cursor:pointer;padding:0;position:relative;}
@@ -167,8 +167,8 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #edribbon .rpane{align-items:stretch;gap:6px 0;}
 #edribbon .rgroup{display:flex;flex-direction:column;justify-content:space-between;padding:2px 8px;border-right:1px solid #b3b0ad;}  /* เส้นคั่นกลุ่ม: 2.05:1 บนพื้น #faf9f8 (เดิม #eaeaea 1.14:1 · ตอนกลุ่มปิดเหลือ 1.06:1 มองไม่เห็น) */
 #edribbon .rgb{display:flex;align-items:flex-start;gap:1px;}
-#edribbon .rgl{font-size:11px;color:#797775;text-align:center;padding:2px 0 3px;margin-top:auto;}
-#edbar .b-lg{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:1px solid transparent;border-radius:3px;padding:4px 8px 2px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:11.5px;font-weight:500;color:#323130;min-width:52px;line-height:1.2;}
+#edribbon .rgl{font-size:13px;color:#797775;text-align:center;padding:2px 0 3px;margin-top:auto;}
+#edbar .b-lg{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:1px solid transparent;border-radius:3px;padding:4px 8px 2px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:16px;font-weight:500;color:#323130;min-width:52px;line-height:1.2;}
 #edbar .b-lg svg{width:22px;height:22px;stroke:#444;fill:none;stroke-width:1.6;}
 #edbar .b-lg:hover{background:#f3f2f1;border-color:#e1dfdd;}
 #edbar .b-lg:disabled{opacity:.4;cursor:not-allowed;}
@@ -257,7 +257,7 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .sizebox .szbtn{border:none;background:#fff;width:26px;height:30px;cursor:pointer;font-size:15px;font-weight:600;color:#217346;padding:0;}
 #typobar .sizebox .szbtn:hover:not(:disabled){background:#eef7f1;}
 #typobar .sizebox .szbtn:disabled{opacity:.4;cursor:not-allowed;}
-#typobar .sizebox #typoSize{width:40px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:30px;font-family:inherit;font-size:12px;}
+#typobar .sizebox #typoSize{width:40px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:30px;font-family:inherit;font-size:16px;}
 #typobar .colorpick{position:relative;display:inline-flex;align-items:center;}
 #typobar .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #ccc;border-radius:6px;overflow:hidden;}
 #typobar .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0 6px;display:inline-flex;align-items:center;}

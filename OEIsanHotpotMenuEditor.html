@@ -206,7 +206,9 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 /* หน้าต่างปรับค่าเงา (ใต้ปุ่ม ปรับค่า) — ปุ่มข้างในต้องทับ #imgbar button (พื้นเขียว) · .on วางหลัง hover */
 #imgbar .shdpick{position:relative;display:inline-flex;}
 #imgbar .shd-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:260px;font-family:'Prompt',sans-serif;font-size:12px;color:#323130;text-align:left;}
-#imgbar .shd-pop.open{display:block;}
+#imgbar .shd-pop.open{display:block;}.gfontpick{position:relative;display:inline-flex;}.gfont-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:440px;font-family:'Prompt',sans-serif;font-size:12px;color:#323130;text-align:left;}.gfont-pop.open{display:block;}.gfont-ttl{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
+.fontembed-note{flex-basis:100%;width:100%;font-size:10px;color:#8a8f94;line-height:1.3;margin:1px 0 0;}.gfont-inlbl{font-size:11px;color:#605e5c;margin:0 0 3px;line-height:1.3;}.gfont-list{max-height:220px;overflow-y:auto;margin-bottom:8px;border:1px solid #e1dfdd;border-radius:6px;}.gfont-row{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #f0eeec;background:#fff;padding:6px 10px;cursor:pointer;font-family:inherit;text-align:left;}.gfont-name{font-size:12px;color:#323130;white-space:nowrap;}.gfont-prev{font-size:16px;color:#605e5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:auto;max-width:220px;text-align:right;min-height:19px;}.gfont-row:hover{background:#f3f2f1;}.gfont-row:last-child{border-bottom:0;}.gfont-inrow{display:flex;gap:4px;margin-bottom:6px;}.gfont-in{flex:1;min-width:0;box-sizing:border-box;padding:4px 6px;border:1px solid #c8c6c4;border-radius:4px;font-size:12px;font-family:inherit;}.gfont-add{border:1px solid #c8c6c4;background:#f3f2f1;color:#323130;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;}.gfont-add:hover{background:#ebe9e7;}.gfont-msg{font-size:11px;min-height:14px;line-height:1.3;}.gfont-msg.load{color:#8a6d00;}.gfont-msg.err{color:#a4262c;}.gfont-msg.ok{color:#217346;}.gfont-msg.warn{color:#8a6d00;}.gfont-note{font-size:10px;color:#a19f9d;margin-top:6px;line-height:1.3;}
+.gfont-note a.oflink{color:#0b5fb0;text-decoration:underline;}.gfont-sub{font-size:11px;color:#605e5c;margin:0 0 4px;}.gfont-res{margin-top:6px;}.gfont-row.sel{background:#dbeafc;}.gfont-row.sel .gfont-name{font-weight:600;}.gfont-addbtn{display:block;width:100%;box-sizing:border-box;margin:6px 0 2px;padding:7px;border:1px solid #323130;background:#323130;color:#fff;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;}.gfont-addbtn:hover{background:#201f1e;}.gfont-addbtn:disabled{background:#f3f2f1;color:#a19f9d;border-color:#e1dfdd;cursor:default;}
 #imgbar .shd-ttl{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
 #imgbar .shd-lvs{display:flex;gap:6px;margin:0 0 10px;}
 #imgbar .shd-pop button{font-size:12px;padding:4px 12px;border-radius:6px;border:1px solid #d2d0ce;background:#fff;color:#323130;cursor:pointer;}
@@ -521,11 +523,13 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
         <div class="rgroup fontgrp"><div class="rgb">
         <select id="typoFont" onchange="typoFontApply()" disabled>
           <option value="" data-i18n="font.placeholder">— ฟอนต์ —</option>
+          <optgroup id="typoFontBase" data-i18n-label="font.baseGroup" label="ฟอนต์ในไฟล์">
           <option value="'Prompt',sans-serif">Prompt</option>
           <option value="'Sarabun',sans-serif">Sarabun</option>
           <option value="'Noto Sans Thai',sans-serif">Noto Sans Thai</option>
+          </optgroup>
           <optgroup id="typoFontUser" data-i18n-label="font.userGroup" label="ฟอนต์ที่เพิ่ม" style="display:none"></optgroup>
-        </select><button class="b-lg" id="btnAddFont" onclick="fontUploadPick()" title="เพิ่มฟอนต์ของคุณเอง" data-i18n-title="ttl.addFont"><svg viewBox="0 0 24 24"><path d="M5 4h8l4 4v12H5z"/><path d="M12 11v6M9 14h6"/></svg><span data-i18n="btn.addFont">＋ ฟอนต์</span></button><input type="file" id="fontInput" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" style="display:none" onchange="_fontUploadChange(event)">
+        </select><button class="b-lg" id="btnAddFont" onclick="fontUploadPick()" title="เพิ่มฟอนต์ของคุณเอง" data-i18n-title="ttl.addFont"><svg viewBox="0 0 24 24"><path d="M5 4h8l4 4v12H5z"/><path d="M12 11v6M9 14h6"/></svg><span data-i18n="btn.addFont">＋ ฟอนต์</span></button><input type="file" id="fontInput" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" style="display:none" onchange="_fontUploadChange(event)"><span class="gfontpick" id="gfontPick"><button class="b-lg" id="btnAddGFont" onclick="_gfontToggle()" title="เพิ่มฟอนต์จาก Google" data-i18n-title="ttl.addGFont"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 2.6 15.4 0 18M12 3c-2.6 2.6-2.6 15.4 0 18"/></svg><span data-i18n="btn.addGFont">＋ Google</span></button><div class="gfont-pop" id="gfontPop"><div class="gfont-ttl" data-i18n="gfont.title">เพิ่มฟอนต์จาก Google · ต้องต่อเน็ตตอนเพิ่ม · ฝังในไฟล์แล้วใช้ออฟไลน์ได้</div><div class="gfont-sub"><span data-i18n="gfont.browselbl">ฟอนต์ที่ใช้ได้ทั้งหมด</span> (<span id="gfontCount">33</span>) · <span data-i18n="gfont.browsehint">คลิกเพื่อเลือก</span></div><div class="gfont-list" id="gfontList"></div><div class="gfont-inlbl" data-i18n="gfont.inlbl">ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)</div><div class="gfont-inrow"><input type="text" id="gfontInput" class="gfont-in" spellcheck="false" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();_gfontSearch();}"><button type="button" class="gfont-add" id="gfontSearchBtn" onclick="_gfontSearch()" data-i18n="btn.gfontSearch">ค้นหา</button></div><div class="gfont-list gfont-res" id="gfontResults" style="display:none"></div><div class="gfont-msg" id="gfontMsg"></div><button type="button" class="gfont-addbtn" id="gfontAddBtn" onclick="_gfontAddSel()" data-i18n="gfont.add" disabled>เพิ่มฟอนต์ที่เลือก</button><div class="gfont-note"><span data-i18n="gfont.oflPre">ทุกฟอนต์เป็น OFL (</span><a class="oflink" href="https://openfontlicense.org/ofl-fonts/" target="_blank" rel="noopener" data-i18n="gfont.oflName">SIL Open Font License</a><span data-i18n="gfont.oflPost"> ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม</span></div></div></span>
         <span class="colorpick" id="typoColorPick">
           <span class="cp-trigger"><button type="button" class="cp-apply" id="typoCpApply" title="ทาสีปัจจุบันลงช่วงที่เลือก" data-i18n-title="ttl.cpApply"><span class="cp-current" id="typoCpCurrent" style="background:#C0392B"></span></button><button type="button" class="cp-caretbtn" id="typoCpCaret" title="เลือกสีอื่น" data-i18n-title="ttl.cpCaret"><span class="cp-caret">▾</span></button></span>
           <input type="color" id="typoColor" value="#c0392b" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;">
@@ -570,6 +574,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
         <button class="tbtn clearsel" id="typoClearSel" onclick="typoClearSel()" title="ไฮไลท์ข้อความก่อน — ลากคลุมส่วนที่จะล้างรูปแบบ" data-i18n-title="ttl.clearSelNeed" disabled><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg><span data-i18n="btn.clearSel">ล้างรูปแบบจุดที่ไฮไลท์</span></button>
         </div><div class="rgl" data-i18n="grp.format">จัดรูปแบบ</div></div>
       </div>
+      <div class="fontembed-note" data-i18n="font.embedNote">ฟอนต์ทุกตัวในรายการนี้ฝังอยู่ในไฟล์ — เปิดเครื่องอื่นก็เห็นเหมือนเดิม</div>
     </div>
     <div class="rpane" data-pane="image">
       <div class="rgroup"><div class="rgb">
@@ -1219,7 +1224,7 @@ function buildEditorHtml(){
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
   var sv=clone.querySelector('#btnSave'); if(sv) sv.classList.remove('dirty');
   var _cpd=clone.querySelector('#typoCpDlg'); if(_cpd) _cpd.classList.remove('open');  /* หน้าต่างสีไม่บันทึกค้างเปิด */
-  var _shp=clone.querySelector('#shdPop'); if(_shp) _shp.classList.remove('open'); clone.querySelectorAll('#imgbar .shd').forEach(function(bx){ bx.classList.remove('on'); if(bx.id!=='btnShdAdj') bx.disabled=true; }); var _cpn=clone.querySelector('#btnImgCopyName'); if(_cpn){ _cpn.disabled=true; _cpn.setAttribute('data-i18n-title','ttl.imgCopyNeed'); } var _cpp=clone.querySelector('#btnImgCopyPos'); if(_cpp){ _cpp.disabled=true; _cpp.setAttribute('data-i18n-title','ttl.imgCopyPosNeed'); }  /* ปุ่ม/หน้าต่างเงาไม่บันทึกค้าง (เปิดไฟล์ใหม่ = ยังไม่ได้เลือกรูป) */
+  var _shp=clone.querySelector('#shdPop'); if(_shp) _shp.classList.remove('open'); var _gfp=clone.querySelector('#gfontPop'); if(_gfp){ _gfp.classList.remove('open'); var _gfi=_gfp.querySelector('#gfontInput'); if(_gfi) _gfi.value=''; var _gfm=_gfp.querySelector('#gfontMsg'); if(_gfm){ _gfm.textContent=''; _gfm.className='gfont-msg'; } } var _gfb=clone.querySelector('#btnAddGFont'); if(_gfb) _gfb.classList.remove('on'); var _gfl=clone.querySelector('#gfontList'); if(_gfl) _gfl.innerHTML=''; var _gfr=clone.querySelector('#gfontResults'); if(_gfr){ _gfr.innerHTML=''; _gfr.style.display='none'; } var _gfin=clone.querySelector('#gfontInput'); if(_gfin) _gfin.value=''; var _gfab=clone.querySelector('#gfontAddBtn'); if(_gfab) _gfab.disabled=true; clone.querySelectorAll('#imgbar .shd').forEach(function(bx){ bx.classList.remove('on'); if(bx.id!=='btnShdAdj') bx.disabled=true; }); var _cpn=clone.querySelector('#btnImgCopyName'); if(_cpn){ _cpn.disabled=true; _cpn.setAttribute('data-i18n-title','ttl.imgCopyNeed'); } var _cpp=clone.querySelector('#btnImgCopyPos'); if(_cpp){ _cpp.disabled=true; _cpp.setAttribute('data-i18n-title','ttl.imgCopyPosNeed'); }  /* ปุ่ม/หน้าต่างเงาไม่บันทึกค้าง (เปิดไฟล์ใหม่ = ยังไม่ได้เลือกรูป) */
   var _ih=clone.querySelector('#btnImgHide'); if(_ih){ _ih.classList.remove('on'); _ih.setAttribute('data-i18n-title','ttl.imgHide'); }  /* ซ่อนรูปไม่บันทึก */
   var ib=clone.querySelector('#imgbar'); if(ib){ib.style.removeProperty('display');}
   var _dbE=clone.querySelector('#draftBar'); if(_dbE) _dbE.remove();  /* แถบกู้คืนร่างเป็นของจอ ไม่บันทึก (lint ข้อ 63) */
@@ -1857,7 +1862,7 @@ window.addEventListener('load', function(){ renumber(); _lastSnap=_serializePage
 });
 /* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
 var I18N={
- th:{'btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','ttl.addFont':'เพิ่มฟอนต์ของคุณเอง (.ttf/.otf/.woff/.woff2) — ฝังในไฟล์ ใช้ออฟไลน์ได้','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์',
+ th:{'btn.addGFont':'＋ Google','ttl.addGFont':'เพิ่มฟอนต์จาก Google (ต่อเน็ตตอนเพิ่ม · ฝังในไฟล์ · ใช้ต่อออฟไลน์ได้)','gfont.title':'เพิ่มฟอนต์จาก Google · ต้องต่อเน็ตตอนเพิ่ม · ฝังในไฟล์แล้วใช้ออฟไลน์ได้','gfont.inlbl':'ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)','gfont.add':'เพิ่มฟอนต์ที่เลือก','btn.gfontSearch':'ค้นหา','gfont.browselbl':'ฟอนต์ที่ใช้ได้ทั้งหมด','gfont.browsehint':'คลิกเพื่อเลือก','fl.gfontNoMatch':'ไม่พบฟอนต์ "{q}" — ลองพิมพ์ชื่อให้ตรง','gfont.oflPre':'ทุกฟอนต์เป็น OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม','fl.gfontLoading':'กำลังโหลดฟอนต์ "{name}" จาก Google…','fl.gfontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วใช้ได้เลย','fl.gfontNotFound':'ไม่พบฟอนต์ "{name}" บน Google — ตรวจชื่อให้ตรง','fl.gfontOffline':'โหลดฟอนต์ "{name}" ไม่ได้ — ต้องต่อเน็ตตอนเพิ่มฟอนต์ Google','fl.gfontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.fontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.gfontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','font.baseGroup':'ฟอนต์ในไฟล์','font.embedNote':'ฟอนต์ทุกตัวในรายการนี้ฝังอยู่ในไฟล์ — เปิดเครื่องอื่นก็เห็นเหมือนเดิม','ttl.addFont':'เพิ่มฟอนต์ของคุณเอง (.ttf/.otf/.woff/.woff2) — ฝังในไฟล์ ใช้ออฟไลน์ได้','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์',
   'grp.mode':'โหมด','grp.font':'ฟอนต์','grp.format':'จัดรูปแบบ','grp.imgtools':'จัดการรูป','grp.pagetools':'หน้า','grp.file':'ไฟล์','grp.print':'พิมพ์',
   'btn.editText':'แก้ข้อความ','btn.editImage':'แก้รูป','btn.applyAll':'ใช้ทั้งประเภท','btn.reset':'คืนค่า',
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ','btn.resetSize':'คืนขนาด','btn.actualSize':'ขนาดจริง',
@@ -1874,7 +1879,7 @@ var I18N={
   'pnl.delPageLabel':'ลบหน้า','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กด Ctrl+Z เพื่อย้อนได้ (ก่อนปิดหรือรีเฟรชหน้า)',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
   'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม'},
- en:{'btn.addFont':'＋ Font','font.userGroup':'Added fonts','ttl.addFont':'Add your own font (.ttf/.otf/.woff/.woff2) — embedded in the file, works offline','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File',
+ en:{'btn.addGFont':'＋ Google','ttl.addGFont':'Add a font from Google (online to add · embedded in file · works offline after)','gfont.title':'Add a font from Google · online to add · embedded, then works offline','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Fonts in file','font.embedNote':'All fonts here are embedded in the file — they look the same on any computer','ttl.addFont':'Add your own font (.ttf/.otf/.woff/.woff2) — embedded in the file, works offline','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File',
   'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
   'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink','btn.resetSize':'Reset Size','btn.actualSize':'Actual Size',
@@ -2555,17 +2560,16 @@ function typoFontApply(){
 function fontUploadPick(){ var inp=document.getElementById('fontInput'); if(inp){ inp.value=''; inp.click(); } }
 function _fontUploadChange(ev){ var f=ev&&ev.target&&ev.target.files&&ev.target.files[0]; if(f) _fontUploadFile(f); }
 function _fontFmt(name){ var n=(name||'').toLowerCase(); if(n.slice(-6)==='.woff2') return 'woff2'; if(n.slice(-5)==='.woff') return 'woff'; if(n.slice(-4)==='.otf') return 'opentype'; if(n.slice(-4)==='.ttf') return 'truetype'; return ''; }
-function _fontFamFromName(name){
+function _fontBaseName(name){
   var base=(name||'').replace(/\.[^.]+$/,'').replace(/[^A-Za-z0-9\u0E00-\u0E7F _-]/g,'').trim(); if(!base) base='Font';
-  var sel=document.getElementById('typoFont'), exist={}, i, v, mm;
-  for(i=0;i<sel.options.length;i++){ v=sel.options[i].value||''; mm=/^'([^']*)'/.exec(v); if(mm) exist[mm[1].toLowerCase()]=1; }
-  var fam=base, n=2; while(exist[fam.toLowerCase()]){ fam=base+' '+n; n++; }
-  return fam;
+  return base;
 }
 function _fontUploadFile(f){
   var nm=(f&&f.name)||'';
   var fmt=_fontFmt(nm);
   if(!fmt){ flashStatus('warning',tk('fl.fontBadType',{name:nm})); return; }
+  var fam=_fontBaseName(nm);
+  if(_gfontFamExists(fam)){ flashStatus('info',tk('fl.fontDup',{name:fam})); if(typeof _gfontUse==='function') _gfontUse(fam); return; }
   var rd=new FileReader();
   rd.onerror=function(){ flashStatus('warning',tk('fl.fontAddErr',{name:nm})); };
   rd.onload=function(){
@@ -2573,10 +2577,9 @@ function _fontUploadFile(f){
       var res=rd.result||'', comma=res.indexOf(','), b64=comma>=0?res.slice(comma+1):'';
       if(!b64){ flashStatus('warning',tk('fl.fontAddErr',{name:nm})); return; }
       var mime=fmt==='truetype'?'font/ttf':fmt==='opentype'?'font/otf':fmt==='woff2'?'font/woff2':'font/woff';
-      var fam=_fontFamFromName(nm);
       var st=document.getElementById('userFonts');
       st.appendChild(document.createTextNode("@font-face{font-family:'"+fam+"';font-style:normal;font-weight:400;font-display:swap;src:url(data:"+mime+";base64,"+b64+") format('"+fmt+"');}\n"));
-      var grp=document.getElementById('typoFontUser'); if(grp){ grp.style.display=''; var op=document.createElement('option'); op.value="'"+fam+"',sans-serif"; op.textContent=fam; grp.appendChild(op); }
+      _fontAddOpt(fam);
       try{ if(document.fonts&&document.fonts.load) document.fonts.load("16px '"+fam+"'"); }catch(e){}
       if(typeof markDirty==='function') markDirty();
       flashStatus('info',tk('fl.fontAdded',{name:fam}));
@@ -2585,6 +2588,137 @@ function _fontUploadFile(f){
   rd.readAsDataURL(f);
 }
 
+
+function _fontAddOpt(fam){ var grp=document.getElementById('typoFontUser'); if(grp){ grp.style.display=''; var op=document.createElement('option'); op.value="'"+fam+"',sans-serif"; op.textContent=fam; grp.appendChild(op); } }
+var _GTHAI=['Anuphan','Athiti','Bai Jamjuree','Chakra Petch','Charm','Charmonman','Chonburi','Fahkwang','IBM Plex Sans Thai','IBM Plex Sans Thai Looped','Itim','K2D','Kanit','KoHo','Kodchasan','Krub','Maitree','Mali','Mitr','Niramit','Noto Sans Thai','Noto Sans Thai Looped','Noto Serif Thai','Pattaya','Playpen Sans Thai','Pridi','Prompt','Sarabun','Sriracha','Srisakdi','Taviraj','Thasadith','Trirong'];
+var _GPREV_SAMPLE='เตี๋ยวหมูโคล้ง Aa';
+var _gfontSel=null, _gfontPrevLoaded={}, _gfontPrevTried={};
+function _gfontPrevFam(nm){ return '__gpprev_'+nm.replace(/[^A-Za-z0-9]/g,''); }
+function _ab2b64(buf){ var bytes=new Uint8Array(buf),bin='',ch=0x8000,i; for(i=0;i<bytes.length;i+=ch){ bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+ch)); } return btoa(bin); }
+function _gfontMsg(txt,cls){ var m=document.getElementById('gfontMsg'); if(!m) return; m.textContent=txt||''; m.className='gfont-msg'+(cls?' '+cls:''); }
+function _gfontFillPrev(nm){ var sp=document.querySelectorAll('.gfont-prev[data-pv="'+nm+'"]'); for(var i=0;i<sp.length;i++){ sp[i].textContent=_GPREV_SAMPLE; sp[i].style.fontFamily="'"+_gfontPrevFam(nm)+"'"; } }
+async function _gfontPrevLoad(names){
+  var need=[]; names.forEach(function(n){ if(!_gfontPrevLoaded[n] && !_gfontPrevTried[n]) need.push(n); });
+  if(!need.length) return;
+  need.forEach(function(n){ _gfontPrevTried[n]=1; });
+  var q=need.map(function(f){ return 'family='+encodeURIComponent(f).replace(/%20/g,'+'); }).join('&');
+  var css;
+  try{ var r=await fetch('https://fonts.googleapis.com/css2?'+q+'&display=swap'); if(!r.ok) return; css=await r.text(); }
+  catch(e){ need.forEach(function(n){ _gfontPrevTried[n]=0; }); return; }
+  var blocks=css.match(/@font-face\s*\{[\s\S]*?\}/g)||[], byFam={};
+  blocks.forEach(function(bk){
+    var fm=/font-family:\s*'([^']+)'/.exec(bk); if(!fm) return;
+    var um=/url\((https:\S+?\.woff2)\)/.exec(bk); if(!um) return;
+    var ur=/unicode-range:\s*([^;]+);/.exec(bk); var range=ur?ur[1]:'';
+    var fam=fm[1]; if(!byFam[fam]) byFam[fam]={};
+    if(/U\+0E/i.test(range)) byFam[fam].thai=um[1]; else if(!byFam[fam].latin) byFam[fam].latin=um[1];
+  });
+  Object.keys(byFam).forEach(function(fam){
+    var u=byFam[fam].thai||byFam[fam].latin; if(!u) return;
+    try{ var ff=new FontFace(_gfontPrevFam(fam),'url('+u+')'); ff.load().then(function(l){ document.fonts.add(l); _gfontPrevLoaded[fam]=1; _gfontFillPrev(fam); }).catch(function(){}); }catch(e){}
+  });
+}
+function _gfontMkRow(nm){
+  var row=document.createElement('button'); row.type='button'; row.className='gfont-row'; row.setAttribute('data-fam',nm);
+  var a=document.createElement('span'); a.className='gfont-name'; a.textContent=nm;
+  var b=document.createElement('span'); b.className='gfont-prev'; b.setAttribute('data-pv',nm);
+  if(_gfontPrevLoaded[nm]){ b.textContent=_GPREV_SAMPLE; b.style.fontFamily="'"+_gfontPrevFam(nm)+"'"; }
+  row.appendChild(a); row.appendChild(b);
+  row.onclick=function(){ _gfontSelect(nm,row); };
+  return row;
+}
+function _gfontList(){ var c=document.getElementById('gfontList'); if(!c||c.childNodes.length) return; for(var i=0;i<_GTHAI.length;i++){ c.appendChild(_gfontMkRow(_GTHAI[i])); } }
+function _gfontSelect(nm,row){
+  _gfontSel=nm;
+  var rows=document.querySelectorAll('#gfontPop .gfont-row.sel'); for(var i=0;i<rows.length;i++){ rows[i].classList.remove('sel'); }
+  if(row) row.classList.add('sel');
+  var ab=document.getElementById('gfontAddBtn'); if(ab) ab.disabled=false;
+  _gfontMsg('');
+}
+function _gfontClearSel(){
+  _gfontSel=null;
+  var rows=document.querySelectorAll('#gfontPop .gfont-row.sel'); for(var i=0;i<rows.length;i++){ rows[i].classList.remove('sel'); }
+  var ab=document.getElementById('gfontAddBtn'); if(ab) ab.disabled=true;
+}
+function _gfontFuzzy(name,q){ if(q.length<3) return false; var i=0,j=0; while(i<name.length && j<q.length){ if(name.charAt(i)===q.charAt(j)) j++; i++; } return j===q.length; }
+function _gfontSearch(){
+  var inp=document.getElementById('gfontInput'), res=document.getElementById('gfontResults');
+  if(!inp||!res) return;
+  var raw=inp.value.trim(), q=raw.toLowerCase();
+  res.innerHTML=''; _gfontClearSel();
+  if(!q){ res.style.display='none'; _gfontMsg(''); return; }
+  var scored=[];
+  for(var i=0;i<_GTHAI.length;i++){
+    var nm=_GTHAI[i], lo=nm.toLowerCase(), sc=0;
+    if(lo===q) sc=4; else if(lo.indexOf(q)===0) sc=3; else if(lo.indexOf(q)>=0) sc=2; else if(_gfontFuzzy(lo,q)) sc=1;
+    if(sc>0) scored.push([sc,nm]);
+  }
+  scored.sort(function(a,b){ return b[0]-a[0] || (a[1]<b[1]?-1:1); });
+  if(!scored.length){ res.style.display='none'; _gfontMsg(tk('fl.gfontNoMatch',{q:raw}),'warn'); return; }
+  _gfontMsg(''); res.style.display='';
+  var names=[]; scored.forEach(function(p){ res.appendChild(_gfontMkRow(p[1])); names.push(p[1]); });
+  _gfontPrevLoad(names);
+}
+function _gfontOpen(){
+  var p=document.getElementById('gfontPop'); if(!p) return;
+  _gfontList(); var cnt=document.getElementById('gfontCount'); if(cnt) cnt.textContent=_GTHAI.length; p.classList.add('open');
+  var b=document.getElementById('btnAddGFont'); if(b) b.classList.add('on');
+  _gfontMsg(''); _gfontClearSel();
+  var res=document.getElementById('gfontResults'); if(res){ res.innerHTML=''; res.style.display='none'; }
+  var inp=document.getElementById('gfontInput'); if(inp) inp.value='';
+  _gfontPrevLoad(_GTHAI.slice());
+}
+function _gfontClose(){ var p=document.getElementById('gfontPop'); if(!p||!p.classList.contains('open')) return; p.classList.remove('open'); var b=document.getElementById('btnAddGFont'); if(b) b.classList.remove('on'); }
+function _gfontToggle(){ var p=document.getElementById('gfontPop'); if(!p) return; if(p.classList.contains('open')) _gfontClose(); else _gfontOpen(); }
+function _gfontFamExists(fam){ var sel=document.getElementById('typoFont'),i,v,mm; if(!sel) return false; for(i=0;i<sel.options.length;i++){ v=sel.options[i].value||''; mm=/^'([^']*)'/.exec(v); if(mm && mm[1].toLowerCase()===fam.toLowerCase()) return true; } return false; }
+function _gfontUse(fam){ var sel=document.getElementById('typoFont'); if(!sel) return; sel.value="'"+fam+"',sans-serif"; if(typeof typoFontApply==='function') typoFontApply(); }
+function _gfontAddSel(){ if(_gfontSel) _gfontAdd(_gfontSel); }
+async function _gfontAdd(family){
+  family=(family||'').trim(); if(!family) return;
+  if(_gfontFamExists(family)){ _gfontMsg(tk('fl.gfontDup',{name:family}),'warn'); _gfontUse(family); return; }
+  _gfontMsg(tk('fl.gfontLoading',{name:family}),'load');
+  var cssUrl='https://fonts.googleapis.com/css2?family='+encodeURIComponent(family).replace(/%20/g,'+')+':wght@400;700&display=swap';
+  var cssText;
+  try{
+    var r=await fetch(cssUrl);
+    if(!r.ok){ _gfontMsg(tk('fl.gfontNotFound',{name:family}),'err'); return; }
+    cssText=await r.text();
+  }catch(e){ _gfontMsg(tk('fl.gfontOffline',{name:family}),'err'); return; }
+  var blocks=cssText.match(/@font-face\s*\{[\s\S]*?\}/g)||[];
+  var keep=[],seen={},realFam=family;
+  for(var i=0;i<blocks.length;i++){
+    var bk=blocks[i];
+    var ur=/unicode-range:\s*([^;]+);/.exec(bk); var range=ur?ur[1]:'';
+    var isThai=/U\+0E/i.test(range); var isLatin=/U\+0000/i.test(range);
+    if(range && !isThai && !isLatin) continue;
+    var um=/url\((https:\S+?\.woff2)\)/.exec(bk); if(!um) continue;
+    var fm=/font-family:\s*'([^']+)'/.exec(bk); if(fm) realFam=fm[1];
+    var wm=/font-weight:\s*(\d+)/.exec(bk);
+    var key=(wm?wm[1]:'400')+'|'+um[1];
+    if(seen[key]) continue; seen[key]=1;
+    keep.push({block:bk, url:um[1]});
+  }
+  if(!keep.length){ _gfontMsg(tk('fl.gfontNotFound',{name:family}),'err'); return; }
+  var out=[];
+  try{
+    for(var j=0;j<keep.length;j++){
+      var rr=await fetch(keep[j].url); if(!rr.ok) throw new Error('woff2 '+rr.status);
+      var buf=await rr.arrayBuffer(); var b64=_ab2b64(buf);
+      out.push(keep[j].block.replace(/url\(https:\S+?\)/,"url(data:font/woff2;base64,"+b64+")"));
+    }
+  }catch(e){ _gfontMsg(tk('fl.gfontOffline',{name:family}),'err'); return; }
+  var st=document.getElementById('userFonts'); if(!st){ _gfontMsg(tk('fl.gfontAddErr',{name:family}),'err'); return; }
+  st.appendChild(document.createTextNode('\n'+out.join('\n')+'\n'));
+  _fontAddOpt(realFam);
+  try{ if(document.fonts&&document.fonts.load){ document.fonts.load("16px '"+realFam+"'"); document.fonts.load("700 16px '"+realFam+"'"); } }catch(e){}
+  if(typeof markDirty==='function') markDirty();
+  _gfontUse(realFam);
+  _gfontClearSel();
+  _gfontMsg(tk('fl.gfontAdded',{name:realFam}),'ok');
+  flashStatus('info',tk('fl.gfontAdded',{name:realFam}));
+}
+document.addEventListener('mousedown',function(e){ var p=document.getElementById('gfontPick'),pop=document.getElementById('gfontPop'); if(p && pop && pop.classList.contains('open') && !p.contains(e.target)) _gfontClose(); });
+document.addEventListener('keydown',function(e){ var p=document.getElementById('gfontPop'); if(e.key==='Escape' && p && p.classList.contains('open')){ var a=document.activeElement; if(a&&a.id==='gfontInput'){ a.value=''; return; } _gfontClose(); } });
 function typoLineApply(){
   /* แบบเส้นจุด (lint ข้อ 40): เปลี่ยนเฉพาะแบบเส้น — สีเส้นเปลี่ยนที่ปุ่มสี (applyColorRange) · เดิมไม่มีข้อความผล */
   if(!_typoEl||!(_typoType&&_typoType.line)) return;
@@ -3143,7 +3277,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
   document.getElementById('typobar').addEventListener('mousedown', function(e){
     // For focus-taking controls (HEX text input, color picker, font select): SNAPSHOT the
     // still-live selection NOW, before the browser moves focus and kills the highlight.
-    if(e.target.id==='typoColor' || e.target.id==='typoHex' || e.target.id==='typoOlHex' || e.target.id==='typoCpDlgHex' || e.target.id==='typoSize' || e.target.id==='typoFont' || e.target.id==='typoLineStyle' || e.target.tagName==='OPTION'){ saveSelection(); return; }  /* typoLineStyle (select แบบเส้น) — ลืมใส่ → คลิกแล้ว dropdown ไม่เปิด (ผู้ใช้ 10 ต.ค. 2026 · lint ข้อ 35) */  /* ช่องกรอกทุกช่องในแถบ (lint ข้อ 35) — ไม่อยู่ในนี้ = คลิกแล้ว preventDefault กันไม่ให้พิมพ์ได้ */
+    if(e.target.id==='typoColor' || e.target.id==='typoHex' || e.target.id==='typoOlHex' || e.target.id==='typoCpDlgHex' || e.target.id==='typoSize' || e.target.id==='typoFont' || e.target.id==='typoLineStyle' || e.target.id==='gfontInput' || e.target.tagName==='OPTION'){ saveSelection(); return; }  /* typoLineStyle (select แบบเส้น) — ลืมใส่ → คลิกแล้ว dropdown ไม่เปิด (ผู้ใช้ 10 ต.ค. 2026 · lint ข้อ 35) */  /* ช่องกรอกทุกช่องในแถบ (lint ข้อ 35) — ไม่อยู่ในนี้ = คลิกแล้ว preventDefault กันไม่ให้พิมพ์ได้ */
     e.preventDefault();
   });
 

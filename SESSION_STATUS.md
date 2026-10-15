@@ -8,7 +8,120 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
-## 14 ต.ค. 2026 (13:09) — ✅ เสร็จ Phase 0+1: ฐานทะเบียนฟอนต์ + อัปโหลด .ttf ฝังเอง (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit)
+## 15 ต.ค. 2026 (12:50) — ✅ เสร็จ: โน้ต OFL มีลิงก์ไปหน้า SIL OFL (ผู้ใช้ · รวม Phase 3)
+- เปลี่ยน '— ใช้/ฝัง/แจกฟรีได้' → '(SIL Open Font License ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี)' · 'SIL Open Font License' เป็นลิงก์
+- ข้อจำกัด: โน้ตเดิมใช้ textContent (data-i18n) ใส่ `<a>` ไม่ได้ → รื้อเป็น 3 ชิ้น: span oflPre + a.oflink oflName + span oflPost · ลบคีย์ gfont.note ทิ้ง (ไม่มี caller)
+- ลิงก์ href=openfontlicense.org/ofl-fonts/ target=_blank rel=noopener · สี #0b5fb0 น้ำเงิน (ไม่เขียว กฎ #1) · editor UI เท่านั้น (ไม่พิมพ์)
+- lint #66: tuple gfont.note→oflPre/oflName/oflPost + เพิ่มเช็กลิงก์ (มี + target=_blank + rel=noopener) · ✅ menu_ofllink.html sha 393bfe896d36c125 · 6,912,904 bytes · V0 ผ่าน 2.7s (0/0) · variant V1-V5 FAIL ถูก
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: OFL note links to SIL Open Font License page (new tab, safe); split note into i18n pieces; lint #66"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบ/ยังไม่ commit
+
+## 15 ต.ค. 2026 (12:40) — ✅ เสร็จ: ลดข้อความแจ้งฟอนต์ซ้ำให้สั้น (ผู้ใช้ · รวม Phase 3)
+- ผู้ใช้: 'เลือกให้แล้ว' ทำให้งง — 'ฟอนต์ "X" มีอยู่แล้ว' พอ
+- fl.gfontDup + fl.fontDup (th+en) → 'ฟอนต์ "{name}" มีอยู่แล้ว' / 'Font "{name}" already exists' · ตัด 'เลือกให้แล้ว'/'ไม่เพิ่มซ้ำ'/'selected it for you' ออก
+- behavior ไม่เปลี่ยน: ตัวฟอนต์ยังถูกเลือกให้เงียบๆ (_gfontUse) · แค่ไม่ประกาศ
+- ไม่แก้ lint (เปลี่ยนแค่ค่าข้อความคีย์เดิม) · ✅ menu_dupmsg.html sha e8f02e5c49f96ac0 · 6,912,439 bytes · V0 ผ่าน 2.7s (0/0)
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html SESSION_STATUS.md && git commit -m "fonts Phase 3: simplify duplicate-font message to 'already exists' (drop confusing 'selected it for you')"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบ/ยังไม่ commit
+
+## 15 ต.ค. 2026 (12:30) — ✅ เสร็จ: กลุ่ม 'ฟอนต์ในไฟล์' + โน้ตฝังไฟล์ + upload เตือนซ้ำ (ผู้ใช้ · รวม Phase 3)
+- (1) optgroup `typoFontBase` 'ฟอนต์ในไฟล์' ครอบ 3 ตัวมาตรฐาน (Prompt/Sarabun/Noto Sans Thai) · i18n font.baseGroup th+en
+- (2) โน้ต `.fontembed-note` (font.embedNote) flex-basis 100pct ท้าย pane home → ตกบรรทัดใต้แถบ · 'ฟอนต์ทุกตัว...ฝังอยู่ในไฟล์'
+- (3) upload เตือนซ้ำ: `_fontUploadFile` เช็ก `_gfontFamExists` → ซ้ำ=fl.fontDup+เลือกตัวเดิม ไม่เพิ่ม (ตรงกับ Google) · ลบ `_fontFamFromName` (เปลี่ยนชื่ออัตโนมัติ) → `_fontBaseName` (sanitize ล้วน ไม่มี dead code)
+- lint #67 +5 เช็ก · ✅ menu_filefont.html sha cbb7cbf39dd0c054 · 6,912,616 bytes · V0 ผ่าน 2.6s (0/0) · variant V1-V5 FAIL ถูก
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: group base fonts as 'Fonts in file' optgroup + embed note under toolbar + upload duplicate-reject (match Google); lint #67"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบ/ยังไม่ commit
+
+## 15 ต.ค. 2026 (12:15) — ✅ เสร็จ: ขยาย popover เพิ่มฟอนต์ Google ให้กว้างขึ้น (ผู้ใช้)
+- `.gfont-pop` width 320px → 440px · `.gfont-prev` max-width 155px → 220px (ชื่อยาวเช่น 'IBM Plex Sans Thai Looped' + ตัวอย่างแสดงครบแถวเดียว)
+- CSS 2 จุด · ไม่กระทบ logic/lint · delta 0 bytes (แค่เปลี่ยนตัวเลข px)
+- ✅ ผล: menu_wide.html sha 56d816004ba550a0 · 6,911,614 bytes · lint V0 ผ่าน 2.7s (0/0)
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html SESSION_STATUS.md && git commit -m "fonts Phase 3: widen Google font picker popover 320->440px, preview 155->220px"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบ/ยังไม่ commit (รวม Phase 3)
+
+## 15 ต.ค. 2026 (12:05) — ✅ เสร็จ: ปรับข้อความ label ช่องค้นหา + โน้ต OFL ให้เข้าใจง่าย (ผู้ใช้)
+- gfont.inlbl: 'ค้นหาฟอนต์ไทยทั้งหมด' → 'ค้นหาฟอนต์จากรายการด้านบน' (สื่อ scope ชัด — ค้นเฉพาะในลิสต์) · EN 'Search the list above'
+- gfont.note: เลิกสำนวน 'เดินทางไปกับไฟล์' → 'ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม' · EN 'the font is saved inside the file, so it looks the same on any computer'
+- แก้ markup note ที่ตกค้าง 'ส่วนใหญ่เป็นฟอนต์ OFL' (ไม่ตรง i18n 'ทุกฟอนต์') → sync ให้ตรง
+- แก้ 6 จุด (markup 2 + i18n 4 th/en) · ไม่แก้ lint (แค่เปลี่ยนข้อความของคีย์เดิม)
+- ✅ ผล: menu_lbl.html sha b37693cd1cdbecf6 · 6,911,614 bytes · lint V0 ผ่าน 2.6s (0/0)
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html SESSION_STATUS.md && git commit -m "fonts Phase 3: clearer search label (scope = list above) + plainer OFL/embed note; sync note markup"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบ/ยังไม่ commit (รวม Phase 3)
+
+## 15 ต.ค. 2026 (11:45) — ✅ เสร็จ: ลิสต์ Google Fonts โชว์ครบทุกตัว (33) + โน้ต OFL เดียว
+- เปลี่ยนหัวลิสต์ 'ฟอนต์แนะนำ (14)' → 'ฟอนต์ที่ใช้ได้ทั้งหมด (XX)' · `_gfontList` สร้างจาก `_GTHAI` ทั้งชุด (โชว์ครบ 33) · ย้าย `#gfontCount` ขึ้นหัวลิสต์ · ลบ `_GFONTS` (14 คัดเลือก) ทิ้ง
+- โน้ต OFL เดียว (`gfont.note`): 'ทุกฟอนต์เป็น OFL — ใช้/ฝัง/แจกฟรีได้' — ไม่ต่อท้าย (OFL) ทุกแถว (ตรวจ repo google/fonts: 33 ตัวเป็น OFL หมด ไม่มีใน apache/ufl)
+- ลบ srchnote (markup+i18n+CSS) — count ย้ายขึ้นหัวลิสต์แล้ว ไม่ต้องมีโน้ตซ้ำ
+- lint #66 +เช็ก `_gfontList` ต้องใช้ `_GTHAI` · tuple srchnote→browsehint · ข้อความ gfontCount แก้→'หัวลิสต์'
+- ✅ ผล: menu_allfonts.html sha 8d1460c65615abba · 6,911,361 bytes · lint V0 ผ่าน 2.6s (0/0) · variant V1-V4 FAIL ถูก (subset/no-count/hardcode/browsehint)
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: Google Fonts picker — full list of all Thai Google fonts (count XX), single OFL note, select-then-add, live previews, input cursor fix; lint #66"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit
+
+## 15 ต.ค. 2026 (11:23) — ✅ เสร็จ: เพิ่ม note จำนวนฟอนต์ไทยใต้ช่องค้นหา (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit รวม Phase 3)
+- ผู้ใช้ขอ (เห็นด้วย ทำทันที): เพิ่ม note บอกว่าค้นหาได้เฉพาะฟอนต์ไทยบน Google (ตอบคำถาม "ทำไม roboto ไม่เจอ")
+- ตัดสินใจ: ตัวเลขดึงจาก _GTHAI.length อัตโนมัติ (ไม่พิมพ์ 33 ตายตัว — กันเลขโกหกถ้ารายการเปลี่ยน · หลักปุ่มไม่หลอก)
+- baseline: Phase3 บนดิสก์ sha 4f7f3a18fcac5ab2 (6,911,154 bytes, LF) ยังไม่ commit (git ที่ e112736)
+- แก้: (1) markup +<div.gfont-srchnote> ใต้ gfont-inrow มี <span id=gfontCount>33</span> + label (2) i18n gfont.srchnote th+en (3) _gfontOpen เติม gfontCount.textContent=_GTHAI.length (4) CSS .gfont-srchnote (5) lint #66 +เช็ก gfontCount/_GTHAI.length/i18n
+- next: build → lint V0+variants → copy back → git commit Phase 3 รวมทั้งหมด
+- ✅ ผล: menu_noteout.html sha f05f10e8a2e67a36 · 6,911,748 bytes · lint V0 ผ่าน 2.6s (0/0) · variant V1-V3 FAIL ถูกต้อง (no-gfontCount/no-_GTHAI.length-fill/en-srchnote)
+- แก้: markup +.gfont-srchnote (#gfontCount เลข + label) ใต้ gfont-inrow · i18n gfont.srchnote th+en · _gfontOpen เติม gfontCount=_GTHAI.length · CSS .gfont-srchnote · lint #66 +เช็ก 3 จุด · UI_STANDARD 8.2.3
+- git (commit Phase 3 รวมทั้งหมด): cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: Google Fonts picker — searchable list of 33 Thai Google fonts, select-then-add, live FontFace previews, neutral sample word, count note; fix input cursor; lint #66"
+- ⚠ กด F5 ก่อนทดสอบ · ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit
+
+## 15 ต.ค. 2026 (10:00) — ✅ เสร็จ: Google picker ยกเครื่อง (คำตัวอย่าง+Search+2รายการ+select-then-add) — คำตัวอย่างใหม่ + Search + 2 รายการ + select-then-add (พับใน commit Phase 3 ที่ยังไม่ commit)
+- ผู้ใช้แจ้ง 5 ข้อ (15 ต.ค. 9:40): (1) เปลี่ยนคำตัวอย่าง "อีสาน" (คำที่คนเหยียด) เป็นคำกลาง (2) ช่องค้นหาพิมพ์ได้แล้ว (3) ทำปุ่ม Search (4) แสดงผลค้นหาตรง+ใกล้เคียง ชื่อซ้าย/ตัวอย่างขวา คลิกเลือกได้ (5) ปุ่มเพิ่ม enabled เฉพาะตอนเลือกฟอนต์ (ทั้งรายการบน+ผลค้นหาล่าง) ไม่เลือก=disabled
+- ผู้ใช้เลือกคำ: "เตี๋ยวหมูโคล้ง" (เป็นกลาง · วรรณยุกต์ ตี๋/ต้/ล้ + สระหน้า โ ครบ) → _GPREV_SAMPLE='เตี๋ยวหมูโคล้ง Aa' (วัดแล้ว 116px พอดีกล่อง 155px)
+- โมเดลใหม่ = select-then-add แบบ Word/Google Fonts/VS Code: คลิกแถว=เลือก (ไฮไลท์) · ปุ่มเพิ่ม disabled จนกว่าเลือก · เลือกข้ามรายการ=ยกเลิกอีกรายการ (เลือกได้ทีละตัว)
+- 2 รายการตามที่ผู้ใช้ระบุ: บน=#gfontList (14 ตัวคัดสรร "ฟอนต์แนะนำ") · ล่าง=#gfontResults (ผลค้นหา ซ่อนจนกว่าค้นหา)
+- ค้นหาจาก _GTHAI = ฟอนต์ไทยทั้งหมดบน Google 33 ตัว (ยืนยันจาก gwfh /api/fonts subset thai=true · 34 ตัว ตัด "Google Sans" แบรนด์ฟอนต์ออก) bake ในไฟล์ · ค้นแบบ offline ได้ (กรองชื่อ) · โหลดจริงตอนกดเพิ่ม (ต่อเน็ต)
+- _GTHAI 33: Anuphan Athiti BaiJamjuree ChakraPetch Charm Charmonman Chonburi Fahkwang IBMPlexSansThai IBMPlexSansThaiLooped Itim K2D Kanit KoHo Kodchasan Krub Maitree Mali Mitr Niramit NotoSansThai NotoSansThaiLooped NotoSerifThai Pattaya PlaypenSansThai Pridi Prompt Sarabun Sriracha Srisakdi Taviraj Thasadith Trirong
+- search scoring: exact=4 prefix=3 substring=2 fuzzy(subsequence,len>=3)=1 · ไม่พบ=fl.gfontNoMatch · ตัวอย่างทุกแถว FontFace (ของบนจอ) โหลด batch
+- baseline: Phase3+fix บนดิสก์ sha 29e63d37484ed433 (6,906,703 bytes, LF) — ยังไม่ commit (git ที่ e112736)
+- แก้: swap gfont JS block (gfont_v3.js) · markup +gfont-sub(browselbl)+gfontResults+gfontSearchBtn, gfontAddBtn ย้ายลงล่าง full-width disabled · CSS +gfont-sub/.gfont-row.sel(ไฮไลท์น้ำเงิน ไม่ใช้เขียว)/.gfont-addbtn+:disabled · whitelist mousedown มี gfontInput แล้ว · _NOEDIT21 +gfontSearchBtn · buildEditorHtml เคลียร์ gfontResults+input+disable addBtn · i18n repurpose gfont.inlbl(ค้นหา)+gfont.add(เพิ่มฟอนต์ที่เลือก) +ใหม่ btn.gfontSearch/gfont.browselbl/fl.gfontNoMatch · lint #66 ขยาย
+- next: build → lint V0+variants → UI_STANDARD 8.2.2 + SESSION_STATUS → file_copy กลับ → git commit Phase 3 รวมทั้งหมด (ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit)
+- ✅ ผล: menu_srchout.html sha 4f7f3a18fcac5ab2 · 6,911,154 bytes (6.591MB) · lint V0 ผ่าน 2.6s (0/0) · variant V1-V7 FAIL ถูกต้อง (addBtn-not-disabled/no-gfontResults/no-_gfontSearch/select-no-enable/searchBtn-bad-onclick/en-key/cursor-whitelist)
+- คำตัวอย่าง: อีสาน Aa → เตี๋ยวหมูโคล้ง Aa (116px พอดี) · ชื่อร้าน 'โอ อีสาน แจ่วฮ้อน' ในเนื้อเมนูคงไว้ (ชื่อจริงร้าน)
+- _GTHAI 33 ตัว bake · search scoring exact/prefix/substring/fuzzy · select-then-add · addBtn disabled→enabled on select · preview FontFace (บนจอ)
+- git (commit Phase 3 รวมทั้งหมด): cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: Google Fonts picker — searchable list of all 33 Thai Google fonts, select-then-add (Add enabled only on selection), live FontFace previews, neutral sample word; fix input cursor; lint #66"
+- ⚠ กด F5 ก่อนทดสอบ · กด ﹢Google: เห็นรายการแนะนำ ชื่อซ้าย/ตัวอย่างขวา · พิมพ์ในช่อง+กดค้นหา/Enter = ผลค้นหาด้านล่าง · คลิกแถว=ไฮไลท์ · ปุ่มเพิ่มสว่างเฉพาะตอนเลือก · กดเพิ่ม=ฟอนต์เข้า dropdown
+- คิวค้าง: ปุ่ม emoji ชุดคัดสรร · GitHub publish + license + credit
+
+## 15 ต.ค. 2026 (09:01) — ✅ เสร็จ: แก้ Google font picker — บั๊ก cursor + chips→list+ตัวอย่าง (lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit รวม Phase 3)
+- ผู้ใช้แจ้ง 2 เรื่อง (15 ต.ค. เช้า): (1) ช่องพิมพ์ชื่อฟอนต์ไม่รับ cursor พิมพ์ไม่ได้ (2) อยากให้รายการฟอนต์เป็น list ซ้าย=ชื่อ ขวา=ตัวอย่างฟอนต์จริง + scroll · เลือกจากรายการได้
+- ผู้ใช้เลือก (decision): A — list + ตัวอย่างจริง
+- ต้นเหตุบั๊ก cursor (ยืนยันจากโค้ด): ตัวดัก mousedown #typobar เรียก e.preventDefault() กับทุก element นอก whitelist (typoColor/typoHex/typoOlHex/typoCpDlgHex/typoSize/typoFont/typoLineStyle/OPTION) → gfontInput ไม่อยู่ใน whitelist → focus ถูกบล็อก = พิมพ์ไม่ได้ (บั๊กประเภทเดียวกับ dropdown เส้นจุด lint #35)
+- baseline: Phase 3 บนดิสก์ (sha d9dc394954582387, 6,904,614 bytes, LF) — ยังไม่ commit (git ที่ e112736)
+- แก้: (1) เพิ่ม gfontInput เข้า whitelist mousedown (saveSelection();return; เหมือน typoHex) (2) เปลี่ยน <div.gfont-chips#gfontChips> เป็น <div.gfont-list#gfontList> (3) _gfontChips→_gfontList (สร้าง row: span.gfont-name ซ้าย + span.gfont-prev ขวา ว่างไว้ก่อน) + _gfontPrevLoad (FontFace API โหลดตัวอย่าง 14 ฟอนต์ตอนเปิด · fetch css2 รวม 14 family ครั้งเดียว · แยก woff2 ต่อ family เลือก thai>latin · new FontFace(__gpprev_X) → document.fonts.add → เติม textContent+fontFamily) + _gfontPrevFam/_gfontRows/_gfontPrevDone (4) _gfontOpen เรียก _gfontList+_gfontPrevLoad (5) CSS chips→list (max-height scroll) (6) buildEditorHtml เคลียร์ #gfontList ตอนบันทึก
+- เหตุผล FontFace API ไม่ใช่ <link>/<style>: FontFace ที่ add ผ่าน JS ไม่ถูก serialize ลง outerHTML/cloneNode → ตัวอย่างไม่รั่วลงไฟล์ที่บันทึก (ของบนจอล้วน) · ตัวอย่างว่างถ้าโหลดไม่ได้/ออฟไลน์ = ไม่โชว์ของปลอม (ซื่อสัตย์)
+- lint #66 เพิ่มเช็ก: gfontInput ใน whitelist mousedown · #gfontList มี · _gfontList/_gfontPrevLoad มี · FontFace preview (ของบนจอ)
+- next: build menu_fixout.html → lint V0+variants → UI_STANDARD 8.2 (ปรับส่วน list) + SESSION_STATUS → file_copy กลับ → git commit Phase 3 รวมแก้นี้ (ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit)
+- ✅ ผล: menu_fixout.html sha 29e63d37484ed433 · 6,906,703 bytes (6.587MB) · lint V0 ผ่าน 2.6s (0/0) · variant V1-V5 FAIL ถูกต้อง (cursor-whitelist/no-gfontList/no-_gfontPrevLoad/no-FontFace/cdn-link)
+- แก้ 6 จุด: (1) whitelist mousedown +gfontInput (2) markup gfont-chips→gfont-list (3) swap gfont JS block (เพิ่ม _gfontList/_gfontPrevLoad/_gfontPrevFam/_gfontRows/_gfontPrevDone · _gfontOpen เรียก list+prevload) (4) CSS chips→list (max-height:220 scroll · .gfont-row/.gfont-name/.gfont-prev) + popover 290→320px (5) buildEditorHtml เคลียร์ #gfontList (6) lint #66 +เช็ก cursor/list/FontFace
+- preview: FontFace API (ของบนจอ ไม่ serialize) · เริ่มว่าง เติมเมื่อโหลดเสร็จ · ออฟไลน์=ชื่อครบ กดได้ ตัวอย่างว่าง
+- git (commit Phase 3 รวมแก้นี้): cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: Google Fonts picker (fetch woff2, embed base64, travels with file; all browsers) — list view w/ live previews (FontFace, screen-only) + type-name input; fix typobar mousedown blocking input cursor; lint #66 + #64 refine"
+- ⚠ กด F5 ก่อนทดสอบ · กดปุ่ม ﹢Google → เห็น list ชื่อซ้าย/ตัวอย่างขวา เลื่อนได้ · พิมพ์ชื่อในช่องได้แล้ว · คลิกแถว/กดเพิ่ม = ฟอนต์เข้า dropdown · ตัดเน็ต=ตัวอย่างว่าง+กดขึ้นต้องต่อเน็ต
+- คิวค้าง: ปุ่ม emoji ชุดคัดสรร · GitHub publish + license + credit
+
+## 14 ต.ค. 2026 (22:40) — ✅ เสร็จ Phase 3: เลือกฟอนต์จาก Google (แบบ B ดึง woff2 มาฝัง · ทุกเบราว์เซอร์ · เดินทางไปกับไฟล์) · lint ผ่าน 0/0 · รอทดสอบเบราว์เซอร์ · รอ commit
+- ตัดสินใจ (user): ข้าม Phase 2 (ฟอนต์ในเครื่อง queryLocalFonts — Chromium-only) · ทำ Google แทน · แบบ B (ดึง woff2 ฝัง · ทุกเบราว์เซอร์ · เดินทางไปกับไฟล์) ไม่ใช่แบบ A (link online)
+- CORS ทดสอบผ่าน: font_cors_test.html เปิดจาก file:// → fetch CSS+woff2 จาก Google = HTTP 200 (ไม่ถูก CORS บล็อก) · user ยืนยันแถบเขียว 14 ต.ค. 22:29 · ลบไฟล์ทดสอบแล้ว
+- baseline: commit e112736 (sha b601ce2c81cde5d0, 6,894,394 bytes, LF)
+- ยืนยันฟอนต์ไทยคัดสรรมีจริงบน Google (gwfh API, subset thai=true): Chakra Petch/Charm/Charmonman/Fahkwang/IBM Plex Sans Thai/K2D/Kodchasan/Krub/Mali/Niramit/Pridi/Sriracha/Thasadith/Athiti/Maitree/Trirong/Chonburi/Itim + Kanit/Mitr/Bai Jamjuree (ตัวที่ตัดจากชุดฝัง — ดึงผ่าน Google ได้)
+- chips คัดสรร 14 ตัว: Kanit, Mitr, Bai Jamjuree, Chakra Petch, K2D, Krub, Mali, Niramit, Pridi, Charm, Charmonman, Sriracha, Itim, Chonburi
+- โครงที่เพิ่ม: ปุ่ม #btnAddGFont "﹢ Google" + popover #gfontPop (chips + ช่องพิมพ์ชื่อ + ข้อความสถานะ inline + note) · ฟังก์ชัน _gfontToggle/_gfontOpen/_gfontClose/_gfontChips/_gfontMsg/_gfontPickInput/_gfontFamExists/_gfontUse/_gfontAdd/_ab2b64 + helper _fontAddOpt (refactor _fontUploadFile ให้ใช้ร่วม) · fetch css2 wght@400;700 → กรอง @font-face เฉพาะ thai+latin (ตาม unicode-range) → fetch woff2 แต่ละตัว → _ab2b64 → rewrite url() เป็น data: → ฝังใน #userFonts (ท่อ Phase 1) → เพิ่ม option → markDirty → เลือกใช้ทันที
+- offline/error: fetch ล้ม=fl.gfontOffline · ไม่พบฟอนต์(ไม่ ok/ไม่มี block)=fl.gfontNotFound · ซ้ำ=fl.gfontDup (เลือกตัวเดิมให้) · โหลด=fl.gfontLoading · สำเร็จ=fl.gfontAdded
+- ⚠ แก้ lint #64: ห้าม googleapis/gstatic เฉพาะ "นอก <script>" (strip script ก่อนเช็ก) — เพราะ fetch รันไทม์ใน JS ต้องมี URL googleapis (ไม่ใช่ <link>/@import dependency) · ยังห้าม <link>/@import CDN เหมือนเดิม
+- lint ใหม่ #66: ปุ่ม #btnAddGFont + _gfontToggle · ฟังก์ชัน _gfontAdd/_gfontOpen/_gfontClose/_ab2b64/_fontAddOpt · _gfontAdd ต้อง fetch + data: + userFonts + markDirty + fl.gfontOffline + fl.gfontNotFound · buildEditorHtml strip #gfontPop open · i18n ครบ th+en
+- next: build menu_g3out.html → lint V0+variants → UI_STANDARD 8.2 + SESSION_STATUS → file_copy กลับ → git commit (ยังไม่ทดสอบเบราว์เซอร์/ยังไม่ commit)
+- ✅ ผล: menu_g3out.html sha d9dc394954582387 · 6,904,614 bytes (6.585MB) · lint V0 ผ่าน 2.8s (0/0) · variant V1-V7 FAIL ถูกต้อง (cdn-link/no-toggle/no-markDirty/no-offline-handler/no-userFonts-embed/en-key/no-gfontPop-strip)
+- โครงที่เพิ่ม: ปุ่ม #btnAddGFont + popover #gfontPop (chips 14 + ช่องพิมพ์ชื่อ label .gfont-inlbl ไม่ใช้ placeholder + #gfontMsg + note) · ฟังก์ชัน _gfontToggle/_gfontOpen/_gfontClose/_gfontChips/_gfontMsg/_gfontPickInput/_gfontFamExists/_gfontUse/_gfontAdd/_ab2b64 + helper _fontAddOpt (refactor _fontUploadFile ใช้ร่วม) · CSS .gfont-* · i18n 12 key th+en
+- lint: ปรับ #64 (ห้าม googleapis/gstatic นอก <script> + ห้าม <link>/@import) · เพิ่ม #66 · ใส่ btnAddGFont+gfontAddBtn ใน _NOEDIT21 · เพิ่ม gfontInput ใน _FILTERED16 (ฟรีเท็กซ์ชื่อฟอนต์) · UI_STANDARD เพิ่ม 8.2
+- CORS: ยืนยันแล้ว fetch file://→Google = 200 ทุกเบราว์เซอร์ (font_cors_test.html ลบแล้ว)
+- git: cd C:\OE && git add OEIsanHotpotMenuEditor.html lint_oe.py UI_STANDARD.md SESSION_STATUS.md && git commit -m "fonts Phase 3: add Google Fonts picker (fetch woff2, embed base64, travels with file; all browsers) + curated Thai chips; lint #66 + #64 refine"
+- ⚠ กด F5 ก่อนทดสอบ · กดปุ่ม ﹢Google → เลือก chip หรือพิมพ์ชื่อ (ต่อเน็ต) → ฟอนต์โผล่ใน dropdown ใช้ได้ · ลองตัดเน็ตแล้วกด = ขึ้น 'ต้องต่อเน็ต' (ปุ่มไม่หลอก) · บันทึก Editor เปิดใหม่ = ฟอนต์ยังอยู่
+- คิวค้าง: ปุ่ม emoji ชุดคัดสรร · GitHub publish + license + credit
+
+## 14 ต.ค. 2026 (13:09) — ✅ เสร็จ+COMMITTED e112736 (14 ต.ค. 22:34): Phase 0+1 ฐานทะเบียนฟอนต์ + อัปโหลด .ttf ฝังเอง (lint ผ่าน 0/0 · user ยืนยัน Kanit-Black อัปโหลดโผล่ใน dropdown ใช้ได้)
 - ตัดสินใจ (user, 14 ต.ค.): ทำครบ 3 แหล่งฟอนต์ (อัปโหลดเอง + ฟอนต์ในเครื่อง Windows + online Google) · agent แบ่ง 4 phase, ทำทีละ commit · เริ่ม Phase 0+1 ก่อน
 - Phase 0 (ฐาน): เพิ่ม <style id="userFonts"> ใน <head> ว่างๆ (ฟอนต์อัปโหลดไปอยู่ที่นี่ · เดินทางไปกับไฟล์ผ่าน cloneNode ทั้ง buildMenuHtml/buildEditorHtml ที่ยืนยันแล้วว่า clone documentElement) + <optgroup id="typoFontUser"> ใน #typoFont
 - Phase 1 (อัปโหลด): ปุ่ม btn.addFont "﹢ ฟอนต์" ในกลุ่ม fontgrp + <input type=file id=fontInput accept .ttf/.otf/.woff/.woff2> ซ่อน · fontUploadPick()+_fontUploadFile(f): validate ชนิด → อ่าน base64 → ฝัง @font-face ใน #userFonts → เพิ่ม <option> ใน optgroup → document.fonts.load → apply กับ selection → markDirty + flashStatus

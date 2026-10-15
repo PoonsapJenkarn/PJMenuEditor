@@ -200,7 +200,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num'}  # ช่องที่มีตัวกรองแล้ว — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -285,6 +285,9 @@ def main():
         'typoCpDlgEye': 'ดูดสีจากหน้าจอใส่หน้าต่างสี (ยังไม่ทาจนกว่าจะกดตกลง)',
         'typoOlCaret': 'เปิด/ปิดรายการความหนาเส้นขอบ (เลือกความหนา = typoOutlineSetWidth ซึ่งมี markDirty)',
         'btnAddFont': 'เปิด dialog เลือกไฟล์ฟอนต์ — markDirty อยู่ใน _fontUploadFile ตอนไฟล์โหลดเสร็จ (async · lint #65 บังคับ markDirty ในนั้น)',
+        'btnAddGFont': 'เปิด popover เลือกฟอนต์ Google (toggle) — ไม่ได้แก้เมนูเอง',
+        'gfontSearchBtn': 'ค้นหาฟอนต์ Google ในรายการ — ไม่แก้เมนู (search เฉยๆ)',
+        'gfontAddBtn': 'สั่งเพิ่มฟอนต์ Google — markDirty อยู่ใน _gfontAdd ตอน fetch เสร็จ (async · lint #66 บังคับ markDirty ในนั้น)',
     }
     _js21 = '\n'.join(re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', txt, re.I))
     def _blk21(src, k):
@@ -1334,9 +1337,13 @@ def main():
     # ---- 64) ฟอนต์ offline: ฝัง @font-face ครบ 3 · ห้ามพึ่ง Google CDN · dropdown เหลือ 3 (ผู้ใช้ 13 ต.ค. 2026) ----
     #   ฝัง Prompt/Sarabun/Noto Sans Thai เป็น base64 TTF ใน @font-face (offline จริง) · ตัด Kanit/Mitr/Bai Jamjuree ออกจาก dropdown
     #   base64 ไม่มีอักขระ . หรือ ' จึงไม่ชน false positive กับ fonts.gstatic.com / 'Kanit' ฯลฯ
+    # ห้าม CDN เฉพาะ "นอก <script>" — fetch รันไทม์ใน JS (Phase 3 เลือกฟอนต์ Google) มี URL googleapis ได้ แต่ <link>/@import ห้าม
+    _nojs64=re.sub(r'<script[\s\S]*?</script>','',txt)
     for _cdn64 in ("fonts.googleapis.com","fonts.gstatic.com"):
-        if _cdn64 in txt:
-            errors.append("พบ "+_cdn64+" — ฟอนต์ต้องฝัง offline ห้ามพึ่ง Google CDN (ดู UI_STANDARD.md ข้อ 8)")
+        if _cdn64 in _nojs64:
+            errors.append("พบ "+_cdn64+" นอก <script> — ฟอนต์ base ต้องฝัง offline ห้ามพึ่ง Google CDN ผ่าน <link>/@import (ดู UI_STANDARD.md ข้อ 8)")
+    if re.search(r'<link[^>]*fonts\.(?:googleapis|gstatic)', txt) or re.search(r'@import[^;]*fonts\.(?:googleapis|gstatic)', txt):
+        errors.append("พบ <link>/@import ไป Google Fonts — ห้ามพึ่ง CDN (ฟอนต์ base ต้องฝัง · ฟอนต์ Google ที่เลือกเพิ่มใช้ fetch รันไทม์เท่านั้น) (ดู UI_STANDARD.md ข้อ 8)")
     for _ff64 in ("'Prompt'","'Sarabun'","'Noto Sans Thai'"):
         if ("@font-face{font-family:"+_ff64) not in txt:
             errors.append("ขาด @font-face ฝังฟอนต์ "+_ff64+" (offline) (ดู UI_STANDARD.md ข้อ 8)")
@@ -1394,6 +1401,126 @@ def main():
         for _k65 in ('btn.addFont','font.userGroup','ttl.addFont','fl.fontAdded','fl.fontBadType','fl.fontAddErr'):
             if ("'"+_k65+"'") not in _thb65: errors.append('i18n '+_k65+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
             if ("'"+_k65+"'") not in _enb65: errors.append('i18n '+_k65+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
+
+
+    # ---- 66) เลือกฟอนต์จาก Google (Phase 3 · แบบ B ดึง woff2 มาฝัง · ผู้ใช้ 14 ต.ค. 2026) ----
+    #   ปุ่ม #btnAddGFont เปิด popover #gfontPop → fetch css2 → fetch woff2 → ฝัง base64 ใน #userFonts (ท่อ Phase 1) → เดินทางไปกับไฟล์
+    #   ทุกเบราว์เซอร์ (fetch universal) · ต่อเน็ตเฉพาะตอนเพิ่ม · ปุ่มต้องไม่หลอก = ต้องมี handler offline/not-found
+    if 'id="btnAddGFont"' not in txt:
+        errors.append('ไม่พบปุ่ม #btnAddGFont (เลือกฟอนต์ Google) (ดู UI_STANDARD.md ข้อ 8)')
+    elif 'onclick="_gfontToggle()"' not in txt:
+        errors.append('#btnAddGFont ไม่ผูก onclick _gfontToggle() (ดู UI_STANDARD.md ข้อ 8)')
+    if 'id="gfontPop"' not in txt:
+        errors.append('ไม่พบ popover #gfontPop (ดู UI_STANDARD.md ข้อ 8)')
+    for _fn66 in ('_gfontToggle','_gfontOpen','_gfontClose','_gfontAdd','_ab2b64','_fontAddOpt'):
+        if ('function '+_fn66+'(') not in txt:
+            errors.append('ไม่พบ '+_fn66+' (เลือกฟอนต์ Google) (ดู UI_STANDARD.md ข้อ 8)')
+    # list ชื่อซ้าย/ตัวอย่างขวา + scroll (ผู้ใช้ 15 ต.ค. 2026) — chips เดิมถูกแทนด้วย list
+    for _fn66b in ('_gfontList','_gfontPrevLoad'):
+        if ('function '+_fn66b+'(') not in txt:
+            errors.append('ไม่พบ '+_fn66b+' (รายการฟอนต์ Google แบบ list) (ดู UI_STANDARD.md ข้อ 8)')
+    if 'id="gfontList"' not in txt:
+        errors.append('ไม่พบ #gfontList (รายการฟอนต์แบบ list) (ดู UI_STANDARD.md ข้อ 8)')
+    # _gfontList ต้องสร้างรายการจาก _GTHAI (โชว์ครบทุกตัว ให้ตรงกับ #gfontCount — list ไม่โกหกจำนวน) ผู้ใช้ 15 ต.ค. 2026
+    _glln66=[l for l in txt.split('\n') if 'function _gfontList(' in l]
+    if _glln66 and '_GTHAI' not in _glln66[0]:
+        errors.append('_gfontList ต้องสร้างรายการจาก _GTHAI (โชว์ครบทุกตัว ให้ตรงกับ #gfontCount) (ดู UI_STANDARD.md ข้อ 8)')
+    # โน้ต OFL มีลิงก์ไปหน้า SIL OFL จริง (ผู้ใช้ 15 ต.ค. 2026) — ลิงก์ต้องเปิดแท็บใหม่อย่างปลอดภัย (signifier ต้องทำงานจริง · กฎ #6)
+    _ofl66=re.search(r'<a\b[^>]*href="https://openfontlicense\.org/ofl-fonts/"[^>]*>', txt)
+    if not _ofl66:
+        errors.append('ไม่พบลิงก์ OFL (<a href=openfontlicense.org/ofl-fonts/>) ในโน้ตฟอนต์ (ดู UI_STANDARD.md ข้อ 8)')
+    elif 'target="_blank"' not in _ofl66.group(0) or 'noopener' not in _ofl66.group(0):
+        errors.append('ลิงก์ OFL ต้องเปิดแท็บใหม่อย่างปลอดภัย (target="_blank" + rel="noopener") (ดู UI_STANDARD.md ข้อ 8)')
+    # ช่องพิมพ์ชื่อฟอนต์ gfontInput ต้องอยู่ใน whitelist mousedown #typobar ไม่งั้นพิมพ์ไม่ได้ (บั๊ก cursor 15 ต.ค. · แบบเดียวกับ #35)
+    _md66=re.search(r"getElementById\('typobar'\)\.addEventListener\('mousedown',[\s\S]{0,600}?saveSelection\(\); return; \}", txt)
+    if not _md66 or "e.target.id==='gfontInput'" not in _md66.group(0):
+        errors.append("gfontInput ไม่อยู่ใน whitelist mousedown #typobar — ช่องพิมพ์ชื่อฟอนต์จะไม่รับ cursor (ดู UI_STANDARD.md ข้อ 8)")
+    # ตัวอย่างฟอนต์ต้องเป็นของบนจอ (FontFace API) ไม่ใช่ <link>/<style> ที่ serialize ลงไฟล์
+    _pl66=re.search(r'\n(?:async )?function _gfontPrevLoad\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _pl66 and ('new FontFace' not in _pl66.group(0) or 'document.fonts.add' not in _pl66.group(0)):
+        errors.append('_gfontPrevLoad ต้องใช้ FontFace API (new FontFace + document.fonts.add) — ตัวอย่างเป็นของบนจอ ไม่รั่วลงไฟล์ (ดู UI_STANDARD.md ข้อ 8)')
+    _ga66=re.search(r'\n(?:async )?function _gfontAdd\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _ga66:
+        _b66=_ga66.group(0)
+        if 'fetch(' not in _b66:
+            errors.append('_gfontAdd ไม่ได้ fetch จาก Google (ดู UI_STANDARD.md ข้อ 8)')
+        if 'data:' not in _b66 or 'userFonts' not in _b66:
+            errors.append('_gfontAdd ไม่ได้ฝังเป็น base64 (data:) ลง #userFonts — ฟอนต์ต้องเดินทางไปกับไฟล์ (ดู UI_STANDARD.md ข้อ 8)')
+        if 'markDirty' not in _b66:
+            errors.append('_gfontAdd ไม่เรียก markDirty — เพิ่มฟอนต์ต้องเป็นจุด Undo/บันทึก (ดู UI_STANDARD.md ข้อ 6)')
+        if 'fl.gfontOffline' not in _b66 or 'fl.gfontNotFound' not in _b66:
+            errors.append('_gfontAdd ไม่มี handler offline/not-found — ปุ่มต้องไม่หลอกเมื่อไม่มีเน็ต/ไม่พบฟอนต์ (ดู UI_STANDARD.md ข้อ 8)')
+    else:
+        errors.append('ไม่พบตัว _gfontAdd — lint ข้อ 66 ตรวจไม่ได้')
+    _be66=re.search(r'\nfunction buildEditorHtml\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _be66 and '#gfontPop' not in _be66.group(0):
+        errors.append('buildEditorHtml ไม่ได้ปิด/ล้าง #gfontPop ก่อนบันทึก (popover ไม่ควรบันทึกค้างเปิด) (ดู UI_STANDARD.md ข้อ 8)')
+    # select-then-add + search (ผู้ใช้ 15 ต.ค. 2026): 2 รายการ (บน=แนะนำ · ล่าง=ผลค้นหา) · ปุ่มเพิ่ม enabled เฉพาะตอนเลือก
+    for _fn66c in ('_gfontSearch','_gfontSelect','_gfontClearSel','_gfontAddSel'):
+        if ('function '+_fn66c+'(') not in txt:
+            errors.append('ไม่พบ '+_fn66c+' (select-then-add + ค้นหา) (ดู UI_STANDARD.md ข้อ 8)')
+    if 'id="gfontResults"' not in txt:
+        errors.append('ไม่พบ #gfontResults (รายการผลค้นหา) (ดู UI_STANDARD.md ข้อ 8)')
+    # note จำนวนฟอนต์ไทยในหัวลิสต์ (ผู้ใช้ 15 ต.ค. 2026) — ตัวเลขต้องดึงจาก _GTHAI.length อัตโนมัติ ไม่ hardcode (ปุ่มไม่หลอก)
+    if 'id="gfontCount"' not in txt:
+        errors.append('ไม่พบ #gfontCount (ป้ายจำนวนฟอนต์ไทยในหัวลิสต์) (ดู UI_STANDARD.md ข้อ 8)')
+    _go66=re.search(r'\nfunction _gfontOpen\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _go66 and "getElementById('gfontCount')" not in _go66.group(0):
+        errors.append('_gfontOpen ไม่ได้เติมจำนวนฟอนต์ลง #gfontCount จาก _GTHAI.length — ป้ายจำนวนต้องตรงกับรายการจริง (ดู UI_STANDARD.md ข้อ 8)')
+    if _go66 and '_GTHAI.length' not in _go66.group(0):
+        errors.append('#gfontCount ต้องใช้ _GTHAI.length (ห้าม hardcode ตัวเลข — ปุ่มไม่หลอก) (ดู UI_STANDARD.md ข้อ 8)')
+    _sb66=re.search(r'<button\b[^>]*id="gfontSearchBtn"[^>]*>', txt)
+    if not _sb66:
+        errors.append('ไม่พบปุ่ม #gfontSearchBtn (ปุ่มค้นหา) (ดู UI_STANDARD.md ข้อ 8)')
+    elif 'onclick="_gfontSearch()"' not in _sb66.group(0):
+        errors.append('#gfontSearchBtn ไม่ผูก onclick _gfontSearch() (ดู UI_STANDARD.md ข้อ 8)')
+    _ab66=re.search(r'<button\b[^>]*id="gfontAddBtn"[^>]*>', txt)
+    if not _ab66:
+        errors.append('ไม่พบปุ่ม #gfontAddBtn (ปุ่มเพิ่มฟอนต์ที่เลือก) (ดู UI_STANDARD.md ข้อ 8)')
+    else:
+        _abt=_ab66.group(0)
+        if 'disabled' not in _abt:
+            errors.append('#gfontAddBtn ต้อง disabled เป็นค่าเริ่มต้น — enabled เฉพาะตอนเลือกฟอนต์ (ดู UI_STANDARD.md ข้อ 5)')
+        if 'onclick="_gfontAddSel()"' not in _abt:
+            errors.append('#gfontAddBtn ไม่ผูก onclick _gfontAddSel() (ดู UI_STANDARD.md ข้อ 8)')
+    _sel66=re.search(r'\nfunction _gfontSelect\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _sel66 and 'disabled=false' not in _sel66.group(0):
+        errors.append('_gfontSelect ต้อง enable #gfontAddBtn (ab.disabled=false) เมื่อเลือกฟอนต์ (ดู UI_STANDARD.md ข้อ 5)')
+    _cl66=re.search(r'\nfunction _gfontClearSel\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _cl66 and 'disabled=true' not in _cl66.group(0):
+        errors.append('_gfontClearSel ต้อง disable #gfontAddBtn เมื่อไม่มีฟอนต์ที่เลือก (ดู UI_STANDARD.md ข้อ 5)')
+    _i66=txt.find("var I18N={")
+    if _i66>=0:
+        _th66=txt.find("th:{",_i66); _en66=txt.find("en:{",_i66)
+        _thb66=txt[_th66:_en66] if (_th66>=0 and _en66>_th66) else ""
+        _enb66=txt[_en66:_en66+30000] if _en66>=0 else ""
+        for _k66 in ('btn.addGFont','ttl.addGFont','gfont.title','gfont.inlbl','gfont.add','gfont.oflPre','gfont.oflName','gfont.oflPost','gfont.browsehint','btn.gfontSearch','gfont.browselbl','fl.gfontNoMatch','fl.gfontLoading','fl.gfontAdded','fl.gfontNotFound','fl.gfontOffline','fl.gfontDup','fl.gfontAddErr'):
+            if ("'"+_k66+"'") not in _thb66: errors.append('i18n '+_k66+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
+            if ("'"+_k66+"'") not in _enb66: errors.append('i18n '+_k66+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
+
+    # ---- 67) จัดกลุ่ม "ฟอนต์ในไฟล์" + โน้ตฝังไฟล์ใต้แถบ + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026) ----
+    # (a) optgroup ฟอนต์มาตรฐาน 3 ตัว ต้องอยู่ในกลุ่ม typoFontBase (ชื่อกลุ่มสื่อว่าอยู่ในไฟล์)
+    _sel67=re.search(r'<select id="typoFont"[\s\S]*?</select>', txt)
+    if _sel67 and 'id="typoFontBase"' not in _sel67.group(0):
+        errors.append('dropdown #typoFont ขาด <optgroup id="typoFontBase"> (กลุ่มฟอนต์ในไฟล์) (ดู UI_STANDARD.md ข้อ 8)')
+    # (b) โน้ตบอกว่าฟอนต์ฝังในไฟล์ (ใต้แถบฟอนต์)
+    if 'data-i18n="font.embedNote"' not in txt:
+        errors.append('ไม่พบโน้ต font.embedNote (บอกว่าฟอนต์ทุกตัวฝังในไฟล์) ใต้แถบฟอนต์ (ดู UI_STANDARD.md ข้อ 8)')
+    # (c) upload เตือนซ้ำ ไม่เอาเข้า — _fontUploadFile ต้องเช็ก _gfontFamExists ก่อนเพิ่ม (ให้ตรงกับ Google)
+    _uf67=re.search(r'\nfunction _fontUploadFile\([^)]*\)\{[\s\S]*?\n\}', txt)
+    if _uf67 and '_gfontFamExists(' not in _uf67.group(0):
+        errors.append('_fontUploadFile ไม่เช็กฟอนต์ซ้ำ (_gfontFamExists) — อัปโหลดชื่อซ้ำต้องเตือน+ไม่เพิ่มซ้ำ ให้ตรงกับ Google (ดู UI_STANDARD.md ข้อ 8)')
+    if _uf67 and 'fl.fontDup' not in _uf67.group(0):
+        errors.append('_fontUploadFile ไม่แจ้ง fl.fontDup ตอนเจอฟอนต์ซ้ำ (ดู UI_STANDARD.md ข้อ 8)')
+    # (d) i18n ครบ th+en
+    _i67=txt.find("var I18N={")
+    if _i67>=0:
+        _th67=txt.find("th:{",_i67); _en67=txt.find("en:{",_i67)
+        _thb67=txt[_th67:_en67] if (_th67>=0 and _en67>_th67) else ""
+        _enb67=txt[_en67:_en67+30000] if _en67>=0 else ""
+        for _k67 in ('font.baseGroup','font.embedNote','fl.fontDup'):
+            if ("'"+_k67+"'") not in _thb67: errors.append('i18n '+_k67+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
+            if ("'"+_k67+"'") not in _enb67: errors.append('i18n '+_k67+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
 
 
     # ---- report ----

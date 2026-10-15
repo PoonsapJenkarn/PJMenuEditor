@@ -283,6 +283,64 @@
 - **ข้อจำกัด (บอกผู้ใช้แล้ว):** ฟอนต์อัปโหลด**เดินทางไปกับไฟล์ที่บันทึกเท่านั้น** · ถ้าอัปโหลดแล้ว browser crash ก่อนกดบันทึก Editor → ฟอนต์หาย เพราะ `_serializePages`/POOL (autosave ร่าง) เก็บเฉพาะ `.page` ไม่เก็บ `<head>` · เหมือนรูปที่เพิ่งเพิ่ม (lint #63) — ยอมรับ ไม่ over-engineer
 - **ยังไม่ทำ (Phase 2/3):** ฟอนต์ในเครื่อง Windows (`queryLocalFonts` Chromium / `local()`) + online Google (`<link>` รันไทม์) — คนละ commit · ทั้งคู่ "ไม่เดินทางไปกับไฟล์" ต้องมีคำเตือน
 
+### 8.2 เลือกฟอนต์จาก Google (Phase 3 · แบบ B ดึง woff2 มาฝัง) — lint ข้อ 66 (ผู้ใช้ 14 ต.ค. 2026)
+
+ผู้ใช้เลือกฟอนต์ไทย/ละตินจาก Google ได้ (ปุ่ม "﹢ Google") — ดึง woff2 มาฝัง base64 ลง `#userFonts` (ท่อเดียวกับ Phase 1) → **เดินทางไปกับไฟล์ + ใช้ต่อออฟไลน์ได้** · ต่อเน็ตเฉพาะ "ตอนเพิ่ม" เท่านั้น
+
+- **ทำไมแบบ B ไม่ใช่แบบ A (`<link>` online):** แบบ A ต่อเน็ตทุกครั้งที่เปิด + ส่ง IP ไป Google ทุกครั้ง + ไม่เดินทางไปกับไฟล์ · แบบ B ฝังจริง = ตรงกับงานฟอนต์ offline ที่ทำมาทั้งหมด · CORS ทดสอบแล้ว: `fetch()` จาก `file://` ไป fonts.googleapis.com/gstatic.com = HTTP 200 (ทุกเบราว์เซอร์ · ยืนยัน 14 ต.ค. 2026)
+- **ทำไมไม่ใช่ Phase 2 (queryLocalFonts ฟอนต์ในเครื่อง):** Chromium-only · แบบ B ทำงานทุกเบราว์เซอร์ (fetch universal) จึงเลือกทำแทน
+- **กลไก `_gfontAdd(family)`:** fetch `css2?family=...:wght@400;700&display=swap` → ถ้าไม่ ok = `fl.gfontNotFound` · ถ้า fetch throw = `fl.gfontOffline` → แยก @font-face แต่ละบล็อก กรองเฉพาะ **thai (unicode-range มี U+0E) + latin (U+0000)** ตัด vietnamese/latin-ext/cyrillic/greek (คุมขนาด) → fetch woff2 แต่ละตัว → `_ab2b64` → rewrite `url()` เป็น `data:` → ฝังใน `#userFonts` → `_fontAddOpt` เพิ่ม option → `document.fonts.load` → `markDirty` → เลือกใช้ทันที (`_gfontUse`)
+- **UI:** ปุ่ม `#btnAddGFont` → popover `#gfontPop` (chips ฟอนต์ไทยคัดสรร 14 ตัว + ช่องพิมพ์ชื่อ + ข้อความสถานะ inline + note) · คลิกนอก/Esc ปิด · chips สร้างจาก `_GFONTS` ตอนเปิดครั้งแรก · **ไม่ใช้ placeholder** (ใช้ label `.gfont-inlbl` นอกช่อง — กฎ #17/ข้อ 6)
+- **chips 14 ตัว (ยืนยันมีจริง + subset thai บน Google):** Kanit, Mitr, Bai Jamjuree (3 ตัวที่ตัดจากชุดฝัง — ดึงผ่าน Google ได้), Chakra Petch, K2D, Krub, Mali, Niramit, Pridi, Charm, Charmonman, Sriracha, Itim, Chonburi
+- **lint #64 ปรับ:** ห้าม googleapis/gstatic เฉพาะ "นอก `<script>`" (strip script ก่อนเช็ก) + ห้าม `<link>`/`@import` ไป Google Fonts · เพราะ fetch รันไทม์ใน JS ต้องมี URL googleapis (ไม่ใช่ dependency CDN) — base ยังต้องฝัง offline เหมือนเดิม
+- **ปุ่มไม่หลอก:** `#btnAddGFont`/`#gfontAddBtn` อยู่ใน `_NOEDIT21` (markDirty อยู่ใน `_gfontAdd` ตอน fetch เสร็จ แบบ async — lint #66 บังคับ markDirty ในนั้น) · offline/not-found มีข้อความชัดใน popover
+- **buildEditorHtml** ปิด `#gfontPop` + ล้างช่อง/ข้อความก่อนบันทึก (popover ไม่บันทึกค้างเปิด) · popover อยู่ในแถบ editor จึงถูก strip ออกจากเมนูสะอาด (buildMenuHtml) อยู่แล้ว
+- **license:** ฟอนต์ Google ส่วนใหญ่ OFL (ฝัง/แจกได้) · ฟอนต์เชิงพาณิชย์บางตัวอาจมีเงื่อนไข — เป็นความรับผิดชอบผู้ใช้ที่เลือกเพิ่ม
+
+### 8.2.1 ปรับ Google picker เป็น list + แก้บั๊ก cursor (ผู้ใช้ 15 ต.ค. 2026 · lint #66 ขยาย)
+
+- **บั๊ก cursor (แก้แล้ว):** ช่อง `#gfontInput` พิมพ์ไม่ได้เพราะตัวดัก `mousedown` ของ `#typobar` เรียก `e.preventDefault()` กับทุก element นอก whitelist → บล็อก focus · แก้โดยเพิ่ม `e.target.id==='gfontInput'` เข้า whitelist (`saveSelection();return;` เหมือน `typoHex`) · เป็นบั๊กประเภทเดียวกับ dropdown เส้นจุด (#35) · lint #66 ล็อกไว้: `gfontInput` ต้องอยู่ใน whitelist mousedown
+- **chips → list:** เปลี่ยนจาก chips (flex-wrap) เป็น **list เลื่อนได้** `#gfontList` (`max-height:220px;overflow-y:auto`) · แต่ละแถว `.gfont-row` = ซ้าย `.gfont-name` (ชื่อฟอนต์ · ฟอนต์ระบบ) + ขวา `.gfont-prev` (ตัวอย่างฟอนต์จริง) · คลิกแถว = เพิ่มฟอนต์นั้น (`_gfontAdd`)
+- **ตัวอย่างฟอนต์ (preview) เป็นของบนจอล้วน:** `_gfontPrevLoad()` โหลดตอนเปิด picker — fetch `css2` รวม 14 family ครั้งเดียว → แยก woff2 ต่อ family (เลือก thai ก่อน latin) → `new FontFace('__gpprev_<name>', url)` → `document.fonts.add` → เติม `textContent`+`fontFamily` ของแถวนั้น · **ใช้ FontFace API ไม่ใช่ `<link>`/`<style>`** เพราะ FontFace ที่ add ผ่าน JS ไม่ถูก serialize ลง `outerHTML`/`cloneNode` → ตัวอย่างไม่รั่วลงไฟล์ที่บันทึก (ไม่ทำให้ไฟล์เมนูบวม · ไม่พึ่ง CDN ในไฟล์) · lint #66 ล็อก: `_gfontPrevLoad` ต้องมี `new FontFace`+`document.fonts.add`
+- **ซื่อสัตย์ตอนออฟไลน์:** แถว `.gfont-prev` เริ่ม**ว่าง** · เติมตัวอย่างเฉพาะเมื่อฟอนต์โหลดสำเร็จ · ออฟไลน์/โหลดไม่ได้ = เห็นชื่อฟอนต์ครบ กดเลือกได้ (ดึงจริงตอนกด = ขึ้น `fl.gfontOffline`) แต่ช่องตัวอย่างว่าง ไม่โชว์ของปลอม
+- **buildEditorHtml** เคลียร์ `#gfontList` (innerHTML='') ตอนบันทึก — รายการ+ตัวอย่าง rebuild ใหม่ตอนเปิด picker ครั้งถัดไป (ไม่บันทึก inline fontFamily ของ preview ที่ชี้ไป FontFace ที่ไม่มีในไฟล์)
+
+### 8.2.2 Google picker: Search + 2 รายการ + select-then-add + คำตัวอย่างใหม่ (ผู้ใช้ 15 ต.ค. 2026 · lint #66 ขยาย)
+
+ยกเครื่อง picker ตามที่ผู้ใช้ระบุ 5 ข้อ — เป็นโมเดล **select-then-add** แบบ Word Font dialog / Google Fonts / VS Code
+
+- **คำตัวอย่าง:** `_GPREV_SAMPLE='เตี๋ยวหมูโคล้ง Aa'` (เปลี่ยนจาก 'อีสาน Aa' — ผู้ใช้แจ้งว่า "อีสาน" เป็นคำที่บางคนใช้เหยียด · เลือกคำกลางที่โชว์วรรณยุกต์ครบ: ตี๋/ต้/ล้ + สระหน้า โ) · วัดแล้ว 116px พอดีกล่อง 155px · **หมายเหตุ:** ชื่อร้าน "โอ อีสาน แจ่วฮ้อน" ในเนื้อเมนูเป็นชื่อจริงของร้าน คงไว้ — เปลี่ยนเฉพาะคำตัวอย่างฟอนต์
+- **2 รายการ** (ตามที่ผู้ใช้วาด): บน `#gfontList` = 14 ตัวคัดสรร "ฟอนต์แนะนำ" (`.gfont-sub` label) · ล่าง `#gfontResults` = ผลค้นหา (ซ่อน `display:none` จนกว่าค้นหา) · แต่ละแถว `.gfont-row` = ซ้าย `.gfont-name` (ชื่อ · ฟอนต์ระบบ) + ขวา `.gfont-prev` (ตัวอย่างจริง FontFace)
+- **ค้นหา (`_gfontSearch`):** ค้นจาก `_GTHAI` = ฟอนต์ไทยทั้งหมดบน Google **33 ตัว** (ยืนยันจาก gwfh `/api/fonts` subset thai=true · มี 34 ตัด "Google Sans" แบรนด์ฟอนต์ที่ไม่ใช่ OFL ออก) bake ในไฟล์ → กรองชื่อ offline ได้ · scoring: exact=4 / prefix=3 / substring=2 / fuzzy(subsequence, len≥3)=1 · ไม่พบ = `fl.gfontNoMatch` · ปุ่ม `#gfontSearchBtn` (ค้นหา) + Enter ในช่อง = ค้น · ค้นหา = เปลี่ยนรายการ → ล้าง selection
+- **select-then-add (ข้อ 5):** คลิกแถว = `_gfontSelect` (ไฮไลท์ `.sel` สีน้ำเงิน `#dbeafc` — **ไม่ใช้เขียว** ตามกฎข้อ 1 เขียวสงวนโหมด active) · เลือกได้ทีละตัวข้ามรายการ (`_gfontClearSel` ล้าง `.sel` ทุกแถวใน `#gfontPop` ก่อน) · ปุ่ม `#gfontAddBtn` (full-width ล่าง, สีเข้ม #323130) **disabled เป็นค่าเริ่มต้น** · `_gfontSelect` → `ab.disabled=false` · `_gfontClearSel` → `ab.disabled=true` · มี affordance จาง (`:disabled`) · กดเพิ่ม = `_gfontAddSel` → `_gfontAdd(_gfontSel)` (ท่อ fetch+embed เดิม) · เพิ่มสำเร็จ = `_gfontClearSel`
+- **ตัวอย่าง (preview) ยังเป็น FontFace บนจอ** (เหมือน 8.2.1): `_gfontPrevLoad(names)` รับ list, fetch css2 รวม batch, `new FontFace('__gpprev_<name>')` → `document.fonts.add` → `_gfontFillPrev` เติมทุก `.gfont-prev[data-pv="<name>"]` · โหลด 14 ตัวตอนเปิด + โหลดผลค้นหาเมื่อค้น · `_gfontPrevLoaded`/`_gfontPrevTried` กันโหลดซ้ำ · ออฟไลน์ = ตัวอย่างว่าง (ไม่โชว์ของปลอม)
+- **ปุ่มในแถบ (lint #21):** `gfontSearchBtn` อยู่ใน `_NOEDIT21` (ค้นหาไม่แก้เมนู) · `gfontAddBtn`/`btnAddGFont` อยู่แล้ว · `gfontInput` อยู่ใน whitelist mousedown #typobar (พิมพ์ได้) + `_FILTERED16` (ฟรีเท็กซ์)
+- **buildEditorHtml** ตอนบันทึก: เคลียร์ `#gfontList` + `#gfontResults` (innerHTML + display:none) + `#gfontInput` value + `#gfontAddBtn` disabled=true + ปิด popover — ไม่บันทึกสถานะ picker/preview ค้าง
+
+### 8.2.3 ลิสต์ "ฟอนต์ที่ใช้ได้ทั้งหมด (XX)" + โน้ต OFL เดียว (ผู้ใช้ 15 ต.ค. 2026 · lint #66 ขยาย)
+
+หัวลิสต์บนสุดของ popover เปลี่ยนจาก "ฟอนต์แนะนำ (14 ตัวคัดเลือก)" → **"ฟอนต์ที่ใช้ได้ทั้งหมด (XX)"** โดย `#gfontList` สร้างจาก **`_GTHAI` ทั้งชุด** (โชว์ครบทุกตัวที่ค้นได้) ในลิสต์ scroll ได้ — ตอบคำถาม "ทำไมบางชื่อ (เช่น Roboto) ไม่เจอ" โดยให้เห็นทั้งหมดที่มีจริง (Roboto ไม่มี subset ไทย จึงไม่อยู่ในชุด)
+
+- **(XX) ดึงจาก `_GTHAI.length` อัตโนมัติ** ผ่าน `#gfontCount` (ย้ายจากใต้ช่องค้นหามาไว้ที่หัวลิสต์) ที่ `_gfontOpen` เติมตอนเปิด popover — **ห้าม hardcode "33"** (ถ้ารายการเปลี่ยน ตัวเลขต้องตามจริง · หลักปุ่มไม่หลอก) · markup มี fallback "33" แต่ JS ทับด้วยค่าจริงเสมอ · ลิสต์ที่สร้างจาก `_GTHAI` = ตัวเลขหัวลิสต์ตรงกับจำนวนแถวจริงเสมอ
+- i18n หัวลิสต์: `gfont.browselbl` "ฟอนต์ที่ใช้ได้ทั้งหมด" / "All available fonts" + `gfont.browsehint` "คลิกเพื่อเลือก" / "click to select"
+- **โน้ต OFL เดียว** (ไม่ต่อท้าย (OFL) ทุกแถว) · เหตุผล: ตรวจแล้วฟอนต์ไทยทั้ง 33 เป็น OFL เหมือนกันหมด (ตรวจ repo google/fonts: ไม่มีตัวใดอยู่กลุ่ม apache/ufl) → ป้ายซ้ำทุกแถวไม่มีความหมาย · ถ้าอนาคตมี license ปน ค่อยใส่ป้ายรายแถวเฉพาะตัวที่ต่าง
+- **โน้ตแยกเป็น 3 ชิ้น + ลิงก์จริง (ผู้ใช้ 15 ต.ค. 2026):** เดิม `gfont.note` คีย์เดียว (textContent) → ใส่ลิงก์ไม่ได้ · รื้อเป็น `<div class="gfont-note">` + span `gfont.oflPre` ("ทุกฟอนต์เป็น OFL (") + `<a class="oflink">` `gfont.oflName` ("SIL Open Font License") + span `gfont.oflPost` (" ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ ...") · EN: "All fonts are OFL (SIL Open Font License — free to embed, share, use commercially) · ..."
+  - ลิงก์ `href="https://openfontlicense.org/ofl-fonts/" target="_blank" rel="noopener"` (เปิดแท็บใหม่ปลอดภัย) · สี `#0b5fb0` น้ำเงินมีขีดเส้นใต้ (ห้ามเขียว — เขียวสงวนโหมด active กฎ #1) · อยู่ใน popover = editor UI เท่านั้น (buildMenuHtml ตัด ribbon · ไม่พิมพ์/ไม่อยู่ในเมนูลูกค้า)
+  - ลบคีย์ `gfont.note` ทิ้ง (ไม่มี caller เหลือ) · lint #66: tuple `gfont.note`→`gfont.oflPre/oflName/oflPost` + เพิ่มเช็ก `<a href=openfontlicense.org/ofl-fonts/>` ต้องมี + `target=_blank`+`rel=noopener` (signifier ต้องทำงานจริง กฎ #6)
+- preview โหลด `_GTHAI` ทั้งชุด (33) ตอนเปิด — `_gfontPrevLoad` ยิง css2 **ครั้งเดียวแบบ batch** (ไม่ใช่ 33 ครั้ง) แล้ว FontFace ต่อไฟล์ · ต้องต่อเน็ตตอนเปิด (preview อย่างเดียว ไม่ลงไฟล์)
+- ลบ `.gfont-srchnote` + i18n `gfont.srchnote` ทิ้ง (ย้าย count ขึ้นหัวลิสต์แล้ว ไม่ต้องมีโน้ตซ้ำ)
+- lint #66 ล็อก: ต้องมี `#gfontCount` + `_gfontOpen` เติมจาก `_GTHAI.length` + **`_gfontList` ต้องสร้างจาก `_GTHAI`** (list ตรงกับ count) + i18n `gfont.browsehint` ครบ th+en
+
+### 8.3 กลุ่ม "ฟอนต์ในไฟล์" + โน้ตฝังไฟล์ + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026 · lint #67)
+
+**(1) จัดกลุ่ม dropdown #typoFont เป็น 2 กลุ่ม:** ฟอนต์มาตรฐาน 3 ตัว (Prompt/Sarabun/Noto Sans Thai) อยู่ใน `<optgroup id="typoFontBase" data-i18n-label="font.baseGroup">` ชื่อ "ฟอนต์ในไฟล์" / "Fonts in file" · ฟอนต์อัปโหลด/Google อยู่ใน `#typoFontUser` "ฟอนต์ที่เพิ่ม" เดิม · placeholder `— ฟอนต์ —` อยู่นอก optgroup (ตัวเลือกว่าง) · ชื่อกลุ่มสื่อว่าฝังในไฟล์ไปในตัว (เทียบ InDesign "Document Installed Fonts" / Word "Theme Fonts")
+
+**(2) โน้ตใต้แถบฟอนต์:** `.fontembed-note` (data-i18n `font.embedNote`) วางเป็น flex item `flex-basis:100%` ท้าย pane "home" (หลัง #typobar ที่เป็น display:contents) → ตกลงบรรทัดใต้แถบเครื่องมือเอง · โชว์เฉพาะแท็บข้อความ (อยู่ใน .rpane[data-pane=home]) · TH "ฟอนต์ทุกตัวในรายการนี้ฝังอยู่ในไฟล์ — เปิดเครื่องอื่นก็เห็นเหมือนเดิม" / EN "All fonts here are embedded in the file ..." · เป็น editor UI (buildMenuHtml ตัดทั้ง ribbon อยู่แล้ว · ไม่พิมพ์)
+
+**(3) upload เตือนซ้ำ ไม่เอาเข้า (ให้ตรงกับ Google):** `_fontUploadFile` เช็ก `_gfontFamExists(fam)` ก่อนอ่านไฟล์ · ซ้ำ → `flashStatus('info', fl.fontDup)` + เลือกตัวเดิมให้ (`_gfontUse`) + ไม่เพิ่ม · เดิมใช้ `_fontFamFromName` เปลี่ยนชื่ออัตโนมัติ (Prompt→Prompt 2) ซึ่งขัดกับ Google → ลบ logic เปลี่ยนชื่อ เหลือ `_fontBaseName` คืนชื่อ sanitize ล้วน (ไม่มี numbering/exist-scan แล้ว · ไม่มี dead code) · เช็กจากชื่อฟอนต์ (ไม่ hash เนื้อไฟล์ — เกินจำเป็นสำหรับร้านเล็ก)
+
+- lint #67 ล็อก: `#typoFontBase` optgroup · `font.embedNote` markup · `_fontUploadFile` ต้องเรียก `_gfontFamExists` + แจ้ง `fl.fontDup` · i18n `font.baseGroup`/`font.embedNote`/`fl.fontDup` ครบ th+en
+
 ## ความปลอดภัย (client-side XSS) — lint ข้อ 54 (ผู้ใช้ 12 ต.ค. 2026)
 app เป็น HTML ไฟล์เดียว รันในเครื่อง ใช้คนเดียว — ความเสี่ยงจริงต่ำ (ไม่มี server/backend/login/network ขาเข้า) แต่ user content (ชื่อเมนู/ชื่อกลุ่ม/ชื่อไฟล์รูป) ไหลเข้า DOM ได้ จึงล็อก pattern ที่ปลอดภัยไว้ไม่ให้ถอยหลัง:
 - **`epEsc(s)`** = ตัว escape กลาง ต้อง escape `& < > "` ให้ครบทั้ง 4 (ครอบคลุมทั้ง element content และ attribute ใน `"`) · ทุกจุดที่ต่อ string ชื่อ (user content) ลง `innerHTML` ต้องผ่าน `epEsc()` ก่อน

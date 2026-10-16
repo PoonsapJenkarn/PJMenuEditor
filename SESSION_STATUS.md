@@ -52,8 +52,8 @@
 - แก้แค่ CSS font-size ไม่แตะ lint · lint PASS 0/0 · sha 5c7d7edec289650d · 6,912,335 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
 - ค้าง (ยังไม่ทำ): contrast ของ al-ts (#a0a4a8 = 2.5) และ al-export-lbl (#8a8f94 = 3.05) DevTools เตือนว่าต่ำ — คนละเรื่องกับขนาด แยก commit ถ้าผู้ใช้ต้องการ · แท็บ รูป (#imgbar 12px) ยังไม่ปรับ
 
-## 15 ต.ค. 2026 (21:07) — ✅ เสร็จ: ปรับเป็น type scale ตัวควบคุมหลัก 16px · ป้ายเล็ก 13px (ผู้ใช้เทียบ DXC+Azure DevTools · เลือก type scale)
-- หลักการ (จากที่ผู้ใช้วัด DevTools): DXC/Azure ใช้ขนาดตามบทบาท — เนื้อหา/ปุ่มที่คลิก 16px · nav/ปุ่มรอง 14px · ป้ายกำกับ 10–13px · ขนาดต่างแต่คอนทราสต์เท่ากัน
+## 15 ต.ค. 2026 (21:07) — ✅ เสร็จ: ปรับเป็น type scale ตัวควบคุมหลัก 16px · ป้ายเล็ก 13px (ผู้ใช้เทียบเว็บมาตรฐานผ่าน DevTools · เลือก type scale)
+- หลักการ (จากที่ผู้ใช้วัด DevTools): เว็บมาตรฐานใช้ขนาดตามบทบาท — เนื้อหา/ปุ่มที่คลิก 16px · nav/ปุ่มรอง 14px · ป้ายกำกับ 10–13px · ขนาดต่างแต่คอนทราสต์เท่ากัน
 - แก้ 5 จุดเป็น 16px: #typobar select+input[color] 14→16 · #typoSize 14→16 · #typobar .ttoggle (B/I/U/S) 14→16 · #edbar .b-lg (＋ ฟอนต์/＋ ฟอนต์ Google) 13.5→16 · #edtabs .edtab (แท็บ) 15→16
 - คงเดิม: #typobar button.tbtn (ปุ่ม format: ใช้ทั้งประเภท/ตั้งค่า/คืนค่า) 14px · #edribbon .rgl (ป้ายกลุ่ม) 13px · .szbtn (+/−) 15px · .langsw (TH/EN) 14px · .hint 13.5px — รักษาลำดับชั้น (ตัวควบคุมหลัก > ปุ่มรอง > ป้ายกำกับ)
 - ยังไม่แตะแท็บ รูป (#imgbar 12px) — ถ้าอยากให้ทุกแท็บเท่ากันบอกได้ · แก้แค่ CSS ไม่แตะ lint · lint PASS 0/0 · sha c65e1563122ebf6e · 6,912,334 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · เสี่ยงปุ่มขึ้นบรรทัด/แถบสูง ต้องเทส
@@ -323,7 +323,7 @@
 - วิธี: workspace menu_work.html + lint_oe_cur.py · copy กลับ sha ตรง ad70758f3c77f762 · device python/sandbox ไม่เสถียร (ใช้ workspace + file_copy)
 
 ## 12 ต.ค. 2026 (22:40) — ✅ lint #54 ล็อก pattern กัน XSS (defense-in-depth) · ไม่แก้ HTML · lint ผ่าน · ยังไม่ commit · html คงที่ 99f3f3d (commit 5cbfb2c)
-- ผู้ใช้ถาม security assessment ของ app เมนู (ไม่ใช่งาน AEON) → agent ไล่ตรวจ XSS: innerHTML 27 จุด + sink อื่นทั้งหมด → ไม่พบช่องโหว่ใช้โจมตีได้จริง (โค้ด pattern ถูกต้องอยู่แล้ว)
+- ผู้ใช้ถาม security assessment ของ app เมนู → agent ไล่ตรวจ XSS: innerHTML 27 จุด + sink อื่นทั้งหมด → ไม่พบช่องโหว่ใช้โจมตีได้จริง (โค้ด pattern ถูกต้องอยู่แล้ว)
 - ผลตรวจ: (1) ข้อความแถบล่าง _renderStatus ใช้ textContent (บรรทัด 1125) (2) ชื่อกลุ่มใน dropdown _typoGroupOptsHtml ผ่าน epEsc (บรรทัด 2861) (3) dialog ลบกลุ่ม pre-escape epEsc(nm) (บรรทัด 1054) (4) อัปโหลดรูปเช็ก f.type=image/* + data: URL (5) save ใช้ cloneNode→outerHTML · ไม่มี eval/new Function/document.write/javascript:/on*=
 - จุดเปราะ (ไม่ใช่บั๊ก): openPanel→_msgT() ลง innerHTML ไม่ escape ในตัว — ปลอดภัยเพราะ caller เดียวที่ส่ง user content (ลบกลุ่ม) pre-escape ไว้ · ถ้ามี caller ใหม่ส่งชื่อเมนู/ไฟล์ดิบ = ช่องโหว่ → lint ล็อกไว้
 - แก้ lint_oe.py: เพิ่ม #54 (5 ข้อย่อย ก-จ: epEsc ครบ 4 · _renderStatus textContent · _typoGroupOptsHtml epEsc · delGroup pre-escape · ไม่มี sink อันตราย) · V0 ผ่าน · ทดสอบบั๊ก 6 แบบจับครบ

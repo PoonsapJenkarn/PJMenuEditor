@@ -60,3 +60,9 @@ _imgcheck2/
 # ไฟล์ส่งออก / ข้อมูลอ้างอิงที่สร้างจากเมนู — ไม่ใช่ซอร์สของ editor
 *.pdf
 OEIsanHotpotMenu_items.txt
+
+# ไฟล์เทส CORS (เสร็จงานแล้ว ไม่ใช่ส่วนของ editor · 16 ต.ค. 2026)
+font_sync_cors_test.html
+
+# ฟอนต์ต้นฉบับที่โหลดมา — แอปฝัง base64 ในไฟล์แล้ว ไม่ต้องใช้โฟลเดอร์นี้ (Noto_Color_Emoji ~24MB) · 16 ต.ค. 2026
+Fonts/

@@ -8,6 +8,24 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 15 ต.ค. 2026 (21:28) — ✅ แก้บั๊ก: คลิกเส้นจุด (.ln) ไม่ติดถ้าคลิก textbox มาก่อน (ผู้ใช้รายงาน · lint #68)
+- อาการ: โหมดแก้ข้อความ คลิก textbox (.nm/.pr) ก่อน → คลิกเส้นประ เส้นไม่ active แก้ไม่ได้ (ทุกช่อง) · แต่คลิกที่ว่างก่อนแล้วคลิกเส้น = ได้
+- ต้นเหตุ: .nm/.pr เป็น contenteditable, .ln เป็น span ธรรมดา · คลิก .ln → click handler (capture ~4080) เลือก .ln ถูก แต่ selectionchange ยิงตามด้วย caret ที่ค้างใน textbox → _typoFind(.nm) → typoSelect(.nm) แย่งทับ .ln (บรรทัด 3261)
+- แก้ 1 จุด: เพิ่ม guard `&& !(_typoType && _typoType.line)` ใน selectionchange re-select (บรรทัด 3261) — ถ้าเลือกเส้นจุดอยู่ อย่าให้ selectionchange สลับไป contenteditable · การคลิกสลับ text↔line ยังทำงานผ่าน click handler ปกติ
+- lint #68 ใหม่: ล็อก pattern re-select ต้องมี _typoType.line guard · ทดสอบ V0 ผ่าน + V1 (ไม่มี guard) FAIL + V2 (ลบ re-select) FAIL · lint PASS 0/0
+- sha 352f05d539d515bf · 6,912,607 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · UI_STANDARD เพิ่มหัวข้อ lint #68
+
+## 15 ต.ค. 2026 (21:24) — ✅ เสร็จ: ขยายปุ่ม Undo/Redo + badge ตัวเลข (ผู้ใช้: เล็กไป)
+- ต่อจาก type scale · ปุ่ม Undo/Redo เป็นไอคอน SVG (ไม่ใช่ font) → ขยายไอคอน #edtabs .qab button svg 17→20px (ปุ่มคง 30×30 เท่า B/I/U/S)
+- badge ตัวเลขจำนวน (#edtabs .qab .qab-badge): font 9.5→11px · min-width/height 15→17px · line-height 15→17px · top/right -5→-6px · border-radius 8→9px (ขยายวงให้พอดีเลข 2 หลัก)
+- แก้แค่ CSS ไม่แตะ lint · lint PASS 0/0 · sha 75796362517dd947 · 6,912,334 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 15 ต.ค. 2026 (21:15) — ✅ เสร็จ: ปรับขนาดฟอนต์กลุ่มล่าง (แถบสถานะ + พาเนลประวัติ + แถบกู้คืน) ตาม type scale (ผู้ใช้: เล็กมาก)
+- ต่อจาก type scale ของ toolbar (21:07) · ขยายกลุ่มล่างให้เข้าชุด: หัวพาเนล 15 · เนื้อหา/row/ปุ่ม 14 · ป้าย/หัวคอลัมน์/เวลา 13 · metadata เล็ก 12 · ลูกศร sort 10
+- แก้ 16 จุด CSS: #edstatus base 12→14 (ข้อความสถานะ) · .edstatus-ic 14→15 · .edstatus-meta 11.5→13 · .ovfnote 11→12.5 · #draftBar 14→15 · #draftBar button 13→14 · al-title 13→15 · al-count 11→12 · al-export-btn 11→13 · al-export-lbl 11→13 · al-close 15→16 · al-cols 11→13 · al-arrow 9→10 · al-empty 12→14 · al-row 12→14 (al-msg inherits) · al-ts 11→13
+- แก้แค่ CSS font-size ไม่แตะ lint · lint PASS 0/0 · sha 5c7d7edec289650d · 6,912,335 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ค้าง (ยังไม่ทำ): contrast ของ al-ts (#a0a4a8 = 2.5) และ al-export-lbl (#8a8f94 = 3.05) DevTools เตือนว่าต่ำ — คนละเรื่องกับขนาด แยก commit ถ้าผู้ใช้ต้องการ · แท็บ รูป (#imgbar 12px) ยังไม่ปรับ
+
 ## 15 ต.ค. 2026 (21:07) — ✅ เสร็จ: ปรับเป็น type scale ตัวควบคุมหลัก 16px · ป้ายเล็ก 13px (ผู้ใช้เทียบ DXC+Azure DevTools · เลือก type scale)
 - หลักการ (จากที่ผู้ใช้วัด DevTools): DXC/Azure ใช้ขนาดตามบทบาท — เนื้อหา/ปุ่มที่คลิก 16px · nav/ปุ่มรอง 14px · ป้ายกำกับ 10–13px · ขนาดต่างแต่คอนทราสต์เท่ากัน
 - แก้ 5 จุดเป็น 16px: #typobar select+input[color] 14→16 · #typoSize 14→16 · #typobar .ttoggle (B/I/U/S) 14→16 · #edbar .b-lg (＋ ฟอนต์/＋ ฟอนต์ Google) 13.5→16 · #edtabs .edtab (แท็บ) 15→16

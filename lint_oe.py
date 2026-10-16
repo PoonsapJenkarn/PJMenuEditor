@@ -1498,14 +1498,11 @@ def main():
             if ("'"+_k66+"'") not in _thb66: errors.append('i18n '+_k66+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
             if ("'"+_k66+"'") not in _enb66: errors.append('i18n '+_k66+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
 
-    # ---- 67) จัดกลุ่ม "ฟอนต์ในไฟล์" + โน้ตฝังไฟล์ใต้แถบ + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026) ----
-    # (a) optgroup ฟอนต์มาตรฐาน 3 ตัว ต้องอยู่ในกลุ่ม typoFontBase (ชื่อกลุ่มสื่อว่าอยู่ในไฟล์)
+    # ---- 67) จัดกลุ่ม "ฟอนต์มากับแอป" + โน้ตฝังไฟล์ใต้แถบ + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026) ----
+    # (a) optgroup ฟอนต์มาตรฐาน 3 ตัว ต้องอยู่ในกลุ่ม typoFontBase (ชื่อกลุ่มสื่อว่ามากับแอป)
     _sel67=re.search(r'<select id="typoFont"[\s\S]*?</select>', txt)
     if _sel67 and 'id="typoFontBase"' not in _sel67.group(0):
-        errors.append('dropdown #typoFont ขาด <optgroup id="typoFontBase"> (กลุ่มฟอนต์ในไฟล์) (ดู UI_STANDARD.md ข้อ 8)')
-    # (b) โน้ตบอกว่าฟอนต์ฝังในไฟล์ (ใต้แถบฟอนต์)
-    if 'data-i18n="font.embedNote"' not in txt:
-        errors.append('ไม่พบโน้ต font.embedNote (บอกว่าฟอนต์ทุกตัวฝังในไฟล์) ใต้แถบฟอนต์ (ดู UI_STANDARD.md ข้อ 8)')
+        errors.append('dropdown #typoFont ขาด <optgroup id="typoFontBase"> (กลุ่มฟอนต์มากับแอป) (ดู UI_STANDARD.md ข้อ 8)')
     # (c) upload เตือนซ้ำ ไม่เอาเข้า — _fontUploadFile ต้องเช็ก _gfontFamExists ก่อนเพิ่ม (ให้ตรงกับ Google)
     _uf67=re.search(r'\nfunction _fontUploadFile\([^)]*\)\{[\s\S]*?\n\}', txt)
     if _uf67 and '_gfontFamExists(' not in _uf67.group(0):
@@ -1518,10 +1515,19 @@ def main():
         _th67=txt.find("th:{",_i67); _en67=txt.find("en:{",_i67)
         _thb67=txt[_th67:_en67] if (_th67>=0 and _en67>_th67) else ""
         _enb67=txt[_en67:_en67+30000] if _en67>=0 else ""
-        for _k67 in ('font.baseGroup','font.embedNote','fl.fontDup'):
+        for _k67 in ('font.baseGroup','fl.fontDup'):
             if ("'"+_k67+"'") not in _thb67: errors.append('i18n '+_k67+' ขาดใน th (ดู UI_STANDARD.md ข้อ 8)')
             if ("'"+_k67+"'") not in _enb67: errors.append('i18n '+_k67+' ขาดใน en (ดู UI_STANDARD.md ข้อ 8)')
 
+    # ---- 68) selectionchange ต้องไม่แย่งเลือกทับเส้นจุด (.ln) ที่เพิ่งคลิก (ผู้ใช้ 15 ต.ค. 2026) ----
+    # อาการเดิม: คลิก textbox (.nm/.pr) ก่อน caret ค้างใน contenteditable → คลิกเส้นประ click handler เลือก .ln
+    #           แต่ selectionchange ยิงตามด้วย caret ที่ค้าง → _typoFind(.nm) → typoSelect(.nm) แย่งเลือกทับ .ln
+    # กัน: re-select ใน selectionchange ต้องมี guard !(_typoType && _typoType.line)
+    _m68=re.search(r'_f\.el!==_typoEl[^\n{]*\)\{\s*typoSelect\(_f\.el', txt)
+    if not _m68:
+        errors.append('หา selectionchange re-select (_f.el!==_typoEl ... typoSelect) ไม่พบ — โครงสร้างเปลี่ยน ตรวจ lint #68 (ดู UI_STANDARD.md ข้อ 9)')
+    elif '_typoType.line' not in _m68.group(0):
+        errors.append('selectionchange re-select ขาด guard !(_typoType && _typoType.line) — คลิกเส้นจุดจาก textbox แล้วจะถูกแย่งเลือกทับ (ดู UI_STANDARD.md ข้อ 9)')
 
     # ---- report ----
     print("=" * 54)

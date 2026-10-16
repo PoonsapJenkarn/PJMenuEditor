@@ -331,15 +331,15 @@
 - ลบ `.gfont-srchnote` + i18n `gfont.srchnote` ทิ้ง (ย้าย count ขึ้นหัวลิสต์แล้ว ไม่ต้องมีโน้ตซ้ำ)
 - lint #66 ล็อก: ต้องมี `#gfontCount` + `_gfontOpen` เติมจาก `_GTHAI.length` + **`_gfontList` ต้องสร้างจาก `_GTHAI`** (list ตรงกับ count) + i18n `gfont.browsehint` ครบ th+en
 
-### 8.3 กลุ่ม "ฟอนต์ในไฟล์" + โน้ตฝังไฟล์ + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026 · lint #67)
+### 8.3 กลุ่ม "ฟอนต์มากับแอป" + upload เตือนซ้ำ (ผู้ใช้ 15 ต.ค. 2026 · lint #67)
 
-**(1) จัดกลุ่ม dropdown #typoFont เป็น 2 กลุ่ม:** ฟอนต์มาตรฐาน 3 ตัว (Prompt/Sarabun/Noto Sans Thai) อยู่ใน `<optgroup id="typoFontBase" data-i18n-label="font.baseGroup">` ชื่อ "ฟอนต์ในไฟล์" / "Fonts in file" · ฟอนต์อัปโหลด/Google อยู่ใน `#typoFontUser` "ฟอนต์ที่เพิ่ม" เดิม · placeholder `— ฟอนต์ —` อยู่นอก optgroup (ตัวเลือกว่าง) · ชื่อกลุ่มสื่อว่าฝังในไฟล์ไปในตัว (เทียบ InDesign "Document Installed Fonts" / Word "Theme Fonts")
+**(1) จัดกลุ่ม dropdown #typoFont เป็น 2 กลุ่ม:** ฟอนต์มาตรฐาน 3 ตัว (Prompt/Sarabun/Noto Sans Thai) อยู่ใน `<optgroup id="typoFontBase" data-i18n-label="font.baseGroup">` ชื่อ "ฟอนต์มากับแอป" / "Built-in fonts" (เดิม "ฟอนต์ในไฟล์" — เปลี่ยน 15 ต.ค. 2026 เพราะกลุ่มฟอนต์ที่เพิ่มก็อยู่ในไฟล์เหมือนกัน คำเก่าไม่แยกความต่าง) · ฟอนต์อัปโหลด/Google อยู่ใน `#typoFontUser` "ฟอนต์ที่เพิ่ม" เดิม · placeholder `— ฟอนต์ —` อยู่นอก optgroup (ตัวเลือกว่าง) · ชื่อกลุ่มสื่อว่าฝังในไฟล์ไปในตัว (เทียบ InDesign "Document Installed Fonts" / Word "Theme Fonts")
 
-**(2) โน้ตใต้แถบฟอนต์:** `.fontembed-note` (data-i18n `font.embedNote`) วางเป็น flex item `flex-basis:100%` ท้าย pane "home" (หลัง #typobar ที่เป็น display:contents) → ตกลงบรรทัดใต้แถบเครื่องมือเอง · โชว์เฉพาะแท็บข้อความ (อยู่ใน .rpane[data-pane=home]) · TH "ฟอนต์ทุกตัวในรายการนี้ฝังอยู่ในไฟล์ — เปิดเครื่องอื่นก็เห็นเหมือนเดิม" / EN "All fonts here are embedded in the file ..." · เป็น editor UI (buildMenuHtml ตัดทั้ง ribbon อยู่แล้ว · ไม่พิมพ์)
+**(2) โน้ตใต้แถบฟอนต์ — ลบออกแล้ว (ผู้ใช้ 15 ต.ค. 2026):** เดิมมี `.fontembed-note` (data-i18n `font.embedNote`) ใต้แถบ บอกว่าฟอนต์ฝังในไฟล์ · ผู้ใช้ให้เอาออกเพราะกินพื้นที่ส่วนอื่น · ลบ markup + CSS `.fontembed-note` + i18n `font.embedNote` (th+en) ทั้งหมด · lint #67 เลิกเช็ก `font.embedNote` แล้ว
 
 **(3) upload เตือนซ้ำ ไม่เอาเข้า (ให้ตรงกับ Google):** `_fontUploadFile` เช็ก `_gfontFamExists(fam)` ก่อนอ่านไฟล์ · ซ้ำ → `flashStatus('info', fl.fontDup)` + เลือกตัวเดิมให้ (`_gfontUse`) + ไม่เพิ่ม · เดิมใช้ `_fontFamFromName` เปลี่ยนชื่ออัตโนมัติ (Prompt→Prompt 2) ซึ่งขัดกับ Google → ลบ logic เปลี่ยนชื่อ เหลือ `_fontBaseName` คืนชื่อ sanitize ล้วน (ไม่มี numbering/exist-scan แล้ว · ไม่มี dead code) · เช็กจากชื่อฟอนต์ (ไม่ hash เนื้อไฟล์ — เกินจำเป็นสำหรับร้านเล็ก)
 
-- lint #67 ล็อก: `#typoFontBase` optgroup · `font.embedNote` markup · `_fontUploadFile` ต้องเรียก `_gfontFamExists` + แจ้ง `fl.fontDup` · i18n `font.baseGroup`/`font.embedNote`/`fl.fontDup` ครบ th+en
+- lint #67 ล็อก: `#typoFontBase` optgroup · `_fontUploadFile` ต้องเรียก `_gfontFamExists` + แจ้ง `fl.fontDup` · i18n `font.baseGroup`/`fl.fontDup` ครบ th+en (เลิกเช็ก `font.embedNote` — โน้ตถูกลบ 15 ต.ค. 2026)
 
 ## ความปลอดภัย (client-side XSS) — lint ข้อ 54 (ผู้ใช้ 12 ต.ค. 2026)
 app เป็น HTML ไฟล์เดียว รันในเครื่อง ใช้คนเดียว — ความเสี่ยงจริงต่ำ (ไม่มี server/backend/login/network ขาเข้า) แต่ user content (ชื่อเมนู/ชื่อกลุ่ม/ชื่อไฟล์รูป) ไหลเข้า DOM ได้ จึงล็อก pattern ที่ปลอดภัยไว้ไม่ให้ถอยหลัง:
@@ -350,3 +350,10 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - **`openPanel` → `_msgT()` ลง `innerHTML` โดยไม่ escape ในตัว** (จุดเปราะ · defense-in-depth gap) → caller ที่ส่ง user content เข้า `msgArgs` ต้อง **pre-escape เอง** เช่น dialog ลบกลุ่ม `msgArgs:{name:epEsc(nm)}` · ถ้าเพิ่ม caller ใหม่ที่ส่งชื่อเมนู/ไฟล์ ต้อง `epEsc` ก่อนเสมอ
 - **ห้ามมี sink อันตราย** ในไฟล์: `eval()` · `new Function` · `document.write` · `javascript:` · inline `on*=` handler ที่รับ user content · การ save ใช้ `cloneNode→outerHTML` (เบราว์เซอร์ escape ให้เอง) · อัปโหลดรูปเช็ก `f.type` = `image/*` + เป็น data: URL
 - lint ข้อ 54 ตรวจ 5 จุดนี้ (ก–จ) กันถอยหลัง — ไม่ได้แก้โค้ด (โค้ดถูกต้องอยู่แล้ว) แค่ล็อก pattern
+
+
+## การเลือกเส้นจุด (.ln) ในโหมดแก้ข้อความ — lint #68 (ผู้ใช้ 15 ต.ค. 2026)
+- `.nm`/`.pr` เป็น contenteditable · `.ln` (เส้นจุด) เป็น span ธรรมดา แก้ไขข้อความไม่ได้
+- บั๊กเดิม: คลิก textbox (.nm/.pr) ก่อน → caret ค้างใน contenteditable · คลิกเส้นประ `.ln` → click handler (capture) เลือก `.ln` ถูก แต่ `selectionchange` ยิงตามด้วย caret ที่ค้าง → `_typoFind(.nm)` → `typoSelect(.nm)` แย่งเลือกทับ `.ln` ทันที (คลิกที่ว่างก่อนแล้วค่อยคลิกเส้นได้ เพราะ caret ถูกเคลียร์)
+- แก้: ใน handler `selectionchange` การ re-select ต้องมี guard `!(_typoType && _typoType.line)` — ถ้าขณะนี้เลือกเส้นจุดอยู่ อย่าให้ selectionchange สลับไป contenteditable (เพราะเส้นจุดแก้ข้อความไม่ได้ selectionchange ที่ยิงตอนนั้น = caret ค้างเสมอ) · การคลิกสลับระหว่าง text↔line ยังทำงานผ่าน click handler (capture, บรรทัด ~4080) ตามปกติ
+- lint #68 ล็อก: pattern `_f.el!==_typoEl ... typoSelect(_f.el` ต้องมี `_typoType.line` อยู่ในนั้น (กันถอยกลับเป็น unguarded)

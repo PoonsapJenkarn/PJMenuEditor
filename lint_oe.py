@@ -200,7 +200,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -1550,6 +1550,11 @@ def main():
         for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset'):
             if ("'"+_k69+"'") not in _thb69: errors.append('i18n '+_k69+' ขาดใน th (ดู UI_STANDARD.md ข้อ 10)')
             if ("'"+_k69+"'") not in _enb69: errors.append('i18n '+_k69+' ขาดใน en (ดู UI_STANDARD.md ข้อ 10)')
+    # (e) ช่อง % (#zoomLvl) ต้องเป็น <input> พิมพ์ค่าเองได้ + มี _zoomType รับค่า (ผู้ใช้ 16 ต.ค. 2026)
+    if 'id="zoomLvl"' in txt and not re.search(r'<input[^>]*id="zoomLvl"', txt):
+        errors.append('#zoomLvl ต้องเป็น <input> (พิมพ์ % เองได้) ไม่ใช่ปุ่ม (ดู UI_STANDARD.md ข้อ 10)')
+    if 'function _zoomType' not in txt:
+        errors.append('ขาด function _zoomType (รับค่า % ที่พิมพ์ในช่อง zoomLvl) (ดู UI_STANDARD.md ข้อ 10)')
 
     # ---- report ----
     print("=" * 54)

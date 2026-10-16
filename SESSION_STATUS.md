@@ -8,6 +8,14 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 16 ต.ค. 2026 (12:21) — ✅ เสร็จ: ช่อง % ของ zoom พิมพ์ค่าเองได้ (ผู้ใช้ขอ · ผมเห็นด้วย ทำต่อทันที)
+- เปลี่ยน #zoomLvl จาก <button> (คลิก=reset 100%) → <input> พิมพ์ % เองได้ · focus=select-all · Enter=blur commit · onchange=_zoomType()
+- รับค่าอิสระ 50–200 ทีละ 1 (ไม่ปัด 10): _zoomSet→_zoomCommit (clamp เท่านั้น ไม่ snap) · ปุ่ม −/+ ยังทีละ 10 เข้ากริด (zoomIn=floor+1, zoomOut=ceil−1) · _zoomLoad ไม่ snap แล้ว
+- คลิก-reset หายไป (input คลิก=พิมพ์) → reset ด้วยพิมพ์ 100 (แบบ Figma/เบราว์เซอร์) · zoomReset() ยังอยู่
+- i18n ttl.zoomType (th+en) เพิ่ม · เก็บ ttl.zoomReset ไว้ (lint #69 ต้องการ) · zoomLvl เพิ่มใน lint _FILTERED16 (มีตัวกรอง strip ตัวเลข — ไม่มี warning)
+- #edtabs ไม่มี preventDefault ครอบ (ต่างจาก #typobar) → input focus/พิมพ์ได้ไม่ติด · lint #69(e) ใหม่: zoomLvl ต้องเป็น input + มี function _zoomType · V0 PASS + V1(button)/V2(no func) FAIL
+- lint PASS 0/0 (0 warning) · sha 1c38ca74c968b64f · 6,916,405 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 16 ต.ค. 2026 (11:54) — ✅ เสร็จ: In-page Zoom หน้า A4 (ปุ่มแถบบนข้าง Undo/Redo · ผู้ใช้เลือกแบบ A + ตำแหน่งแถบบน)
 - ปัญหา: Browser Zoom ขยาย toolbar ไปด้วยจนบังเนื้อหา · แก้ไม่ได้ที่ browser → ทำ In-page zoom เอง ขยายเฉพาะ .page
 - CSS: @media screen{ body:not(.measuring) .page{ zoom:var(--pagezoom,1); } } (screen-only + กัน measuring) · ตัวควบคุม .zoomctl (−/%/+) ใน #edtabs · ปุ่ม % คลิก=รีเซ็ต 100% · press-state :not(.on) (lint #43)

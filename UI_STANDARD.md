@@ -367,3 +367,5 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - ปุ่มควบคุม `.zoomctl` (− / % / +) อยู่แถบบนข้าง Undo/Redo (#edtabs) · ปุ่ม % กลางคลิก = รีเซ็ต 100% · press-state ต้องมี `:not(.on)` (lint #43) แม้ไม่ใช่ปุ่ม toggle
 - บันทึก: buildEditorHtml + buildMenuHtml ต้อง `b.style.removeProperty('--pagezoom')` ทั้งคู่ → ไฟล์ที่บันทึก/ดาวน์โหลดเปิดครั้งหน้าเริ่มที่ 100% เสมอ (zoom เป็นมุมมองบนจอ ไม่ติดไปกับไฟล์)
 - lint #69 ล็อก: กฎ apply แบบ screen-only · `.zoomctl` + 3 ปุ่ม (zoomOut/zoomLvl/zoomIn) · strip --pagezoom ครบ 2 ที่ · i18n ttl.zoomIn/zoomOut/zoomReset th+en
+- ช่อง % (`#zoomLvl`) เป็น `<input>` พิมพ์ค่าเองได้ (16 ต.ค. 2026): focus=select-all · onchange=`_zoomType()` · Enter=blur commit · รับค่าอิสระ 50–200 ทีละ 1 (ไม่ปัด 10) ผ่าน `_zoomCommit` (clamp เท่านั้น) · ปุ่ม −/+ ยังขยับทีละ 10 เข้ากริด (zoomIn/zoomOut ใช้ floor/ceil ÷ step) · คลิก-reset เดิมหายไป → พิมพ์ 100 แทน (แบบ Figma/เบราว์เซอร์) · zoomLvl อยู่ใน `_FILTERED16` (มีตัวกรอง strip ตัวเลข) · อยู่ใน #edtabs ไม่มี preventDefault ครอบ จึง focus/พิมพ์ได้
+- lint #69(e): `#zoomLvl` ต้องเป็น `<input>` + ต้องมี `function _zoomType` (กันถอยกลับเป็นปุ่ม)

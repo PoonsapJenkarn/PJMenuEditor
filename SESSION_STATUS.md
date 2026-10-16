@@ -8,6 +8,16 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 16 ต.ค. 2026 (07:18) — ✅ เสร็จ: ไล่แก้ขนาดฟอนต์ editor ที่เหลือครบทั้ง 6 กลุ่ม A–F (59 จุด) ตาม type scale (ผู้ใช้: ไล่แก้ให้ครบ)
+- หลักเดิม: หัวป๊อปอัพ 15 · เนื้อหา/ปุ่ม/ช่องกรอก 14 · ป้าย 13 · เล็กสุด/โน้ต 12 · caret 11 · เนื้อหาเมนูที่พิมพ์จริง (.nm/.pr/.sec-h/.row/.brand/.contact/.crab/.pagelabel/.secnote) ไม่แตะ
+- A แท็บรูป+ป๊อปอัพเงา: #imgbar select/button 12→14 · shd-pop 12→13 · shd-ttl 11→15 · shd-pop button 12→14 · shd-row label 11.5→13 · shd-num 12→14 · shd-use 11→13
+- B ป๊อปอัพฟอนต์ Google: gfont-pop 12→13 · ttl 11→15 · inlbl 11→13 · name 12→14 · in 12→14 · add 12→14 · msg 11→13 · note 10→12 · sub 11→13 · addbtn 12→14 (คง prev 16)
+- C ป๊อปอัพสี/เส้นขอบ: olcaret 10→11 · ol-auto 12→14 · ol-msg 11→13 · ol-w 12→14 · cp-caret 10→11 · cp-sec-label 11→13 · cp-empty 11→13 · cp hex 12→14 · cp-add 11→13 · cp-paint 12→14 · cp-dlg 12→13 · cp-dlg-ttl 12.5→15 · CpDlgHex 13→14 · cp-dlg-msg 11→13 · cp-dlg-ok/cancel 12→14 (ไม่แตะปุ่ม A เส้นขอบบน toolbar)
+- D ปุ่มในหน้า A4: ed-del 11→12 · ed-dup 10→12 · ed-add 12→14 · ed-delpage 12→14 · pk-hint 11→12 · ed-addgroup 13→14 · ed-delgroup 13→14 · ed-dupgroup 12→14 · ed-badgeadd 12→13 · ed-badgedel 13→14 (คง sechead 19, emoji 22)
+- E พาเนลหน้า/ปรับราคา (ep-*): ep-msg 13→14 · label 12.5→14 · input 13→14 · preview 11.5→13 · goset 11.5→13 · chk 12→14 · seg label 12→14 · num 13→14 · sel 12.5→14 · flabel 12→13 · ok/cancel/clearonly 12.5→14
+- F เบ็ดเตล็ด: #edbar .hint 12→13 · #edbar .rgl 10→13
+- แก้แค่ CSS font-size ไม่แตะ lint · lint PASS 0/0 · sha e8f715ef0b37112d · 6,912,589 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · เสี่ยงปุ่ม/ป๊อปอัพล้นบรรทัด ต้องเทส
+
 ## 15 ต.ค. 2026 (21:28) — ✅ แก้บั๊ก: คลิกเส้นจุด (.ln) ไม่ติดถ้าคลิก textbox มาก่อน (ผู้ใช้รายงาน · lint #68)
 - อาการ: โหมดแก้ข้อความ คลิก textbox (.nm/.pr) ก่อน → คลิกเส้นประ เส้นไม่ active แก้ไม่ได้ (ทุกช่อง) · แต่คลิกที่ว่างก่อนแล้วคลิกเส้น = ได้
 - ต้นเหตุ: .nm/.pr เป็น contenteditable, .ln เป็น span ธรรมดา · คลิก .ln → click handler (capture ~4080) เลือก .ln ถูก แต่ selectionchange ยิงตามด้วย caret ที่ค้างใน textbox → _typoFind(.nm) → typoSelect(.nm) แย่งทับ .ln (บรรทัด 3261)

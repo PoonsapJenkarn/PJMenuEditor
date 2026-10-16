@@ -119,8 +119,8 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 /* highlight element ที่กำลังเลือกแก้ */
 .typosel{outline:2px dashed #3d6fb5 !important;outline-offset:2px;border-radius:3px;}
 @media print{#typobar{display:none !important;}.typosel{outline:none !important;}}
-#imgbar select{padding:5px;border:1px solid #ccc;border-radius:6px;font-size:12px;}
-#imgbar button{font-size:12px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;}
+#imgbar select{padding:5px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
+#imgbar button{font-size:14px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;}
 #imgbar button:disabled{background:#555;color:#9aa0a8;cursor:not-allowed;opacity:.65;}
 @media print{.fimg .rz,.fimg .delbtn{display:none!important;} .fimg{pointer-events:none!important;} .fimg.sel{outline:none!important;}}
 </style>
@@ -130,12 +130,12 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
   display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;font-family:'Prompt','Sarabun',sans-serif;
   box-shadow:0 1px 4px rgba(0,0,0,.10);border-bottom:1px solid #e1dfdd;}
 #edbar .t{font-weight:700;font-size:15px;color:#217346;}
-#edbar .hint{font-size:12px;color:#605e5c;font-weight:400;margin-right:auto;}
+#edbar .hint{font-size:13px;color:#605e5c;font-weight:400;margin-right:auto;}
 #edbar button{font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;border:none;border-radius:8px;
   padding:8px 15px;cursor:pointer;}
 #edbar .rgroup{display:flex;flex-direction:column;align-items:center;padding:0 10px;}
 #edbar .rgb{display:flex;align-items:center;gap:6px;}
-#edbar .rgl{font-size:10px;color:#8a8886;margin-top:3px;letter-spacing:.2px;}
+#edbar .rgl{font-size:13px;color:#8a8886;margin-top:3px;letter-spacing:.2px;}
 #edbar .btn-edit{background:#fff;color:#201f1e;border:1px solid #d2d0ce;}
 #edbar .btn-edit.on{background:#217346;color:#fff;border-color:#217346;}
 #edbar .btn-dl{background:#217346;color:#fff;}.btn-save{background:#1a5c38;color:#fff;position:relative;}.btn-save.dirty::after{content:'';position:absolute;top:5px;right:6px;width:8px;height:8px;background:#ffd23f;border:1px solid #fff;border-radius:50%;}
@@ -205,22 +205,22 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #imgbar button.b-lg.shd.on:hover{background:#1a5c38;border-color:#1a5c38;color:#fff;}
 /* หน้าต่างปรับค่าเงา (ใต้ปุ่ม ปรับค่า) — ปุ่มข้างในต้องทับ #imgbar button (พื้นเขียว) · .on วางหลัง hover */
 #imgbar .shdpick{position:relative;display:inline-flex;}
-#imgbar .shd-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:260px;font-family:'Prompt',sans-serif;font-size:12px;color:#323130;text-align:left;}
-#imgbar .shd-pop.open{display:block;}.gfontpick{position:relative;display:inline-flex;}.gfont-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:440px;font-family:'Prompt',sans-serif;font-size:12px;color:#323130;text-align:left;}.gfont-pop.open{display:block;}.gfont-ttl{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
-.gfont-inlbl{font-size:11px;color:#605e5c;margin:0 0 3px;line-height:1.3;}.gfont-list{max-height:220px;overflow-y:auto;margin-bottom:8px;border:1px solid #e1dfdd;border-radius:6px;}.gfont-row{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #f0eeec;background:#fff;padding:6px 10px;cursor:pointer;font-family:inherit;text-align:left;}.gfont-name{font-size:12px;color:#323130;white-space:nowrap;}.gfont-prev{font-size:16px;color:#605e5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:auto;max-width:220px;text-align:right;min-height:19px;}.gfont-row:hover{background:#f3f2f1;}.gfont-row:last-child{border-bottom:0;}.gfont-inrow{display:flex;gap:4px;margin-bottom:6px;}.gfont-in{flex:1;min-width:0;box-sizing:border-box;padding:4px 6px;border:1px solid #c8c6c4;border-radius:4px;font-size:12px;font-family:inherit;}.gfont-add{border:1px solid #c8c6c4;background:#f3f2f1;color:#323130;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;}.gfont-add:hover{background:#ebe9e7;}.gfont-msg{font-size:11px;min-height:14px;line-height:1.3;}.gfont-msg.load{color:#8a6d00;}.gfont-msg.err{color:#a4262c;}.gfont-msg.ok{color:#217346;}.gfont-msg.warn{color:#8a6d00;}.gfont-note{font-size:10px;color:#a19f9d;margin-top:6px;line-height:1.3;}
-.gfont-note a.oflink{color:#0b5fb0;text-decoration:underline;}.gfont-sub{font-size:11px;color:#605e5c;margin:0 0 4px;}.gfont-res{margin-top:6px;}.gfont-row.sel{background:#dbeafc;}.gfont-row.sel .gfont-name{font-weight:600;}.gfont-addbtn{display:block;width:100%;box-sizing:border-box;margin:6px 0 2px;padding:7px;border:1px solid #323130;background:#323130;color:#fff;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;}.gfont-addbtn:hover{background:#201f1e;}.gfont-addbtn:disabled{background:#f3f2f1;color:#a19f9d;border-color:#e1dfdd;cursor:default;}
-#imgbar .shd-ttl{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
+#imgbar .shd-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:260px;font-family:'Prompt',sans-serif;font-size:13px;color:#323130;text-align:left;}
+#imgbar .shd-pop.open{display:block;}.gfontpick{position:relative;display:inline-flex;}.gfont-pop{position:absolute;top:100%;left:0;z-index:50;display:none;margin-top:4px;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px 12px;width:440px;font-family:'Prompt',sans-serif;font-size:13px;color:#323130;text-align:left;}.gfont-pop.open{display:block;}.gfont-ttl{font-size:15px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
+.gfont-inlbl{font-size:13px;color:#605e5c;margin:0 0 3px;line-height:1.3;}.gfont-list{max-height:220px;overflow-y:auto;margin-bottom:8px;border:1px solid #e1dfdd;border-radius:6px;}.gfont-row{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #f0eeec;background:#fff;padding:6px 10px;cursor:pointer;font-family:inherit;text-align:left;}.gfont-name{font-size:14px;color:#323130;white-space:nowrap;}.gfont-prev{font-size:16px;color:#605e5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:auto;max-width:220px;text-align:right;min-height:19px;}.gfont-row:hover{background:#f3f2f1;}.gfont-row:last-child{border-bottom:0;}.gfont-inrow{display:flex;gap:4px;margin-bottom:6px;}.gfont-in{flex:1;min-width:0;box-sizing:border-box;padding:4px 6px;border:1px solid #c8c6c4;border-radius:4px;font-size:14px;font-family:inherit;}.gfont-add{border:1px solid #c8c6c4;background:#f3f2f1;color:#323130;border-radius:4px;padding:4px 10px;font-size:14px;cursor:pointer;font-family:inherit;white-space:nowrap;}.gfont-add:hover{background:#ebe9e7;}.gfont-msg{font-size:13px;min-height:14px;line-height:1.3;}.gfont-msg.load{color:#8a6d00;}.gfont-msg.err{color:#a4262c;}.gfont-msg.ok{color:#217346;}.gfont-msg.warn{color:#8a6d00;}.gfont-note{font-size:12px;color:#a19f9d;margin-top:6px;line-height:1.3;}
+.gfont-note a.oflink{color:#0b5fb0;text-decoration:underline;}.gfont-sub{font-size:13px;color:#605e5c;margin:0 0 4px;}.gfont-res{margin-top:6px;}.gfont-row.sel{background:#dbeafc;}.gfont-row.sel .gfont-name{font-weight:600;}.gfont-addbtn{display:block;width:100%;box-sizing:border-box;margin:6px 0 2px;padding:7px;border:1px solid #323130;background:#323130;color:#fff;border-radius:5px;font-size:14px;cursor:pointer;font-family:inherit;}.gfont-addbtn:hover{background:#201f1e;}.gfont-addbtn:disabled{background:#f3f2f1;color:#a19f9d;border-color:#e1dfdd;cursor:default;}
+#imgbar .shd-ttl{font-size:15px;color:#8a8f94;font-weight:600;margin:0 0 8px;line-height:1.35;}
 #imgbar .shd-lvs{display:flex;gap:6px;margin:0 0 10px;}
-#imgbar .shd-pop button{font-size:12px;padding:4px 12px;border-radius:6px;border:1px solid #d2d0ce;background:#fff;color:#323130;cursor:pointer;}
+#imgbar .shd-pop button{font-size:14px;padding:4px 12px;border-radius:6px;border:1px solid #d2d0ce;background:#fff;color:#323130;cursor:pointer;}
 #imgbar .shd-pop button:hover{background:#f3f2f1;}
 #imgbar .shd-pop button:disabled{background:#fff;color:#a19f9d;opacity:.6;cursor:not-allowed;}
 #imgbar .shd-pop button.on{background:#217346;color:#fff;border-color:#217346;}
 #imgbar .shd-pop button.on:hover{background:#1a5c38;border-color:#1a5c38;color:#fff;}
 #imgbar .shd-row{display:grid;grid-template-columns:1fr 60px;gap:2px 8px;align-items:center;margin:0 0 8px;}
-#imgbar .shd-row label{grid-column:1 / -1;font-size:11.5px;}
+#imgbar .shd-row label{grid-column:1 / -1;font-size:13px;}
 #imgbar .shd-row input[type=range]{width:100%;margin:0;accent-color:#217346;}
-#imgbar .shd-num{width:56px;box-sizing:border-box;padding:3px 5px;border:1px solid #c8c6c4;border-radius:4px;font-size:12px;text-align:right;font-family:inherit;}
-#imgbar .shd-use{font-size:11px;color:#605e5c;margin:2px 0 8px;line-height:1.35;}
+#imgbar .shd-num{width:56px;box-sizing:border-box;padding:3px 5px;border:1px solid #c8c6c4;border-radius:4px;font-size:14px;text-align:right;font-family:inherit;}
+#imgbar .shd-use{font-size:13px;color:#605e5c;margin:2px 0 8px;line-height:1.35;}
 #imgbar .shd-foot{display:flex;justify-content:flex-end;}
 #typobar .ttoggle.on:hover{background:#1a5c38;border-color:#1a5c38;color:#fff;}
 #typobar .ttoggle .ol-a{font-family:'Prompt',sans-serif;font-weight:700;font-size:15px;color:#fff;text-shadow:-1px -1px 0 #2b2320,1px -1px 0 #2b2320,-1px 1px 0 #2b2320,1px 1px 0 #2b2320,0 -1px 0 #2b2320,0 1px 0 #2b2320,-1px 0 0 #2b2320,1px 0 0 #2b2320;}  /* ปุ่มเส้นขอบ: ไอคอนเป็นตัว A ขาวขอบเข้ม = แสดงผลที่จะได้ */
@@ -230,9 +230,9 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .ol-bar.none{background:transparent !important;border:1px dashed #8a8f94;}  /* ยังไม่มีสีที่ใช้ได้ */
 #typobar #typoOutline.on .ol-bar,#typobar #typoOutline.on .ol-bar.none{border-color:#fff;}
 #typobar .olpick{position:relative;display:inline-flex;align-items:center;gap:1px;}
-#typobar .ttoggle.olcaret{width:16px;padding:0;font-size:10px;color:#666;}
+#typobar .ttoggle.olcaret{width:16px;padding:0;font-size:11px;color:#666;}
 #typobar .ol-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}
-#typobar .ol-auto{display:flex;align-items:center;gap:8px;width:100%;height:26px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;padding:0 8px;margin:0 0 8px;font-family:inherit;font-size:12px;}
+#typobar .ol-auto{display:flex;align-items:center;gap:8px;width:100%;height:26px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;padding:0 8px;margin:0 0 8px;font-family:inherit;font-size:14px;}
 #typobar .ol-auto .ol-autosw{width:16px;height:16px;border:1px solid #bbb;border-radius:3px;flex:none;}
 #typobar .ol-auto:hover:not(:disabled){background:#eef7f1;border-color:#217346;}
 #typobar .ol-auto.on{background:#217346;border-color:#217346;color:#fff;}  /* สีขอบของช่องที่เลือก = อัตโนมัติ (UI_STANDARD ข้อ 1) */
@@ -242,11 +242,11 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .ol-add{margin:0;}
 /* ช่อง HEX สีขอบ (ผู้ใช้ 9 ต.ค. 2026): แบบเดียวกับตัวเลือกสีตัวอักษร · ช่อง HEX ซ้าย + กำหนดเอง ขวา */
 #typobar .ol-foot{margin:0 0 6px;}
-#typobar .ol-msg{color:#c0392b;font-size:11px;line-height:1.35;margin:2px 0 6px;}
+#typobar .ol-msg{color:#c0392b;font-size:13px;line-height:1.35;margin:2px 0 6px;}
 #typobar .ol-msg:empty{display:none;}
 #typobar .ol-wlbl{margin-top:4px;border-top:1px solid #eee;padding-top:8px;}
 #typobar .ol-pop.open{display:block;}
-#typobar .ol-w{display:flex;align-items:center;gap:8px;width:100%;height:26px;border:none;background:#fff;color:#323130;border-radius:5px;cursor:pointer;padding:0 8px;font-family:inherit;font-size:12px;}
+#typobar .ol-w{display:flex;align-items:center;gap:8px;width:100%;height:26px;border:none;background:#fff;color:#323130;border-radius:5px;cursor:pointer;padding:0 8px;font-family:inherit;font-size:14px;}
 #typobar .ol-w .ol-s{display:inline-block;width:38px;background:#2b2320;border-radius:1px;flex:none;}
 #typobar .ol-w:hover{background:#eef7f1;}
 #typobar .ol-w.on{background:#217346;color:#fff;}  /* ความหนาของช่องที่เลือก (UI_STANDARD ข้อ 1) */
@@ -265,33 +265,33 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .cp-trigger .cp-current{width:20px;height:20px;border-radius:4px;border:1px solid #bbb;display:inline-block;}
 #typobar .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #ccc;background:#fff;cursor:pointer;padding:0 5px;display:inline-flex;align-items:center;}
 #typobar .cp-trigger .cp-caretbtn:hover{background:#eef7f1;}
-#typobar .cp-trigger .cp-caret{font-size:10px;color:#666;}
+#typobar .cp-trigger .cp-caret{font-size:11px;color:#666;}
 #typobar .cp-trigger .cp-apply:disabled,#typobar .cp-trigger .cp-caretbtn:disabled{opacity:.4;cursor:not-allowed;}
 #typobar .cp-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}
 #typobar .cp-pop.open{display:block;}
-#typobar .cp-sec-label{font-size:11px;color:#8a8f94;font-weight:600;margin:0 0 5px;}
+#typobar .cp-sec-label{font-size:13px;color:#8a8f94;font-weight:600;margin:0 0 5px;}
 #typobar .cp-grid,#typobar .cp-custom{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-bottom:9px;}
 #typobar .cp-sw{width:20px;height:20px;border:1px solid #d2d0ce;border-radius:4px;cursor:pointer;padding:0;}
 #typobar .cp-sw:hover{transform:scale(1.15);border-color:#217346;}
 #typobar .cp-sw.white{border-color:#bbb;}
-#typobar .cp-empty{grid-column:1/-1;font-size:11px;color:#b0b4b8;}
+#typobar .cp-empty{grid-column:1/-1;font-size:13px;color:#b0b4b8;}
 #typobar .cp-foot{display:flex;flex-wrap:wrap;align-items:center;gap:5px;border-top:1px solid #eee;padding-top:8px;}
-#typobar .cp-foot #typoHex,#typobar .cp-foot #typoOlHex{width:80px;height:28px;border:1px solid #d2d0ce;border-radius:5px;font-family:monospace;font-size:12px;text-align:center;text-transform:uppercase;}
+#typobar .cp-foot #typoHex,#typobar .cp-foot #typoOlHex{width:80px;height:28px;border:1px solid #d2d0ce;border-radius:5px;font-family:monospace;font-size:14px;text-align:center;text-transform:uppercase;}
 #typobar .cp-foot #typoColor{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;}
-#typobar .cp-add{height:28px;padding:0 8px;border:1px solid #d2d0ce;background:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:11px;white-space:nowrap;}
+#typobar .cp-add{height:28px;padding:0 8px;border:1px solid #d2d0ce;background:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:13px;white-space:nowrap;}
 #typobar .cp-add:hover{background:#eef7f1;border-color:#217346;color:#217346;}
-#typobar .cp-paint{flex:1 1 100%;height:28px;padding:0 10px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;}
+#typobar .cp-paint{flex:1 1 100%;height:28px;padding:0 10px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;}
 /* หน้าต่างสีที่กำหนดเอง (8 ต.ค. 2026): ของแอปเอง — HEX เป็นช่องหลัก · ใหม่/เดิม · ตกลง/ยกเลิก · ระหว่างเลือกไม่เปลี่ยนเมนู */
-#typobar .cp-dlg{position:absolute;top:34px;left:0;z-index:52;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);padding:10px;width:240px;font-size:12px;color:#323130;}
+#typobar .cp-dlg{position:absolute;top:34px;left:0;z-index:52;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);padding:10px;width:240px;font-size:13px;color:#323130;}
 #typobar .cp-dlg.open{display:block;}
-#typobar .cp-dlg-ttl{font-weight:700;font-size:12.5px;margin:0 0 8px;}
+#typobar .cp-dlg-ttl{font-weight:700;font-size:15px;margin:0 0 8px;}
 #typobar .cp-sv{position:relative;height:140px;border-radius:5px;cursor:crosshair;margin-bottom:10px;}
 #typobar .cp-svdot{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.5);pointer-events:none;box-sizing:border-box;}
 #typobar .cp-hue{position:relative;height:12px;border-radius:6px;cursor:pointer;margin:0 7px 10px;background:linear-gradient(to right,#f00 0%,#ff0 16.66%,#0f0 33.33%,#0ff 50%,#00f 66.66%,#f0f 83.33%,#f00 100%);}
 #typobar .cp-huedot{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.5);pointer-events:none;box-sizing:border-box;}
 #typobar .cp-dlg-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 #typobar .cp-dlg-lbl{font-weight:700;color:#605e5c;}
-#typobar #typoCpDlgHex{flex:1 1 auto;min-width:0;height:28px;border:1px solid #d2d0ce;border-radius:5px;font-family:monospace;font-size:13px;text-align:center;text-transform:uppercase;}
+#typobar #typoCpDlgHex{flex:1 1 auto;min-width:0;height:28px;border:1px solid #d2d0ce;border-radius:5px;font-family:monospace;font-size:14px;text-align:center;text-transform:uppercase;}
 #typobar #typoCpDlgHex.bad{border-color:#c0392b;}
 #typobar .cp-eye{flex:none;width:30px;height:28px;border:1px solid #d2d0ce;background:#fff;border-radius:5px;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;}
 #typobar .cp-eye[hidden]{display:none;}
@@ -299,12 +299,12 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .cp-cmp{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 #typobar .cp-cmp-lbl{color:#605e5c;}
 #typobar .cp-cmp-sw{width:40px;height:20px;border:1px solid #bbb;border-radius:4px;margin-right:6px;}
-#typobar .cp-dlg-msg{color:#c0392b;font-size:11px;margin:-2px 0 8px;}
+#typobar .cp-dlg-msg{color:#c0392b;font-size:13px;margin:-2px 0 8px;}
 #typobar .cp-dlg-msg:empty{display:none;}
 #typobar .cp-dlg-btns{display:flex;justify-content:flex-end;gap:6px;}
-#typobar .cp-dlg-ok{height:28px;padding:0 16px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;}
+#typobar .cp-dlg-ok{height:28px;padding:0 16px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
 #typobar .cp-dlg-ok:disabled{opacity:.45;cursor:not-allowed;}
-#typobar .cp-dlg-cancel{height:28px;padding:0 12px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;}
+#typobar .cp-dlg-cancel{height:28px;padding:0 12px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;}
 @media screen{#typobar .cp-dlg-ok:hover:not(:disabled){background:#1a5c38;} #typobar .cp-dlg-cancel:hover,#typobar .cp-eye:hover{background:#eef7f1;border-color:#217346;}}
 #typobar button.tbtn.clearsel{background:none;color:#323130;border-color:transparent;}
 #typobar button.tbtn.clearsel svg{stroke:#444;}
@@ -382,31 +382,31 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 body.editmode .pr[contenteditable]:empty,body.editmode .pr[contenteditable]:has(> br:only-child),body.pricemode .pr[contenteditable]:empty,body.pricemode .pr[contenteditable]:has(> br:only-child){display:inline-block;min-width:3em;min-height:1.15em;}
 body{padding-top:56px;}
 .ed-del{margin-left:6px;border:none;background:#e0332a;color:#fff;border-radius:50%;
-  width:18px;height:18px;font-size:11px;line-height:1;cursor:pointer;padding:0;flex:none;}
+  width:18px;height:18px;font-size:12px;line-height:1;cursor:pointer;padding:0;flex:none;}
 .ed-add{display:block;margin:5px 0 0;border:1px dashed #1592d9;background:rgba(21,146,217,.06);
-  color:#1592d9;border-radius:6px;padding:3px 0;width:100%;font-size:12px;font-weight:600;
+  color:#1592d9;border-radius:6px;padding:3px 0;width:100%;font-size:14px;font-weight:600;
   font-family:'Prompt',sans-serif;cursor:pointer;}
 .ed-dup{margin-left:4px;border:none;background:#1592d9;color:#fff;border-radius:50%;
-  width:18px;height:18px;font-size:10px;line-height:1;cursor:pointer;padding:0;flex:none;}
+  width:18px;height:18px;font-size:12px;line-height:1;cursor:pointer;padding:0;flex:none;}
 .page.overflowed{outline:3px solid #e8a020;outline-offset:-3px;}
-.ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:12px;cursor:pointer;}.sec-h .sechead{outline:none;flex:1 1 auto;font-size:19px;}  /* ชื่อกลุ่มเมนู 19px (ผู้ใช้ 8 ต.ค. 2026 · เดิม 17px จาก .sec-h) */@media screen{body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}}@media print{.ed-delpage{display:none !important;}} @media screen{body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:11px;color:#888;margin-bottom:6px;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
+.ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}.sec-h .sechead{outline:none;flex:1 1 auto;font-size:19px;}  /* ชื่อกลุ่มเมนู 19px (ผู้ใช้ 8 ต.ค. 2026 · เดิม 17px จาก .sec-h) */@media screen{body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}}@media print{.ed-delpage{display:none !important;}} @media screen{body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:12px;color:#888;margin-bottom:6px;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
 
 /* --- v5 additions: add/del group, editable header, logo edit --- */
 .ed-addgroup{display:none;margin:4px 0 9px;border:1.5px dashed #4a8579;background:rgba(74,133,121,.07);
-  color:#4a8579;border-radius:8px;padding:7px 0;width:100%;font-size:13px;font-weight:700;
+  color:#4a8579;border-radius:8px;padding:7px 0;width:100%;font-size:14px;font-weight:700;
   font-family:'Prompt',sans-serif;cursor:pointer;}
 body.editmode .ed-addgroup{display:block;}
 .ed-delgroup{margin-left:auto;border:none;background:#e0332a;color:#fff;border-radius:6px;
-  width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
+  width:22px;height:22px;font-size:14px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
 @media screen{body.editmode .ed-delgroup{display:inline-flex;align-items:center;justify-content:center;}}
 .ed-dupgroup{margin-left:6px;border:none;background:#1592d9;color:#fff;border-radius:6px;
-  width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
+  width:22px;height:22px;font-size:14px;line-height:1;cursor:pointer;padding:0;flex:none;display:none;}
 @media screen{body.editmode .ed-dupgroup{display:inline-flex;align-items:center;justify-content:center;}}
 @media screen{body.imgmode .brand .logo{outline:2px dashed #8a4b9c;outline-offset:3px;cursor:pointer;border-radius:6px;}}
 /* ป้ายประจำกลุ่ม (8 ต.ค. 2026): แบบโลโก้ — โหมดแก้รูป คลิกป้าย = เปลี่ยน · × = ลบ · + ป้าย = ใส่ให้กลุ่มที่ยังไม่มี · ปุ่มเฉพาะจอ ไม่เก็บในไฟล์ */
 @media screen{body.imgmode .sec-h .secimg{outline:2px dashed #8a4b9c;outline-offset:2px;cursor:pointer;border-radius:4px;}}
-.ed-badgeadd{display:none;margin-left:auto;border:1.5px dashed #8a4b9c;background:rgba(138,75,156,.07);color:#8a4b9c;border-radius:6px;padding:1px 9px;font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;line-height:1.5;cursor:pointer;flex:none;}
-.ed-badgedel{display:none;margin-left:2px;border:none;background:#e0332a;color:#fff;border-radius:6px;width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;flex:none;}
+.ed-badgeadd{display:none;margin-left:auto;border:1.5px dashed #8a4b9c;background:rgba(138,75,156,.07);color:#8a4b9c;border-radius:6px;padding:1px 9px;font-family:'Prompt',sans-serif;font-size:13px;font-weight:600;line-height:1.5;cursor:pointer;flex:none;}
+.ed-badgedel{display:none;margin-left:2px;border:none;background:#e0332a;color:#fff;border-radius:6px;width:22px;height:22px;font-size:14px;line-height:1;cursor:pointer;padding:0;flex:none;}
 @media screen{body.imgmode .ed-badgeadd{display:inline-block;} body.imgmode .ed-badgedel{display:inline-flex;align-items:center;justify-content:center;}}
 @media screen{.ed-badgeadd:hover{background:rgba(138,75,156,.16);} .ed-badgedel:hover{background:#b8231b;}}
 @media screen{body.editmode [data-edit]{outline:1.5px dashed #1592d9;outline-offset:2px;background:rgba(21,146,217,.12);border-radius:4px;padding:1px 4px;cursor:text;}}
@@ -455,37 +455,37 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
 @keyframes epslide{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
 #edpanel .ep-ic{flex:none;display:flex;}
 #edpanel .ep-ic svg{width:21px;height:21px;fill:none;stroke-width:1.9;}
-#edpanel .ep-msg{font-size:13px;font-weight:500;color:#2e3440;line-height:1.4;flex:1 1 220px;min-width:0;}
+#edpanel .ep-msg{font-size:14px;font-weight:500;color:#2e3440;line-height:1.4;flex:1 1 220px;min-width:0;}
 #edpanel .ep-msg b{font-weight:700;}
-#edpanel .ep-label{font-size:12.5px;font-weight:600;color:#3a3937;white-space:nowrap;}
-#edpanel .ep-input{font-family:inherit;font-size:13px;font-weight:500;padding:5px 10px;border:1px solid #c8ccd2;border-radius:6px;width:160px;outline:none;}
+#edpanel .ep-label{font-size:14px;font-weight:600;color:#3a3937;white-space:nowrap;}
+#edpanel .ep-input{font-family:inherit;font-size:14px;font-weight:500;padding:5px 10px;border:1px solid #c8ccd2;border-radius:6px;width:160px;outline:none;}
 #edpanel .ep-input:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
-#edpanel .ep-preview{font-size:11.5px;color:#6b7280;white-space:normal;line-height:1.35;flex:1 1 180px;min-width:0;}  /* ข้อความยาว = ขึ้นบรรทัดในพื้นที่ตัวเอง ไม่ดันส่วนอื่น */
+#edpanel .ep-preview{font-size:13px;color:#6b7280;white-space:normal;line-height:1.35;flex:1 1 180px;min-width:0;}  /* ข้อความยาว = ขึ้นบรรทัดในพื้นที่ตัวเอง ไม่ดันส่วนอื่น */
 #edpanel .ep-preview b{color:#c0392b;font-weight:700;}
 #edpanel .ep-preview.ep-err{color:#c0392b;font-weight:600;}
-#edpanel .ep-goset{margin-left:8px;font-family:inherit;font-size:11.5px;font-weight:600;color:#217346;background:#fff;border:1px solid #217346;border-radius:6px;padding:2px 10px;cursor:pointer;vertical-align:middle;}
+#edpanel .ep-goset{margin-left:8px;font-family:inherit;font-size:13px;font-weight:600;color:#217346;background:#fff;border:1px solid #217346;border-radius:6px;padding:2px 10px;cursor:pointer;vertical-align:middle;}
 #edpanel .ep-goset:hover{background:#217346;color:#fff;}
-#edpanel .ep-chk{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#3a3937;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-chk{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;color:#3a3937;cursor:pointer;white-space:nowrap;}
 #edpanel .ep-chk input{accent-color:#217346;margin:0;cursor:pointer;}
 #edpanel .ep-chk:has(input:disabled){opacity:.45;cursor:not-allowed;}
 #edpanel .ep-chk:has(input:disabled) input{cursor:not-allowed;}
 #edpanel .ep-btns{display:flex;gap:6px;margin-left:auto;}
 #edpanel .ep-pf{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 #edpanel .ep-seg{display:inline-flex;border:1px solid #c8ccd2;border-radius:6px;overflow:hidden;}
-#edpanel .ep-seg label{font-size:12px;font-weight:600;color:#605e5c;padding:5px 11px;cursor:pointer;background:#fff;white-space:nowrap;}
+#edpanel .ep-seg label{font-size:14px;font-weight:600;color:#605e5c;padding:5px 11px;cursor:pointer;background:#fff;white-space:nowrap;}
 #edpanel .ep-seg label:not(:last-child){border-right:1px solid #c8ccd2;}
 #edpanel .ep-seg input{position:absolute;opacity:0;pointer-events:none;}
 #edpanel .ep-seg input:checked+span{color:#fff;}
 #edpanel .ep-seg label:has(input:checked){background:#217346;color:#fff;}
 #edpanel .ep-seg label span{pointer-events:none;}
-#edpanel .ep-num{font-family:inherit;font-size:13px;font-weight:600;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;width:70px;outline:none;text-align:center;}
+#edpanel .ep-num{font-family:inherit;font-size:14px;font-weight:600;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;width:70px;outline:none;text-align:center;}
 #edpanel .ep-num:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
 #edpanel .ep-price{width:130px;}
-#edpanel .ep-sel{font-family:inherit;font-size:12.5px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;outline:none;max-width:170px;}
+#edpanel .ep-sel{font-family:inherit;font-size:14px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;outline:none;max-width:170px;}
 #edpanel .ep-sel:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
-#edpanel .ep-flabel{font-size:12px;font-weight:600;color:#3a3937;white-space:nowrap;}
-#edpanel .ep-ok{color:#fff;border:none;border-radius:6px;padding:6px 16px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap;}
-#edpanel .ep-cancel{background:#fff;color:#605e5c;border:1px solid #c8ccd2;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:500;font-size:12.5px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-flabel{font-size:13px;font-weight:600;color:#3a3937;white-space:nowrap;}
+#edpanel .ep-ok{color:#fff;border:none;border-radius:6px;padding:6px 16px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-cancel{background:#fff;color:#605e5c;border:1px solid #c8ccd2;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:500;font-size:14px;cursor:pointer;white-space:nowrap;}
 #edpanel.info{background:#eef7f1;border-top-color:#bfe0cc;}
 #edpanel.info .ep-ic svg{stroke:#217346;}
 #edpanel.info .ep-ok{background:#217346;}
@@ -496,7 +496,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
 #edpanel.danger{background:#fdecea;border-top-color:#e6a49b;}
 #edpanel.danger .ep-ic svg{stroke:#c0392b;}
 #edpanel.danger .ep-ok{background:#c0392b;}
-#edpanel .ep-clearonly{background:#fff;color:#c0392b;border:1px solid #c0392b;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-clearonly{background:#fff;color:#c0392b;border:1px solid #c0392b;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;}
 #edpanel .ep-clearonly:hover{background:#fdecea;}
 #edpanel .ep-clearonly:disabled{opacity:.45;cursor:not-allowed;}
 @media print{#edpanel{display:none !important;}}

@@ -357,3 +357,13 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - บั๊กเดิม: คลิก textbox (.nm/.pr) ก่อน → caret ค้างใน contenteditable · คลิกเส้นประ `.ln` → click handler (capture) เลือก `.ln` ถูก แต่ `selectionchange` ยิงตามด้วย caret ที่ค้าง → `_typoFind(.nm)` → `typoSelect(.nm)` แย่งเลือกทับ `.ln` ทันที (คลิกที่ว่างก่อนแล้วค่อยคลิกเส้นได้ เพราะ caret ถูกเคลียร์)
 - แก้: ใน handler `selectionchange` การ re-select ต้องมี guard `!(_typoType && _typoType.line)` — ถ้าขณะนี้เลือกเส้นจุดอยู่ อย่าให้ selectionchange สลับไป contenteditable (เพราะเส้นจุดแก้ข้อความไม่ได้ selectionchange ที่ยิงตอนนั้น = caret ค้างเสมอ) · การคลิกสลับระหว่าง text↔line ยังทำงานผ่าน click handler (capture, บรรทัด ~4080) ตามปกติ
 - lint #68 ล็อก: pattern `_f.el!==_typoEl ... typoSelect(_f.el` ต้องมี `_typoType.line` อยู่ในนั้น (กันถอยกลับเป็น unguarded)
+
+
+## In-page Zoom หน้า A4 — lint #69 (ผู้ใช้ 16 ต.ค. 2026)
+- ปัญหา: Browser Zoom (Ctrl +/−) ขยายทั้งหน้ารวม toolbar → toolbar บังเนื้อหา · แก้ไม่ได้ด้วย CSS/JS (เป็นข้อจำกัด browser)
+- วิธีที่ถูก (แบบ A): ย่อ/ขยายเฉพาะหน้า A4 ด้วย CSS `zoom` บน `.page` · toolbar (#edbar) + แถบล่าง (#edstatus) อยู่นอก `.page` จึงคงขนาดเดิม
+- กฎ apply: `@media screen{ body:not(.measuring) .page{ zoom:var(--pagezoom,1); } }` — (1) screen-only ไม่กระทบพิมพ์ (print ไม่เห็นกฎใน @media screen) (2) ยกเว้น body.measuring ให้ zoom:1 เสมอ (ตัววัดล้นหน้าต้องวัดขนาดจริง ไม่เพี้ยนตาม zoom)
+- ค่า zoom เก็บใน CSS var `--pagezoom` บน `document.body.style` · ช่วง 50–200% ทีละ 10% · จำข้าม reload ที่ localStorage `oe_pagezoom`
+- ปุ่มควบคุม `.zoomctl` (− / % / +) อยู่แถบบนข้าง Undo/Redo (#edtabs) · ปุ่ม % กลางคลิก = รีเซ็ต 100% · press-state ต้องมี `:not(.on)` (lint #43) แม้ไม่ใช่ปุ่ม toggle
+- บันทึก: buildEditorHtml + buildMenuHtml ต้อง `b.style.removeProperty('--pagezoom')` ทั้งคู่ → ไฟล์ที่บันทึก/ดาวน์โหลดเปิดครั้งหน้าเริ่มที่ 100% เสมอ (zoom เป็นมุมมองบนจอ ไม่ติดไปกับไฟล์)
+- lint #69 ล็อก: กฎ apply แบบ screen-only · `.zoomctl` + 3 ปุ่ม (zoomOut/zoomLvl/zoomIn) · strip --pagezoom ครบ 2 ที่ · i18n ttl.zoomIn/zoomOut/zoomReset th+en

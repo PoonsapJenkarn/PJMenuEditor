@@ -8,6 +8,14 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 16 ต.ค. 2026 (11:54) — ✅ เสร็จ: In-page Zoom หน้า A4 (ปุ่มแถบบนข้าง Undo/Redo · ผู้ใช้เลือกแบบ A + ตำแหน่งแถบบน)
+- ปัญหา: Browser Zoom ขยาย toolbar ไปด้วยจนบังเนื้อหา · แก้ไม่ได้ที่ browser → ทำ In-page zoom เอง ขยายเฉพาะ .page
+- CSS: @media screen{ body:not(.measuring) .page{ zoom:var(--pagezoom,1); } } (screen-only + กัน measuring) · ตัวควบคุม .zoomctl (−/%/+) ใน #edtabs · ปุ่ม % คลิก=รีเซ็ต 100% · press-state :not(.on) (lint #43)
+- JS: _zoom 50–200% ทีละ 10% · _zoomSet/_zoomApply/zoomIn/zoomOut/zoomReset/_zoomLoad · ตั้ง --pagezoom บน body.style · จำข้าม reload ที่ localStorage oe_pagezoom
+- strip ตอนบันทึก: buildEditorHtml + buildMenuHtml เพิ่ม removeProperty(--pagezoom) → ไฟล์เปิดครั้งหน้า = 100% เสมอ
+- i18n ttl.zoomIn/zoomOut/zoomReset (th+en) · lint #69 ใหม่: V0 PASS + 4 variant (not-screen-only/no-zoomctl/strip<2/no-i18n) FAIL ครบ · lint PASS 0/0
+- sha e7bf4159a1de3e5b · 6,915,741 bytes · LF · UI_STANDARD เพิ่ม §10 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 16 ต.ค. 2026 (07:18) — ✅ เสร็จ: ไล่แก้ขนาดฟอนต์ editor ที่เหลือครบทั้ง 6 กลุ่ม A–F (59 จุด) ตาม type scale (ผู้ใช้: ไล่แก้ให้ครบ)
 - หลักเดิม: หัวป๊อปอัพ 15 · เนื้อหา/ปุ่ม/ช่องกรอก 14 · ป้าย 13 · เล็กสุด/โน้ต 12 · caret 11 · เนื้อหาเมนูที่พิมพ์จริง (.nm/.pr/.sec-h/.row/.brand/.contact/.crab/.pagelabel/.secnote) ไม่แตะ
 - A แท็บรูป+ป๊อปอัพเงา: #imgbar select/button 12→14 · shd-pop 12→13 · shd-ttl 11→15 · shd-pop button 12→14 · shd-row label 11.5→13 · shd-num 12→14 · shd-use 11→13

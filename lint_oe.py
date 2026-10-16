@@ -1529,6 +1529,28 @@ def main():
     elif '_typoType.line' not in _m68.group(0):
         errors.append('selectionchange re-select ขาด guard !(_typoType && _typoType.line) — คลิกเส้นจุดจาก textbox แล้วจะถูกแย่งเลือกทับ (ดู UI_STANDARD.md ข้อ 9)')
 
+    # ---- 69) In-page zoom: ย่อ/ขยายเฉพาะหน้า A4 · toolbar ไม่โตตาม (ผู้ใช้ 16 ต.ค. 2026) ----
+    # (a) apply rule ต้อง screen-only (อยู่ใน @media screen) + กันตอน measuring
+    if '@media screen{ body:not(.measuring) .page{ zoom:var(--pagezoom,1); }' not in txt:
+        errors.append('ไม่พบกฎ zoom หน้า A4 แบบ screen-only (@media screen{ body:not(.measuring) .page{ zoom:var(--pagezoom,1); }) — zoom ต้องไม่กระทบพิมพ์/ตอนวัดล้นหน้า (ดู UI_STANDARD.md ข้อ 10)')
+    # (b) markup ปุ่ม zoom 3 ปุ่มในแถบบน
+    if 'class="zoomctl"' not in txt:
+        errors.append('ไม่พบ .zoomctl (ปุ่ม zoom แถบบน) (ดู UI_STANDARD.md ข้อ 10)')
+    for _zid in ('id="zoomOut"','id="zoomLvl"','id="zoomIn"'):
+        if _zid not in txt: errors.append('ไม่พบปุ่ม zoom '+_zid+' (ดู UI_STANDARD.md ข้อ 10)')
+    # (c) ต้อง strip --pagezoom ออกตอนบันทึก ทั้ง buildEditorHtml + buildMenuHtml (เปิดไฟล์ครั้งหน้า = 100%)
+    if txt.count("removeProperty('--pagezoom')") < 2:
+        errors.append('build* ไม่ได้ strip --pagezoom ครบทั้ง 2 ที่ (buildEditorHtml + buildMenuHtml) — ไฟล์ที่บันทึกต้องไม่ติด zoom (ดู UI_STANDARD.md ข้อ 10)')
+    # (d) i18n ttl.zoom* ครบ th+en
+    _i69=txt.find('var I18N={')
+    if _i69>=0:
+        _th69=txt.find('th:{',_i69); _en69=txt.find('en:{',_i69)
+        _thb69=txt[_th69:_en69] if (_th69>=0 and _en69>_th69) else ''
+        _enb69=txt[_en69:_en69+30000] if _en69>=0 else ''
+        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset'):
+            if ("'"+_k69+"'") not in _thb69: errors.append('i18n '+_k69+' ขาดใน th (ดู UI_STANDARD.md ข้อ 10)')
+            if ("'"+_k69+"'") not in _enb69: errors.append('i18n '+_k69+' ขาดใน en (ดู UI_STANDARD.md ข้อ 10)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

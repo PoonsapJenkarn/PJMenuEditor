@@ -8,6 +8,11 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (23:37) — ✅ เสร็จ: เอาสกรอลในของกล่อง OFL ออก เหลือสกรอลเดียว (ผู้ใช้ "scroll bar ใหญ่ด้านข้างทำไม")
+- บริบท: ผู้ใช้ชี้ว่าตอนกดดู OFL เต็ม มีสกรอลบาร์ 2 อันซ้อนกัน (กล่องนอก .about-box max-height:85vh overflow:auto + กล่องใน .ofl-text max-height:200px overflow:auto) → สับสน · อ้าง chrome://credits/VS Code About = สกรอลเดียว
+- แก้ CSS จุดเดียว: .ofl-text เอา max-height:200px + overflow:auto ออก → ข้อความ OFL ยืดเต็ม กล่อง About (.about-box) เลื่อนเป็นชิ้นเดียว · ปิด OFL = ไม่มีสกรอล · เปิด OFL = สกรอลเดียวของกล่อง About
+- CSS-only · ไม่แตะ lint/i18n/markup · lint PASS 0/0 (paren 7462:7467 จาก OFL list markers · lint strip <pre class=ofl-text> ก่อนนับแล้ว) · html sha 463f536f44d7c9bf · 6,949,147 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 17 ต.ค. 2026 (23:00) — ✅ เสร็จ: ฝัง OFL 1.1 เต็มในไฟล์ .html (ระดับ A+B) — .html เดี่ยว self-contained + อ่านในแอปได้ (ผู้ใช้เลือก A+B)
 - บริบท: ผู้ใช้ชี้ว่า app เป็นไฟล์เดียว (.html) · ถ้าจะให้ OFL เต็มติดไปกับไฟล์และอ่านได้ ต้องอยู่ใน .html เอง (THIRD-PARTY-LICENSES.txt อยู่ใน repo เท่านั้น คนได้ไฟล์เดี่ยวไม่มี)
 - ระดับ B (หลัก): เพิ่ม <details class="ofl-full"> ในแท็บลิขสิทธิ์ · summary i18n about.oflView (ดูสัญญาอนุญาตเต็ม / View full license) · <pre class="ofl-text"> = OFL 1.1 เต็ม verbatim (3 copyright + ตัวบทจาก OFL.txt จริง อ่านจากเครื่อง ไม่พิมพ์ซ้ำ) · อังกฤษล้วน (license ห้ามแปล) · อ่านได้ทั้ง View Source + ในแอป · travels กับไฟล์ · CSS .ofl-text (pre-wrap, monospace 11px, max-height 200px scroll)

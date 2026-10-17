@@ -8,6 +8,21 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (16:19) — ✅ เสร็จ: กล่องนำเข้า — เพิ่มบรรทัดตัวอย่าง "น้ำ 666 30" + ขยายฟอนต์ 3 จุดให้เท่า bullet (ผู้ใช้)
+- บริบท: ผู้ใช้ขอ (1) เพิ่ม "น้ำ 666 30" ท้ายตัวอย่างให้สมบูรณ์ (โชว์เคสชื่อเมนูลงท้ายด้วยเลข — น้ำ 666 = ชื่อ, 30 = ราคา) (2) ตัวหนังสือ 3 จุดยังเล็ก (3) ถาม dropdown หน้าเยอะ
+- ต้นเหตุฟอนต์เล็ก: bullet (.about-desc ในกล่องนำเข้า) ไม่มี font-size scope → สืบทอดจาก body (~16px) · แต่ summary/exLabel/ph box ตั้ง inline 14/14/13px เลยเล็กกว่า bullet
+- แก้: summary paste.title 14→16px · paste.exLabel "ตัวอย่าง" 14→16px · กล่องตัวอย่าง paste.ph 13→15px (monospace) · ลำดับชั้น: modalTitle 18 > summary/exLabel 16 ≈ bullet > ph box 15
+- เพิ่มบรรทัดตัวอย่าง "น้ำ 666 30" 3 จุด: static markup (real \n) + i18n th paste.ph + i18n en (Soda 666 30 — parallel)
+- dropdown #pasteDest: ตอบผู้ใช้ว่า native <select> เบราว์เซอร์จัดการ overflow เอง (scroll อัตโนมัติเมื่อเกิน viewport · ไม่หลุดจอ · ไม่ต้อง limit) — ไม่แก้โค้ด
+- font-size inline ไม่แตะ lint (lint #71 เช็ก structure/i18n ไม่เช็ก px) · lint PASS 0/0 · html sha 356e4782cf2f4a71 · 6,933,224 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (15:15) — ✅ เสร็จ: กล่องนำเข้า — เพิ่มช่องเลือกหน้าปลายทาง + เด้งไปไฮไลท์กลุ่มใหม่ + ข้อความบอกหน้า (ผู้ใช้ "ไม่รู้ว่านำเข้าหน้าไหน สะเปะสะปะ")
+- บริบท: ผู้ใช้ชี้ว่าตอนวางรายการนำเข้า ไม่รู้ว่าของไปโผล่หน้าไหน (เดิม doPasteImport ยัดเข้าคอลัมน์สุดท้ายของหน้าสุดท้ายเสมอ ไม่ให้เลือก ไม่เห็นผล) · ผู้ใช้เลือก "เลือกหน้า + เด้งไปเห็นของใหม่" · อ้าง Excel/Notion import
+- แก้ 6 จุด HTML: (1) CSS .sec.just-imported ไฮไลท์ (keyframes justImp 2.2s · @media screen เท่านั้น · ไม่พิมพ์) (2) <select id="pasteDest"> + label paste.destLbl เหนือ textarea (3) openPaste เติม option หน้า 1..N default หน้าสุดท้าย (option = ตัวเลขล้วน ไม่ต้อง relang) (4) doPasteImport: อ่าน pasteDest → แทรกที่คอลัมน์สุดท้ายของหน้าที่เลือก + scrollIntoView + ไฮไลท์ 2.2s + destPage=_pageNoOf (5)(6) i18n paste.destLbl th/en + paste.done เพิ่ม {page}
+- ปลายทาง: เดิม = หน้าสุดท้ายเสมอ → ใหม่ = หน้าที่ผู้ใช้เลือก (default หน้าสุดท้าย) · ข้อความ "✓ นำเข้า {n} เมนู {g} กลุ่ม ไปที่หน้า {page} แล้ว"
+- lint #71 ขยาย: เช็ก #pasteDest มีอยู่ + _pageNoOf(made[0]) ใน doPasteImport + paste.destLbl ใน i18n tuple · V0 PASS + 5 variant FAIL ตรงจุด · lint PASS 0/0
+- html sha 53cf2c821bbe90cc · 6,933,176 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 17 ต.ค. 2026 (13:22) — ✅ เสร็จ: วางมาตรฐานปุ่มกลาง .ui-btn-* + ครอบ 2 modal (About + นำเข้า) + lint #72 (ผู้ใช้ "สร้างมาตรฐานเถอะ เพิ่มใหม่ทีไรต้องมาบอกแก้ทุกที")
 - บริบท: ผู้ใช้ชี้ว่ากล่องนำเข้าปุ่มสีไม่เข้าธีม + บ่นว่าต้องสั่งแก้สีซ้ำทุกครั้งที่เพิ่มของใหม่ → ต้นเหตุ: app ไม่มีคลาสปุ่มกลาง · modal ใหม่ฝังสี inline มั่ว (ปุ่มนำเข้า background:#1592D9 = สีหัวกลุ่มเมนูอื่นๆ ไม่ใช่สี UI · ปุ่มยกเลิกไม่มี bg = เทา default) · ปุ่มใช้ class about-close ที่ scope แค่ #aboutModal เลยไม่ติดสไตล์
 - มาตรฐานใหม่ (อ้างสีจริงจากโค้ด app): .ui-btn (ฐาน) · .ui-btn-primary เขียว #217346 hover #1a5c38 (เท่า btn-save/btn-dl) · .ui-btn-secondary ขาวขอบเทา #d2d0ce hover เขียว · press :active translateY(1px) ไม่มีเขียว (ข้อ 1/lint #43)

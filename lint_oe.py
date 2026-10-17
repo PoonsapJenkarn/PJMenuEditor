@@ -1600,6 +1600,10 @@ def main():
         errors.append('ไม่พบหัวข้อ modal paste.modalTitle (ดู UI_STANDARD.md ข้อ 12)')
     if '<details class="paste-howto" open>' not in txt:
         errors.append('<details class="paste-howto"> ต้องมี open (เปิดวิธีนำเข้าเป็นค่าเริ่มต้น — เห็น format ตั้งแต่แรก) (ดู UI_STANDARD.md ข้อ 12)')
+    if 'id="pasteDest"' not in txt:
+        errors.append('ไม่พบ #pasteDest (ช่องเลือกหน้าปลายทางนำเข้า) (ดู UI_STANDARD.md ข้อ 12)')
+    if '_pageNoOf(made[0])' not in txt:
+        errors.append('doPasteImport ไม่ได้รายงานหน้าปลายทาง (_pageNoOf) — ต้องบอกหน้าหลังนำเข้า (ดู UI_STANDARD.md ข้อ 12)')
     _pbox71=re.search(r'#pasteModal \.about-box\{([^}]*)\}', txt)
     if not _pbox71 or 'background' not in _pbox71.group(1):
         errors.append('#pasteModal .about-box ไม่มี background (การ์ดหาย — กล่องลอยบนพื้นมืด) (ดู UI_STANDARD.md ข้อ 12)')
@@ -1618,7 +1622,7 @@ def main():
         _th71s=txt.find('th:{',_i71); _en71s=txt.find('en:{',_i71)
         _thb71=txt[_th71s:_en71s] if (_th71s>=0 and _en71s>_th71s) else ''
         _enb71=txt[_en71s:_en71s+30000] if _en71s>=0 else ''
-        for _k71 in ('btn.pasteImport','paste.title','paste.modalTitle','paste.desc','paste.import','paste.cancel','paste.empty','paste.done','paste.grpDefault','paste.ph'):
+        for _k71 in ('btn.pasteImport','paste.title','paste.modalTitle','paste.destLbl','paste.desc','paste.import','paste.cancel','paste.empty','paste.done','paste.grpDefault','paste.ph'):
             if ("'"+_k71+"'") not in _thb71: errors.append('i18n '+_k71+' ขาดใน th (ดู UI_STANDARD.md ข้อ 12)')
             if ("'"+_k71+"'") not in _enb71: errors.append('i18n '+_k71+' ขาดใน en (ดู UI_STANDARD.md ข้อ 12)')
 

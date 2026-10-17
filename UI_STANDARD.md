@@ -436,3 +436,27 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - **ระดับ A (header comment):** OFL notice ใน `<head>` = 3 copyright + ชื่อ OFL 1.1 + pointer (ไม่ใส่ตัวบทเต็มใน comment เพราะ OFL body มี separator '-----' และ '--' = HTML comment ห้ามมี · จึงใส่ notice สั้น + ชี้ไปตัวเต็มใน `<pre>`)
 - **ข้อควรระวัง lint:** ตัวบท OFL มี list markers 1)..5) = paren ไม่สมดุล (เกิน `)` 5 ตัว) โดยธรรมชาติ · lint brace/paren check แก้ให้ strip `<pre class="ofl-text">` ก่อนนับ (verbatim third-party text ไม่ใช่โค้ด) · lint #70 ขยาย: require pre.ofl-text + ตัวบท 'SIL OPEN FONT LICENSE Version 1.1' + header 'THIRD-PARTY FONT LICENSES' + i18n about.oflView th/en
 - ความสัมพันธ์กับ THIRD-PARTY-LICENSES.txt: ไฟล์ .txt ใน repo = สำหรับคน clone · `<pre>` ใน .html = สำหรับคนที่ได้แค่ไฟล์เดี่ยว · ครอบทั้งสองทาง
+
+## 6.1) มาตรฐาน Input Validation — element ไหนรับอะไร / อะไรห้ามเข้า (เพิ่ม 18 ต.ค. 2026 · ผู้ใช้ · lint #6/#9/#10/#69)
+**หลักการ (coding instruction):** ทุกช่องกรอก (`<input type=text>` / contenteditable ที่รับค่าจำกัด) ต้องนิยามชัดว่า **รับอักขระชุดใด** และ **ปฏิเสธที่เหลือทันทีขณะพิมพ์** ไม่ใช่รอตอน blur/commit · ค่าที่ไม่ถูกต้องต้องไม่ปรากฏในช่องแม้ชั่วคราว
+
+**ทุกช่องต้องมีครบ 4 อย่าง:**
+1. **ตัวกรองสดขณะพิมพ์ (`oninput`)** — strip อักขระนอกชุดที่รับทันที + รักษาตำแหน่ง cursor (idiom มาตรฐาน: `var v=el.value,o=CLEAN(v); if(o===v)return; var ps=el.selectionStart,kp=CLEAN(v.slice(0,ps)).length; el.value=o; el.setSelectionRange(kp,kp);`)
+2. **ตรวจ/clamp ค่าตอน commit (`onchange`/Enter/blur)** — เช่น ปัดเศษ, บีบเข้าช่วง min-max
+3. **แปลงเลขไทย→อารบิก** ก่อนกรอง (`_prNorm`) ทุกช่องตัวเลข
+4. **อยู่ใน `_FILTERED16` ของ lint** — ⚠️ **การอยู่ใน whitelist ไม่ได้แปลว่ามี filter จริง** · whitelist แค่บอก lint ว่า 'ช่องนี้ไม่ต้องเตือน' · ต้องมีโค้ด `oninput` filter จริงด้วยเสมอ (บั๊ก zoom 18 ต.ค. 2026: อยู่ใน whitelist แต่มีแค่ onchange → พิมพ์ 'sdffd' เข้าได้)
+
+**การแจ้งเตือน:** ช่องที่สื่อว่ามี 'กฎ format' (ราคา/ขนาด/HEX/เลขหน้า) → เด้ง warning เมื่อ drop อักขระ (ให้ผู้ใช้รู้ว่าพิมพ์อะไรผิด) · ช่องที่ชัดเจนอยู่แล้วว่าเป็นตัวเลขล้วน (zoom) → **เงียบ** (strip เฉยๆ ไม่เด้ง ตามแนว Figma/Chrome/Photoshop · สอดคล้อง lint #62 ไม่ log input-validation)
+
+**ตารางช่องกรอก (รับอะไร / ห้ามอะไร):**
+| ช่อง | รับ | สูงสุด | commit/clamp | แจ้งเตือน | clean fn |
+|---|---|---|---|---|---|
+| **zoomLvl** (zoom %) | 0-9 เท่านั้น | 3 หลัก | clamp 50–200 ตอน blur | เงียบ | `_zoomClean` |
+| ราคา (.pr / ep-price / ep-amt) | 0-9 + '-' (ช่วง) | 5 หลัก/ตัว | - | warning (prNumOnly) | `_prCleanChars` |
+| ขนาดตัวอักษร (typoSize) | 0-9 + '.' 1 จุด | 4 ตัว | ทีละ 0.5 ตอน Enter | warning (sizeOnly) | `_sizeClean` |
+| สี HEX (typoHex ฯลฯ) | # + 0-9A-F | 6 หลัก | normalize ตอน Enter | warning (hexOnly) | `_hexClean` |
+| เงา (shd-num) | 0-9 + '.' | - | clamp ช่วง | warning (shdOnly) | `_shdClean` |
+| เลขหน้า (ep-input ลบหน้า) | 0-9 + ',' + '-' | - | - | warning (pagesOnly) | `_pgCleanChars` |
+| ฟอนต์ Google (gfontInput) | ตัวอักษรชื่อฟอนต์ | - | - | เงียบ (ชื่อผิด=ไม่พบตอนค้นหา) | - |
+
+- **เพิ่มช่องใหม่ครั้งหน้า:** ต้องทำครบ 4 ข้อ + เพิ่มแถวในตารางนี้ + เพิ่ม clean fn · ห้ามพึ่ง onchange อย่างเดียว (ค่าผิดจะโผล่ในช่องระหว่างพิมพ์)

@@ -8,6 +8,13 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 18 ต.ค. 2026 (00:09) — ✅ เสร็จ: แก้บั๊กช่อง zoom รับตัวอักษรได้ (เพิ่ม oninput filter) + เขียน instruction มาตรฐาน input (ผู้ใช้ "ช่อง zoom ควรรับแค่ตัวเลข + เขียน instruction ว่า element รับอะไร")
+- 🐛 ต้นเหตุ: #zoomLvl มีแค่ onchange="_zoomType()" (กรองตอน blur) ไม่มี oninput กรองสดขณะพิมพ์ → พิมพ์ "sdffd" เข้าช่องได้ · อยู่ใน _FILTERED16 whitelist ของ lint แล้ว แต่ whitelist = แค่บอก lint ว่าไม่ต้องเตือน ไม่ได้บังคับว่ามี filter จริง (ช่องว่างของ lint)
+- แก้ HTML: เพิ่ม oninput="_zoomFilter(this)" ที่ markup + 2 ฟังก์ชัน _zoomClean (0-9 สูงสุด 3 หลัก · _prNorm เลขไทย→อารบิก) + _zoomFilter (strip สด + รักษา cursor · idiom เดียวกับ _hexClean/_sizeClean) · เงียบไม่เด้ง warning (แนว zoom silent-clamp · Figma/Chrome)
+- lint #69 ขยาย (f): เช็ก #zoomLvl ต้องมี oninput="_zoomFilter + ต้องมี function _zoomFilter/_zoomClean จริง (ปิดช่องว่าง "whitelist แต่ไม่มี filter") · V0 PASS + 2 variant FAIL ตรงจุด · lint PASS 0/0
+- 📋 instruction: UI_STANDARD เพิ่มข้อ 6.1 "มาตรฐาน Input Validation — element ไหนรับอะไร/ห้ามอะไร": หลักการ 4 ข้อ (oninput กรองสด + clamp ตอน commit + _prNorm + อยู่ _FILTERED16 แต่ต้องมี filter จริง) + ตารางทุกช่อง (zoom/ราคา/ขนาด/HEX/เงา/เลขหน้า/gfont · รับอะไร/สูงสุด/clamp/แจ้งเตือน/clean fn) + กฎเพิ่มช่องใหม่
+- html sha 73a8dee3cfbb952d · 6,950,002 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 17 ต.ค. 2026 (23:37) — ✅ เสร็จ: เอาสกรอลในของกล่อง OFL ออก เหลือสกรอลเดียว (ผู้ใช้ "scroll bar ใหญ่ด้านข้างทำไม")
 - บริบท: ผู้ใช้ชี้ว่าตอนกดดู OFL เต็ม มีสกรอลบาร์ 2 อันซ้อนกัน (กล่องนอก .about-box max-height:85vh overflow:auto + กล่องใน .ofl-text max-height:200px overflow:auto) → สับสน · อ้าง chrome://credits/VS Code About = สกรอลเดียว
 - แก้ CSS จุดเดียว: .ofl-text เอา max-height:200px + overflow:auto ออก → ข้อความ OFL ยืดเต็ม กล่อง About (.about-box) เลื่อนเป็นชิ้นเดียว · ปิด OFL = ไม่มีสกรอล · เปิด OFL = สกรอลเดียวของกล่อง About

@@ -1562,6 +1562,12 @@ def main():
         errors.append('#zoomLvl ต้องเป็น <input> (พิมพ์ % เองได้) ไม่ใช่ปุ่ม (ดู UI_STANDARD.md ข้อ 10)')
     if 'function _zoomType' not in txt:
         errors.append('ขาด function _zoomType (รับค่า % ที่พิมพ์ในช่อง zoomLvl) (ดู UI_STANDARD.md ข้อ 10)')
+    # (f) ช่อง zoomLvl ต้องมี oninput filter กรองสดขณะพิมพ์ (ไม่ใช่แค่ whitelist — ผู้ใช้ 18 ต.ค. 2026) · ดู UI_STANDARD.md ข้อ 6.1
+    _zt=re.search(r'<input[^>]*id="zoomLvl"[^>]*>', txt)
+    if _zt and 'oninput="_zoomFilter' not in _zt.group(0):
+        errors.append('#zoomLvl ไม่มี oninput="_zoomFilter" — ช่องตัวเลขต้องกรองสดขณะพิมพ์ (onchange กรองตอน blur ไม่พอ · ดู UI_STANDARD.md ข้อ 6.1)')
+    if 'function _zoomFilter' not in txt or 'function _zoomClean' not in txt:
+        errors.append('ขาด function _zoomFilter/_zoomClean (filter ตัวเลขช่อง zoom · ดู UI_STANDARD.md ข้อ 6.1)')
 
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)
@@ -1677,6 +1683,18 @@ def main():
         _apos73 = re.findall(r"[A-Za-z]'[A-Za-z]", _blk73)
         if _apos73:
             errors.append("i18n มี apostrophe ไม่ escape ในสตริง (เช่น user's/don't) — ปิด string กลางคัน JS พัง: {} — เขียนใหม่เลี่ยง ' หรือ escape \\' (ดู UI_STANDARD.md ข้อ 11)".format(', '.join(sorted(set(_apos73))[:5])))
+
+    # ---- 74) โหมดจอป้าย (display board) screen-only — ล็อกครบทุกส่วน (ผู้ใช้ 18 ต.ค. 2026) ----
+    #   พื้น #ECEDEF + ตัวอักษร/ราคา #171A1E เฉพาะจอ (@media screen) · ไม่กระทบพิมพ์/บันทึก/ดาวน์โหลด · strip 2 จุด · i18n TH/EN
+    _e74 = []
+    if 'body.boardmode' not in _css: _e74.append('ไม่พบ CSS body.boardmode')
+    if 'function toggleBoardMode(' not in txt: _e74.append('ไม่พบ toggleBoardMode')
+    if 'id="btnBoard"' not in txt: _e74.append('ไม่พบปุ่ม btnBoard')
+    if "'imgmode','imghidden','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนบันทึก editor')
+    if "'imghidden','imgmode','headermode','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนดาวน์โหลดเมนู')
+    if "'btn.board':'จอป้าย'" not in txt: _e74.append('ไม่พบ i18n TH btn.board')
+    if "'btn.board':'Board'" not in txt: _e74.append('ไม่พบ i18n EN btn.board')
+    if _e74: errors.append('lint #74 (โหมดจอป้าย): ' + ' · '.join(_e74))
 
     # ---- report ----
     print("=" * 54)

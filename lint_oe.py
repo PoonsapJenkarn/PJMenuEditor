@@ -25,10 +25,17 @@ def main():
     warnings = []
 
     # ---- 1) brace / paren / bracket balance ----
-    if txt.count("{") != txt.count("}"):
-        errors.append("Brace imbalance: {{={} }}={}".format(txt.count("{"), txt.count("}")))
-    if txt.count("(") != txt.count(")"):
-        errors.append("Paren imbalance: (={} )={}".format(txt.count("("), txt.count(")")))
+    #   strip verbatim OFL license <pre> (third-party text, not code — list markers 1)..5) ทำ paren ไม่สมดุลโดยธรรมชาติ · ผู้ใช้ 17 ต.ค. 2026)
+    _bptxt = txt
+    _ops = _bptxt.find('<pre class="ofl-text">')
+    if _ops >= 0:
+        _ope = _bptxt.find("</pre>", _ops)
+        if _ope >= 0:
+            _bptxt = _bptxt[:_ops] + _bptxt[_ope+6:]
+    if _bptxt.count("{") != _bptxt.count("}"):
+        errors.append("Brace imbalance: {{={} }}={}".format(_bptxt.count("{"), _bptxt.count("}")))
+    if _bptxt.count("(") != _bptxt.count(")"):
+        errors.append("Paren imbalance: (={} )={}".format(_bptxt.count("("), _bptxt.count(")")))
 
     # ---- 2) <script> paired ----
     if txt.count("<script") != txt.count("</script>"):
@@ -1570,6 +1577,10 @@ def main():
         errors.append('About ไม่มีแท็บข้อมูลเทคนิค (about.techBody) (ดู UI_STANDARD.md ข้อ 11)')
     if 'data-pane="lic"' not in txt or 'data-i18n="about.licBody"' not in txt:
         errors.append('About ไม่มีแท็บลิขสิทธิ์ (about.licBody · OFL notice) (ดู UI_STANDARD.md ข้อ 11)')
+    if 'class="ofl-text"' not in txt or 'SIL OPEN FONT LICENSE Version 1.1' not in txt:
+        errors.append('About ไม่มีข้อความ OFL เต็มในไฟล์ (pre.ofl-text + ตัวบท OFL 1.1) — ต้องฝังเต็มให้ .html เดี่ยว self-contained (ดู UI_STANDARD.md ข้อ 11)')
+    if 'THIRD-PARTY FONT LICENSES' not in txt:
+        errors.append('ไม่พบ OFL notice ใน header comment (ดู UI_STANDARD.md ข้อ 11)')
     _eb70=re.search(r'<span class="edbrand"[^>]*>', txt)
     if not _eb70 or 'openAbout()' not in _eb70.group(0):
         errors.append('ตรา P (.edbrand) ไม่ได้ wired openAbout() — คลิกแล้วต้องเปิด About (ดู UI_STANDARD.md ข้อ 11)')
@@ -1592,7 +1603,7 @@ def main():
         _th70=txt.find('th:{',_i70); _en70=txt.find('en:{',_i70)
         _thb70=txt[_th70:_en70] if (_th70>=0 and _en70>_th70) else ''
         _enb70=txt[_en70:_en70+30000] if _en70>=0 else ''
-        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.licBody','about.licNote'):
+        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.oflView','about.licBody','about.licNote'):
             if ("'"+_k70+"'") not in _thb70: errors.append('i18n '+_k70+' ขาดใน th (ดู UI_STANDARD.md ข้อ 11)')
             if ("'"+_k70+"'") not in _enb70: errors.append('i18n '+_k70+' ขาดใน en (ดู UI_STANDARD.md ข้อ 11)')
 

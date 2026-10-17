@@ -429,3 +429,10 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - บั๊ก: note อังกฤษแท็บลิขสิทธิ์เขียน "the user's own responsibility" · `'` ใน user's ไปปิด JS string (ค่า i18n ครอบด้วย single quote) → `s own...` = SyntaxError → script ทั้งไฟล์ไม่โหลด → ปุ่มทุกอันคลิกไม่ได้ (แอปค้าง)
 - lint เดิมไม่จับ (นับ brace/paren ครบ · apostrophe ไม่กระทบ count) → เพิ่ม lint #73: สแกนบล็อก I18N หา regex `[A-Za-z]'[A-Za-z]` (letter'letter = apostrophe ไม่ escape · delimiter จริงมี : , { } หรือช่องว่างติด · escaped มี \\ นำหน้า จึงไม่ false-positive)
 - วิธีเขียน i18n ที่มี apostrophe: เลี่ยงด้วยการเขียนใหม่ (user's → of the user) หรือ escape เป็น \\' · บทเรียน: lint ที่นับโครงสร้างอย่างเดียวไม่พอ ต้องดักคลาส JS-string-break ด้วย
+
+## 11.3) OFL เต็มฝังใน .html + อ่านในแอปได้ (เพิ่ม 17 ต.ค. 2026 · ผู้ใช้ · ระดับ A+B)
+- บริบท: หน่วยที่แจกจริง = ไฟล์ .html เดี่ยว · OFL ข้อ 2 ต้องการให้ทุกสำเนาที่ฝังฟอนต์แนบ copyright + ตัว license · ไฟล์เดี่ยวจึงต้อง carry OFL เต็มในตัวเอง
+- **ระดับ B (ตัวหลัก):** `<pre class="ofl-text">` ในแท็บลิขสิทธิ์ = ข้อความ OFL 1.1 เต็ม verbatim (3 copyright + ตัวบทจาก OFL.txt จริง) · อยู่ใน `<details>` summary 'ดูสัญญาอนุญาตเต็ม' (i18n about.oflView) · เป็นภาษาอังกฤษล้วน (license ห้ามแปล) · อ่านได้ 2 ทาง: เปิด .html ใน text editor/View Source เห็น + กดดูในแอป · travels กับไฟล์ (อยู่ใน DOM, buildEditorHtml save ไว้) · strip จาก print (อยู่ใน #aboutModal)
+- **ระดับ A (header comment):** OFL notice ใน `<head>` = 3 copyright + ชื่อ OFL 1.1 + pointer (ไม่ใส่ตัวบทเต็มใน comment เพราะ OFL body มี separator '-----' และ '--' = HTML comment ห้ามมี · จึงใส่ notice สั้น + ชี้ไปตัวเต็มใน `<pre>`)
+- **ข้อควรระวัง lint:** ตัวบท OFL มี list markers 1)..5) = paren ไม่สมดุล (เกิน `)` 5 ตัว) โดยธรรมชาติ · lint brace/paren check แก้ให้ strip `<pre class="ofl-text">` ก่อนนับ (verbatim third-party text ไม่ใช่โค้ด) · lint #70 ขยาย: require pre.ofl-text + ตัวบท 'SIL OPEN FONT LICENSE Version 1.1' + header 'THIRD-PARTY FONT LICENSES' + i18n about.oflView th/en
+- ความสัมพันธ์กับ THIRD-PARTY-LICENSES.txt: ไฟล์ .txt ใน repo = สำหรับคน clone · `<pre>` ใน .html = สำหรับคนที่ได้แค่ไฟล์เดี่ยว · ครอบทั้งสองทาง

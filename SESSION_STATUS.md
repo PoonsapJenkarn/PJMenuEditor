@@ -8,6 +8,20 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (23:00) — ✅ เสร็จ: ฝัง OFL 1.1 เต็มในไฟล์ .html (ระดับ A+B) — .html เดี่ยว self-contained + อ่านในแอปได้ (ผู้ใช้เลือก A+B)
+- บริบท: ผู้ใช้ชี้ว่า app เป็นไฟล์เดียว (.html) · ถ้าจะให้ OFL เต็มติดไปกับไฟล์และอ่านได้ ต้องอยู่ใน .html เอง (THIRD-PARTY-LICENSES.txt อยู่ใน repo เท่านั้น คนได้ไฟล์เดี่ยวไม่มี)
+- ระดับ B (หลัก): เพิ่ม <details class="ofl-full"> ในแท็บลิขสิทธิ์ · summary i18n about.oflView (ดูสัญญาอนุญาตเต็ม / View full license) · <pre class="ofl-text"> = OFL 1.1 เต็ม verbatim (3 copyright + ตัวบทจาก OFL.txt จริง อ่านจากเครื่อง ไม่พิมพ์ซ้ำ) · อังกฤษล้วน (license ห้ามแปล) · อ่านได้ทั้ง View Source + ในแอป · travels กับไฟล์ · CSS .ofl-text (pre-wrap, monospace 11px, max-height 200px scroll)
+- ระดับ A (header comment): OFL notice ใน <head> ต่อจาก MIT · 3 copyright + ชื่อ OFL 1.1 + pointer · ⚠️ ไม่ใส่ตัวบทเต็มใน comment เพราะ OFL body มี "-----" separator + "--" → HTML comment ห้ามมี (จะ invalid) · แจ้งผู้ใช้แล้ว ตัวเต็มอยู่ใน <pre> แทน (ครบตาม intent ระดับ A)
+- 🐛 lint ดักเจอ: OFL body มี list markers 1)..5) → paren เกิน 5 → lint paren-balance FAIL · แก้ lint ให้ strip <pre class="ofl-text"> ก่อนนับ brace/paren (verbatim text ไม่ใช่โค้ด) · lint #70 ขยาย: pre.ofl-text + ตัวบท OFL marker + header notice + i18n oflView · V0 PASS + 5 variant FAIL ตรงจุด · lint PASS 0/0
+- html sha 95b3560c48ab9167 · 6,949,178 bytes · LF · UI_STANDARD เพิ่มข้อ 11.3 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (22:41) — ✅ เสร็จ: สร้างไฟล์ THIRD-PARTY-LICENSES.txt (ปิด OFL compliance ก่อน publish · ผู้ใช้เลือก)
+- สร้าง C:\OE\THIRD-PARTY-LICENSES.txt จาก OFL.txt จริง 3 ไฟล์ (C:\OE\Fonts\{Prompt,Sarabun,Noto_Sans_Thai}\OFL.txt) — เนื้อหา verbatim ไม่เดา · header อธิบาย: โค้ด MIT (ดู LICENSE) + ฟอนต์ฝัง 3 ตัว OFL 1.1 + copyright แต่ละตัว · ตามด้วย OFL.txt เต็มทั้ง 3 (คั่นด้วย separator)
+- 14,359 bytes · LF (normalize จาก CRLF ต้นฉบับ 93 CRLF/ไฟล์) · sha 7891d4c3a51e7639 · OFL 1.1 body 3 ชุด · copyright ครบ (Cadson Demak 2015 / Sarabun 2018 / Noto 2022)
+- README เพิ่มย่อหน้าชี้ไป THIRD-PARTY-LICENSES.txt (TH+EN) ใต้ Copyright line · ไม่แตะ HTML/lint (ไฟล์ license + markdown เท่านั้น)
+- ปิดช่องว่าง OFL compliance ที่ค้างมาจาก About Licenses tab (b3323da) · ตอนนี้ repo มีทั้ง About สรุป + ไฟล์ license เต็ม = พร้อม publish ด้าน license
+- ยังไม่ commit · (THIRD-PARTY-LICENSES.txt เป็นไฟล์ใหม่ ต้อง git add)
+
 ## 17 ต.ค. 2026 (22:30) — 🐛✅ แก้บั๊กแอปค้าง: apostrophe ไม่ escape ใน i18n (user's) ทำ JS พังทั้งไฟล์ (ผู้ใช้ "app ค้าง คลิกอะไรไม่ได้เลย")
 - อาการ: ผู้ใช้แจ้งแอปค้าง คลิกไม่ได้ · Console: Uncaught SyntaxError: Unexpected identifier 's' (OEIsanHotpotMenuEditor.html:1969) — ไม่ใช่ draft ค้าง แต่เป็น syntax error ในไฟล์เอง → JS ทั้งไฟล์ไม่โหลด → handler ตายหมด
 - 🐛 ต้นเหตุ (ความผิด agent รอบ licNote 614dad ที่ยังไม่ commit): note อังกฤษ "are the user's own responsibility..." · apostrophe ใน user's ปิด single-quote JS string ก่อนเวลา → "s own responsibility" = invalid JS

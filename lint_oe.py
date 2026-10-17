@@ -1562,6 +1562,12 @@ def main():
         errors.append('ไม่พบ #aboutModal (ป๊อปอัพ About) (ดู UI_STANDARD.md ข้อ 11)')
     if 'function openAbout' not in txt or 'function closeAbout' not in txt:
         errors.append('ขาด function openAbout/closeAbout (ดู UI_STANDARD.md ข้อ 11)')
+    if 'function aboutTab' not in txt:
+        errors.append('ขาด function aboutTab (สลับแท็บ About) (ดู UI_STANDARD.md ข้อ 11)')
+    if txt.count('class="about-tab') < 3 or 'data-tab="about"' not in txt or 'data-tab="tech"' not in txt:
+        errors.append('About ไม่ครบ 2 แท็บ (about/tech) (ดู UI_STANDARD.md ข้อ 11)')
+    if 'data-pane="tech"' not in txt or 'data-i18n="about.techBody"' not in txt:
+        errors.append('About ไม่มีแท็บข้อมูลเทคนิค (about.techBody) (ดู UI_STANDARD.md ข้อ 11)')
     _eb70=re.search(r'<span class="edbrand"[^>]*>', txt)
     if not _eb70 or 'openAbout()' not in _eb70.group(0):
         errors.append('ตรา P (.edbrand) ไม่ได้ wired openAbout() — คลิกแล้วต้องเปิด About (ดู UI_STANDARD.md ข้อ 11)')
@@ -1584,7 +1590,7 @@ def main():
         _th70=txt.find('th:{',_i70); _en70=txt.find('en:{',_i70)
         _thb70=txt[_th70:_en70] if (_th70>=0 and _en70>_th70) else ''
         _enb70=txt[_en70:_en70+30000] if _en70>=0 else ''
-        for _k70 in ('about.title','about.desc','about.by','about.licenseLbl','about.close'):
+        for _k70 in ('about.title','about.desc','about.by','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote'):
             if ("'"+_k70+"'") not in _thb70: errors.append('i18n '+_k70+' ขาดใน th (ดู UI_STANDARD.md ข้อ 11)')
             if ("'"+_k70+"'") not in _enb70: errors.append('i18n '+_k70+' ขาดใน en (ดู UI_STANDARD.md ข้อ 11)')
 
@@ -1643,8 +1649,8 @@ def main():
         for _mid72,_seg72 in _segs72.items():
             for _bm72 in re.finditer(r'<button\b[^>]*>', _seg72):
                 _tag72=_bm72.group(0)
-                if 'ui-btn' not in _tag72:
-                    errors.append('ปุ่มใน #'+_mid72+' ไม่ได้ใช้คลาส ui-btn-* (ปุ่ม dialog ต้องใช้คลาสกลาง · ดู UI_STANDARD.md ข้อ 13)')
+                if 'ui-btn' not in _tag72 and 'about-tab' not in _tag72:
+                    errors.append('ปุ่มใน #'+_mid72+' ไม่ได้ใช้คลาส ui-btn-* (ปุ่ม dialog ต้องใช้คลาสกลาง · ยกเว้นแท็บนำทาง .about-tab · ดู UI_STANDARD.md ข้อ 13)')
                 if 'background:#' in _tag72:
                     errors.append('ปุ่มใน #'+_mid72+' ฝัง background:# สี inline (ห้าม — ใช้ ui-btn-primary/secondary · ดู UI_STANDARD.md ข้อ 13)')
 

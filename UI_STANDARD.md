@@ -414,3 +414,11 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 **กฎ:** ปุ่มในทุก modal (#pasteModal, #aboutModal, และ modal ใหม่ในอนาคต) **ต้องใช้** .ui-btn-primary หรือ .ui-btn-secondary · **ห้ามฝัง background:# สี inline บนปุ่มใน modal** (น้ำเงิน #1592D9 เป็นสีเนื้อหา/หัวกลุ่ม ไม่ใช่สีปุ่ม) · spacing (margin) inline ได้ แต่สีต้องมาจากคลาส
 - lint #72 ล็อก: (a) คลาส .ui-btn-primary มี #217346 + .ui-btn-secondary มี #d2d0ce (b) .ui-btn:active มี transform (c) ทุก <button> ใน #pasteModal/#aboutModal มีคลาส ui-btn (d) ห้าม background:# inline บนปุ่มใน 2 modal
 - **เพิ่ม modal ใหม่ครั้งหน้า:** ใช้ .ui-btn-primary/.ui-btn-secondary ได้เลย ไม่ต้องเขียนสีใหม่ · ถ้าลืม lint #72 จะเตือน (แต่ครอบเฉพาะ 2 modal ที่มี — modal ใหม่ควรเพิ่มชื่อใน _segs72 ของ lint ด้วย)
+
+## 11.1) About แบบแท็บแนวตั้ง + ข้อมูลเทคนิค (ผู้ใช้ 17 ต.ค. 2026 · lint #70 ขยาย)
+- About modal เปลี่ยนจากหน้าเดียว → **master-detail: เมนูแท็บแนวตั้งซ้าย + เนื้อหาขวา** (อ้าง Notepad 'What's New' ที่ผู้ใช้ชี้ · โครงสร้าง = modal + vertical tabs)
+- 2 แท็บ: **เกี่ยวกับ** (about.tabAbout · ชื่อ/ผู้สร้าง/ติดต่อ/GitHub/license เดิม) + **ข้อมูลเทคนิค** (about.tabTech · สเปคประสิทธิภาพ)
+- `.about-tab` = ปุ่มนำทาง (navigation) **ไม่ใช่ปุ่ม action** → ยกเว้นจากกฎ ui-btn (ข้อ 13) · active = เขียวข้อความ #217346 + ขอบซ้าย 3px เขียว + พื้น #f3f2f1 (เท่า #edtabs .edtab.active · **ไม่ใช่พื้นเขียว** ตามข้อ 1) · press :active = translateY เท่านั้น
+- `aboutTab(name)` สลับ .on ที่ปุ่ม+pane · openAbout รีเซ็ตมาแท็บ 'about' ทุกครั้งที่เปิด · screen-only (strip เหมือน About เดิม · ปิด .open ตอน save, ตัดทั้ง modal ใน buildMenuHtml)
+- **ข้อมูลเทคนิค = ตัวเลขวัดจริง (ห้ามเดา):** วัดบน Chrome 17 ต.ค. 2026 (หน้าเปล่า) — addPage/overflow/snapshot/save ที่ 11/26/51/101/201 หน้า · ผล: ทุกคำสั่งต่ำกว่า 0.27 วิ แม้ 200 หน้า · เชิงเส้น ไม่ crash · ลื่น (ต่ำกว่า 0.1 วิ) ถึง ~50 หน้า · ไม่มีเพดานตายตัวในโค้ด (addPage ไม่เช็กเพดาน) · ระบุ caveat ว่าหน้าจริงมีรายการ/รูปหนักกว่าต่อหน้า
+- lint #70 ขยาย: function aboutTab + 2 แท็บ (data-tab about/tech) + tech pane (about.techBody) + i18n about.tabAbout/tabTech/techHead/techBody/techNote th+en

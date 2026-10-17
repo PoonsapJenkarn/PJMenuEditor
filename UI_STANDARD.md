@@ -369,3 +369,45 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - lint #69 ล็อก: กฎ apply แบบ screen-only · `.zoomctl` + 3 ปุ่ม (zoomOut/zoomLvl/zoomIn) · strip --pagezoom ครบ 2 ที่ · i18n ttl.zoomIn/zoomOut/zoomReset th+en
 - ช่อง % (`#zoomLvl`) เป็น `<input>` พิมพ์ค่าเองได้ (16 ต.ค. 2026): focus=select-all · onchange=`_zoomType()` · Enter=blur commit · รับค่าอิสระ 50–200 ทีละ 1 (ไม่ปัด 10) ผ่าน `_zoomCommit` (clamp เท่านั้น) · ปุ่ม −/+ ยังขยับทีละ 10 เข้ากริด (zoomIn/zoomOut ใช้ floor/ceil ÷ step) · คลิก-reset เดิมหายไป → พิมพ์ 100 แทน (แบบ Figma/เบราว์เซอร์) · zoomLvl อยู่ใน `_FILTERED16` (มีตัวกรอง strip ตัวเลข) · อยู่ใน #edtabs ไม่มี preventDefault ครอบ จึง focus/พิมพ์ได้
 - lint #69(e): `#zoomLvl` ต้องเป็น `<input>` + ต้องมี `function _zoomType` (กันถอยกลับเป็นปุ่ม)
+
+
+## About modal — lint #70 (ผู้ใช้ 16 ต.ค. 2026)
+- เหตุผล (ผู้ใช้ยืนยัน): ซอฟต์แวร์ควรมี About เพื่อ 'การมีตัวตนของงาน' ไม่ใช่เพราะมีคนกด · ไม่ทำเป็นหน้า/ไฟล์แยก (ซ้ำ README) — ทำเป็นป๊อปอัพเล็กแบบ Help→About (Word/VS Code)
+- `#aboutModal` = overlay fixed inset:0 + backdrop · เปิดด้วยคลิกตรา P (.edbrand onclick=openAbout) · ปิดด้วยปุ่มปิด / คลิกฉากหลัง (e.target===modal) / Escape · เก็บ tooltip ttl.credit เดิมไว้ด้วย
+- เนื้อหา: ชื่อโปรแกรม · คำอธิบาย · สร้างโดย Poonsap Jenkarn · 2026 · อีเมล mailto (คลิกส่งเมลได้ — ต่างจาก tooltip ที่คลิกไม่ได้) · GitHub target=_blank rel=noopener · license (รอกำหนด/TBD) · ลิงก์สี #0b5fb0 ไม่ใช่เขียว (UI rule #1)
+- เฉพาะจอ: @media print ซ่อน · buildEditorHtml ปิด .open ตอนบันทึก (คงไว้ในไฟล์ editor แต่ปิด) · buildMenuHtml ตัด #aboutModal ออกจาก list (ไม่ติดในไฟล์เมนูพิมพ์)
+- lint #70 ล็อก: #aboutModal + openAbout/closeAbout + ตรา P wired openAbout + mailto link + github target=_blank + ปิด .open ใน buildEditorHtml + #aboutModal ใน list buildMenuHtml + i18n about.* th+en
+
+
+## Font-size scale (สเกลตัวอักษร UI chrome) — ผู้ใช้ 17 ต.ค. 2026
+แอปไม่มี CSS variable กลางสำหรับ font-size แต่มีสเกลโดยพฤตินัย 5 ระดับที่ใช้ซ้ำทั้งแอป — UI ใหม่ต้องเลือกจากสเกลนี้ ห้ามตั้งค่านอกสเกล (เช่น 12px) :
+- 18px = หัวข้อใหญ่ (dialog heading, .about-h)
+- 16px = ปุ่มหลัก/แท็บ (.edtab, .b-lg)
+- 15px = base (#edbar, .about-name)
+- 14px = เนื้อหา/ปุ่มรอง/หัวข้อย่อย (.about-row, .about-close, #edstatus, summary ของ collapsible, หัว 'ตัวอย่าง')
+- 13px = label/คำอธิบาย/ตัวอย่างโค้ด (.rgl, .about-desc, .hint, กล่องตัวอย่าง paste.ph)
+
+## Paste-import รายการ — lint #71 / ข้อ 12 (ผู้ใช้ 17 ต.ค. 2026)
+- ปุ่ม '📋 วางรายการ' (#btnPasteImport, onclick=openPaste) ในแท็บ ข้อความ กลุ่มใหม่ 'นำเข้า' (grp.import)
+- `#pasteModal` = overlay แบบเดียวกับ About · เปิด openPaste / ปิด closePaste · ปิดด้วยปุ่มยกเลิก / คลิกฉากหลัง (e.target===modal) / Escape
+- วิธีใช้เป็น collapsible `<details><summary>` (native, accessible, ไม่ใช้ JS, ไม่ใช่ modal-ซ้อน-modal) · summary = paste.title 'วิธีการนำเข้ารายการเมนู' (14px) · ภายใน: paste.desc (คำอธิบาย 13px) + หัว 'ตัวอย่าง' (paste.exLabel 14px) + กล่องตัวอย่าง paste.ph (13px monospace) · **default เปิด (`<details open>`) ตั้งแต่ 17 ต.ค. 2026** — เห็น format ครบตั้งแต่เปิดกล่อง ไม่ต้องกด (ฟีเจอร์พึ่ง format 100% ไม่ควรซ่อนหลังคลิก · อ้าง Google Forms/Notion import)
+- ตัวแยกบรรทัด `_pasteParseLine`: 1 บรรทัด=1 รายการ · เว้นวรรคแล้วตัวเลขท้าย=ราคา (รองรับช่วง 230-280, ตัด บาท/฿/บ./THB ท้ายก่อนจับราคา) · บรรทัดไม่มีราคา=หัวกลุ่ม · บรรทัดว่าง/ตัวเลขลอย=ข้าม
+- นำเข้าเป็น 'กลุ่มใหม่ต่อท้าย' เสมอ (insertBefore .ed-addgroup ตัวสุดท้าย) ไม่แตะกลุ่มเดิม · ใช้ newSection()/newRow() เดิม · มี Undo 1 ครั้ง (_snapNow) · ผลลัพธ์ใช้ flashStatus+tk (เปลี่ยนภาษาตามได้)
+- เฉพาะจอ: strip #pasteModal ออกจาก buildMenuHtml (list) + ปิด .open ใน buildEditorHtml ตอนบันทึก
+- ห้ามใช้ placeholder ในช่องกรอก (UI rule #6) · ตัวอย่างโชว์ใน collapsible แทน
+- **หัวข้อ modal (เพิ่ม 17 ต.ค. 2026 · ผู้ใช้):** หัว modal 'นำเข้ารายการเมนู' (paste.modalTitle, 18px เขียว #217346) อยู่บนสุดของกล่อง
+- **บรรทัดคำแนะนำสรุป (paste.guide) ถูกลบออก 17 ต.ค. 2026 · ผู้ใช้:** เดิมมีบรรทัดสรุป 'วาง 1 บรรทัด = 1 เมนู · เลขท้ายบรรทัด = ราคา' เหนือช่อง (ไว้ชดเชยตอน details ยุบ) · เมื่อเปลี่ยน details เป็น **default เปิด** แล้ว บรรทัดนี้ซ้ำกับ 4 bullet ใน paste.desc → ลบทิ้ง (one source of truth · ไม่ซ้ำ) · **ห้ามใช้ placeholder เสมอ** (ขัดข้อ 6 · lint #9)
+- **การ์ดหน้าต่าง (เพิ่ม 17 ต.ค. 2026 · ผู้ใช้ 'มองไม่เห็น'):** `#pasteModal .about-box` ต้องมีพื้นหลังขาว + กรอบ + เงา (background:#fff · border 1px #e1dfdd · border-radius 12px · box-shadow · padding 22/24) เหมือน `#aboutModal .about-box` · **บั๊กเดิม:** ตอนทำ type-scale ย้าย card CSS จาก `.about-box` (base ใช้ร่วม) → `#aboutModal .about-box` ทำให้ paste modal ไม่เหลือการ์ด = เนื้อหาลอยบนพื้นมืด มองไม่เห็นว่าเป็นหน้าต่าง · lint #71 เพิ่มเช็ก `#pasteModal .about-box` ต้องมี background
+- lint #71 ล็อก: ปุ่ม+openPaste + #pasteModal + หัวข้อ paste.modalTitle + <details class="paste-howto" open> (เปิดค่าเริ่มต้น) + openPaste/closePaste/doPasteImport/_pasteParseLine + strip (list+editor) + การ์ด #pasteModal .about-box มี background + i18n paste.* th+en (ไม่มี paste.guide แล้ว)
+
+## 13) ปุ่มมาตรฐานกลางของ dialog/modal — .ui-btn-* (ผู้ใช้ 17 ต.ค. 2026 · lint #72)
+ปัญหาเดิม: ปุ่มใน modal ใหม่ (About, กล่องนำเข้า) ฝังสี inline เอง (เช่น background:#1592D9 สีน้ำเงินที่จริงเป็นสีหัวกลุ่ม 'เมนูอื่นๆ' ไม่ใช่สี UI) + บางปุ่มใช้คลาส about-close ที่ scope เฉพาะ #aboutModal ทำให้ปุ่มกล่องอื่นไม่ได้สไตล์ → ดริฟต์ออกจากธีมทุกครั้งที่เพิ่มของใหม่ ผู้ใช้ต้องมาสั่งแก้ซ้ำ
+
+**มาตรฐาน (ใช้กับทุก dialog/modal เสมอ):**
+- **.ui-btn** = ฐาน (height 40px · radius 8px · Prompt 15px/600 · border 1px transparent · press `:active` = translateY(1px) เท่านั้น ไม่มีเขียวใน :active ตามข้อ 1/lint #43)
+- **.ui-btn-primary** = ปุ่มหลัก/commit (นำเข้า/บันทึก/ตกลง) · พื้นเขียว #217346 ตัวอักษรขาว · hover #1a5c38 · เท่ากับ btn-save/btn-dl (สีหลักของ app)
+- **.ui-btn-secondary** = ปุ่มรอง (ยกเลิก/ปิด) · พื้นขาว ขอบเทา #d2d0ce ตัวอักษรเข้ม · hover ขอบ+ตัวอักษรเขียว #217346
+
+**กฎ:** ปุ่มในทุก modal (#pasteModal, #aboutModal, และ modal ใหม่ในอนาคต) **ต้องใช้** .ui-btn-primary หรือ .ui-btn-secondary · **ห้ามฝัง background:# สี inline บนปุ่มใน modal** (น้ำเงิน #1592D9 เป็นสีเนื้อหา/หัวกลุ่ม ไม่ใช่สีปุ่ม) · spacing (margin) inline ได้ แต่สีต้องมาจากคลาส
+- lint #72 ล็อก: (a) คลาส .ui-btn-primary มี #217346 + .ui-btn-secondary มี #d2d0ce (b) .ui-btn:active มี transform (c) ทุก <button> ใน #pasteModal/#aboutModal มีคลาส ui-btn (d) ห้าม background:# inline บนปุ่มใน 2 modal
+- **เพิ่ม modal ใหม่ครั้งหน้า:** ใช้ .ui-btn-primary/.ui-btn-secondary ได้เลย ไม่ต้องเขียนสีใหม่ · ถ้าลืม lint #72 จะเตือน (แต่ครอบเฉพาะ 2 modal ที่มี — modal ใหม่ควรเพิ่มชื่อใน _segs72 ของ lint ด้วย)

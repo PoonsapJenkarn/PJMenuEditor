@@ -8,6 +8,80 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (13:22) — ✅ เสร็จ: วางมาตรฐานปุ่มกลาง .ui-btn-* + ครอบ 2 modal (About + นำเข้า) + lint #72 (ผู้ใช้ "สร้างมาตรฐานเถอะ เพิ่มใหม่ทีไรต้องมาบอกแก้ทุกที")
+- บริบท: ผู้ใช้ชี้ว่ากล่องนำเข้าปุ่มสีไม่เข้าธีม + บ่นว่าต้องสั่งแก้สีซ้ำทุกครั้งที่เพิ่มของใหม่ → ต้นเหตุ: app ไม่มีคลาสปุ่มกลาง · modal ใหม่ฝังสี inline มั่ว (ปุ่มนำเข้า background:#1592D9 = สีหัวกลุ่มเมนูอื่นๆ ไม่ใช่สี UI · ปุ่มยกเลิกไม่มี bg = เทา default) · ปุ่มใช้ class about-close ที่ scope แค่ #aboutModal เลยไม่ติดสไตล์
+- มาตรฐานใหม่ (อ้างสีจริงจากโค้ด app): .ui-btn (ฐาน) · .ui-btn-primary เขียว #217346 hover #1a5c38 (เท่า btn-save/btn-dl) · .ui-btn-secondary ขาวขอบเทา #d2d0ce hover เขียว · press :active translateY(1px) ไม่มีเขียว (ข้อ 1/lint #43)
+- แปลงปุ่ม 3 ตัว: About "ปิด" + นำเข้า (→primary) + ยกเลิก (→secondary) · ลบคลาส about-close ทิ้งทั้งหมด (3 ปุ่ม) + ลบกฎ CSS #aboutModal .about-close + :hover ที่กลายเป็น dead (2 กฎ) · ไม่เหลือ about-close ในไฟล์
+- น้ำเงิน #1592D9 เหลือ 3 จุด = สีหัวกลุ่ม "เมนูอื่นๆ" + summary link (เนื้อหา/ไม่ใช่ปุ่ม · นอกขอบเขต ถูกต้องแล้ว)
+- lint #72: (a) .ui-btn-primary มี #217346 + .ui-btn-secondary มี #d2d0ce (b) .ui-btn:active มี transform (c) ทุก <button> ใน #pasteModal/#aboutModal ใช้ ui-btn (d) ห้าม background:# inline บนปุ่ม 2 modal · V0 PASS + 4 variant FAIL ตรงจุด · lint PASS 0/0
+- CSS+markup · html sha d050c894673e1ac5 · 6,931,628 bytes · LF · UI_STANDARD เพิ่มข้อ 13 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (13:00) — ✅ เสร็จ: ลบบรรทัดกฎสรุป (paste.guide) + เปิด 4 bullet "วิธีการนำเข้า" เป็นค่าเริ่มต้น (ผู้ใช้ "เอาออกครับ")
+- บริบท: ผู้ใช้ถามตรงๆ "บรรทัดนี้ (วาง 1 บรรทัด = 1 เมนู · เลขท้ายบรรทัด = ราคา) ควรเอาไว้ไหม" · ผมเอนไปทางเอาออก: บรรทัดสรุปนี้ซ้ำกับ 4 bullet ที่เพิ่งเขียน (คำอธิบาย format 2 ที่ในกล่องเดียว = รก) · ทางสะอาด = ลบสรุป + เปิด bullet default เป็น one source of truth
+- แก้ 3 จุด HTML: (1) ลบ element <div data-i18n="paste.guide"> เหนือ textarea (2) ลบ i18n key paste.guide th+en (ไม่ทิ้ง dead code · เหลือ paste.modalTitle) (3) <details class="paste-howto"> → เพิ่ม open (เปิดค่าเริ่มต้น)
+- เหตุผลเปิด default: ฟีเจอร์พึ่ง format 100% (พิมพ์ผิด format = นำเข้าพลาด) · ซ่อนข้อมูลสำคัญหลังคลิกเป็นดีไซน์ไม่ดี · Google Forms/Notion import โชว์ hint format ไว้เห็นเลย
+- lint #71 แก้: เอาเช็ก element paste.guide + i18n key paste.guide ออก · เพิ่มเช็ก <details class="paste-howto" open> ต้องมี open · V0 PASS + 3 variant FAIL (no open / no modalTitle / no card bg) ตรงจุด · lint PASS 0/0
+- html sha a1a3bd59f7cdeb97 · 6,930,898 bytes · LF · paste.guide = 0 ทั้งไฟล์ · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (12:44) — ✅ เสร็จ: วิธีการนำเข้า (paste.desc) เปลี่ยนจากประโยคยาวต่อกัน → bullet 4 ข้อแยกบรรทัด (ผู้ใช้เสนอ · ผมเห็นด้วย + ปรับถ้อยคำข้อ 3)
+- เดิม: "วาง 1 บรรทัดต่อ 1 เมนู · เว้น 1 วรรคต่อด้วยตัวเลข = ราคา · บรรทัดที่ไม่มีราคา = หัวกลุ่ม" (ประโยคเดียวยาว)
+- ใหม่ (4 bullet): วาง 1 บรรทัดต่อ 1 เมนู / เว้น 1 วรรคระหว่างชื่อเมนูและราคา / ราคาอยู่ท้ายบรรทัด (ต่อจากชื่อเมนู) / ชื่อกลุ่มเมนูไม่ต้องใส่ตัวเลขต่อท้าย (บรรทัดที่ไม่มีราคา = ชื่อกลุ่มเมนู)
+- ปรับถ้อยคำข้อ 3 จากที่ผู้ใช้เขียน "(ชื่อเมนู)" → "(ต่อจากชื่อเมนู)" เพราะวงเล็บเดิมอ่านงง · ที่เหลือตามผู้ใช้
+- กลไกขึ้นบรรทัด: เพิ่ม white-space:pre-line ที่ div.about-desc (เดิมไม่มี) + static markup ใช้ newline จริง + i18n th/en ใช้ \n (แบบเดียวกับ paste.ph) · applyLang set textContent → pre-line เรนเดอร์บรรทัด
+- แก้ 3 จุด: static markup TH + i18n paste.desc th + en · ไม่แตะ lint (key paste.desc ยังอยู่ th+en, lint #71 ผ่าน) · lint PASS 0/0
+- html sha ae30b4633f81e9ed · 6,931,273 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (12:26) — ✅ เสร็จ: เอา "บาท/THB" ออกจากตัวอย่าง paste (ผู้ใช้เลือก "คงไว้ง่ายๆ + เอาบาทออกจากตัวอย่าง")
+- บริบท: ผู้ใช้ถามเรื่อง format วาง — บาทเอาออกดีไหม / quote / dash · ผมแนะนำ (1) ชื่อมีช่องว่างไม่ต้องทำอะไร parser ตัดเลขท้าย=ราคาอยู่แล้ว (2) ไม่ใช้ quote (ไม่มี delimiter) (3) dash เป็นออปชันได้แต่ชนช่วงราคา 230-280 · ผู้ใช้เลือกคงง่ายๆ + เอาบาทออกจากตัวอย่าง
+- แก้ตัวอย่าง 3 จุด: TH i18n paste.ph + TH static HTML default (คอหมูย่าง 70 บาท → คอหมูย่าง 70, 2 จุด) + EN i18n paste.ph (Grilled pork 70 THB → Grilled pork 70)
+- พาร์เซอร์ไม่แตะ: ยังรับ บาท/฿/THB ท้ายบรรทัดถ้าใครพิมพ์มา (ให้อภัย ไม่ลงโทษ) · แค่ตัวอย่างโชว์เลขเปล่าให้สะอาด · ไม่เพิ่ม quote/dash
+- ไม่แตะ lint (paste.ph key ยังอยู่ แค่เปลี่ยน value) · lint PASS 0/0 · html sha 28413dbd35b38900 · 6,930,666 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (12:14) — ✅ เสร็จ: แก้บั๊ก popup นำเข้า "มองไม่เห็น" — ใส่การ์ดขาว+กรอบ+เงาให้ #pasteModal (ผู้ใช้ส่งรูป)
+- บริบท: ผู้ใช้ "ใส่กรอบ หรือเป็นหน้าต่างเถอะ มันมองไม่เห็น" + รูป popup ที่เนื้อหาลอยบนพื้นมืดไม่มีการ์ด
+- 🐛 ต้นเหตุ (บั๊กจริง ไม่ใช่แค่มองยาก): ตอนทำ type-scale ก่อนหน้า CSS การ์ด (background/border-radius/box-shadow/padding) ถูกย้ายจาก `.about-box` (base ใช้ร่วม 2 modal) → `#aboutModal .about-box` (เฉพาะ About) · ผล: `#pasteModal .about-box` เหลือแค่ max-width/overflow ไม่มีพื้นหลัง → กล่องนำเข้าลอยบนพื้นมืด rgba(0,0,0,.4) มองไม่เห็นขอบ
+- แก้ CSS บรรทัด 178: `#pasteModal .about-box` เพิ่ม background:#fff + border:1px solid #e1dfdd + border-radius:12px + box-shadow:0 8px 32px rgba(0,0,0,.3) + padding:22px 24px + box-sizing · คง max-width/width/max-height/overflow เดิม
+- lint #71 เพิ่มเช็ก: `#pasteModal .about-box` ต้องมี background (regex กลุ่ม) · V0 PASS + variant (ย้อน regress) FAIL ตรงจุด · lint PASS 0/0
+- CSS-only · html sha 73a5541c637fdfcb · 6,930,690 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 17 ต.ค. 2026 (11:54) — ✅ เสร็จ: popup นำเข้ารายการเมนู — เพิ่มหัวข้อ + บรรทัดคำแนะนำเหนือช่อง (ผู้ใช้เลือก · ไม่ใช้ placeholder)
+- บริบท: ผู้ใช้ถาม "Professional แล้วใช่ไหม" + ส่งรูป popup · ผมประเมิน 3 จุดขาด: (1) ไม่มีหัวข้อกล่อง (2) ช่องว่างไม่มี hint (3) คำแนะนำยุบไว้ · ผู้ใช้เลือก "หัวข้อ + บรรทัดคำแนะนำเหนือช่อง"
+- ⚠️ บทเรียน: ตอนแรกผมเสนอ placeholder → lint #9 (UI_STANDARD ข้อ 6) จับ FAIL เพราะโปรเจกต์ห้าม placeholder (หายตอนพิมพ์ + screen reader ไม่อ่าน) · ผมหยุด บอกผู้ใช้ตรงๆ ว่าแนะนำผิด ไม่ยกเว้น lint ให้ตัวเอง · เปลี่ยนเป็นบรรทัดคำแนะนำนอกช่อง (เห็นตลอด) แทน
+- แก้ 4 จุด HTML: (1) หัว modal <div data-i18n="paste.modalTitle"> "นำเข้ารายการเมนู" 18px เขียว #217346 บนสุด (2) บรรทัดคำแนะนำ <div data-i18n="paste.guide"> "วาง 1 บรรทัด = 1 เมนู · เลขท้ายบรรทัด = ราคา" 13px เหนือ textarea (3)(4) i18n paste.modalTitle/paste.guide th+en
+- lint #71 ขยาย: เช็ก element paste.modalTitle + paste.guide มีอยู่ + เพิ่ม 2 key ใน i18n tuple · V0 PASS + 4 variant FAIL ตรงจุด · lint PASS 0/0
+- html sha e17aed7cbc0dd6f5 · 6,930,553 bytes · LF · ไม่มี placeholder (regex placeholder[=:] = 0) · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 16 ต.ค. 2026 (16:04) — ✅ เสร็จ: เปลี่ยนชื่อโปรแกรม "OE Isan Hotpot Menu Editor" → "PJ Menu Editor" (ผู้ใช้ · OE = ตัวอย่าง, ตัว download จริง = template เปล่า)
+- เหตุ: ชื่อโปรแกรม (TOOL) ควร generic ไม่ผูกร้าน OE · OE menu = ตัวอย่างให้ชม · ตัว download จริงจะเป็น template เปล่า (ยังไม่ทำ — งานถัดไป)
+- แก้ 4 จุด HTML: (1) header comment "PJ Menu Editor — เครื่องมือทำเมนูร้านอาหารขนาดเล็ก (เมนู A4) · ไฟล์นี้เป็นตัวอย่าง" (2) about-name "PJ Menu Editor" (3) about.desc th "เครื่องมือทำเมนูร้านอาหารขนาดเล็ก" (4) about.desc en "Menu maker for small restaurants"
+- README: title → "PJ Menu Editor — เครื่องมือทำเมนูร้านอาหารขนาดเล็ก" + ระบุว่าไฟล์ตัวอย่าง = เมนู OE
+- lint ไม่ล็อกค่า about (lint #70 เช็กแค่ key มีอยู่) · lint PASS 0/0 · html sha 7318715a2ebd1f30 · 6,921,235 bytes · README sha 000a0e7e7c6e1c9f · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ⚖️ รีวิวกฎหมาย (16 ต.ค.): ต้องแก้ก่อน public — (1) OFL notice: ต้องแนบข้อความ OFL + copyright ฟอนต์ (Prompt/Sarabun/Noto Sans Thai) · MIT ครอบแค่โค้ด ฟอนต์ที่ฝัง base64 ยังเป็น OFL (2) ข้อมูลร้าน OE (เบอร์โทรคุณไก่ = personal data ตาม PDPA 2562 + แบรนด์ร้าน) → แก้ด้วย template เปล่า (3) ที่มารูปอาหาร/โลโก้ร้าน = ยังไม่ทราบ ต้องถามผู้ใช้ · repo ยัง private = ยังไม่มี exposure
+
+## 16 ต.ค. 2026 (15:53) — ✅ เสร็จ: เลือก license = MIT · เติมให้ครบทุกจุด (ผู้ใช้เลือก MIT · เป้า เครดิต→งาน→เงิน)
+- สร้างไฟล์ LICENSE (MIT · Copyright (c) 2026 Poonsap Jenkarn) · ข้อความ MIT มาตรฐานเต็ม · LF · 1072 bytes
+- HTML header comment: "License: ยังไม่กำหนด (รอเลือก) / TBD" → "License: MIT License · Copyright (c) 2026 Poonsap Jenkarn"
+- About modal i18n about.licenseVal (th+en): "รอกำหนด (TBD)"/"To be decided (TBD)" → "MIT License" ทั้งคู่
+- README: เพิ่มส่วน "สัญญาอนุญาต / License" (TH+EN) + ลิงก์ไปไฟล์ LICENSE + Copyright line
+- เป็นข้อความ/ไฟล์ license ไม่แตะ lint · lint PASS 0/0 · html sha 20145442bf54c9e4 · 6,921,330 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ✅ ตัวตนของงานครบแล้ว: ชื่อ (เครดิต 3 จุด) + About modal + GitHub repo (private) + MIT License · พร้อมเปลี่ยน repo เป็น public เมื่อผู้ใช้ต้องการ
+
+## 16 ต.ค. 2026 (15:40) — ✅ เสร็จ: ป๊อปอัพ About เด้งจากตรา P (ผู้ใช้ท้วงว่าซอฟต์แวร์ควรมี About = การมีตัวตนของงาน · ผมยอมรับ ทำให้)
+- ไม่ทำหน้าแยก (ซ้ำ README) · ทำป๊อปอัพ Help→About · คลิกตรา P (.edbrand onclick=openAbout) เปิด · ปิดด้วยปุ่ม/คลิกฉากหลัง/Escape · เก็บ tooltip ttl.credit ไว้
+- เนื้อหา: ชื่อโปรแกรม + คำอธิบาย + สร้างโดย Poonsap Jenkarn 2026 + อีเมล mailto คลิกได้ + GitHub target=_blank + license (รอกำหนด TBD) · ลิงก์ #0b5fb0 (ไม่ใช่เขียว)
+- เฉพาะจอ: @media print ซ่อน · buildEditorHtml ปิด .open ตอนบันทึก · buildMenuHtml เพิ่ม #aboutModal ใน strip list
+- lint #70 ใหม่: #aboutModal + openAbout/closeAbout + ตรา P wired + mailto + github target=_blank + strip editor/menu + i18n about.* th+en · V0 PASS + 5 variant FAIL ครบ (รวม check (c) เจาะ list buildMenuHtml)
+- lint PASS 0/0 · sha 3cab2fea5d2713ae · 6,921,368 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ค้าง: license (จุด 4) — About + HTML header + LICENSE จะเติม license พร้อมกันตอนเลือก (MIT vs PolyForm NC)
+
+## 16 ต.ค. 2026 (15:22) — ✅ เสร็จ: ใส่เครดิต Poonsap Jenkarn (3 จุด · ผู้ใช้ยืนยันชื่อ+อีเมล)
+- ชื่อ: Poonsap Jenkarn · 2026 · ติดต่อ jenkarn2631@gmail.com · repo github.com/Justin-10/OE
+- จุด 1: HTML comment หัวไฟล์ — วางไว้ "ใน <head>" (ไม่ใช่ระหว่าง DOCTYPE↔<html>) เพราะ buildEditorHtml/buildMenuHtml ใช้ DOCTYPE+documentElement.outerHTML → comment นอก <html> จะถูกตัดตอน save · ใน head = ติดไปกับไฟล์ที่บันทึก/ดาวน์โหลด
+- จุด 2: tooltip ตรา P (.edbrand) — เดิม title="POONSAP" → "สร้างโดย Poonsap Jenkarn · 2026 · jenkarn2631@gmail.com" + data-i18n-title="ttl.credit" (เฉพาะจอ)
+- จุด 3: i18n ttl.credit (th+en) · README เพิ่มส่วน "ผู้สร้าง / Credit" + แก้บรรทัด "Local Git repo (ไม่มี remote)" → ชี้ไป github.com/Justin-10/OE (private) เพราะ push แล้ว
+- เครดิตเป็นข้อความ/i18n ไม่แตะ lint · lint PASS 0/0 · html sha 5c9b925eefadba7e · 6,917,055 bytes · README sha d7d4f2a1bf67bf12 · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ค้าง: LICENSE (จุด 4) รอเลือก license (MIT vs PolyForm NC) · HTML header เขียน "License: ยังไม่กำหนด (รอเลือก) / TBD" ไว้ก่อน
+
 ## 16 ต.ค. 2026 (12:21) — ✅ เสร็จ: ช่อง % ของ zoom พิมพ์ค่าเองได้ (ผู้ใช้ขอ · ผมเห็นด้วย ทำต่อทันที)
 - เปลี่ยน #zoomLvl จาก <button> (คลิก=reset 100%) → <input> พิมพ์ % เองได้ · focus=select-all · Enter=blur commit · onchange=_zoomType()
 - รับค่าอิสระ 50–200 ทีละ 1 (ไม่ปัด 10): _zoomSet→_zoomCommit (clamp เท่านั้น ไม่ snap) · ปุ่ม −/+ ยังทีละ 10 เข้ากริด (zoomIn=floor+1, zoomOut=ceil−1) · _zoomLoad ไม่ snap แล้ว

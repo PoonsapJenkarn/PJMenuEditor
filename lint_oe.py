@@ -1556,6 +1556,92 @@ def main():
     if 'function _zoomType' not in txt:
         errors.append('ขาด function _zoomType (รับค่า % ที่พิมพ์ในช่อง zoomLvl) (ดู UI_STANDARD.md ข้อ 10)')
 
+    # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
+    # (a) element #aboutModal + wired คลิกตรา P (openAbout)
+    if 'id="aboutModal"' not in txt:
+        errors.append('ไม่พบ #aboutModal (ป๊อปอัพ About) (ดู UI_STANDARD.md ข้อ 11)')
+    if 'function openAbout' not in txt or 'function closeAbout' not in txt:
+        errors.append('ขาด function openAbout/closeAbout (ดู UI_STANDARD.md ข้อ 11)')
+    _eb70=re.search(r'<span class="edbrand"[^>]*>', txt)
+    if not _eb70 or 'openAbout()' not in _eb70.group(0):
+        errors.append('ตรา P (.edbrand) ไม่ได้ wired openAbout() — คลิกแล้วต้องเปิด About (ดู UI_STANDARD.md ข้อ 11)')
+    # (b) ลิงก์ติดต่อ/GitHub ต้องคลิกได้จริง (mailto + github target=_blank)
+    _am70=re.search(r'<div id="aboutModal"[\s\S]*?</div></div>', txt)
+    _ams=_am70.group(0) if _am70 else ''
+    if 'href="mailto:jenkarn2631@gmail.com"' not in _ams:
+        errors.append('About ไม่มีลิงก์อีเมล mailto คลิกได้ (ดู UI_STANDARD.md ข้อ 11)')
+    if 'github.com/Justin-10/OE' not in _ams or 'target="_blank"' not in _ams:
+        errors.append('About ไม่มีลิงก์ GitHub แบบเปิดแท็บใหม่ (target=_blank) (ดู UI_STANDARD.md ข้อ 11)')
+    # (c) ปิด .open ตอนบันทึก editor + ตัดทิ้งใน buildMenuHtml
+    if "_abm.classList.remove('open')" not in txt:
+        errors.append('buildEditorHtml ไม่ได้ปิด About (.open) ตอนบันทึก (ดู UI_STANDARD.md ข้อ 11)')
+    _ml70=re.search(r"\['#edbar','#edstatus'[^\]]*\]", txt)
+    if not _ml70 or "'#aboutModal'" not in _ml70.group(0):
+        errors.append('buildMenuHtml ไม่ได้ตัด #aboutModal ออกจากไฟล์เมนู (ดู UI_STANDARD.md ข้อ 11)')
+    # (d) i18n about.* ครบ th+en
+    _i70=txt.find('var I18N={')
+    if _i70>=0:
+        _th70=txt.find('th:{',_i70); _en70=txt.find('en:{',_i70)
+        _thb70=txt[_th70:_en70] if (_th70>=0 and _en70>_th70) else ''
+        _enb70=txt[_en70:_en70+30000] if _en70>=0 else ''
+        for _k70 in ('about.title','about.desc','about.by','about.licenseLbl','about.close'):
+            if ("'"+_k70+"'") not in _thb70: errors.append('i18n '+_k70+' ขาดใน th (ดู UI_STANDARD.md ข้อ 11)')
+            if ("'"+_k70+"'") not in _enb70: errors.append('i18n '+_k70+' ขาดใน en (ดู UI_STANDARD.md ข้อ 11)')
+
+    # ---- 71) Paste-import รายการ: ปุ่ม + modal + parser + strip + i18n (ผู้ใช้ 17 ต.ค. 2026) ----
+    if 'id="btnPasteImport"' not in txt:
+        errors.append('ไม่พบปุ่ม #btnPasteImport (วางรายการ) ในแท็บข้อความ (ดู UI_STANDARD.md ข้อ 12)')
+    _pb71=re.search(r'<button[^>]*id="btnPasteImport"[^>]*>', txt)
+    if not _pb71 or 'openPaste()' not in _pb71.group(0):
+        errors.append('ปุ่ม #btnPasteImport ไม่ได้ wired openPaste() (ดู UI_STANDARD.md ข้อ 12)')
+    if 'id="pasteModal"' not in txt:
+        errors.append('ไม่พบ #pasteModal (ป๊อปอัพวางรายการ) (ดู UI_STANDARD.md ข้อ 12)')
+    if 'data-i18n="paste.modalTitle"' not in txt:
+        errors.append('ไม่พบหัวข้อ modal paste.modalTitle (ดู UI_STANDARD.md ข้อ 12)')
+    if '<details class="paste-howto" open>' not in txt:
+        errors.append('<details class="paste-howto"> ต้องมี open (เปิดวิธีนำเข้าเป็นค่าเริ่มต้น — เห็น format ตั้งแต่แรก) (ดู UI_STANDARD.md ข้อ 12)')
+    _pbox71=re.search(r'#pasteModal \.about-box\{([^}]*)\}', txt)
+    if not _pbox71 or 'background' not in _pbox71.group(1):
+        errors.append('#pasteModal .about-box ไม่มี background (การ์ดหาย — กล่องลอยบนพื้นมืด) (ดู UI_STANDARD.md ข้อ 12)')
+    for _f71 in ('function openPaste','function closePaste','function doPasteImport','function _pasteParseLine'):
+        if _f71 not in txt:
+            errors.append('ขาด '+_f71+' (paste-import) (ดู UI_STANDARD.md ข้อ 12)')
+    # strip: menu print array + editor save close
+    _arr71=re.search(r"\['#edbar'[^\]]*\]", txt)
+    if not _arr71 or "'#pasteModal'" not in _arr71.group(0):
+        errors.append('buildMenuHtml ไม่ได้ตัด #pasteModal ออกจากไฟล์เมนู (ดู UI_STANDARD.md ข้อ 12)')
+    if "_pm=clone.querySelector('#pasteModal')" not in txt or "_pm.classList.remove('open')" not in txt:
+        errors.append('buildEditorHtml ไม่ได้ปิด #pasteModal (.open) ตอนบันทึก (ดู UI_STANDARD.md ข้อ 12)')
+    # i18n ครบ th+en
+    _i71=txt.find('var I18N={')
+    if _i71>=0:
+        _th71s=txt.find('th:{',_i71); _en71s=txt.find('en:{',_i71)
+        _thb71=txt[_th71s:_en71s] if (_th71s>=0 and _en71s>_th71s) else ''
+        _enb71=txt[_en71s:_en71s+30000] if _en71s>=0 else ''
+        for _k71 in ('btn.pasteImport','paste.title','paste.modalTitle','paste.desc','paste.import','paste.cancel','paste.empty','paste.done','paste.grpDefault','paste.ph'):
+            if ("'"+_k71+"'") not in _thb71: errors.append('i18n '+_k71+' ขาดใน th (ดู UI_STANDARD.md ข้อ 12)')
+            if ("'"+_k71+"'") not in _enb71: errors.append('i18n '+_k71+' ขาดใน en (ดู UI_STANDARD.md ข้อ 12)')
+
+    # ---- 72) ปุ่มมาตรฐานกลาง ui-btn-* ในทุก dialog/modal (ผู้ใช้ 17 ต.ค. 2026) ----
+    #   ทุก modal ใช้ .ui-btn-primary/.ui-btn-secondary · ห้ามปุ่มใน modal ฝัง background:# สีเอง (กันดริฟต์ธีม) · ดู UI_STANDARD.md ข้อ 13
+    for _sel72,_need72 in (('.ui-btn-primary{','#217346'),('.ui-btn-secondary{','#d2d0ce')):
+        _m72=re.search(re.escape(_sel72)+r'([^}]*)\}', _css)
+        if not _m72 or _need72 not in _m72.group(1):
+            errors.append('คลาส '+_sel72+' หาย/สีไม่ถูก (ต้องมี '+_need72+') (ดู UI_STANDARD.md ข้อ 13)')
+    _mp72=re.search(r'\.ui-btn:active[^{]*\{([^}]*)\}', _css)
+    if not _mp72 or 'transform' not in _mp72.group(1):
+        errors.append('.ui-btn:active ต้องมี transform (press state · ดู UI_STANDARD.md ข้อ 13)')
+    _abt72=txt.find('id="aboutModal"'); _pst72=txt.find('id="pasteModal"')
+    if _abt72>=0 and _pst72>_abt72:
+        _segs72={'aboutModal':txt[_abt72:_pst72], 'pasteModal':txt[_pst72:txt.find('</body>',_pst72)]}
+        for _mid72,_seg72 in _segs72.items():
+            for _bm72 in re.finditer(r'<button\b[^>]*>', _seg72):
+                _tag72=_bm72.group(0)
+                if 'ui-btn' not in _tag72:
+                    errors.append('ปุ่มใน #'+_mid72+' ไม่ได้ใช้คลาส ui-btn-* (ปุ่ม dialog ต้องใช้คลาสกลาง · ดู UI_STANDARD.md ข้อ 13)')
+                if 'background:#' in _tag72:
+                    errors.append('ปุ่มใน #'+_mid72+' ฝัง background:# สี inline (ห้าม — ใช้ ui-btn-primary/secondary · ดู UI_STANDARD.md ข้อ 13)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -8,6 +8,20 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (22:30) — 🐛✅ แก้บั๊กแอปค้าง: apostrophe ไม่ escape ใน i18n (user's) ทำ JS พังทั้งไฟล์ (ผู้ใช้ "app ค้าง คลิกอะไรไม่ได้เลย")
+- อาการ: ผู้ใช้แจ้งแอปค้าง คลิกไม่ได้ · Console: Uncaught SyntaxError: Unexpected identifier 's' (OEIsanHotpotMenuEditor.html:1969) — ไม่ใช่ draft ค้าง แต่เป็น syntax error ในไฟล์เอง → JS ทั้งไฟล์ไม่โหลด → handler ตายหมด
+- 🐛 ต้นเหตุ (ความผิด agent รอบ licNote 614dad ที่ยังไม่ commit): note อังกฤษ "are the user's own responsibility..." · apostrophe ใน user's ปิด single-quote JS string ก่อนเวลา → "s own responsibility" = invalid JS
+- 🔑 ทำไม lint ไม่จับ: lint นับ brace/paren ครบ (apostrophe ไม่กระทบ count) · lint PASS แต่ JS พัง — ช่องว่างจริงของ lint
+- แก้: เขียน EN ใหม่เลี่ยง apostrophe "are the responsibility of the user to verify before distribution." (ตัวเลข/ความหมายเดิม) · สแกน I18N block ยืนยันไม่เหลือ letter'letter · TH ไม่กระทบ (ไม่มี apostrophe)
+- เพิ่ม lint #73: สแกน I18N block หา regex [A-Za-z]'[A-Za-z] (apostrophe ไม่ escape) · V0 PASS + V1(user's)/V2(don't) FAIL + V3(escaped \') PASS ไม่ false-positive · lint PASS 0/0
+- html sha 3dc5aaa650bab1c5 · 6,943,548 bytes · LF · UI_STANDARD เพิ่มข้อ 11.2 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · (งาน licNote 614dad + fix นี้ รวม commit เดียวได้)
+
+## 17 ต.ค. 2026 (22:05) — ✅ เสร็จ: แก้ note แท็บลิขสิทธิ์ให้ scope ถูก (ผู้ใช้ถาม "ฟอนต์ที่เพิ่มเองทีหลังไม่ได้ลงใน license จะเป็นอะไรไหม")
+- บริบท: ผู้ใช้ถามเรื่องฟอนต์ที่ผู้ใช้ฝังเพิ่มทีหลัง (upload/Google) ไม่ได้อยู่ในแท็บลิขสิทธิ์ · ผมวิเคราะห์: (1) template ที่เจ้าของแจก = มีแค่ 3 ฟอนต์ ครบแล้ว (2) ฟอนต์ที่ผู้ใช้เพิ่มเอง = ผู้ใช้กลายเป็นผู้แจกจ่าย ภาระ license ตกที่ผู้ใช้ ไม่ย้อนถึง template
+- 🔑 ช่องว่างจริง = ถ้อยคำ note เกินจริง: เดิม "ฟอนต์ทั้งหมดอยู่ภายใต้ OFL" เป็นเท็จทันทีที่ผู้ใช้เพิ่มฟอนต์เชิงพาณิชย์ · auto-list ฟอนต์ที่เพิ่มทำไม่ได้ (เบราว์เซอร์อ่าน license จากไฟล์ฟอนต์ไม่ได้ — พิสูจน์แล้วตอนทำ sync) → แก้ถ้อยคำแทน
+- แก้ licNote 3 จุด (static TH + i18n th/en): "ฟอนต์ทั้งหมด" → "ฟอนต์ที่มากับแอป (3 ฟอนต์ด้านบน)" + เพิ่มประโยค "ฟอนต์ที่คุณเพิ่มเองภายหลัง (อัปโหลด/Google) เป็นความรับผิดชอบของผู้ใช้ในการตรวจสอบสิทธิ์ก่อนแจกจ่าย" · EN parallel
+- ข้อความอย่างเดียว ไม่แตะ lint (key licNote มีอยู่) · lint PASS 0/0 · html sha 614dad177189b25d · 6,943,547 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
 ## 17 ต.ค. 2026 (20:43) — ✅ เสร็จ: เพิ่มแท็บลิขสิทธิ์ (แท็บที่ 3) ใน About — ปิดช่องว่าง OFL (ผู้ใช้เลือก "แท็บลิขสิทธิ์")
 - บริบท: ผู้ใช้ถามว่า pro/enterprise ใส่แท็บอะไรใน About บ้าง · ผมเสนอ licenses (ปิดช่องว่าง OFL จริงก่อน public) + help · ผู้ใช้เลือกแท็บลิขสิทธิ์
 - 🔑 copyright ฟอนต์ = อ่านตัวจริงจาก OFL.txt (ไม่เดา): C:\OE\Fonts\{Prompt,Sarabun,Noto_Sans_Thai}\OFL.txt → Prompt "Copyright (c) 2015, Cadson Demak" · Sarabun "Copyright 2018 The Sarabun Project Authors" · Noto Sans Thai "Copyright 2022 The Noto Project Authors"

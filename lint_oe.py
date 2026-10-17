@@ -1656,6 +1656,17 @@ def main():
                 if 'background:#' in _tag72:
                     errors.append('ปุ่มใน #'+_mid72+' ฝัง background:# สี inline (ห้าม — ใช้ ui-btn-primary/secondary · ดู UI_STANDARD.md ข้อ 13)')
 
+    # ---- 73) i18n: apostrophe ไม่ escape ในสตริง single-quote (ผู้ใช้ 17 ต.ค. 2026 · บั๊ก user's ทำ JS พังทั้งไฟล์) ----
+    #   ค่า i18n ทุกตัวครอบด้วย single quote · apostrophe ในคำ (เช่น user's, don't) ปิดสตริงก่อนเวลา → SyntaxError → script ไม่โหลด → แอปค้าง
+    #   สัญญาณ: letter'letter ในบล็อก I18N = apostrophe ไม่ escape (delimiter ที่ถูกต้องมี : , { } หรือช่องว่างติด · escaped มี \\ นำหน้า)
+    _i73 = txt.find('var I18N={')
+    if _i73 >= 0:
+        _end73 = txt.find('};', _i73)
+        _blk73 = txt[_i73:_end73] if _end73 > _i73 else txt[_i73:_i73+60000]
+        _apos73 = re.findall(r"[A-Za-z]'[A-Za-z]", _blk73)
+        if _apos73:
+            errors.append("i18n มี apostrophe ไม่ escape ในสตริง (เช่น user's/don't) — ปิด string กลางคัน JS พัง: {} — เขียนใหม่เลี่ยง ' หรือ escape \\' (ดู UI_STANDARD.md ข้อ 11)".format(', '.join(sorted(set(_apos73))[:5])))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

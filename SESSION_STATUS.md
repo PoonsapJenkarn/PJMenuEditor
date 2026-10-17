@@ -8,6 +8,14 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 17 ต.ค. 2026 (20:43) — ✅ เสร็จ: เพิ่มแท็บลิขสิทธิ์ (แท็บที่ 3) ใน About — ปิดช่องว่าง OFL (ผู้ใช้เลือก "แท็บลิขสิทธิ์")
+- บริบท: ผู้ใช้ถามว่า pro/enterprise ใส่แท็บอะไรใน About บ้าง · ผมเสนอ licenses (ปิดช่องว่าง OFL จริงก่อน public) + help · ผู้ใช้เลือกแท็บลิขสิทธิ์
+- 🔑 copyright ฟอนต์ = อ่านตัวจริงจาก OFL.txt (ไม่เดา): C:\OE\Fonts\{Prompt,Sarabun,Noto_Sans_Thai}\OFL.txt → Prompt "Copyright (c) 2015, Cadson Demak" · Sarabun "Copyright 2018 The Sarabun Project Authors" · Noto Sans Thai "Copyright 2022 The Noto Project Authors"
+- เพิ่ม nav แท็บที่ 3 (data-tab=lic) + pane (data-pane=lic) · หัว "ลิขสิทธิ์และสัญญาอนุญาต" · body: โค้ด MIT (Copyright 2026 Poonsap Jenkarn) + ฟอนต์ฝัง OFL 1.1 (3 ฟอนต์ + copyright) · note: OFL อนุญาตฝัง/แจก/เชิงพาณิชย์ฟรี คงประกาศลิขสิทธิ์ · ใช้คลาส .about-tech-* เดิม ไม่เพิ่ม CSS · ย่อหน้า nbsp×3
+- i18n 4 key (about.tabLic/licHead/licBody/licNote) th+en · lint #70 ขยาย: 3 แท็บ (about/tech/lic) + lic pane + i18n 4 key · V0 PASS + 5 variant FAIL ตรงจุด · lint PASS 0/0
+- html sha ee8eba07a908f3e1 · 6,942,677 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ⚠️ ยังค้าง (OFL compliance เต็ม): About แท็บ = สรุป · ควรมีไฟล์ THIRD-PARTY-LICENSES / OFL.txt (OFL 1.1 เต็ม + copyright 3 ฟอนต์) ใน repo ก่อน public — ยังไม่ได้ทำ (เสนอผู้ใช้เป็นงานถัดไป)
+
 ## 17 ต.ค. 2026 (20:34) — ✅ เสร็จ: ปรับ techBody About เป็นโครงใหม่ตามที่ผู้ใช้จัด (sub-list ค่าวัด + เพดานแนะนำ 50 หน้า)
 - ผู้ใช้ให้โครงใหม่ 3 bullet (เดิม 4) · ผมเห็นด้วย (ตัวเลขตรงผลวัดจริง 11/51/101 หน้า = 0.1/0.5/1.1 วิ · เพดาน 50 หน้ามีเหตุผล) → ดำเนินการทันทีตามที่ตกลง
 - bullet 1: "การทดสอบความเสถียรรองรับถึง 100 หน้า" + sub-list 3 ค่า (10 หน้า 0.1 วิ / 50 หน้า 0.5 วิ / 100 หน้า 1.1 วิ) — ย่อหน้าด้วย nbsp×3 + en-dash (pre-line กินช่องว่างปกติ nbsp ไม่ถูกกิน)

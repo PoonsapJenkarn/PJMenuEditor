@@ -1602,6 +1602,8 @@ def main():
         errors.append('<details class="paste-howto"> ต้องมี open (เปิดวิธีนำเข้าเป็นค่าเริ่มต้น — เห็น format ตั้งแต่แรก) (ดู UI_STANDARD.md ข้อ 12)')
     if 'id="pasteDest"' not in txt:
         errors.append('ไม่พบ #pasteDest (ช่องเลือกหน้าปลายทางนำเข้า) (ดู UI_STANDARD.md ข้อ 12)')
+    if 'id="pasteCol"' not in txt:
+        errors.append('ไม่พบ #pasteCol (ช่องเลือกคอลัมน์ปลายทาง ซ้าย/ขวา) (ดู UI_STANDARD.md ข้อ 12)')
     if '_pageNoOf(made[0])' not in txt:
         errors.append('doPasteImport ไม่ได้รายงานหน้าปลายทาง (_pageNoOf) — ต้องบอกหน้าหลังนำเข้า (ดู UI_STANDARD.md ข้อ 12)')
     _pbox71=re.search(r'#pasteModal \.about-box\{([^}]*)\}', txt)
@@ -1622,7 +1624,7 @@ def main():
         _th71s=txt.find('th:{',_i71); _en71s=txt.find('en:{',_i71)
         _thb71=txt[_th71s:_en71s] if (_th71s>=0 and _en71s>_th71s) else ''
         _enb71=txt[_en71s:_en71s+30000] if _en71s>=0 else ''
-        for _k71 in ('btn.pasteImport','paste.title','paste.modalTitle','paste.destLbl','paste.desc','paste.import','paste.cancel','paste.empty','paste.done','paste.grpDefault','paste.ph'):
+        for _k71 in ('btn.pasteImport','paste.title','paste.modalTitle','paste.destLbl','paste.colLbl','paste.colLeft','paste.colRight','paste.desc','paste.import','paste.cancel','paste.empty','paste.done','paste.grpDefault','paste.ph'):
             if ("'"+_k71+"'") not in _thb71: errors.append('i18n '+_k71+' ขาดใน th (ดู UI_STANDARD.md ข้อ 12)')
             if ("'"+_k71+"'") not in _enb71: errors.append('i18n '+_k71+' ขาดใน en (ดู UI_STANDARD.md ข้อ 12)')
 

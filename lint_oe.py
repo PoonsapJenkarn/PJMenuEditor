@@ -1622,6 +1622,33 @@ def main():
     if not _pg75 or "font-family:'Prompt'" not in _pg75.group(0):
         errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
+    # ---- 76) accent bar หัวกลุ่ม = ::before parallelogram เฉียง 45° บน-ล่าง (ผู้ใช้ 18 ต.ค. 2026 · แทน border-left ที่หัวโดน radius ตัด/ล่างเป็น miter ไม่เท่ากัน) ----
+    if '.sec-h::before' not in _css:
+        errors.append('accent bar หัวกลุ่มต้องเป็น .sec-h::before (ไม่ใช่ border-left) — ปลายบน-ล่างเฉียง 45° เท่ากัน (ดู UI_STANDARD.md ข้อ 6)')
+    else:
+        _ab76=re.search(r'\.sec-h::before\{[^}]*\}', _css)
+        if _ab76 and 'clip-path:polygon(' not in _ab76.group(0):
+            errors.append('.sec-h::before ต้องมี clip-path:polygon (ทรง parallelogram เฉียง 45°) (ดู UI_STANDARD.md ข้อ 6)')
+        if _ab76 and 'var(--accent)' not in _ab76.group(0):
+            errors.append('.sec-h::before ต้องใช้ background:var(--accent) (แถบสีตามหมวด) (ดู UI_STANDARD.md ข้อ 6)')
+        if 'border-left:5px solid var(--accent)' in _css:
+            errors.append('ยังมี border-left:5px เป็น accent bar เก่า — ต้องลบ ใช้ ::before แทน (ดู UI_STANDARD.md ข้อ 6)')
+        if 'body.boardmode .sec-h::before' not in _css:
+            errors.append('โหมดจอป้ายไม่ override สี accent bar (.sec-h::before) เป็น #171A1E (ดู UI_STANDARD.md ข้อ 10.2)')
+
+    # ---- 77) ระยะปุ่มแถบบน (#edtabs) จัดเป็นกลุ่ม: boundary ระหว่างกลุ่ม margin-left:16px สม่ำเสมอ · ในกลุ่มชิด (base gap 2px) (ผู้ใช้ 18 ต.ค. 2026) ----
+    #   กลุ่ม: [undo/redo qab] | [zoom zoomctl] | [มุมมอง btnCal+btnBoard] | [TH/EN langsw] · btnBoard = กลุ่มเดียวกับ btnCal จึง margin-left:0 (ชิด)
+    for _s77, _need77, _msg77 in (
+        ('#edtabs .zoomctl{', 'margin-left:16px', 'zoomctl (zoom) ต้องเว้นจากกลุ่มซ้าย 16px'),
+        ('#edtabs #btnCal{', 'margin-left:16px', 'btnCal (ปรับเทียบจอ · ต้นกลุ่มมุมมอง) ต้องเว้น 16px'),
+        ('#edtabs .langsw{', 'margin-left:16px', 'langsw (TH/EN) ต้องเว้นจากกลุ่มมุมมอง 16px'),
+        ('#edtabs #btnBoard{', 'margin-left:0', 'btnBoard (จอป้าย) อยู่กลุ่มเดียวกับ btnCal ต้องชิด (margin-left:0)'),
+    ):
+        _m77=re.search(re.escape(_s77)+r'[^}]*\}', _css)
+        if _m77 and _need77 not in _m77.group(0):
+            errors.append('ระยะแถบปุ่มบนไม่สม่ำเสมอ: '+_msg77+' (ดู UI_STANDARD.md ข้อ 1)')
+    if re.search(r'#edtabs \.qab\{[^}]*margin-right:8px', _css):
+        errors.append('#edtabs .qab ยังมี margin-right:8px เก่า — ระยะกลุ่มต้องคุมด้วย margin-left:16px ที่กลุ่มถัดไป ไม่ใช่ margin-right มั่ว (ดู UI_STANDARD.md ข้อ 1)')
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)
     if 'id="aboutModal"' not in txt:

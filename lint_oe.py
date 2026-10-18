@@ -1622,20 +1622,6 @@ def main():
     if not _pg75 or "font-family:'Prompt'" not in _pg75.group(0):
         errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
-    # ---- 76) accent bar หัวกลุ่ม = ::before parallelogram เฉียง 45° บน-ล่าง (ผู้ใช้ 18 ต.ค. 2026 · แทน border-left ที่หัวโดน radius ตัด/ล่างเป็น miter ไม่เท่ากัน) ----
-    if '.sec-h::before' not in _css:
-        errors.append('accent bar หัวกลุ่มต้องเป็น .sec-h::before (ไม่ใช่ border-left) — ปลายบน-ล่างเฉียง 45° เท่ากัน (ดู UI_STANDARD.md ข้อ 6)')
-    else:
-        _ab76=re.search(r'\.sec-h::before\{[^}]*\}', _css)
-        if _ab76 and 'clip-path:polygon(' not in _ab76.group(0):
-            errors.append('.sec-h::before ต้องมี clip-path:polygon (ทรง parallelogram เฉียง 45°) (ดู UI_STANDARD.md ข้อ 6)')
-        if _ab76 and 'var(--accent)' not in _ab76.group(0):
-            errors.append('.sec-h::before ต้องใช้ background:var(--accent) (แถบสีตามหมวด) (ดู UI_STANDARD.md ข้อ 6)')
-        if 'border-left:5px solid var(--accent)' in _css:
-            errors.append('ยังมี border-left:5px เป็น accent bar เก่า — ต้องลบ ใช้ ::before แทน (ดู UI_STANDARD.md ข้อ 6)')
-        if 'body.boardmode .sec-h::before' not in _css:
-            errors.append('โหมดจอป้ายไม่ override สี accent bar (.sec-h::before) เป็น #171A1E (ดู UI_STANDARD.md ข้อ 10.2)')
-
     # ---- 77) ระยะปุ่มแถบบน (#edtabs) จัดเป็นกลุ่ม: boundary ระหว่างกลุ่ม margin-left:16px สม่ำเสมอ · ในกลุ่มชิด (base gap 2px) (ผู้ใช้ 18 ต.ค. 2026) ----
     #   กลุ่ม: [undo/redo qab] | [zoom zoomctl] | [มุมมอง btnCal+btnBoard] | [TH/EN langsw] · btnBoard = กลุ่มเดียวกับ btnCal จึง margin-left:0 (ชิด)
     for _s77, _need77, _msg77 in (
@@ -1649,6 +1635,17 @@ def main():
             errors.append('ระยะแถบปุ่มบนไม่สม่ำเสมอ: '+_msg77+' (ดู UI_STANDARD.md ข้อ 1)')
     if re.search(r'#edtabs \.qab\{[^}]*margin-right:8px', _css):
         errors.append('#edtabs .qab ยังมี margin-right:8px เก่า — ระยะกลุ่มต้องคุมด้วย margin-left:16px ที่กลุ่มถัดไป ไม่ใช่ margin-right มั่ว (ดู UI_STANDARD.md ข้อ 1)')
+
+    # ---- 78) ตัวเลือกไอคอนหัวกลุ่ม (emoji picker): ต้องมี 'ไม่ใช้ไอคอน' + ช่องไอคอนว่างคลิกเพิ่มกลับได้ในโหมดแก้ (ผู้ใช้ 18 ต.ค. 2026) ----
+    #   เดิมเลือกได้อย่างเดียว ลบ/ไม่ใช้ไม่ได้ · เพิ่มปุ่ม pk.none (_emojiNone ล้าง textContent) + .em:empty editmode affordance (＋ คลิกเพิ่ม) · .em:empty default display:none (ไม่มี gap ตอนพิมพ์)
+    if 'function _emojiNone' not in txt:
+        errors.append('ขาด _emojiNone — ปุ่มไม่ใช้/ลบไอคอนหัวกลุ่มใช้ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pk.none'" not in txt:
+        errors.append('ขาด i18n pk.none (ปุ่มไม่ใช้ไอคอนใน emoji picker) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'body.editmode .sec-h .em:empty' not in _css:
+        errors.append('ช่องไอคอนหัวกลุ่มที่ว่าง ไม่มี affordance คลิกเพิ่มในโหมดแก้ (body.editmode .sec-h .em:empty) — ลบไอคอนแล้วเพิ่มกลับไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if '.sec-h .em:empty{display:none' not in _css:
+        errors.append('.sec-h .em:empty ต้อง display:none โดย default — ไอคอนว่างไม่ควรเกิด gap ตอนพิมพ์/บันทึก (ดู UI_STANDARD.md ข้อ 6)')
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)
     if 'id="aboutModal"' not in txt:

@@ -1554,7 +1554,7 @@ def main():
         _th69=txt.find('th:{',_i69); _en69=txt.find('en:{',_i69)
         _thb69=txt[_th69:_en69] if (_th69>=0 and _en69>_th69) else ''
         _enb69=txt[_en69:_en69+30000] if _en69>=0 else ''
-        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset','ttl.zoomFit','ttl.zoomA4','zoom.a4','cal.title','cal.desc','cal.card','cal.save','cal.cancel','cal.a4is','cal.note','btn.cal','cal.inchdesc','cal.method1','cal.method2','cal.inchlbl','cal.inchbtn','cal.reslbl','fl.a4Nominal'):
+        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset','ttl.zoomFit','ttl.zoomA4','zoom.a4','cal.title','cal.desc','cal.card','cal.startlbl','cal.endlbl','cal.save','cal.cancel','cal.a4is','cal.note','btn.cal','cal.inchdesc','cal.method1','cal.method2','cal.inchlbl','cal.inchbtn','cal.reslbl','fl.a4Nominal'):
             if ("'"+_k69+"'") not in _thb69: errors.append('i18n '+_k69+' ขาดใน th (ดู UI_STANDARD.md ข้อ 10)')
             if ("'"+_k69+"'") not in _enb69: errors.append('i18n '+_k69+' ขาดใน en (ดู UI_STANDARD.md ข้อ 10)')
     # (e) ช่อง % (#zoomLvl) ต้องเป็น <input> พิมพ์ค่าเองได้ + มี _zoomType รับค่า (ผู้ใช้ 16 ต.ค. 2026)
@@ -1601,6 +1601,26 @@ def main():
         errors.append('cal-barwrap ต้อง overflow:hidden — แถบทาบบัตรห้ามล้น/มี scrollbar (ดู UI_STANDARD.md ข้อ 10.2)')
     if 'function _calMaxWidth' not in txt:
         errors.append('ขาด _calMaxWidth — _calSetWidth ต้อง clamp ความกว้างแถบไม่ให้เกินกรอบ modal (ดู UI_STANDARD.md ข้อ 10.2)')
+    # (m) แถบทาบบัตรแบบมาตรฐาน: เส้นเริ่ม/เส้นสิ้นสุดเป็นเส้นตรงชัดเจน · grip กึ่งกลางเส้นสิ้นสุด = จุดวัดจริง (ผู้ใช้ 18 ต.ค. 2026)
+    if 'cal-startline' not in txt or 'cal-endline' not in txt:
+        errors.append('แถบทาบบัตรต้องมีเส้นเริ่ม (cal-startline) + เส้นสิ้นสุด (cal-endline) เป็นเส้นตรงบอกจุดวางขอบซ้าย/ขวาบัตรชัดเจน (ดู UI_STANDARD.md ข้อ 10.2)')
+    # (n) ปุ่มเปิด modal (btnCal) ต้องขึ้น active เขียว .on ระหว่างเปิด + ถอดตอนปิด — theme มาตรฐาน (ผู้ใช้ 18 ต.ค. 2026)
+    if _oc69 and "getElementById('btnCal')" not in _oc69.group(0):
+        errors.append('openCal ไม่ตั้ง .on ให้ btnCal — ปุ่มเปิด modal ต้องขึ้น active เขียวระหว่างเปิด (theme · ดู UI_STANDARD.md ข้อ 1/2)')
+    _cc69n=re.search(r'function closeCal\([^)]*\)\{.*?\n', txt)
+    if _cc69n and "classList.remove('on')" not in _cc69n.group(0):
+        errors.append('closeCal ไม่ถอด .on ของ btnCal — ปิด modal แล้วปุ่มต้องเลิกเขียว (ดู UI_STANDARD.md ข้อ 1/2)')
+    if '#edtabs #btnCal.on{' not in _css:
+        errors.append('ขาด CSS #edtabs #btnCal.on (ปุ่มปรับเทียบจอ active เขียว) — ปุ่มเปิด modal ต้องเขียวระหว่างเปิด (ดู UI_STANDARD.md ข้อ 1)')
+    # (o) จุดแสดง % (calPct) ต้องเป็น global อยู่บนสุด ไม่ซ่อนในวิธีใดวิธีหนึ่ง (ผู้ใช้ 18 ต.ค. 2026)
+    if 'class="cal-result"' not in txt:
+        errors.append('จุดแสดงผล % (calPct) ต้องอยู่ในกล่อง global cal-result บนสุด ไม่ซ่อนในวิธีที่ 1/2 (ดู UI_STANDARD.md ข้อ 10.2)')
+
+    # ---- 75) default font ของเมนู = Prompt ที่ .page (ผู้ใช้ 18 ต.ค. 2026) ----
+    #   ชื่อเมนู/หมายเหตุ/sub สืบทอดจาก .page · ตั้ง Prompt ที่ .page = เปลี่ยน default ทุกเมนูทุกหน้าในที่เดียว (ไม่แตะ UI editor)
+    _pg75=re.search(r'\.page\{[^}]*\}', _css)
+    if not _pg75 or "font-family:'Prompt'" not in _pg75.group(0):
+        errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)

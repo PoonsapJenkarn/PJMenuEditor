@@ -8,6 +8,58 @@
 - ค้าง (เลือกทำ): กลุ่มใหม่ยังใช้สีเดิม #4a8579 · ออกจากโหมดแก้รูปแล้วข้อความแถบล่างค้าง · ลบรูปอาหารไม่มีผล · เพิ่มรูปไม่ย่อ · หลัง Ctrl+Z แถบรูปแบบอาจชี้ช่องที่ถูกลบ · ไอคอน ⚠ ซ้ำในแถบล่าง · ประวัติถี่เกิน · สีเส้นจุดไม่ทำงาน · typoFont ผูก 2 ครั้ง · B/I/U/S ไม่มีผล · ปุ่ม [ใส่ราคา] ไม่ focus · QR code (รอ URL) · ชื่อเมนูกลับ 17px? (ท้ายหน้า 1 มีที่ว่าง) · จำสีขอบล่าสุดข้าม reload? · ไฟล์ mockup ที่ไม่ได้ track 3 ไฟล์ (ลบหรือเก็บ?)
 - verify_oe.py รันผ่านแล้ว 61/61 บนเครื่อง (11 ต.ค. 2026) · ✅ ตัดสินใจแล้ว (13 ต.ค. 2026): ไม่เอาเข้า pre-commit hook — hook คง lint อย่างเดียว · verify_oe.py = เครื่องมือรันเองตอนตรวจ runtime (manual) ไม่ใช่ทุก commit
 
+## 18 ต.ค. 2026 (10:44) — ✅ เสร็จ: เปลี่ยน tooltip ปุ่ม A4 เป็น "กว้างขนาด A4" (ผู้ใช้สั่ง)
+- ttl.zoomA4 TH: "ขนาด A4 จริงบนจอ · ปรับเทียบด้วยบัตรครั้งแรก" → "กว้างขนาด A4" · EN: "Actual A4 size on screen · calibrate with a card first" → "A4 width"
+- + title ตายตัวบน markup ปุ่ม A4 ("ขนาด A4 จริง · กว้าง 210mm (zoom 100%)") → "กว้างขนาด A4" (กันข้อความเก่าแวบก่อน applyLang)
+- ข้อความ i18n ล้วน ไม่แตะ lint/โครงสร้าง/ฟังก์ชัน · lint PASS 0/0 · html sha 5ed15fdde543d8df · 6,965,139 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 18 ต.ค. 2026 (10:31) — ✅ เสร็จ: ปุ่ม Fit เปลี่ยนเป็นไอคอน (ผู้ใช้ "ใช้สัญลักษณ์แทนได้ไหม ปุ่มเล็ก" + รูปแถบ zoom เบียด)
+- 🐛 ปัญหา: "พอดีหน้า" (8 ตัว) ยาว ทำแถบ zoom เบียด/ตัด ("+พอดีห...") · ผู้ใช้ขอใช้สัญลักษณ์ · agent เห็นด้วย ทำทันที (ไม่ decision card ซ้ำ)
+- แก้: ปุ่ม Fit (zoomFit) <span>พอดีหน้า</span> → ไอคอน 4 มุม (corner brackets · M4 9V4H9 ฯลฯ) · class zfit→zfitic (square 30px เหมือน +/−) · ป้ายผ่าน tooltip ttl.zoomFit · ไอคอน frame ไม่ใช่ลูกศร (เลี่ยงกำกวม fullscreen) · อ้าง PDF viewer/InDesign
+- A4 คงเป็นข้อความ "A4" (label สั้นชัดสุด · ไอคอนแทนไม่ได้ดีกว่า) · "A4" พอดีแถบอยู่แล้ว · เบียดมาจาก "พอดีหน้า" ตัวเดียว แก้ตัวนั้นจบ
+- CSS: .zoomctl .zfitic svg (17px stroke #3a3937 ตรงกับ +/−) · ลบ i18n zoom.fit th+en (ไม่ใช้แล้ว · no dead code) · zoom.a4 คงไว้
+- lint #69(g): เอา zoom.fit ออกจาก tuple + เพิ่มเช็ก "zbtn zfitic" (ล็อก Fit=ไอคอน) · V0 PASS + 4 variant FAIL · lint 0/0
+- html sha b560fc053c11f993 · 6,965,310 bytes · LF · brace 0 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 18 ต.ค. 2026 (10:18) — ✅ เสร็จ: เพิ่มวิธีที่ 2 ปรับเทียบ A4 = พิมพ์ขนาดจอ (นิ้ว) · สูตร PPI (ผู้ใช้เลือก decision "เพิ่มสูตร PPI เป็นวิธีที่ 2")
+- บริบท: ต่อจากปุ่ม A4 ปรับเทียบด้วยบัตร · ผู้ใช้ส่ง dxdiag (Latitude 3440, 1920×1080) + สูตร PPI จาก Google · ยืนยันคำนวณ: PPI=√(1920²+1080²)/14=157.4 → zoom 164% ≈ 165% ที่ผู้ใช้วัดด้วยกระดาษจริง (สูตรถูก)
+- Q&A ก่อนทำ: (1) หน่วย นิ้ว/mm/px ไม่มีผลต่อความแม่น (ต่างกัน 0.028% จากปัด 8.27) · ตัวแปรที่สำคัญคือ "ขนาดจอนิ้ว" (14 โฆษณา vs ~13.9 จริง = คลาด ~1%) · (2) Acrobat ก็ปรับเทียบ (Preferences›Page Display›Resolution PPI) หลักเดียวกับบัตร · บัตรรับค่าง่ายกว่า (ไม่ต้องรู้ PPI)
+- สูตร: zoom% = √(screen.w²+screen.h²)/นิ้ว/96*100 · screen.w/h เป็น CSS px รวม scaling แล้ว ไม่ต้องแยก DPR
+- โค้ด: เพิ่มใน #calModal เดิม (ไม่ใช่ modal แยก) ใต้แถบบัตร: ตัวคั่น cal.or + #calInch(นิ้ว) + ปุ่ม "ใช้ค่านี้" cal.inchbtn + โชว์ res ที่ตรวจพบ (cal.reslbl + id=calRes · openCal เติม screen.wxh) · _calFromInches เซ็ต barWidth จากสูตร → _calSetWidth → readout เดิม → Save ทางเดียวกับบัตร (_calPxPerMm ตัวเดียว ปุ่ม A4 ค่าเดียว)
+- #calInch: _calInchClean (0-9+จุด1 ≤4ตัว) + _calInchFilter (กรองสด) + _FILTERED16 · เงียบ ค่าผิด=ไม่เปลี่ยนแถบ (§6.1)
+- lint #69(h): +id=calInch +function _calFromInches +i18n cal.or/inchlbl/inchbtn/reslbl th+en · V0 PASS + 5 variant FAIL · lint 0/0
+- html sha 0298877a09e20366 · 6,965,173 bytes · LF · brace 0 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 18 ต.ค. 2026 (09:05) — ✅ เสร็จ: ปุ่ม A4 = ขนาดกระดาษ A4 จริงบนจอ (ปรับเทียบด้วยบัตร 85.6mm) · ผู้ใช้เลือก "ปรับเทียบด้วยบัตร"
+- 🧠 แก้ความเข้าใจผิดสะสม 3 รอบ: ผู้ใช้ต้องการให้ "ความกว้างเพจบนจอ = 210mm จริง" (เอากระดาษ A4 ทาบจอแล้วเท่ากัน · เขาวัดได้ ~165%) · ไม่ใช่ 100% (agent ผิด: บนจอ CSS 1mm=96/25.4px คงที่ · 210mm จริงกี่ px ขึ้นกับ PPI จอ ที่เว็บอ่านไม่ได้) · ไม่ใช่กว้างตามจอ (Fit Width)
+- 🚫 ลองดึง DPI จาก ctypes บนเครื่อง = sandbox block · และ web อ่าน PPI จริงไม่ได้ (devicePixelRatio ≠ PPI) → สูตร auto คำนวณ px ทำไม่ได้จริง → ต้องปรับเทียบต่อเครื่อง (วิธีเดียวที่ถูก)
+- กลไก: บัตร ISO ID-1 กว้าง 85.6mm (ทุกใบเท่ากัน) · ลากแถบ #calBar ให้เท่าบัตรจริง → _calPxPerMm=barPx/85.6 เก็บ localStorage oe_screen_pxpermm · ปุ่ม A4(zoomA4): zoom%=_calPxPerMm/(96/25.4)*100 · ยังไม่ปรับเทียบ→เปิด modal ก่อน
+- UI: #calModal (overlay) + #calBar ลากขอบ #calGrip(เทา #605e5c ไม่ใช่เขียว · lint #43) + ปุ่ม +/− 1px + readout ป้าย data-i18n cal.a4is + <b id=calPct>%แยก (relang ได้ ไม่ใช้ t() ใน textContent · กฎ #20) + ปุ่ม ui-btn · ปุ่ม "ปรับเทียบจอ"(btnCal) แท็บไฟล์ กลุ่มใหม่ "จอภาพ" เปิดใหม่ได้
+- strip: #calModal ใน list ลบ buildMenuHtml + ปิด .open buildEditorHtml · ค่า px/mm เป็น localStorage ของจอ ไม่ติดไฟล์ · zoomA4 ใช้ _zoomFitCommit clamp 30–200 (จอ PPI สูงมากต้อง >200 ค่อยขยาย _ZMAX)
+- ปุ่ม "เต็มกว้าง/Fit Width" เดิมถูกแทนที่ด้วย A4 ไปแล้วรอบก่อน (zoomFitWidth ลบแล้ว) · ปุ่ม "พอดีหน้า/Fit" (zoomFitPage) ยังอยู่ (ถูก)
+- lint #69(h): id=calModal + 4 ฟังก์ชัน + '#calModal'] strip + i18n 7 cal keys + btn.cal + grp.screen th+en · V0 PASS + 7 variant FAIL ตรงจุด · lint 0/0
+- html sha 9baa44698570d02f · 6,962,309 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+- ⏭️ ค้าง (คอมมิตถัดไป): ปุ่ม toggle โหมด (จอป้าย btnBoard, ซ่อนรูป btnImgHide) ต้องขึ้นเขียว active + ทำเป็นมาตรฐาน+lint ทุกปุ่ม toggle
+
+## 18 ต.ค. 2026 (01:28) — ✅ แก้ 2 เรื่อง: ปุ่ม zoom ที่ 2 → "A4" (ขนาดจริง 100%) + สีกลุ่มข้าว&เส้น (ผู้ใช้ "เพี้ยน/เละเทะ" + clear รอบ 3)
+- 🐛🧠 ปุ่ม zoom ที่ 2 ผิดความหมาย 3 รอบ: ผู้ใช้ต้องการ "ความกว้างเพจ = A4 210mm จริง" = zoom 100% = ขนาดจริง · agent ไปทำ Fit Width (กว้างตามจอ) ผิด · แก้: ปุ่ม 2 onclick zoomFitWidth()→zoomReset() (=_zoomCommit(100)) · ชื่อ "เต็มกว้าง"→"A4" (ผู้ใช้เสนอชื่อ A4 เอง ตอนนี้ถูกความหมายพอดี) · ลบ function zoomFitWidth (ไม่ใช้แล้ว) · เก็บ zoomFitPage/_pageFitMetrics/_zoomFitCommit/_ZFIT_MIN (ปุ่ม Fit ยังใช้)
+- 🐛 "เละเทะ" = แถบ zoom แคบ 2 ปุ่มไทยกว้าง (พอดีหน้า+เต็มกว้าง) ล้นทับ TH/EN · ชื่อ "A4" (2 ตัว) แทน "เต็มกว้าง" (8 ตัว) → แถบแคบลงมาก (ถ้ายังล้นจะเปลี่ยนเป็น dropdown — ผู้ใช้เคยบอก "การเลือกก็ได้")
+- i18n: ลบ zoom.fitW/ttl.zoomFitW · เพิ่ม zoom.a4=A4/A4 + ttl.zoomA4 (ขนาด A4 จริง · 210mm · zoom 100%) th+en · lint #69(g) อัปเดต id=zoomA4 + ลบ zoomFitWidth req + tuple zoom.a4 · V0 PASS + 5 variant FAIL
+- 🎨 กลุ่มข้าว&เส้น (sechead เดียว anchor "เมนูข้าว &amp; เส้น"): เส้นขอบ(text-shadow outline + data-ol-c) #D79533 ทอง → #FFFFFF ขาว (17 จุด) · ตัวหนังสือ color:#FFFFFF → #171A1E · ไม่แตะ --accent(แถบซ้าย)/data-acc0 ตามที่ผู้ใช้สั่งเฉพาะ 2 อย่าง · ไม่แตะ lint (ไม่มีกฎล็อกสีราย group)
+- html sha d4656e093b70b3d6 · 6,954,669 bytes · LF · brace 0 · lint PASS 0/0 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 18 ต.ค. 2026 (01:20) — ✅ เสร็จ: แก้ปุ่ม Fit/Fit Width ข้อความตัดบรรทัดซ้อนกัน (ผู้ใช้ "เพี้ยน" + รูป)
+- 🐛 ต้นเหตุ: .zoomctl .zfit ไม่มี white-space:nowrap → ข้อความไทย "พอดีหน้า"/"เต็มกว้าง" ตัด 2 บรรทัดในปุ่ม (เห็นเป็น "พอดีเต็ม"/"หน้ากว้าง" ซ้อน) · ไทยไม่มีช่องว่างระหว่างคำ เบราว์เซอร์ตัดที่ไหนก็ได้
+- แก้ CSS จุดเดียว: .zoomctl .zfit เพิ่ม white-space:nowrap (ปุ่มกว้าง auto อยู่แล้ว ขยายรับข้อความบรรทัดเดียว)
+- CSS-only · ไม่แตะ lint/markup/i18n · lint PASS 0/0 · html sha 7399abfd83aedf43 · 6,954,927 bytes · LF · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit
+
+## 18 ต.ค. 2026 (01:11) — ✅ เสร็จ: เพิ่มปุ่ม Fit (เห็นทั้งหน้า) + Fit Width (เต็มกว้างจอ) ในแถบ zoom (ผู้ใช้ "ทำสองปุ่มนี้")
+- บริบท: หลังเคลียร์ความหมาย 2 รอบ ผู้ใช้สั่งทำทั้ง 2 ปุ่ม · Fit=min(กว้าง,สูง) เห็นทั้งแผ่น A4 · Fit Width=ความกว้างเพจเต็มพื้นที่กว้างจอ เลื่อนแนวตั้ง · อ้าง InDesign Fit Page / Word Page Width
+- แก้ HTML 5 จุด: (1) markup 2 ปุ่ม (zoomFit/zoomFitW · span data-i18n label) หลังปุ่ม + ใน .zoomctl (2) CSS .zoomctl .zfit (width:auto padding font 13px) (3) ฟังก์ชัน _ZFIT_MIN=30 + _zoomFitCommit + _pageFitMetrics (อ่าน .page rect ÷ zoom ปัจจุบัน = unzoomed จริง · avail=clientWidth-32/innerHeight-pad-32) + zoomFitPage + zoomFitWidth (4)(5) i18n ttl.zoomFit/ttl.zoomFitW/zoom.fit/zoom.fitW th+en
+- _ZFIT_MIN=30 เฉพาะ fit (จอเล็กย่อ <50% ได้) · ปุ่ม −/+/พิมพ์ ยัง clamp [50,200] · button-triggered ไม่ auto-refit (ตรง InDesign/Figma) · --pagezoom ยัง strip จาก build*
+- lint #69(g): require ปุ่ม 2 ปุ่ม + 3 ฟังก์ชัน + i18n 4 key th+en · V0 PASS + 5 variant FAIL ตรงจุด · lint PASS 0/0
+- html sha 6ea86402f1dd56db · 6,954,908 bytes · LF · UI_STANDARD เพิ่มข้อ 10.1 · ยังไม่ทดสอบเบราว์เซอร์ · ยังไม่ commit · (หมายเหตุ: ชื่อปุ่ม "เต็มกว้าง"/"Fit Width" เปลี่ยนได้ง่ายถ้าผู้ใช้อยากได้คำอื่น)
+
 ## 18 ต.ค. 2026 (00:09) — ✅ เสร็จ: แก้บั๊กช่อง zoom รับตัวอักษรได้ (เพิ่ม oninput filter) + เขียน instruction มาตรฐาน input (ผู้ใช้ "ช่อง zoom ควรรับแค่ตัวเลข + เขียน instruction ว่า element รับอะไร")
 - 🐛 ต้นเหตุ: #zoomLvl มีแค่ onchange="_zoomType()" (กรองตอน blur) ไม่มี oninput กรองสดขณะพิมพ์ → พิมพ์ "sdffd" เข้าช่องได้ · อยู่ใน _FILTERED16 whitelist ของ lint แล้ว แต่ whitelist = แค่บอก lint ว่าไม่ต้องเตือน ไม่ได้บังคับว่ามี filter จริง (ช่องว่างของ lint)
 - แก้ HTML: เพิ่ม oninput="_zoomFilter(this)" ที่ markup + 2 ฟังก์ชัน _zoomClean (0-9 สูงสุด 3 หลัก · _prNorm เลขไทย→อารบิก) + _zoomFilter (strip สด + รักษา cursor · idiom เดียวกับ _hexClean/_sizeClean) · เงียบไม่เด้ง warning (แนว zoom silent-clamp · Figma/Chrome)

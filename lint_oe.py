@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -1554,7 +1554,7 @@ def main():
         _th69=txt.find('th:{',_i69); _en69=txt.find('en:{',_i69)
         _thb69=txt[_th69:_en69] if (_th69>=0 and _en69>_th69) else ''
         _enb69=txt[_en69:_en69+30000] if _en69>=0 else ''
-        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset'):
+        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset','ttl.zoomFit','ttl.zoomA4','zoom.a4','cal.title','cal.desc','cal.card','cal.save','cal.cancel','cal.a4is','cal.note','btn.cal','cal.inchdesc','cal.method1','cal.method2','cal.inchlbl','cal.inchbtn','cal.reslbl','fl.a4Nominal'):
             if ("'"+_k69+"'") not in _thb69: errors.append('i18n '+_k69+' ขาดใน th (ดู UI_STANDARD.md ข้อ 10)')
             if ("'"+_k69+"'") not in _enb69: errors.append('i18n '+_k69+' ขาดใน en (ดู UI_STANDARD.md ข้อ 10)')
     # (e) ช่อง % (#zoomLvl) ต้องเป็น <input> พิมพ์ค่าเองได้ + มี _zoomType รับค่า (ผู้ใช้ 16 ต.ค. 2026)
@@ -1568,6 +1568,39 @@ def main():
         errors.append('#zoomLvl ไม่มี oninput="_zoomFilter" — ช่องตัวเลขต้องกรองสดขณะพิมพ์ (onchange กรองตอน blur ไม่พอ · ดู UI_STANDARD.md ข้อ 6.1)')
     if 'function _zoomFilter' not in txt or 'function _zoomClean' not in txt:
         errors.append('ขาด function _zoomFilter/_zoomClean (filter ตัวเลขช่อง zoom · ดู UI_STANDARD.md ข้อ 6.1)')
+    # (g) ปุ่ม Fit / Fit Width (ผู้ใช้ 18 ต.ค. 2026) · ดู UI_STANDARD.md ข้อ 10
+    for _zfid in ('id="zoomFit"','id="zoomA4"'):
+        if _zfid not in txt: errors.append('ไม่พบปุ่ม zoom '+_zfid+' (Fit/Fit Width) (ดู UI_STANDARD.md ข้อ 10)')
+    if 'zbtn zfitic' not in txt: errors.append('ปุ่ม Fit ต้องเป็นไอคอน (class zfitic · ไม่ใช้ข้อความยาว) (ดู UI_STANDARD.md ข้อ 10)')
+    for _zfn in ('function zoomFitPage','function _pageFitMetrics'):
+        if _zfn not in txt: errors.append('ขาด '+_zfn+' (คำนวณ zoom จากขนาดจอ) (ดู UI_STANDARD.md ข้อ 10)')
+    # (h) A4 ปรับเทียบจอด้วยบัตร (ผู้ใช้ 18 ต.ค. 2026) · ดู UI_STANDARD.md ข้อ 10.2
+    if 'id="calModal"' not in txt: errors.append('ขาด #calModal (ปรับเทียบจอด้วยบัตร) (ดู UI_STANDARD.md ข้อ 10.2)')
+    if 'id="calInch"' not in txt: errors.append('ขาด #calInch (วิธีที่ 2: พิมพ์ขนาดจอนิ้ว · สูตร PPI) (ดู UI_STANDARD.md ข้อ 10.2)')
+    for _calfn in ('function zoomA4','function openCal','function _calSave','function _calLoad','function _calFromInches'):
+        if _calfn not in txt: errors.append('ขาด '+_calfn+' (A4 calibration) (ดู UI_STANDARD.md ข้อ 10.2)')
+    if "'#calModal']" not in txt: errors.append('calModal ไม่ถูก strip ใน buildMenuHtml (ดู UI_STANDARD.md ข้อ 10.2)')
+    # (i) ปุ่ม A4 ต้องซูมทันที ไม่เปิด modal (ผู้ใช้ 18 ต.ค. 2026) · ปรับเทียบจอเปิดจากปุ่ม ปรับเทียบจอ (btnCal) เท่านั้น
+    _z4lint=re.search(r'function zoomA4\([^)]*\)\{.*?\n', txt)
+    if _z4lint and 'openCal(' in _z4lint.group(0):
+        errors.append('zoomA4 ยังเรียก openCal — ปุ่ม A4 ต้องซูมทันที ไม่เปิด modal (ปรับเทียบจอเปิดจากปุ่ม ปรับเทียบจอ เท่านั้น · ดู UI_STANDARD.md ข้อ 10.2)')
+    if 'fl.a4Nominal' not in txt:
+        errors.append('ขาด i18n fl.a4Nominal — A4 ตอนยังไม่ปรับเทียบต้องแจ้งว่าเป็นค่าโดยประมาณ (กัน signifier หลอก · ดู UI_STANDARD.md ข้อ 10.2)')
+    # (j) วิธีหลัก = พิมพ์นิ้ว ต้องมาก่อนทาบบัตร · %readout แยกจากปุ่ม −/+ (ผู้ใช้ 18 ต.ค. 2026)
+    _ci18=txt.find('id="calInch"'); _cb18=txt.find('id="calBar"')
+    if _ci18>=0 and _cb18>=0 and _ci18>_cb18:
+        errors.append('ลำดับ modal ปรับเทียบจอผิด — ช่องพิมพ์นิ้ว (calInch) ต้องมาก่อนแถบทาบบัตร (calBar) · วิธีหลัก=พิมพ์นิ้ว ทาบบัตร=ตัวเลือก (ดู UI_STANDARD.md ข้อ 10.2)')
+    if 'cal.inchdesc' not in txt:
+        errors.append('ขาด i18n cal.inchdesc — คำอธิบายวิธีหลัก พิมพ์นิ้ว (ดู UI_STANDARD.md ข้อ 10.2)')
+    # (k) openCal ต้องเรียก applyLang — modal อยู่หลัง editorScript ปิด init ไม่ถึง → เปิดครั้งแรกเห็น default สั้นไม่ตรง i18n (ผู้ใช้ 18 ต.ค. 2026)
+    _oc69=re.search(r'function openCal\([^)]*\)\{.*?\n', txt)
+    if _oc69 and 'applyLang(' not in _oc69.group(0):
+        errors.append('openCal ไม่เรียก applyLang — เปิด modal ครั้งแรกจะเห็นข้อความ default สั้นไม่ตรง i18n (modal อยู่หลัง editorScript ปิด · ดู UI_STANDARD.md ข้อ 10.2)')
+    # (l) แถบทาบบัตรต้องไม่ล้นกรอบ — barwrap overflow:hidden + _calSetWidth clamp ด้วย _calMaxWidth (ผู้ใช้ 18 ต.ค. 2026)
+    if '#calModal .cal-barwrap{overflow:hidden' not in txt:
+        errors.append('cal-barwrap ต้อง overflow:hidden — แถบทาบบัตรห้ามล้น/มี scrollbar (ดู UI_STANDARD.md ข้อ 10.2)')
+    if 'function _calMaxWidth' not in txt:
+        errors.append('ขาด _calMaxWidth — _calSetWidth ต้อง clamp ความกว้างแถบไม่ให้เกินกรอบ modal (ดู UI_STANDARD.md ข้อ 10.2)')
 
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)
@@ -1684,16 +1717,20 @@ def main():
         if _apos73:
             errors.append("i18n มี apostrophe ไม่ escape ในสตริง (เช่น user's/don't) — ปิด string กลางคัน JS พัง: {} — เขียนใหม่เลี่ยง ' หรือ escape \\' (ดู UI_STANDARD.md ข้อ 11)".format(', '.join(sorted(set(_apos73))[:5])))
 
-    # ---- 74) โหมดจอป้าย (display board) screen-only — ล็อกครบทุกส่วน (ผู้ใช้ 18 ต.ค. 2026) ----
-    #   พื้น #ECEDEF + ตัวอักษร/ราคา #171A1E เฉพาะจอ (@media screen) · ไม่กระทบพิมพ์/บันทึก/ดาวน์โหลด · strip 2 จุด · i18n TH/EN
+    # ---- 74) โหมดจอป้าย (display board) จอ + พิมพ์ — ล็อกครบทุกส่วน (ผู้ใช้ 18 ต.ค. 2026) ----
+    #   พื้น #ECEDEF + ตัวอักษร/ราคา #171A1E · @media screen, print + print-color-adjust:exact · CSS อยู่ใน <style> ก้อนแรก (รอด buildMenuHtml) · Save Menu คงโหมด (WYSIWYG) · Save Editor ถอด · i18n TH/EN
     _e74 = []
     if 'body.boardmode' not in _css: _e74.append('ไม่พบ CSS body.boardmode')
     if 'function toggleBoardMode(' not in txt: _e74.append('ไม่พบ toggleBoardMode')
     if 'id="btnBoard"' not in txt: _e74.append('ไม่พบปุ่ม btnBoard')
     if "'imgmode','imghidden','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนบันทึก editor')
-    if "'imghidden','imgmode','headermode','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนดาวน์โหลดเมนู')
+    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode ต้องไม่ถูก strip ตอนดาวน์โหลด (เมนูต้องติดโหมดจอป้ายตามที่เปิด WYSIWYG)')
     if "'btn.board':'จอป้าย'" not in txt: _e74.append('ไม่พบ i18n TH btn.board')
     if "'btn.board':'Board'" not in txt: _e74.append('ไม่พบ i18n EN btn.board')
+    if '@media screen, print{' not in _css: _e74.append('board CSS ไม่ได้อยู่ใน @media screen, print — จอป้ายจะไม่พิมพ์')
+    if 'print-color-adjust:exact' not in _css: _e74.append('ไม่มี print-color-adjust:exact — พื้นเทาจอป้ายจะไม่พิมพ์ (ต้องติ๊ก Background graphics เอง)')
+    if '.sec-h .sechead *{color:#171A1E' not in _css: _e74.append('หัวข้อกลุ่มที่ทาสีบางคำ (child span) ไม่ถูก override เป็น #171A1E ในจอป้าย — ต้องมี .sec-h .sechead * ครอบ child run')
+    if 'body.boardmode .sec-h .sechead{text-shadow' not in _css: _e74.append('จอป้ายไม่บังคับขอบขาวหัวข้อกลุ่ม (text-shadow) — ขอบที่ผู้ใช้ตั้งเองจะค้าง ไม่เป็นดำ/ขอบขาวตามมาตรฐานจอป้าย')
     if _e74: errors.append('lint #74 (โหมดจอป้าย): ' + ' · '.join(_e74))
 
     # ---- report ----

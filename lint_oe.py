@@ -1660,6 +1660,12 @@ def main():
         errors.append('ขาดปุ่มโฟกัส (btnFocus/toggleFocus) — toggle ซ่อนแถบเครื่องมือให้พื้นที่กว้างขึ้น (ดู UI_STANDARD.md ข้อ 5)')
     if 'body.focusmode #edribbon' not in _css:
         errors.append('ขาด CSS body.focusmode #edribbon (ซ่อนริบบอนในโหมดโฟกัส) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- canvas เทา + ช่องว่างหัวเพจ: หน้ากระดาษลอยบน canvas เทา เว้นจากริบบอน (editor-only · screen-only · ผู้ใช้ 20 ต.ค. 2026) ----
+    #   อยู่ใน #editorUI (strip จากเมนูดาวน์โหลด) · presentmode override ทั้ง bg+margin จึงใช้ body:not(.presentmode)
+    if 'body:not(.presentmode){background:#e9e6e1;}' not in _css:
+        errors.append('ขาด canvas เทาหลังหน้ากระดาษในโหมดแก้ (body:not(.presentmode) background) — หน้ากระดาษควรลอยบน canvas ไม่ชนริบบอน (ดู UI_STANDARD.md ข้อ 1)')
+    if 'body:not(.presentmode) .page{margin-top:20px;}' not in _css:
+        errors.append('ขาดช่องว่างหัวเพจ (.page margin-top ในโหมดแก้) — หน้ากระดาษชนริบบอน (ดู UI_STANDARD.md ข้อ 1)')
     if "closest('#edtabs .edtab')" not in txt:
         errors.append('โหมดโฟกัสไม่มี auto-exit ตอนคลิกแท็บเครื่องมือ — คลิกแท็บแล้วริบบอนไม่โผล่ = คลิกตาย (ดู UI_STANDARD.md ข้อ 6)')
     if "'btn.focus'" not in txt:

@@ -1579,7 +1579,7 @@ def main():
     if 'id="calInch"' not in txt: errors.append('ขาด #calInch (วิธีที่ 2: พิมพ์ขนาดจอนิ้ว · สูตร PPI) (ดู UI_STANDARD.md ข้อ 10.2)')
     for _calfn in ('function zoomA4','function openCal','function _calSave','function _calLoad','function _calFromInches'):
         if _calfn not in txt: errors.append('ขาด '+_calfn+' (A4 calibration) (ดู UI_STANDARD.md ข้อ 10.2)')
-    if "'#calModal']" not in txt: errors.append('calModal ไม่ถูก strip ใน buildMenuHtml (ดู UI_STANDARD.md ข้อ 10.2)')
+    if "'#calModal'," not in txt and "'#calModal']" not in txt: errors.append('calModal ไม่ถูก strip ใน buildMenuHtml (ดู UI_STANDARD.md ข้อ 10.2)')
     # (i) ปุ่ม A4 ต้องซูมทันที ไม่เปิด modal (ผู้ใช้ 18 ต.ค. 2026) · ปรับเทียบจอเปิดจากปุ่ม ปรับเทียบจอ (btnCal) เท่านั้น
     _z4lint=re.search(r'function zoomA4\([^)]*\)\{.*?\n', txt)
     if _z4lint and 'openCal(' in _z4lint.group(0):
@@ -1623,18 +1623,125 @@ def main():
         errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
     # ---- 77) ระยะปุ่มแถบบน (#edtabs) จัดเป็นกลุ่ม: boundary ระหว่างกลุ่ม margin-left:16px สม่ำเสมอ · ในกลุ่มชิด (base gap 2px) (ผู้ใช้ 18 ต.ค. 2026) ----
-    #   กลุ่ม: [undo/redo qab] | [zoom zoomctl] | [มุมมอง btnCal+btnBoard] | [TH/EN langsw] · btnBoard = กลุ่มเดียวกับ btnCal จึง margin-left:0 (ชิด)
+    #   กลุ่ม: [undo/redo] | [zoom + ปรับเทียบจอ ชิด] | [โฟกัส] | [TH/EN] · โมโนโครม/นำเสนอ ย้ายเข้าแท็บหน้าจอแล้ว · ภายในกลุ่ม margin-left:0 · boundary 16px
     for _s77, _need77, _msg77 in (
+        ('#edtabs #btnCal{', 'margin-left:0', 'btnCal (ปรับเทียบจอ) อยู่กลุ่ม zoom ติด A4 ต้องชิด (margin-left:0)'),
         ('#edtabs .zoomctl{', 'margin-left:16px', 'zoomctl (zoom) ต้องเว้นจากกลุ่มซ้าย 16px'),
-        ('#edtabs #btnCal{', 'margin-left:16px', 'btnCal (ปรับเทียบจอ · ต้นกลุ่มมุมมอง) ต้องเว้น 16px'),
-        ('#edtabs .langsw{', 'margin-left:16px', 'langsw (TH/EN) ต้องเว้นจากกลุ่มมุมมอง 16px'),
-        ('#edtabs #btnBoard{', 'margin-left:0', 'btnBoard (จอป้าย) อยู่กลุ่มเดียวกับ btnCal ต้องชิด (margin-left:0)'),
+        ('#edtabs #btnFocus{', 'margin-left:16px', 'btnFocus (โฟกัส · กลุ่มเดี่ยว) ต้องเว้น 16px'),
+        ('#edtabs .langsw{', 'margin-left:16px', 'langsw (TH/EN) ต้องเว้นจากกลุ่มโฟกัส 16px'),
     ):
         _m77=re.search(re.escape(_s77)+r'[^}]*\}', _css)
         if _m77 and _need77 not in _m77.group(0):
             errors.append('ระยะแถบปุ่มบนไม่สม่ำเสมอ: '+_msg77+' (ดู UI_STANDARD.md ข้อ 1)')
     if re.search(r'#edtabs \.qab\{[^}]*margin-right:8px', _css):
         errors.append('#edtabs .qab ยังมี margin-right:8px เก่า — ระยะกลุ่มต้องคุมด้วย margin-left:16px ที่กลุ่มถัดไป ไม่ใช่ margin-right มั่ว (ดู UI_STANDARD.md ข้อ 1)')
+
+    # ---- 80) โหมดนำเสนอ (present/fullscreen): 2 แกน Fit Width + Fit Screen (preset หน้า/จอ 1/2/3/4/6/8 โชว์ครบเสมอ · ตัวเกินจำนวนหน้า = disabled+tooltip · เอนจินเลือกกริดใหญ่สุด) · รองรับหลายจอ (จำค่าล่าสุด localStorage + เตือนจอเล็ก + เพดานสเกล ultrawide) · แถบลอย+คีย์ 1/2/3/4/6/8 · เฉพาะจอ · strip ตอน save (ผู้ใช้ 18-19 ต.ค. 2026) ----
+    if 'function togglePresent' not in txt:
+        errors.append('ขาด togglePresent — ปุ่มนำเสนอ (fullscreen) ใช้ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'id="btnPresent"' not in txt:
+        errors.append('ขาดปุ่ม btnPresent (นำเสนอ) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'btn.present'" not in txt:
+        errors.append('ขาด i18n btn.present (ดู UI_STANDARD.md ข้อ 5)')
+    if 'requestFullscreen' not in txt:
+        errors.append('โหมดนำเสนอต้องเรียก requestFullscreen — ผู้ใช้เลือกเต็มจอ JS (ยอมรับปุ่มวงกลมออกเต็มจอของเบราว์เซอร์) 19 ต.ค. 2026 (ดู UI_STANDARD.md ข้อ 5)')
+    if "addEventListener('fullscreenchange'" not in txt:
+        errors.append('ขาด fullscreenchange listener — ออกจากเต็มจอด้วยปุ่มวงกลมเบราว์เซอร์ ต้องออกจากโหมดนำเสนอ (_presentExit) ด้วย (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentFit' not in txt:
+        errors.append('ขาด _presentFit — โหมดนำเสนอต้องย่อหน้าพอดีจอ (fit) ไม่ค้าง zoom เดิม (ดู UI_STANDARD.md ข้อ 5)')
+    if "presentmode')) _presentFit();" not in txt:
+        errors.append('_presentFit ไม่ถูกเรียกตอน resize — หน้าไม่ปรับพอดีเมื่อขนาดจอ/fullscreen เปลี่ยน (ดู UI_STANDARD.md ข้อ 5)')
+    if "if(typeof _zoomApply==='function') _zoomApply();" not in txt:
+        errors.append('ออกจากนำเสนอไม่คืน zoom เดิมด้วย _zoomApply (ดู UI_STANDARD.md ข้อ 5)')
+    if "k==='Escape'){ e.preventDefault(); _presentExit(); }" not in txt:
+        errors.append('ปุ่ม Esc ในโหมดนำเสนอต้องเรียก _presentExit ผ่าน keydown (ไม่พึ่ง fullscreenchange ของเบราว์เซอร์แล้ว) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- โฟกัส (focus mode): ซ่อนริบบอน #edribbon ให้พื้นที่กว้างขึ้น · toggle จริง · strip ตอน save editor (ผู้ใช้ 19 ต.ค. 2026) ----
+    if 'function toggleFocus' not in txt or 'id="btnFocus"' not in txt:
+        errors.append('ขาดปุ่มโฟกัส (btnFocus/toggleFocus) — toggle ซ่อนแถบเครื่องมือให้พื้นที่กว้างขึ้น (ดู UI_STANDARD.md ข้อ 5)')
+    if 'body.focusmode #edribbon' not in _css:
+        errors.append('ขาด CSS body.focusmode #edribbon (ซ่อนริบบอนในโหมดโฟกัส) (ดู UI_STANDARD.md ข้อ 5)')
+    if "closest('#edtabs .edtab')" not in txt:
+        errors.append('โหมดโฟกัสไม่มี auto-exit ตอนคลิกแท็บเครื่องมือ — คลิกแท็บแล้วริบบอนไม่โผล่ = คลิกตาย (ดู UI_STANDARD.md ข้อ 6)')
+    if "'btn.focus'" not in txt:
+        errors.append('ขาด i18n btn.focus (ปุ่มโฟกัส) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'data-tab="screen"' not in txt or "'tab.screen'" not in txt:
+        errors.append('ขาดแท็บ หน้าจอ (data-tab="screen" + i18n tab.screen) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'data-pane="screen"' not in txt:
+        errors.append('ขาด rpane หน้าจอ (data-pane="screen" รวมโมโนโครม+นำเสนอ) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#edtabs #btnBoard{' in _css or '#edtabs #btnPresent{' in _css:
+        errors.append('โมโนโครม/นำเสนอ ต้องย้ายออกจาก #edtabs เข้าแท็บหน้าจอ (ribbon) — ไม่ควรเหลือ CSS #edtabs #btnBoard/#btnPresent (ดู UI_STANDARD.md ข้อ 5)')
+    if "'imgmode','imghidden','boardmode','presentmode','focusmode'" not in txt:
+        errors.append('focusmode ไม่ถูก strip ตอนบันทึก editor — เปิดไฟล์มาติดโหมดโฟกัส (ดู UI_STANDARD.md ข้อ 7)')
+    if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
+        errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:
+        errors.append('โหมดนำเสนอขาด grid-auto-rows:var(--prowh) + align-items:center — แถวจะไม่สูงเท่าจอ ทำให้แถวถัดไปโผล่ขึ้นมา (3/4 หน้าเพี้ยน) (ดู UI_STANDARD.md ข้อ 5)')
+    if "setProperty('--prowh'" not in txt:
+        errors.append('_presentFit ไม่ได้ตั้ง --prowh (ความสูงแถว = จอ/จำนวนแถว) — Fit Screen จะมีแถวถัดไปโผล่กันไม่พอดีจอ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'rowsPer=g.rows' not in txt:
+        errors.append('_presentFit ไม่ได้ใช้จำนวนแถวจาก _presentBestGrid (rowsPer) คุมความสูงแถว (ดู UI_STANDARD.md ข้อ 5)')
+    if 'cols*pw' not in txt:
+        errors.append('_presentFit ไม่ได้คำนวณ fit ตามจำนวนคอลัมน์ (ต้องหาร cols*pw) — หลายคอลัมน์จะล้นจอ (ดู UI_STANDARD.md ข้อ 5)')
+    if ('gap:20px !important' in _css) != ('gap=20' in txt):
+        errors.append('ค่า gap ของโหมดนำเสนอใน CSS กับ JS ไม่ตรงกัน — fit จะคลาด (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentApply' not in txt or 'function _presentBuildBar' not in txt:
+        errors.append('ขาด _presentApply/_presentBuildBar — แถบเลือกโหมดนำเสนอใช้ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if "bar.id='presentBar'" not in txt:
+        errors.append('ขาดการสร้างแถบลอย #presentBar (ดู UI_STANDARD.md ข้อ 5)')
+    if '_presentSetK(parseInt(k' not in txt:
+        errors.append('ขาดคีย์ลัด 1/2/4/6/9 เลือกจำนวนหน้า/จอในโหมดนำเสนอ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentKPresets' not in txt:
+        errors.append('ขาด _presentKPresets — จำนวนหน้า/จอไม่ปรับตามจำนวนหน้า (ดู UI_STANDARD.md ข้อ 5)')
+    if '_presentView' not in txt or 'function _presentToggleWidth' not in txt:
+        errors.append('ขาดโหมด Fit Width (เลื่อนอ่านเต็มกว้าง) หรือคีย์ W (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pres.fitWidth'" not in txt:
+        errors.append('ขาด i18n pres.fitWidth (ปุ่มเต็มกว้าง) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentBestGrid' not in txt:
+        errors.append('ขาด _presentBestGrid — เอนจินเลือกกริดหน้าใหญ่สุดต่อ K หน้า/จอ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentWarn' not in txt:
+        errors.append('ขาด _presentWarn — จอเล็กต้องเตือนตัวเล็กอาจอ่านยาก (ดู UI_STANDARD.md ข้อ 5)')
+    if "'oe_present_k'" not in txt or 'function _presentLoad' not in txt:
+        errors.append('ขาดการจำค่า view/จำนวนหน้าล่าสุด (localStorage oe_present_k + _presentLoad) — เปิดจอเดิมต้องได้ค่าเดิม (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pres.small'" not in txt:
+        errors.append('ขาด i18n pres.small (ป้ายเตือนจอเล็ก) (ดู UI_STANDARD.md ข้อ 5)')
+    if '.pb-warn' not in _css:
+        errors.append('ขาด CSS .pb-warn (ป้ายเตือนจอเล็ก) (ดู UI_STANDARD.md ข้อ 6)')
+    if 'return [1,2,3,4,6,8,12,16];' not in txt:
+        errors.append('preset หน้า/จอ ต้องเป็นชุด 1/2/3/4/6/8/12/16 ครบเสมอ (เพดาน 16 ตามมาตรฐาน N-up · ไม่กรองตามจำนวนหน้า) (ดู UI_STANDARD.md ข้อ 5)')
+    if "lab.className='pb-ico'" not in txt or '#presentBar .pb-ico' not in _css:
+        errors.append('ป้ายจำนวนหน้า/จอ ต้องเป็นไอคอน grid (.pb-ico) ไม่ใช่คำว่าหน้าต่อจอ (ตามธรรมเนียม viewer บนจอ) (ดู UI_STANDARD.md ข้อ 5/6)')
+    if "xb.className='pb-exit'" not in txt or '#presentBar .pb-exit' not in _css:
+        errors.append('แถบลอยนำเสนอต้องมีปุ่มออก ✕ (.pb-exit) ของตัวเอง — ไม่พึ่งปุ่มออกเต็มจอของเบราว์เซอร์ (ตามมาตรฐาน PowerPoint/Acrobat) (ดู UI_STANDARD.md ข้อ 5/6)')
+    if 'xb.onclick=function(){ _presentExit(); }' not in txt:
+        errors.append('ปุ่มออก ✕ ในแถบลอยไม่ได้ wired _presentExit (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pres.exit'" not in txt:
+        errors.append('ขาด i18n pres.exit (tooltip ปุ่มออกนำเสนอ) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'e.clientY>=window.innerHeight-_PRES_HOTZONE' not in txt or 'var _PRES_HOTZONE' not in txt:
+        errors.append('แถบลอยนำเสนอต้องโผล่เฉพาะ hot zone ขอบล่าง (mousemove เช็ค e.clientY>=window.innerHeight-_PRES_HOTZONE) — ย้ายลงล่างหนีปุ่มวงกลมปิดเต็มจอของเบราว์เซอร์ที่อยู่บนเสมอ · ผู้ใช้ 19 ต.ค. 2026 (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _presentBarHideSoon' not in txt or 'else { _presentBarHideSoon(); }' not in txt:
+        errors.append('แถบลอยนำเสนอต้องซ่อนทันทีเมื่อเมาส์ออกจากเขตบน (hide-on-leave หน่วง ~400ms ผ่าน _presentBarHideSoon) — ไม่ให้คนใจร้อนต้องรอ 2.8 วิ (ผู้ใช้ 19 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if '_PRES_GRACE' not in txt or '_presentGrace=true;' not in txt:
+        errors.append('ตอนเข้าโหมดนำเสนอครั้งแรก แถบกริดต้องค้าง grace (_PRES_GRACE ~4 วิ) โดยไม่ถูกซ่อนด้วย hide-on-leave/auto-hide — ให้ผู้ใช้ใหม่สังเกตเห็นแถบทัน (ผู้ใช้ 19 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'if(!_presentGrace){ _presentIdleT=setTimeout' not in txt or 'function _presentBarHideSoon(){ if(_presentGrace) return;' not in txt:
+        errors.append('grace ตอนเข้าโหมดต้องบล็อกทั้ง auto-hide (2.8 วิ) และ hide-on-leave (0.4 วิ) — ไม่งั้นแถบหายก่อนผู้ใช้ทันเห็น (ดู UI_STANDARD.md ข้อ 5)')
+    if "else { b.disabled=true; b.setAttribute('data-i18n-title','pres.kNeed');" not in txt:
+        errors.append('ปุ่ม preset ที่เกินจำนวนหน้าต้อง disabled + tooltip pres.kNeed (โชว์ครบแต่กดไม่ได้ ไม่ซ่อน) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pres.kNeed'" not in txt:
+        errors.append('ขาด i18n pres.kNeed (tooltip ปุ่มที่ยังใช้ไม่ได้ ต้องบอกเหตุผล) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#presentBar button:disabled' not in _css:
+        errors.append('ขาด CSS #presentBar button:disabled (ปุ่มที่ใช้ไม่ได้ต้องดูต่างจากปุ่มปกติ · signifier ซื่อสัตย์) (ดู UI_STANDARD.md ข้อ 6)')
+    if "'#calModal','#presentBar']" not in txt:
+        errors.append('buildMenuHtml ไม่ strip #presentBar — แถบลอยหลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
+    if "'pres.perScreen'" not in txt:
+        errors.append('ขาด i18n pres.perScreen (ป้ายแถบจำนวนหน้า/จอ) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#presentBar{display:none' not in _css or 'body.presentmode #presentBar{display:flex' not in _css:
+        errors.append('#presentBar ต้อง display:none โดย default + แสดงเฉพาะ body.presentmode (กันแถบค้างนอกโหมดนำเสนอ) (ดู UI_STANDARD.md ข้อ 6)')
+    if "'headermode','presentmode')" not in txt:
+        errors.append('buildMenuHtml ไม่ strip presentmode — state นำเสนอหลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
+    if "'boardmode','presentmode'" not in txt:
+        errors.append('buildEditorHtml ไม่ strip presentmode — ไฟล์ editor เปิดมาติดโหมดนำเสนอ (ดู UI_STANDARD.md ข้อ 7)')
+    if 'body.presentmode{' not in _css or 'body.presentmode #edbar' not in _css:
+        errors.append('ขาด CSS body.presentmode (ซ่อน toolbar + พื้นเข้ม) (ดู UI_STANDARD.md ข้อ 5)')
 
     # ---- 78) ตัวเลือกไอคอนหัวกลุ่ม (emoji picker): ต้องมี 'ไม่ใช้ไอคอน' + ช่องไอคอนว่างคลิกเพิ่มกลับได้ในโหมดแก้ (ผู้ใช้ 18 ต.ค. 2026) ----
     #   เดิมเลือกได้อย่างเดียว ลบ/ไม่ใช้ไม่ได้ · เพิ่มปุ่ม pk.none (_emojiNone ล้าง textContent) + .em:empty editmode affordance (＋ คลิกเพิ่ม) · .em:empty default display:none (ไม่มี gap ตอนพิมพ์)
@@ -1646,6 +1753,18 @@ def main():
         errors.append('ช่องไอคอนหัวกลุ่มที่ว่าง ไม่มี affordance คลิกเพิ่มในโหมดแก้ (body.editmode .sec-h .em:empty) — ลบไอคอนแล้วเพิ่มกลับไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
     if '.sec-h .em:empty{display:none' not in _css:
         errors.append('.sec-h .em:empty ต้อง display:none โดย default — ไอคอนว่างไม่ควรเกิด gap ตอนพิมพ์/บันทึก (ดู UI_STANDARD.md ข้อ 6)')
+
+    # ---- 79) ไอคอนหัวกลุ่มจากไฟล์ในเครื่อง: .em รองรับ <img> · ปุ่ม 'เลือกจากไฟล์' ใน picker · resize ~64px (ผู้ใช้ 18 ต.ค. 2026) ----
+    if 'function _emojiFromFile' not in txt:
+        errors.append('ขาด _emojiFromFile — ปุ่มเลือกไอคอนหัวกลุ่มจากไฟล์ใช้ไม่ได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pk.file'" not in txt:
+        errors.append('ขาด i18n pk.file (ปุ่มเลือกจากไฟล์ใน emoji picker) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'id="secIconInput"' not in txt:
+        errors.append('ขาด #secIconInput (hidden file input ไอคอนหัวกลุ่ม) (ดู UI_STANDARD.md ข้อ 5)')
+    if '.sec-h .em img' not in _css:
+        errors.append('ขาด CSS .sec-h .em img — ไอคอนรูปจากไฟล์ไม่ถูกคุมขนาดในหัวกลุ่ม (ดู UI_STANDARD.md ข้อ 6)')
+    if '#badgeInput,#secIconInput' not in txt:
+        errors.append('buildMenuHtml ไม่ strip #secIconInput — hidden input หลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
     # ---- 70) About modal: เด้งจากตรา P · เครดิต+ลิงก์คลิกได้ · เฉพาะจอ (ผู้ใช้ 16 ต.ค. 2026) ----
     # (a) element #aboutModal + wired คลิกตรา P (openAbout)
     if 'id="aboutModal"' not in txt:
@@ -1654,8 +1773,12 @@ def main():
         errors.append('ขาด function openAbout/closeAbout (ดู UI_STANDARD.md ข้อ 11)')
     if 'function aboutTab' not in txt:
         errors.append('ขาด function aboutTab (สลับแท็บ About) (ดู UI_STANDARD.md ข้อ 11)')
-    if txt.count('class="about-tab') < 4 or 'data-tab="about"' not in txt or 'data-tab="tech"' not in txt or 'data-tab="lic"' not in txt:
-        errors.append('About ไม่ครบ 3 แท็บ (about/tech/lic) (ดู UI_STANDARD.md ข้อ 11)')
+    if txt.count('class="about-tab') < 5 or 'data-tab="about"' not in txt or 'data-tab="tech"' not in txt or 'data-tab="lic"' not in txt or 'data-tab="full"' not in txt:
+        errors.append('About ไม่ครบ 4 แท็บ (about/tech/lic/full) (ดู UI_STANDARD.md ข้อ 11)')
+    if 'data-pane="full"' not in txt or 'data-i18n="about.fullBody"' not in txt:
+        errors.append('About ขาดแท็บเต็มจอ (full pane + about.fullBody — วิธี App Window/Kiosk/F11) (ดู UI_STANDARD.md ข้อ 11)')
+    if '--kiosk' not in txt:
+        errors.append('แท็บเต็มจอต้องมีคำสั่ง kiosk (--kiosk) ให้ผู้ใช้คัดลอกไปตั้ง shortcut (ดู UI_STANDARD.md ข้อ 11)')
     if 'data-pane="tech"' not in txt or 'data-i18n="about.techBody"' not in txt:
         errors.append('About ไม่มีแท็บข้อมูลเทคนิค (about.techBody) (ดู UI_STANDARD.md ข้อ 11)')
     if 'data-pane="lic"' not in txt or 'data-i18n="about.licBody"' not in txt:
@@ -1686,7 +1809,7 @@ def main():
         _th70=txt.find('th:{',_i70); _en70=txt.find('en:{',_i70)
         _thb70=txt[_th70:_en70] if (_th70>=0 and _en70>_th70) else ''
         _enb70=txt[_en70:_en70+30000] if _en70>=0 else ''
-        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.oflView','about.licBody','about.licNote'):
+        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.oflView','about.licBody','about.licNote','about.tabFull','about.fullHead','about.fullBody','about.fullNote'):
             if ("'"+_k70+"'") not in _thb70: errors.append('i18n '+_k70+' ขาดใน th (ดู UI_STANDARD.md ข้อ 11)')
             if ("'"+_k70+"'") not in _enb70: errors.append('i18n '+_k70+' ขาดใน en (ดู UI_STANDARD.md ข้อ 11)')
 
@@ -1768,9 +1891,9 @@ def main():
     if 'function toggleBoardMode(' not in txt: _e74.append('ไม่พบ toggleBoardMode')
     if 'id="btnBoard"' not in txt: _e74.append('ไม่พบปุ่ม btnBoard')
     if "'imgmode','imghidden','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนบันทึก editor')
-    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode ต้องไม่ถูก strip ตอนดาวน์โหลด (เมนูต้องติดโหมดจอป้ายตามที่เปิด WYSIWYG)')
-    if "'btn.board':'จอป้าย'" not in txt: _e74.append('ไม่พบ i18n TH btn.board')
-    if "'btn.board':'Board'" not in txt: _e74.append('ไม่พบ i18n EN btn.board')
+    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode','presentmode')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode คงไว้ (WYSIWYG) · presentmode ต้องถูก strip')
+    if "'btn.board':'โมโนโครม'" not in txt: _e74.append('ไม่พบ i18n TH btn.board (โมโนโครม)')
+    if "'btn.board':'Monochrome'" not in txt: _e74.append('ไม่พบ i18n EN btn.board (Monochrome)')
     if '@media screen, print{' not in _css: _e74.append('board CSS ไม่ได้อยู่ใน @media screen, print — จอป้ายจะไม่พิมพ์')
     if 'print-color-adjust:exact' not in _css: _e74.append('ไม่มี print-color-adjust:exact — พื้นเทาจอป้ายจะไม่พิมพ์ (ต้องติ๊ก Background graphics เอง)')
     if '.sec-h .sechead *{color:#171A1E' not in _css: _e74.append('หัวข้อกลุ่มที่ทาสีบางคำ (child span) ไม่ถูก override เป็น #171A1E ในจอป้าย — ต้องมี .sec-h .sechead * ครอบ child run')

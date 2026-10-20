@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -1678,6 +1678,71 @@ def main():
         errors.append('โมโนโครม/นำเสนอ ต้องย้ายออกจาก #edtabs เข้าแท็บหน้าจอ (ribbon) — ไม่ควรเหลือ CSS #edtabs #btnBoard/#btnPresent (ดู UI_STANDARD.md ข้อ 5)')
     if "'imgmode','imghidden','boardmode','presentmode','focusmode'" not in txt:
         errors.append('focusmode ไม่ถูก strip ตอนบันทึก editor — เปิดไฟล์มาติดโหมดโฟกัส (ดู UI_STANDARD.md ข้อ 7)')
+
+    # ---- 81) ลูกศรคีย์บอร์ดเลื่อนรูปที่เลือกในโหมดแก้รูป (ผู้ใช้ 20 ต.ค. 2026) ----
+    #   รูป active (_imgSel) + imgmode → Arrow เลื่อน 1mm (Shift 5mm) · ต้อง guard imgmode+_imgSel · preventDefault (กันจอเลื่อน) · markDirty (มี undo) · _isLeft (รองรับ anchor right ไม่ให้เลื่อนกลับทาง)
+    _ak = txt.find("if(k!=='ArrowUp'&&k!=='ArrowDown'&&k!=='ArrowLeft'&&k!=='ArrowRight')return;")
+    if _ak < 0:
+        errors.append('ขาด keydown ลูกศรเลื่อนรูป (ArrowUp/Down/Left/Right) ในโหมดแก้รูป (ดู UI_STANDARD.md ข้อ 5)')
+    else:
+        _akseg = txt[max(0,_ak-400):_ak+800]
+        if 'imgmode' not in _akseg or '_imgSel' not in _akseg:
+            errors.append('ลูกศรเลื่อนรูปต้อง guard ด้วย imgmode + _imgSel (ดู UI_STANDARD.md ข้อ 5)')
+        if 'preventDefault' not in _akseg:
+            errors.append('ลูกศรเลื่อนรูปต้อง preventDefault — กันหน้าจอเลื่อนตอนกดลูกศร (ดู UI_STANDARD.md ข้อ 5)')
+        if 'markDirty' not in _akseg:
+            errors.append('ลูกศรเลื่อนรูปต้องเรียก markDirty — ต้องมีจุด Undo (ดู UI_STANDARD.md ข้อ 6)')
+        if '_isLeft' not in _akseg:
+            errors.append('ลูกศรเลื่อนรูปต้องใช้ _isLeft เลือกแกน left/right — รูป anchor right จะเลื่อนกลับทาง (ดู UI_STANDARD.md ข้อ 6)')
+
+    # ---- 82) พื้นหลังหน้า (page background): สี/รูป + ตัวหรี่ · เฉพาะหน้า/ทุกหน้า · เป็นเนื้อหา (ติดไฟล์+พิมพ์) · layer .pgbg ใน <style> ก้อนแรก (ผู้ใช้ 20 ต.ค. 2026) ----
+    if 'id="btnPageBg"' not in txt or 'function openPageBgPanel' not in txt:
+        errors.append('ขาดปุ่มพื้นหลัง (btnPageBg/openPageBgPanel) ในแท็บหน้า (ดู UI_STANDARD.md ข้อ 5)')
+    if '.pgbg{' not in _css or '.pgbg::after' not in _css:
+        errors.append('ขาด CSS เลเยอร์ .pgbg (+::after ตัวหรี่) (ดู UI_STANDARD.md ข้อ 5)')
+    _pgcss = _css[_css.find('.pgbg{'):_css.find('.pgbg{')+400] if '.pgbg{' in _css else ''
+    if 'print-color-adjust:exact' not in _pgcss:
+        errors.append('.pgbg ต้องมี print-color-adjust:exact — พื้นหลังต้องพิมพ์ออกด้วย (ดู UI_STANDARD.md ข้อ 10.2)')
+    if txt.count('<div class="pgbg"></div>') < 2:
+        errors.append('ทุกหน้าต้องมีเลเยอร์ .pgbg (พบ < 2) (ดู UI_STANDARD.md ข้อ 5)')
+    for _f82 in ('function _pageBgSetColor','function _pageBgSetImage','function _pageBgSetDim','function _pageBgClear'):
+        if _f82 not in txt:
+            errors.append('ขาด '+_f82+' (พื้นหลังหน้า) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'btn.pageBg'" not in txt or "'bg.scope'" not in txt:
+        errors.append('ขาด i18n พื้นหลัง (btn.pageBg/bg.scope) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'id="pageBgInput"' not in txt:
+        errors.append('ขาด #pageBgInput (hidden file input พื้นหลัง) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#secIconInput,#pageBgInput' not in txt:
+        errors.append('buildMenuHtml ไม่ strip #pageBgInput — hidden input หลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
+    if '#edpanel .cp-pop{' not in _css or '#edpanel .cp-trigger{overflow:visible' not in _css:
+        errors.append('ถาดสีพื้นหลังต้องมี box CSS ใน #edpanel (กฎ cp-* เดิม scope #typobar) + overflow:visible กัน popup โดน clip — ไม่งั้นถาดกางแบนเต็มแถบ (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'window._cpDlgOpen=_cpDlgOpen' not in txt or "window._cpDlgOpen('bg')" not in txt:
+        errors.append('ปุ่มกำหนดเองพื้นหลังต้องเปิดหน้าต่าง HSV ตัวเดียวกับสีตัวหนังสือ (expose window._cpDlgOpen + เรียก (bg)) (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "if(mode==='bg'){ _cpDlgClose();" not in txt:
+        errors.append('_cpDlgOk ขาด branch mode bg — ตกลงในหน้าต่าง HSV ต้องทาสีพื้นหลัง (ดู UI_STANDARD.md ข้อ 5)')
+    if 'id="bgCpPick"' not in txt or '#edpanel .cp-dlg{' not in _css:
+        errors.append('ขาด host bgCpPick หรือ CSS หน้าต่าง HSV ใน #edpanel (mirror จาก #typobar) — หน้าต่างจะไม่ขึ้น/ไม่มีสไตล์ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _pageBgApplyScope' not in txt or 'function _parsePageRange' not in txt:
+        errors.append('ขาด _pageBgApplyScope/_parsePageRange — เลือกหน้าแบบ print-style (คี่/คู่/ช่วง) (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'value="odd"' not in txt or 'value="even"' not in txt or 'value="range"' not in txt:
+        errors.append('ขอบเขตพื้นหลังต้องมี คี่/คู่/ระบุช่วง (print-style) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _bgScopeApply' not in txt or "addEventListener('change',_bgScopeApply)" not in txt:
+        errors.append('ไม่มีการกระจายสีทันทีเมื่อเปลี่ยนขอบเขต (scope radio change -> _bgScopeApply) — เปลี่ยนขอบเขตแล้วต้องกดใช้ซ้ำได้ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _bgSync' not in txt or '_bgSetCurrentSwatch(col); _bgSync();' not in txt:
+        errors.append('การแก้สดพื้นหลัง (สี/รูป/จาง/คืนค่า) ต้องกระจายตามขอบเขตปัจจุบันทันทีผ่าน _bgSync (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "_pageBgSetColor('page'" not in txt:
+        errors.append('พื้นหลัง: แก้สด (สี/จาง/คืนค่า) ต้องทาหน้าปัจจุบัน แล้วกระจายเมื่อเปลี่ยนขอบเขต — ไม่ผูก scope โดยตรง (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 83) ถาดสีพื้นหลัง = ถาดสีกลาง (cp-* เดียวกับสีตัวหนังสือ) · ใช้ SWATCHES ร่วม + custom localStorage คีย์เดียวกัน · จำสีปัจจุบันตอนเปิด · ห้าม native color picker (ผู้ใช้ 20 ต.ค. 2026) ----
+    if 'id="bgCpPop"' not in txt or 'id="bgCpGrid"' not in txt:
+        errors.append('พื้นหลังต้องใช้ถาดสีกลาง (bgCpPop/bgCpGrid คลาส cp-*) ไม่ใช่ native color picker (ดู UI_STANDARD.md ข้อ 5)')
+    if 'window._cpSwatches=SWATCHES' not in txt:
+        errors.append('ถาดสีพื้นหลังต้องใช้ SWATCHES ร่วม (expose window._cpSwatches) — ไม่ hardcode จานสีซ้ำ (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _bgWirePalette' not in txt or '_bgWirePalette();' not in txt:
+        errors.append('ขาด _bgWirePalette (สร้าง/เดินสายถาดสีพื้นหลังตอนเปิด panel) (ดู UI_STANDARD.md ข้อ 5)')
+    if "localStorage.getItem('oe_custom_swatches')" not in txt:
+        errors.append('ถาดสีพื้นหลังต้องอ่านสีกำหนดเองจาก localStorage คีย์เดียวกับสีตัวหนังสือ (oe_custom_swatches) (ดู UI_STANDARD.md ข้อ 5)')
+    if '_pageBgSetColor(_pageBgScope(),this.value)' in txt:
+        errors.append('พื้นหลังยังมี native color input เดิม (ค้าง) — ต้องแทนด้วยถาดสีกลางแล้ว (ดู UI_STANDARD.md ข้อ 6)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

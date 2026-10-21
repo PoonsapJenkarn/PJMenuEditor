@@ -1615,6 +1615,23 @@ def main():
     # (o) จุดแสดง % (calPct) ต้องเป็น global อยู่บนสุด ไม่ซ่อนในวิธีใดวิธีหนึ่ง (ผู้ใช้ 18 ต.ค. 2026)
     if 'class="cal-result"' not in txt:
         errors.append('จุดแสดงผล % (calPct) ต้องอยู่ในกล่อง global cal-result บนสุด ไม่ซ่อนในวิธีที่ 1/2 (ดู UI_STANDARD.md ข้อ 10.2)')
+    # (g) Ctrl/Cmd+scroll zoom-to-cursor + ตัวบอกหน้า/ซูมในแถบล่าง (ผู้ใช้ 20 ต.ค. 2026) ----
+    if 'function _zoomWheel' not in txt or "addEventListener('wheel', _zoomWheel" not in txt:
+        errors.append('ขาด Ctrl/Cmd+scroll zoom (_zoomWheel + wheel listener) (ดู UI_STANDARD.md ข้อ 10)')
+    if 'function _zoomAtPoint' not in txt or 'function _pageAtClientY' not in txt:
+        errors.append('ขาด zoom-to-cursor (_zoomAtPoint/_pageAtClientY) — Ctrl+scroll ต้องซูมเข้าตรงตำแหน่งเคอร์เซอร์ (ดู UI_STANDARD.md ข้อ 10)')
+    if 'e.ctrlKey||e.metaKey' not in txt:
+        errors.append('_zoomWheel ต้องทำงานเฉพาะเมื่อกด Ctrl/Cmd — ไม่งั้นเลื่อนล้อปกติจะซูมมั่ว (ดู UI_STANDARD.md ข้อ 10)')
+    if 'id="edstatusPage"' not in txt or 'function _zoomMetaUpdate' not in txt:
+        errors.append('ขาดตัวบอกหน้า/ซูมในแถบล่าง (#edstatusPage + _zoomMetaUpdate) (ดู UI_STANDARD.md ข้อ 10)')
+    if "'st.pg'" not in txt:
+        errors.append('ขาด i18n st.pg (ป้ายหน้าในตัวบอกสถานะ) (ดู UI_STANDARD.md ข้อ 10)')
+    if '_ZGRID' not in txt or "classList.toggle('gridview', _zoom<=_ZGRID)" not in txt:
+        errors.append('ขาดโหมดกริด (gridview) ตอนซูมออกต่ำ — ดูภาพรวมทุกหน้าแบบกริด (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 10)')
+    if 'body.gridview:not(.presentmode){display:flex' not in _css:
+        errors.append('ขาด CSS gridview (body.gridview flex-wrap grid) — ซูมออกต้องเรียงหน้าเป็นกริด (ดู UI_STANDARD.md ข้อ 10)')
+    if "'focusmode','gridview'" not in txt or "'presentmode','gridview'" not in txt:
+        errors.append('gridview ไม่ถูก strip ตอน save (editor+menu) — ไฟล์ที่บันทึกจะเปิดมาเป็นกริด (ดู UI_STANDARD.md ข้อ 10)')
 
     # ---- 75) default font ของเมนู = Prompt ที่ .page (ผู้ใช้ 18 ต.ค. 2026) ----
     #   ชื่อเมนู/หมายเหตุ/sub สืบทอดจาก .page · ตั้ง Prompt ที่ .page = เปลี่ยน default ทุกเมนูทุกหน้าในที่เดียว (ไม่แตะ UI editor)
@@ -1705,9 +1722,11 @@ def main():
         errors.append('.pgbg ต้องมี print-color-adjust:exact — พื้นหลังต้องพิมพ์ออกด้วย (ดู UI_STANDARD.md ข้อ 10.2)')
     if txt.count('<div class="pgbg"></div>') < 2:
         errors.append('ทุกหน้าต้องมีเลเยอร์ .pgbg (พบ < 2) (ดู UI_STANDARD.md ข้อ 5)')
-    for _f82 in ('function _pageBgSetColor','function _pageBgSetImage','function _pageBgSetDim','function _pageBgClear'):
+    if '_bgPending' in txt or '_pgbgApplyPending' in txt:
+        errors.append('ห้ามมี _bgPending/_pgbgApplyPending (โมเดล pending เก่า) — พื้นหลังเป็น instant: เลือกสี/รูป/จาง/ล้าง มีผลทันทีกับหน้าในขอบเขต (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    for _f82 in ('function _pageBgSetColor','function _pageBgSetImage','function _pageBgSetDim','function _pageBgClear','function _bgFlashScope'):
         if _f82 not in txt:
-            errors.append('ขาด '+_f82+' (พื้นหลังหน้า) (ดู UI_STANDARD.md ข้อ 5)')
+            errors.append('ขาด '+_f82+' (พื้นหลัง instant — ทาสีทันทีกับทุกหน้าในขอบเขต) (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if "'btn.pageBg'" not in txt or "'bg.scope'" not in txt:
         errors.append('ขาด i18n พื้นหลัง (btn.pageBg/bg.scope) (ดู UI_STANDARD.md ข้อ 5)')
     if 'id="pageBgInput"' not in txt:
@@ -1722,16 +1741,33 @@ def main():
         errors.append('_cpDlgOk ขาด branch mode bg — ตกลงในหน้าต่าง HSV ต้องทาสีพื้นหลัง (ดู UI_STANDARD.md ข้อ 5)')
     if 'id="bgCpPick"' not in txt or '#edpanel .cp-dlg{' not in _css:
         errors.append('ขาด host bgCpPick หรือ CSS หน้าต่าง HSV ใน #edpanel (mirror จาก #typobar) — หน้าต่างจะไม่ขึ้น/ไม่มีสไตล์ (ดู UI_STANDARD.md ข้อ 5)')
-    if 'function _pageBgApplyScope' not in txt or 'function _parsePageRange' not in txt:
-        errors.append('ขาด _pageBgApplyScope/_parsePageRange — เลือกหน้าแบบ print-style (คี่/คู่/ช่วง) (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _parsePageRange' not in txt or 'function _pageBgScopeIdx' not in txt:
+        errors.append('ขาด _parsePageRange/_pageBgScopeIdx — เลือกหน้าแบบ print-style (คี่/คู่/ช่วง) (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'value="odd"' not in txt or 'value="even"' not in txt or 'value="range"' not in txt:
         errors.append('ขอบเขตพื้นหลังต้องมี คี่/คู่/ระบุช่วง (print-style) (ดู UI_STANDARD.md ข้อ 5)')
     if 'function _bgScopeApply' not in txt or "addEventListener('change',_bgScopeApply)" not in txt:
-        errors.append('ไม่มีการกระจายสีทันทีเมื่อเปลี่ยนขอบเขต (scope radio change -> _bgScopeApply) — เปลี่ยนขอบเขตแล้วต้องกดใช้ซ้ำได้ (ดู UI_STANDARD.md ข้อ 5)')
-    if 'function _bgSync' not in txt or '_bgSetCurrentSwatch(col); _bgSync();' not in txt:
-        errors.append('การแก้สดพื้นหลัง (สี/รูป/จาง/คืนค่า) ต้องกระจายตามขอบเขตปัจจุบันทันทีผ่าน _bgSync (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
-    if "_pageBgSetColor('page'" not in txt:
-        errors.append('พื้นหลัง: แก้สด (สี/จาง/คืนค่า) ต้องทาหน้าปัจจุบัน แล้วกระจายเมื่อเปลี่ยนขอบเขต — ไม่ผูก scope โดยตรง (ดู UI_STANDARD.md ข้อ 5)')
+        errors.append('ขาด _bgScopeApply หรือ listener เปลี่ยนขอบเขต (scope radio change -> _bgScopeApply แสดง/ซ่อนช่องระบุ) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _bgReapply' not in txt or 'var _bgCur' not in txt or '_bgReapply(sc)' not in txt:
+        errors.append('เปลี่ยนขอบเขตต้องทาสี/รูปปัจจุบันลงขอบเขตใหม่ทันที — _bgScopeApply ต้องเรียก _bgReapply + จำสีปัจจุบันใน _bgCur (ทุกการเปลี่ยนมีผลทันที ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "e.stopPropagation(); _closePop(); } }, true);" not in txt or "e.stopPropagation(); pop.classList.remove('open'); } }, true);" not in txt:
+        errors.append('ถาดสี (typoCpPop/bgCpPop) ต้องปิดด้วย Esc ได้ — popover ทุกตัวต้องปิดได้ 2 ทาง: คลิกนอก + Esc (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if '#edbar #btnPageBg.on' not in _css or '#edbar #btnBoard.on' not in _css or '#edbar #btnPresent.on' not in _css:
+        errors.append('ปุ่ม ribbon (พื้นหลัง/โมโนโครม/นำเสนอ) ต้องมี rule เขียว #edbar #<id>.on — .b-lg.on ถูก #edbar .b-lg{background:none} ทับ (ปุ่ม ribbon active/เปิดพาเนลทุกปุ่มต้องเขียวตาม pattern) (ดู UI_STANDARD.md ข้อ 1)')
+    if "noOutsideClose:true, toggleBtn:'btnPageBg'" not in txt:
+        errors.append('พาเนลพื้นหลังต้อง noOutsideClose:true — ปิดด้วยกดปุ่มพื้นหลังซ้ำเท่านั้น ไม่ใช่คลิกที่หน้า (งานยังไม่เสร็จ ไม่ควรปิดเอง · ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    _swt = txt[txt.find('function switchTab(name){'):txt.find('function switchTab(name){')+600] if 'function switchTab(name){' in txt else ''
+    if "!_ep.classList.contains('ep-hidden')" not in _swt or 'closePanel()' not in _swt:
+        errors.append('switchTab ต้องปิด panel ที่เปิดอยู่เมื่อสลับแท็บ (closePanel เมื่อ #edpanel ไม่ใช่ ep-hidden) — panel ผูกกับแท็บที่เปิดมัน ครอบคลุมทุก panel (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3)')
+    if 'if(opts.noOutsideClose) return; e.preventDefault(); closePanel();' not in txt:
+        errors.append('_panelKey (Esc ของ openPanel) ต้อง guard opts.noOutsideClose — โหมดค้าง (noOutsideClose เช่น พื้นหลัง/ปรับราคา) Esc ต้องไม่ปิดโหมด — ปิดด้วยกดปุ่มซ้ำ/สลับแท็บเท่านั้น (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'opts.hideOk' not in txt:
+        errors.append('openPanel ต้องรองรับ hideOk — พาเนล toggle ปิดด้วยกดปุ่มซ้ำ/คลิกนอก ไม่ต้องมีปุ่มเสร็จซ้ำซ้อน (ผู้ใช้ 20 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "okKey:'bg.apply'" in txt or 'onOk:_pageBgApplyScope' in txt:
+        errors.append('พื้นหลังต้องไม่มีปุ่มนำไปใช้ (okKey bg.apply/onOk) — instant: ทาทันทีเมื่อเลือกสี/รูป/จาง/ล้าง (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'onchange="_bgDimCommit(+this.value)"' not in txt or 'function _bgDimCommit' not in txt:
+        errors.append('สไลเดอร์ความจางต้อง live ขณะลาก (_bgDimLive หน้าแรกในขอบเขต) + commit ทั้งขอบเขตตอนปล่อย (onchange _bgDimCommit) — กันค้างตอนหลายหน้า (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _bgApply(col){' not in txt or '_pageBgSetColor(_pageBgScope(), col)' not in txt:
+        errors.append('_bgApply ต้องทาสีทันที (_pageBgSetColor ตามขอบเขต) ไม่ใช่ตั้ง pending (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     # ---- 83) ถาดสีพื้นหลัง = ถาดสีกลาง (cp-* เดียวกับสีตัวหนังสือ) · ใช้ SWATCHES ร่วม + custom localStorage คีย์เดียวกัน · จำสีปัจจุบันตอนเปิด · ห้าม native color picker (ผู้ใช้ 20 ต.ค. 2026) ----
     if 'id="bgCpPop"' not in txt or 'id="bgCpGrid"' not in txt:
         errors.append('พื้นหลังต้องใช้ถาดสีกลาง (bgCpPop/bgCpGrid คลาส cp-*) ไม่ใช่ native color picker (ดู UI_STANDARD.md ข้อ 5)')
@@ -1741,8 +1777,6 @@ def main():
         errors.append('ขาด _bgWirePalette (สร้าง/เดินสายถาดสีพื้นหลังตอนเปิด panel) (ดู UI_STANDARD.md ข้อ 5)')
     if "localStorage.getItem('oe_custom_swatches')" not in txt:
         errors.append('ถาดสีพื้นหลังต้องอ่านสีกำหนดเองจาก localStorage คีย์เดียวกับสีตัวหนังสือ (oe_custom_swatches) (ดู UI_STANDARD.md ข้อ 5)')
-    if '_pageBgSetColor(_pageBgScope(),this.value)' in txt:
-        errors.append('พื้นหลังยังมี native color input เดิม (ค้าง) — ต้องแทนด้วยถาดสีกลางแล้ว (ดู UI_STANDARD.md ข้อ 6)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:
@@ -1807,7 +1841,7 @@ def main():
         errors.append('ขาด i18n pres.perScreen (ป้ายแถบจำนวนหน้า/จอ) (ดู UI_STANDARD.md ข้อ 5)')
     if '#presentBar{display:none' not in _css or 'body.presentmode #presentBar{display:flex' not in _css:
         errors.append('#presentBar ต้อง display:none โดย default + แสดงเฉพาะ body.presentmode (กันแถบค้างนอกโหมดนำเสนอ) (ดู UI_STANDARD.md ข้อ 6)')
-    if "'headermode','presentmode')" not in txt:
+    if "'headermode','presentmode','gridview')" not in txt:
         errors.append('buildMenuHtml ไม่ strip presentmode — state นำเสนอหลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
     if "'boardmode','presentmode'" not in txt:
         errors.append('buildEditorHtml ไม่ strip presentmode — ไฟล์ editor เปิดมาติดโหมดนำเสนอ (ดู UI_STANDARD.md ข้อ 7)')
@@ -1962,7 +1996,7 @@ def main():
     if 'function toggleBoardMode(' not in txt: _e74.append('ไม่พบ toggleBoardMode')
     if 'id="btnBoard"' not in txt: _e74.append('ไม่พบปุ่ม btnBoard')
     if "'imgmode','imghidden','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนบันทึก editor')
-    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode','presentmode')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode คงไว้ (WYSIWYG) · presentmode ต้องถูก strip')
+    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode','presentmode','gridview')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode คงไว้ (WYSIWYG) · presentmode ต้องถูก strip')
     if "'btn.board':'โมโนโครม'" not in txt: _e74.append('ไม่พบ i18n TH btn.board (โมโนโครม)')
     if "'btn.board':'Monochrome'" not in txt: _e74.append('ไม่พบ i18n EN btn.board (Monochrome)')
     if '@media screen, print{' not in _css: _e74.append('board CSS ไม่ได้อยู่ใน @media screen, print — จอป้ายจะไม่พิมพ์')

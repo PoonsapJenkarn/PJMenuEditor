@@ -1865,6 +1865,17 @@ def main():
         errors.append('openPanel ต้องซ่อน icon เมื่อ tone info เป็น default (var html=(opts.hideIcon||tone===info)?...) — toolbar/ribbon โทน info ห้ามมี icon info, ให้เป็น default ไม่ใช่ใส่ hideIcon ทีละ panel (toolbar ใหม่ไม่ต้องจำ) · icon เหลือเฉพาะ alert warn/danger (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
     if 'ep-ic' in txt and "tone==='info'" not in txt[txt.find('class="ep-ic"')-120:txt.find('class="ep-ic"')+10]:
         errors.append('guard icon (.ep-ic) ต้องผูกกับ tone!==info — ห้าม render icon บน panel โทน info (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    # ---- 91) ปรับขนาด UI chrome (toolbar) แยกจากซูมเพจ: zoom บน #edbar/#edstatus เท่านั้น ห้ามแตะ .page (กันซูมซ้อนซูมกับ --pagezoom) · ปุ่ม A−/A+ บน toolbar (ผู้ใช้ 22 ต.ค. 2026) ----
+    if 'id="uiIn"' not in txt or 'id="uiOut"' not in txt or 'function _uiscaleApply' not in txt or 'function _uiscaleLoad' not in txt:
+        errors.append('ขาดปุ่มปรับขนาด UI (uiIn/uiOut + _uiscaleApply/_uiscaleLoad) บน toolbar (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#edbar{zoom:var(--uiscale' not in _css or '#edstatus{zoom:var(--uiscale' not in _css or '#actlog{zoom:var(--uiscale' not in _css:
+        errors.append('--uiscale ต้อง zoom chrome ครบ #edbar + #edstatus + #actlog (ประวัติเป็น chrome ขยายตาม UI scale ด้วย) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'zoom:var(--uiscale' in _css.replace('#edbar{zoom:var(--uiscale,1);}','').replace('#edstatus{zoom:var(--uiscale,1);}','').replace('#actlog{zoom:var(--uiscale,1);}',''):
+        errors.append('--uiscale ห้าม zoom element อื่นนอกจาก chrome (#edbar/#edstatus/#actlog) — โดยเฉพาะ .page จะซ้อนกับ --pagezoom ซูมซ้อนซูม (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'UISCALE_KEY' not in txt or 'localStorage.getItem(UISCALE_KEY' not in txt:
+        errors.append('ขนาด UI ต้องจำค่าใน localStorage (UISCALE_KEY) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'ttl.uiOut'" not in txt or "'ttl.uiIn'" not in txt:
+        errors.append('ขาด i18n ปุ่มขนาด UI (ttl.uiOut/ttl.uiIn) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

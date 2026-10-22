@@ -252,7 +252,7 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #edtabs .edtab.active{color:#217346;font-weight:600;background:#fff;}
 #edtabs .edtab.active::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2.5px;background:#217346;}
 #edtabs .hint{margin-left:auto;margin-right:0;font-size:13.5px;color:#8a8886;font-weight:400;}
-#edtabs .langsw{display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-left:16px;margin-right:6px;}
+#edtabs .langsw{display:inline-flex;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;margin-left:8px;margin-right:6px;}
 #edtabs .langsw button{font-family:'Prompt',sans-serif;font-size:14px;font-weight:600;border:none;background:#fff;color:#605e5c;padding:5px 11px;cursor:pointer;}
 #edtabs .langsw button.on{background:#217346;color:#fff;}
 #edtabs .qab{display:inline-flex;gap:2px;}
@@ -639,7 +639,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
 #edbar{zoom:var(--uiscale,1);}
 #edstatus{zoom:var(--uiscale,1);}
 #actlog{zoom:var(--uiscale,1);}
-#edtabs .zoomctl{display:inline-flex;align-items:center;gap:2px;margin-left:16px;}
+#edtabs .zoomctl{display:inline-flex;align-items:center;gap:2px;margin-left:8px;}
 #edtabs .zoomctl button,#edtabs .zoomctl input{display:inline-flex;align-items:center;justify-content:center;height:30px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:16px;padding:0;}
 #edtabs .zoomctl .zbtn{width:30px;}
 .zoomctl .zfit{width:auto;padding:0 10px;font-size:13px;white-space:nowrap;}
@@ -671,7 +671,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
 #calModal #calInch{width:70px;height:30px;border:1px solid #d2d0ce;border-radius:6px;padding:0 8px;font-family:'Prompt',sans-serif;font-size:14px;}
 #calModal .cal-res{font-size:12px;color:#8a8886;margin-bottom:12px;}
 #edtabs .zoomctl #zoomLvl{width:56px;min-width:56px;font-size:14px;font-weight:600;text-align:center;cursor:text;box-sizing:border-box;}
-#edtabs .uiscalectl{margin-left:16px;}
+#edtabs .uiscalectl{margin-left:8px;}
 #edtabs .uiscalectl #uiLvl{min-width:46px;text-align:center;font-size:13px;font-weight:600;color:#3a3937;padding:0 2px;cursor:default;}
 #edtabs .uiscalectl .zbtn{font-family:'Prompt',sans-serif;font-weight:700;}
 #edtabs .uiscalectl .zbtn#uiOut{font-size:12px;}
@@ -679,7 +679,7 @@ body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.p
 #edtabs .zoomctl button:hover:not(:disabled){background:#eef7f1;border-color:#217346;color:#217346;}
 #edtabs .zoomctl button:disabled{opacity:.38;cursor:not-allowed;}
 #edtabs .zoomctl button:active:not(:disabled):not(.on){background:#dce9e0;border-color:#9db3a5;}
-#edtabs #btnFocus{display:inline-flex;align-items:center;gap:5px;height:30px;margin-left:16px;padding:0 10px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;}
+#edtabs #btnFocus{display:inline-flex;align-items:center;gap:5px;height:30px;margin-left:0;padding:0 10px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;}
 #edtabs #btnFocus svg{width:17px;height:17px;stroke:#3a3937;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 #edtabs #btnFocus:hover{background:#eef7f1;border-color:#217346;color:#217346;}
 #edtabs #btnFocus:hover svg{stroke:#217346;}
@@ -709,15 +709,19 @@ body.presentmode #presentBar{display:flex;}
 #presentBar button:disabled{opacity:.32;cursor:not-allowed;}
 #presentBar button:disabled:hover{background:transparent;}
 #presentBar button.on{background:#217346;color:#fff;}}
-#edtabs #btnCal{display:inline-flex;align-items:center;gap:5px;height:30px;margin-left:0;padding:0 10px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;}
-#edtabs #btnCal svg{width:17px;height:17px;stroke:#3a3937;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-#edtabs #btnCal:hover{background:#eef7f1;border-color:#217346;color:#217346;}
-#edtabs #btnCal:hover svg{stroke:#217346;}
+/* ปุ่มปรับเทียบจอ = split button จริงกับ A4 (ผู้ใช้ 23 ต.ค. 2026 · pattern เดียวกับปุ่มเพิ่มหน้า .addpage-split · main A4=ซูม · caret=เปิด modal) · คง id=btnCal (openCal/closeCal/lint #69 เดิม) */
+#edtabs .zoomctl .a4split{display:inline-flex;align-items:stretch;}
+#edtabs .a4split #zoomA4{border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;}
+#edtabs #btnCal.a4caret{display:inline-flex;align-items:center;justify-content:center;height:30px;width:22px;margin-left:0;padding:0;border:1px solid #d2d0ce;border-radius:0 6px 6px 0;background:#fff;color:#3a3937;cursor:pointer;}
+#edtabs #btnCal .cp-caret{font-size:11px;color:#666;}
+#edtabs #btnCal:hover{background:#eef7f1;border-color:#217346;}
+#edtabs #btnCal:hover .cp-caret{color:#217346;}
 #edtabs #btnCal:active:not(:disabled):not(.on){background:#dce9e0;border-color:#9db3a5;}
 #edtabs #btnCal.on{background:#217346;color:#fff;border-color:#217346;}
-#edtabs #btnCal.on svg{stroke:#fff;}
-#edtabs #btnCal.on:hover{background:#1a5c38;border-color:#1a5c38;color:#fff;}
-#edtabs #btnCal.on:hover svg{stroke:#fff;}
+#edtabs #btnCal.on .cp-caret{color:#fff;}
+#edtabs #btnCal.on:hover{background:#1a5c38;border-color:#1a5c38;}
+/* เส้นคั่น 2 โซนแถบบน: [undo/redo · zoom A4] ‖ [ซ่อนริบบอน · ขนาด UI · ภาษา] (ผู้ใช้ 23 ต.ค. 2026) */
+#edtabs .edbar-sep{width:1px;height:20px;background:#d2d0ce;margin:0 14px;align-self:center;flex:none;}
 /* ===== v59: drag-to-reorder handle ===== */
 .dh{cursor:grab;color:#b7bcc4;font-size:14px;line-height:1;padding:0 2px;user-select:none;flex:none;}
 .dh:hover{color:#217346;}
@@ -802,8 +806,8 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
     <button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button><button class="edtab" data-tab="screen" data-i18n="tab.screen" onclick="switchTab('screen')">หน้าจอ</button>
     <span class="hint" id="edhint"></span>
     <span class="qab"><button id="btnUndo" onclick="undo()" data-i18n-title="ttl.undo" title="ย้อนกลับ (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="qab-badge" id="undoBadge"></span></button><button id="btnRedo" onclick="redo()" data-i18n-title="ttl.redo" title="ทำซ้ำ (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="qab-badge" id="redoBadge"></span></button></span>
-    <span class="zoomctl"><button class="zbtn" id="zoomOut" onclick="zoomOut()" data-i18n-title="ttl.zoomOut" title="ย่อหน้า">−</button><input id="zoomLvl" type="text" inputmode="numeric" value="100%" onfocus="this.select()" oninput="_zoomFilter(this)" onchange="_zoomType()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" data-i18n-title="ttl.zoomType" title="พิมพ์ % แล้วกด Enter · 100 = ขนาดเดิม"><button class="zbtn" id="zoomIn" onclick="zoomIn()" data-i18n-title="ttl.zoomIn" title="ขยายหน้า">+</button><button class="zbtn zfitic" id="zoomFit" onclick="zoomFitPage()" data-i18n-title="ttl.zoomFit" title="เห็นทั้งหน้าในจอ"><svg viewBox="0 0 24 24"><path d="M4 9V4H9"/><path d="M20 9V4H15"/><path d="M4 15V20H9"/><path d="M20 15V20H15"/></svg></button><button class="zbtn zfit" id="zoomA4" onclick="zoomA4()" data-i18n-title="ttl.zoomA4" title="กว้างขนาด A4"><span data-i18n="zoom.a4">A4</span></button></span>
-    <button id="btnCal" onclick="openCal()" data-i18n-title="ttl.zoomA4"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10"/><path d="M7 7v4M11 7v6M15 7v4M19 7v6"/></svg><span data-i18n="btn.cal">ปรับเทียบจอ</span></button>
+    <span class="zoomctl"><button class="zbtn" id="zoomOut" onclick="zoomOut()" data-i18n-title="ttl.zoomOut" title="ย่อหน้า">−</button><input id="zoomLvl" type="text" inputmode="numeric" value="100%" onfocus="this.select()" oninput="_zoomFilter(this)" onchange="_zoomType()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" data-i18n-title="ttl.zoomType" title="พิมพ์ % แล้วกด Enter · 100 = ขนาดเดิม"><button class="zbtn" id="zoomIn" onclick="zoomIn()" data-i18n-title="ttl.zoomIn" title="ขยายหน้า">+</button><button class="zbtn zfitic" id="zoomFit" onclick="zoomFitPage()" data-i18n-title="ttl.zoomFit" title="เห็นทั้งหน้าในจอ"><svg viewBox="0 0 24 24"><path d="M4 9V4H9"/><path d="M20 9V4H15"/><path d="M4 15V20H9"/><path d="M20 15V20H15"/></svg></button><span class="a4split"><button class="zbtn zfit" id="zoomA4" onclick="zoomA4()" data-i18n-title="ttl.zoomA4" title="กว้างขนาด A4"><span data-i18n="zoom.a4">A4</span></button><button type="button" class="a4caret" id="btnCal" onclick="openCal()" data-i18n-title="btn.cal" title="ปรับเทียบจอ"><span class="cp-caret">▾</span></button></span></span>
+    <span class="edbar-sep" aria-hidden="true"></span>
     <button id="btnFocus" onclick="toggleFocus()" title="ซ่อนริบบอน — ให้พื้นที่กว้างขึ้น" data-i18n-title="ttl.focusOn"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/></svg><span data-i18n="btn.focus">ซ่อนริบบอน</span></button>
     <span class="zoomctl uiscalectl" data-i18n-title="ttl.uiScale" title="ขนาดเครื่องมือ"><button class="zbtn" id="uiOut" onclick="uiOut()" data-i18n-title="ttl.uiOut" title="เครื่องมือเล็กลง">A−</button><span id="uiLvl">100%</span><button class="zbtn" id="uiIn" onclick="uiIn()" data-i18n-title="ttl.uiIn" title="เครื่องมือใหญ่ขึ้น">A+</button></span><span class="langsw"><button id="langTH" onclick="setLang('th')">TH</button><button id="langEN" onclick="setLang('en')">EN</button></span>
   </div>

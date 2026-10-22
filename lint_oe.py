@@ -1639,19 +1639,21 @@ def main():
     if not _pg75 or "font-family:'Prompt'" not in _pg75.group(0):
         errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
-    # ---- 77) ระยะปุ่มแถบบน (#edtabs) จัดเป็นกลุ่ม: boundary ระหว่างกลุ่ม margin-left:16px สม่ำเสมอ · ในกลุ่มชิด (base gap 2px) (ผู้ใช้ 18 ต.ค. 2026) ----
-    #   กลุ่ม: [undo/redo] | [zoom + ปรับเทียบจอ ชิด] | [โฟกัส] | [TH/EN] · โมโนโครม/นำเสนอ ย้ายเข้าแท็บหน้าจอแล้ว · ภายในกลุ่ม margin-left:0 · boundary 16px
+    # ---- 77) แถบบน 2 โซน: [undo/redo · zoom+A4] ‖(.edbar-sep) [ซ่อนริบบอน · ขนาด UI · ภาษา] · ในโซน 8px · เส้นคั่นให้ boundary (ผู้ใช้ 23 ต.ค. 2026) ----
+    #   ปรับเทียบจอ = caret ▾ ติด A4 (id=btnCal ยังอยู่) · โมโนโครม/นำเสนอ อยู่แท็บหน้าจอ · โซนในชิด 8px · ข้ามเส้นคั่น 14px
     for _s77, _need77, _msg77 in (
-        ('#edtabs #btnCal{', 'margin-left:0', 'btnCal (ปรับเทียบจอ) อยู่กลุ่ม zoom ติด A4 ต้องชิด (margin-left:0)'),
-        ('#edtabs .zoomctl{', 'margin-left:16px', 'zoomctl (zoom) ต้องเว้นจากกลุ่มซ้าย 16px'),
-        ('#edtabs #btnFocus{', 'margin-left:16px', 'btnFocus (โฟกัส · กลุ่มเดี่ยว) ต้องเว้น 16px'),
-        ('#edtabs .langsw{', 'margin-left:16px', 'langsw (TH/EN) ต้องเว้นจากกลุ่มโฟกัส 16px'),
+        ('#edtabs .zoomctl{', 'margin-left:8px', 'zoomctl (zoom · โซนเอกสาร) ชิด undo/redo 8px'),
+        ('#edtabs #btnFocus{', 'margin-left:0', 'btnFocus หลังเส้นคั่น (margin-left:0 — เส้นคั่นให้ระยะแล้ว)'),
+        ('#edtabs .uiscalectl{', 'margin-left:8px', 'uiscalectl (ขนาด UI · โซนสภาพแวดล้อม) 8px'),
+        ('#edtabs .langsw{', 'margin-left:8px', 'langsw (TH/EN · โซนสภาพแวดล้อม) 8px'),
     ):
         _m77=re.search(re.escape(_s77)+r'[^}]*\}', _css)
         if _m77 and _need77 not in _m77.group(0):
             errors.append('ระยะแถบปุ่มบนไม่สม่ำเสมอ: '+_msg77+' (ดู UI_STANDARD.md ข้อ 1)')
     if re.search(r'#edtabs \.qab\{[^}]*margin-right:8px', _css):
         errors.append('#edtabs .qab ยังมี margin-right:8px เก่า — ระยะกลุ่มต้องคุมด้วย margin-left:16px ที่กลุ่มถัดไป ไม่ใช่ margin-right มั่ว (ดู UI_STANDARD.md ข้อ 1)')
+    if '#edtabs .edbar-sep{' not in _css or 'class="edbar-sep"' not in txt:
+        errors.append('แถบบนต้องมีเส้นคั่น 2 โซน (.edbar-sep): [undo/redo · zoom A4] ‖ [ซ่อนริบบอน · ขนาด UI · ภาษา] (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
 
     # ---- 80) โหมดนำเสนอ (present/fullscreen): 2 แกน Fit Width + Fit Screen (preset หน้า/จอ 1/2/3/4/6/8 โชว์ครบเสมอ · ตัวเกินจำนวนหน้า = disabled+tooltip · เอนจินเลือกกริดใหญ่สุด) · รองรับหลายจอ (จำค่าล่าสุด localStorage + เตือนจอเล็ก + เพดานสเกล ultrawide) · แถบลอย+คีย์ 1/2/3/4/6/8 · เฉพาะจอ · strip ตอน save (ผู้ใช้ 18-19 ต.ค. 2026) ----
     if 'function togglePresent' not in txt:

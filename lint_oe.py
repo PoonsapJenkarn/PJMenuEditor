@@ -1860,6 +1860,11 @@ def main():
         errors.append('panel เพิ่มหลายหน้าต้องเป็น "เพิ่ม [จำนวน] หน้า" — label (pnl.addPageLabel) นำหน้าช่อง + suffix (pnl.addPageSuf/.ep-suffix) ต่อท้ายช่อง ผ่าน openPanel suffixKey (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if '#edbar #btnAddPageMore.on' not in _css:
         errors.append('ปุ่ม caret เพิ่มหลายหน้า (btnAddPageMore) ตอนเปิด panel ต้องเขียว #217346 — ต้องมี #edbar #btnAddPageMore.on ตามกฎปุ่ม active เขียว ข้อ 11 (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
+    # ---- 90) toolbar/ribbon/panel โทน info ไม่มี icon — info=เครื่องมือทำงาน ไม่ใช่ alert · เป็น DEFAULT ของ openPanel (ไม่ใช่ใส่ hideIcon ทีละ panel) → toolbar ใหม่ไม่มี icon อัตโนมัติ ไม่ต้องจำเพิ่ม/ถอด · icon เหลือเฉพาะ warn/danger (ผู้ใช้ 22 ต.ค. 2026) ----
+    if "(opts.hideIcon||tone==='info')" not in txt:
+        errors.append('openPanel ต้องซ่อน icon เมื่อ tone info เป็น default (var html=(opts.hideIcon||tone===info)?...) — toolbar/ribbon โทน info ห้ามมี icon info, ให้เป็น default ไม่ใช่ใส่ hideIcon ทีละ panel (toolbar ใหม่ไม่ต้องจำ) · icon เหลือเฉพาะ alert warn/danger (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    if 'ep-ic' in txt and "tone==='info'" not in txt[txt.find('class="ep-ic"')-120:txt.find('class="ep-ic"')+10]:
+        errors.append('guard icon (.ep-ic) ต้องผูกกับ tone!==info — ห้าม render icon บน panel โทน info (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

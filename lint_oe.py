@@ -1715,8 +1715,8 @@ def main():
     # ---- 82) พื้นหลังหน้า (page background): สี/รูป + ตัวหรี่ · เฉพาะหน้า/ทุกหน้า · เป็นเนื้อหา (ติดไฟล์+พิมพ์) · layer .pgbg ใน <style> ก้อนแรก (ผู้ใช้ 20 ต.ค. 2026) ----
     if 'id="btnPageBg"' not in txt or 'function openPageBgPanel' not in txt:
         errors.append('ขาดปุ่มพื้นหลัง (btnPageBg/openPageBgPanel) ในแท็บหน้า (ดู UI_STANDARD.md ข้อ 5)')
-    if '.pgbg{' not in _css or '.pgbgimg::after' not in _css:
-        errors.append('ขาด CSS .pgbg หรือ dim overlay .pgbgimg::after — ตัวหรี่ (ความจาง) ต้องอยู่บนตัวรูป .pgbgimg ไม่ใช่ .pgbg ทั้งหน้า (ไม่งั้น dim โดน background รอบรูป ไม่โดนรูป เพราะรูปถูกยก z-index ตอนแก้ · ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if '.pgbg{' not in _css or '.pgbg::before' not in _css or 'opacity:calc(1 - var(--pgdim' not in _css:
+        errors.append('ขาด CSS .pgbg / .pgbg::before หรือ dim รูป opacity:calc(1 - var(--pgdim)) บน .pgbgimg>img — layer ซ้อน (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
     _pgcss = _css[_css.find('.pgbg{'):_css.find('.pgbg{')+400] if '.pgbg{' in _css else ''
     if 'print-color-adjust:exact' not in _pgcss:
         errors.append('.pgbg ต้องมี print-color-adjust:exact — พื้นหลังต้องพิมพ์ออกด้วย (ดู UI_STANDARD.md ข้อ 10.2)')
@@ -1785,6 +1785,30 @@ def main():
         errors.append('ขาด _bgWirePalette (สร้าง/เดินสายถาดสีพื้นหลังตอนเปิด panel) (ดู UI_STANDARD.md ข้อ 5)')
     if "localStorage.getItem('oe_custom_swatches')" not in txt:
         errors.append('ถาดสีพื้นหลังต้องอ่านสีกำหนดเองจาก localStorage คีย์เดียวกับสีตัวหนังสือ (oe_custom_swatches) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 84) พื้นหลัง layer ซ้อน: สี=ชั้นล่าง (.pgbg::before) + รูป=ลอยทับ · ใส่ก่อน/หลังได้ทั้งคู่ไม่ลบกัน · แยกความจางสี/รูป (ผู้ใช้ 22 ต.ค. 2026) ----
+    _fsc = txt[txt.find('function _pageBgSetColor'):txt.find('function _pageBgSetColor')+420] if 'function _pageBgSetColor' in txt else ''
+    if '.pgbgimg' in _fsc or 'w.remove()' in _fsc:
+        errors.append('_pageBgSetColor ห้ามลบรูป — layer ซ้อน (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    _fsi = txt[txt.find('function _pageBgSetImage'):txt.find('function _pageBgSetImage')+520] if 'function _pageBgSetImage' in txt else ''
+    if 'backgroundColor=' in _fsi:
+        errors.append('_pageBgSetImage ห้ามล้างสีพื้น — layer ซ้อน (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'function _pageBgSetColorAlpha' not in txt or 'function _bgColorDimCommit' not in txt or 'onchange="_bgColorDimCommit(+this.value)"' not in txt:
+        errors.append('ขาดสไลเดอร์ความจางสี (_pageBgSetColorAlpha + _bgColorDimCommit + slider) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if "'bg.colorDim'" not in txt:
+        errors.append('ขาด i18n bg.colorDim (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "setProperty('--pgcolor'" not in txt or "setProperty('--pgcoloralpha'" not in txt:
+        errors.append('สีพื้นต้องเก็บใน --pgcolor + --pgcoloralpha (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if "getAttribute('data-bgcolor')" not in txt or "getAttribute('data-bgimage')" not in txt:
+        errors.append('พื้นหลังต้องแยก flag data-bgcolor/data-bgimage (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    # ---- 85) ความจางกลุ่มเมนู (semi-transparent panel) ต่อหน้า: .sec/.sec-h พื้น rgba(var --secalpha) + slider แยก + i18n (ผู้ใช้ 22 ต.ค. 2026) ----
+    if '--secalpha' not in _css:
+        errors.append('กลุ่มเมนูต้องรองรับกึ่งโปร่งใส: .sec/.sec-h พื้นเป็น rgba(...,var(--secalpha)) เพื่อเห็นพื้นหลังลอด ตัวอักษรทึบเสมอ (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if "setProperty('--secalpha'" not in txt or 'function _pageBgSetSecAlpha' not in txt:
+        errors.append('ขาด _pageBgSetSecAlpha (ตั้ง --secalpha ต่อหน้าตามขอบเขต) — ความจางกลุ่มเมนูต่อหน้า (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'function _bgSecDimCommit' not in txt or 'onchange="_bgSecDimCommit(+this.value)"' not in txt or 'function _bgSecDimLive' not in txt:
+        errors.append('ขาดสไลเดอร์ความจางกลุ่มเมนู (_bgSecDimLive live + _bgSecDimCommit commit ตามขอบเขต) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if "'bg.menuDim'" not in txt:
+        errors.append('ขาด i18n bg.menuDim (ความจางกลุ่มเมนู) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

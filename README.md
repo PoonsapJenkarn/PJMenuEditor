@@ -1,6 +1,6 @@
-# OE Isan Menu — โปรเจกต์เมนูร้าน โออี อาหารอีสาน แจ่วฮ้อน
+# PJ Menu Editor — เครื่องมือทำเมนูร้านอาหารขนาดเล็ก
 
-เมนูร้านอาหารในรูปแบบ HTML (A4) พร้อม editor สำหรับแก้ไขราคา/เมนู และจัดวางรูปอาหาร
+เครื่องมือทำเมนูร้านอาหารในรูปแบบ HTML (A4) — แก้ราคา/เมนู จัดวางรูป แล้วพิมพ์เป็น PDF · ไฟล์ตัวอย่างในโปรเจกต์นี้คือเมนูร้าน โอ อีสาน แจ่วฮ้อน (ตัวอย่างการใช้งาน)
 
 ## ไฟล์ในโปรเจกต์
 
@@ -22,4 +22,22 @@
 Ctrl+P (Chrome/Edge) → A4, Margins = None, Background graphics = ON
 
 ## Version control
-Local Git repo (ไม่มี remote) — commit ทุกครั้งที่แก้เสร็จเพื่อให้ย้อนกลับได้
+Git repo + remote บน GitHub (private): https://github.com/Justin-10/OE — commit ทุกครั้งที่แก้เสร็จเพื่อให้ย้อนกลับได้
+
+## ผู้สร้าง / Credit
+สร้างโดย **Poonsap Jenkarn** (2026)
+เครื่องมือแก้เมนูร้านอาหารอีสาน — ตั้งใจทำให้ร้านเล็กใช้ฟรี
+
+- GitHub: https://github.com/Justin-10/OE
+- ติดต่อ: jenkarn2631@gmail.com
+
+## สัญญาอนุญาต / License
+เผยแพร่ภายใต้ **MIT License** — ใช้ แก้ไข แจกจ่าย หรือใช้เชิงพาณิชย์ได้ฟรี โดยต้องคงประกาศลิขสิทธิ์และข้อความอนุญาตของผู้สร้างไว้ · ดูไฟล์ [LICENSE](LICENSE)
+
+Released under the **MIT License** — free to use, modify, distribute, and use commercially, provided the original copyright and permission notice are kept. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 Poonsap Jenkarn
+
+ฟอนต์ที่ฝังในแอป (Prompt, Sarabun, Noto Sans Thai) อยู่ภายใต้ SIL Open Font License 1.1 · ดูข้อความอนุญาตเต็มและประกาศลิขสิทธิ์ของแต่ละฟอนต์ได้ที่ไฟล์ [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt)
+
+The fonts embedded in the app (Prompt, Sarabun, Noto Sans Thai) are licensed under the SIL Open Font License 1.1. See [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt) for the full license text and each font's copyright notice.

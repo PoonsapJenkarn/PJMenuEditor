@@ -1715,8 +1715,8 @@ def main():
     # ---- 82) พื้นหลังหน้า (page background): สี/รูป + ตัวหรี่ · เฉพาะหน้า/ทุกหน้า · เป็นเนื้อหา (ติดไฟล์+พิมพ์) · layer .pgbg ใน <style> ก้อนแรก (ผู้ใช้ 20 ต.ค. 2026) ----
     if 'id="btnPageBg"' not in txt or 'function openPageBgPanel' not in txt:
         errors.append('ขาดปุ่มพื้นหลัง (btnPageBg/openPageBgPanel) ในแท็บหน้า (ดู UI_STANDARD.md ข้อ 5)')
-    if '.pgbg{' not in _css or '.pgbg::after' not in _css:
-        errors.append('ขาด CSS เลเยอร์ .pgbg (+::after ตัวหรี่) (ดู UI_STANDARD.md ข้อ 5)')
+    if '.pgbg{' not in _css or '.pgbgimg::after' not in _css:
+        errors.append('ขาด CSS .pgbg หรือ dim overlay .pgbgimg::after — ตัวหรี่ (ความจาง) ต้องอยู่บนตัวรูป .pgbgimg ไม่ใช่ .pgbg ทั้งหน้า (ไม่งั้น dim โดน background รอบรูป ไม่โดนรูป เพราะรูปถูกยก z-index ตอนแก้ · ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
     _pgcss = _css[_css.find('.pgbg{'):_css.find('.pgbg{')+400] if '.pgbg{' in _css else ''
     if 'print-color-adjust:exact' not in _pgcss:
         errors.append('.pgbg ต้องมี print-color-adjust:exact — พื้นหลังต้องพิมพ์ออกด้วย (ดู UI_STANDARD.md ข้อ 10.2)')
@@ -1751,6 +1751,14 @@ def main():
         errors.append('เปลี่ยนขอบเขตต้องทาสี/รูปปัจจุบันลงขอบเขตใหม่ทันที — _bgScopeApply ต้องเรียก _bgReapply + จำสีปัจจุบันใน _bgCur (ทุกการเปลี่ยนมีผลทันที ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if "e.stopPropagation(); _closePop(); } }, true);" not in txt or "e.stopPropagation(); pop.classList.remove('open'); } }, true);" not in txt:
         errors.append('ถาดสี (typoCpPop/bgCpPop) ต้องปิดด้วย Esc ได้ — popover ทุกตัวต้องปิดได้ 2 ทาง: คลิกนอก + Esc (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'function _bgSelectPage' not in txt or 'var _bgSelPage' not in txt or '.page.pgcur{' not in _css:
+        errors.append('พื้นหลังต้องคลิกเลือกหน้าได้ + ไฮไลท์หน้าที่เลือก (_bgSelPage/_bgSelectPage + .page.pgcur) — "เฉพาะหน้านี้" ตอน zoom out เห็นหลายหน้าต้องรู้/เลือกได้ว่าหน้าไหน · คลิก=เลือก+ไฮไลท์ ไม่ทาสี (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'function _pgbgImgOf' not in txt or '.pgbgimg{' not in _css or 'function _bgCoverBox' not in txt:
+        errors.append('รูปพื้นหลังต้องเป็น element .pgbgimg (ไม่ใช่ CSS background): _pgbgImgOf + _bgCoverBox + CSS .pgbgimg — ลาก/ย่อ/ขยายด้วยมือเหมือน .fimg (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'window._bgDragBound' not in txt or "e.target.closest('.pgbgimg')" not in txt or 'body.pgbgmode' not in _css:
+        errors.append('รูปพื้นหลังลาก/ย่อ/ขยายแบบ element: drag จับ .pgbgimg ใน body.pgbgmode (กดกลาง=ย้าย · ลากมุม .rz=ย่อ/ขยาย) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'function _bgAddBox' not in txt or '_bgAddBox(im.naturalWidth' not in txt or 'var FILL=90' not in txt:
+        errors.append('ตอน add รูปพื้นหลัง ต้องคำนวณขนาดเริ่มด้วย _bgAddBox — fit ภายใน 90% ของหน้า (var FILL=90) เว้นขอบทั้ง 4 ด้าน เพื่อเห็นกรอบรูป + ใช้ปุ่ม resize ที่มุมได้ทันที (รูปใหญ่กว่าหน้าก็ไม่ชนขอบ · ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
     if '#edbar #btnPageBg.on' not in _css or '#edbar #btnBoard.on' not in _css or '#edbar #btnPresent.on' not in _css:
         errors.append('ปุ่ม ribbon (พื้นหลัง/โมโนโครม/นำเสนอ) ต้องมี rule เขียว #edbar #<id>.on — .b-lg.on ถูก #edbar .b-lg{background:none} ทับ (ปุ่ม ribbon active/เปิดพาเนลทุกปุ่มต้องเขียวตาม pattern) (ดู UI_STANDARD.md ข้อ 1)')
     if "noOutsideClose:true, toggleBtn:'btnPageBg'" not in txt:
@@ -1841,7 +1849,7 @@ def main():
         errors.append('ขาด i18n pres.perScreen (ป้ายแถบจำนวนหน้า/จอ) (ดู UI_STANDARD.md ข้อ 5)')
     if '#presentBar{display:none' not in _css or 'body.presentmode #presentBar{display:flex' not in _css:
         errors.append('#presentBar ต้อง display:none โดย default + แสดงเฉพาะ body.presentmode (กันแถบค้างนอกโหมดนำเสนอ) (ดู UI_STANDARD.md ข้อ 6)')
-    if "'headermode','presentmode','gridview')" not in txt:
+    if "'headermode','presentmode','gridview','pgbgmode')" not in txt:
         errors.append('buildMenuHtml ไม่ strip presentmode — state นำเสนอหลุดลงไฟล์เมนู (ดู UI_STANDARD.md ข้อ 6)')
     if "'boardmode','presentmode'" not in txt:
         errors.append('buildEditorHtml ไม่ strip presentmode — ไฟล์ editor เปิดมาติดโหมดนำเสนอ (ดู UI_STANDARD.md ข้อ 7)')
@@ -1996,7 +2004,7 @@ def main():
     if 'function toggleBoardMode(' not in txt: _e74.append('ไม่พบ toggleBoardMode')
     if 'id="btnBoard"' not in txt: _e74.append('ไม่พบปุ่ม btnBoard')
     if "'imgmode','imghidden','boardmode'" not in txt: _e74.append('boardmode ไม่ถูก strip ตอนบันทึก editor')
-    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode','presentmode','gridview')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode คงไว้ (WYSIWYG) · presentmode ต้องถูก strip')
+    if "'editmode','editing-on','pricemode','imghidden','imgmode','headermode','presentmode','gridview','pgbgmode')" not in txt: _e74.append('buildMenuHtml strip ไม่ตรง — boardmode คงไว้ (WYSIWYG) · presentmode ต้องถูก strip')
     if "'btn.board':'โมโนโครม'" not in txt: _e74.append('ไม่พบ i18n TH btn.board (โมโนโครม)')
     if "'btn.board':'Monochrome'" not in txt: _e74.append('ไม่พบ i18n EN btn.board (Monochrome)')
     if '@media screen, print{' not in _css: _e74.append('board CSS ไม่ได้อยู่ใน @media screen, print — จอป้ายจะไม่พิมพ์')

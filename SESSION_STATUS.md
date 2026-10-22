@@ -1,37 +1,46 @@
 # OE Isan Menu — SESSION STATUS
 
-อัปเดตล่าสุด: Thu 22 Oct 2026, 12:02 +07
+อัปเดตล่าสุด: Thu 22 Oct 2026, 17:51 +07
 
-## งานล่าสุด: ความจางกลุ่มเมนู (semi-transparent panel) — เห็นพื้นหลังลอดกลุ่มเมนูได้
-ผู้ใช้เลือก: แนว A (แผงกึ่งโปร่งใส ปรับระดับได้) + ขอบเขต A (ต่อหน้า เข้าชุดกับพาเนลพื้นหลัง)
-เหตุผล: Professional/Enterprise ใช้ semi-transparent tinted panel เพราะคุม contrast ได้ + พิมพ์ออกแน่นอน (frosted glass/blur พิมพ์ไม่ออก ไม่เหมาะเมนูที่ปริ้นต์)
+## งานล่าสุด: แก้บั๊ก slider ความจาง live เฉพาะหน้าแรก → ให้ real-time ทุกหน้าในขอบเขต
+ผู้ใช้พบ: เลือก scope "ทุกหน้า" เลื่อน slider ความจางกลุ่มเมนู หน้าแรกเปลี่ยน real-time แต่หน้าอื่นเปลี่ยนตอนปล่อยเมาส์เท่านั้น
+ผู้ใช้เลือก A: แก้ทั้ง 3 slider (รูป/สี/กลุ่มเมนู) ให้ live ทุกหน้า สม่ำเสมอ
 
 ## สถานะ: ✅ เขียนลงดิสก์แล้ว · lint จริงจากดิสก์ PASS (rc=0) — รอผู้ใช้ทดสอบใน browser
-- เขียน OEIsanHotpotMenuEditor.html + lint_oe.py (assert-gated: anchor 0 + lint rc=0 ก่อนเขียน)
-- re-run lint จากดิสก์: rc=0 · braces 3325:3325 สมดุล
-- token ครบ: --secalpha, _pageBgSetSecAlpha, _bgSecDimCommit, bg.menuDim, rgba(255,255,255,var(--secalpha,1)), rgba(245,239,228,var(--secalpha,1))
+- เขียน OEIsanHotpotMenuEditor.html + lint_oe.py (assert-gated)
+- re-run lint จากดิสก์: rc=0 · braces 3343:3343 สมดุล
+- ยืนยัน: _bgDimLive/_bgColorDimLive/_bgSecDimLive ทั้ง 3 เป็น forEach (ทุกหน้า) · ไม่มี t[0] เหลือ
 - **ยังไม่ commit**
 
+## สาเหตุบั๊ก (วิเคราะห์จากของจริง)
+- live function เดิมตั้งใจ set เฉพาะ t[0] (หน้าแรก) ขณะลาก แล้ว commit ทั้งขอบเขตตอนปล่อยเมาส์ (onchange)
+- pattern นี้ตัดสินไว้ 21 ต.ค. (lint 1776) เหตุผล "กันค้างตอนหลายหน้า" — แต่เมนู 4 หน้า set CSS var เบามาก ไม่มีทางค้าง เหตุผลเดิมไม่สมจริง
+- บั๊กมีครบทั้ง 3 slider (รูป/สี/กลุ่มเมนู) ไม่ใช่แค่กลุ่มเมนู
+
 ## สิ่งที่เปลี่ยน
-- CSS: .sec พื้น rgba(255,255,255,var(--secalpha,1)) · .sec-h พื้น rgba(245,239,228,var(--secalpha,1)) !important · เพิ่ม print-color-adjust:exact ทั้งคู่
-- ตัวหนังสือ/เส้นจุด/ราคา อยู่คนละชั้น ไม่โดน alpha → ทึบ 100% เสมอ (contrast ไม่เสีย)
-- var ต่อหน้า --secalpha ตั้งบน .page (inherit ลง .sec/.sec-h) · ใช้ _pageBgTargets(scope) เดียวกับพื้นหลัง
-- JS ใหม่: _pageBgSetSecAlpha / _bgSecDimLive / _bgSecDimCommit · var _pageBgSecFade
-- _bgCur เก็บ secfade เพิ่ม · hydrate อ่าน --secalpha จาก .page · _bgReapply พา secfade ไป scope ใหม่
-- slider ใหม่ "ความจางกลุ่มเมนู" (default 0 = ทึบเต็ม ไม่กระทบเอกสารเดิม · max 80 กัน contrast พัง) ต่อจาก "ความจางสี"
-- i18n bg.menuDim (TH ความจางกลุ่มเมนู / EN Menu panel fade)
-- lint ข้อ 85 ล็อกฟีเจอร์ (--secalpha + _pageBgSetSecAlpha + slider + i18n)
-- boardmode .sec/.sec-h ใช้ !important override → ไม่กระทบ (โหมด monochrome ทึบเสมอ ถูกต้อง)
+- 3 live functions: เปลี่ยนจาก `var t=...; var pg=t&&t[0]; if(pg){...}` → `_pageBgTargets(_pageBgScope()).forEach(function(pg){...})` ทุกหน้าในขอบเขต
+- live ยังไม่ markDirty (เจตนาเดิม: live=อัปเดต view ไม่สร้าง undo · commit ตอนปล่อยเมาส์ค่อย markDirty) — แยก live/commit ยังอยู่ครบ
+- set functions (_pageBgSetDim/_pageBgSetColorAlpha/_pageBgSetSecAlpha) ไม่แตะ (commit + _bgReapply ยังเรียกเหมือนเดิม)
+- lint 1776: แก้ข้อความ "หน้าแรกในขอบเขต" → "ทุกหน้าในขอบเขต"
+- lint ข้อ 88 ใหม่: บังคับ live ทั้ง 3 ต้องมี _pageBgTargets+forEach + ห้ามมี t[0] (กันถอยกลับ)
 
 ## รอทดสอบ (browser · refresh F5 ก่อน)
-1. หน้าที่มีพื้นหลัง (เช่นหน้า 2) → เปิดพาเนลพื้นหลัง → เลื่อน "ความจางกลุ่มเมนู": กล่องเมนูโปร่งขึ้น เห็นพื้นหลังลอด · ตัวหนังสือยังชัด 100%
-2. ขอบเขต "เฉพาะหน้านี้/ทุกหน้า/คี่/คู่/ช่วง" ใช้ได้เหมือนพื้นหลัง
-3. ปริ้นต์/preview: สีกึ่งโปร่งพิมพ์ออก
-4. default (ไม่แตะ slider) = กล่องทึบเหมือนเดิม ไม่เพี้ยน
+1. scope "ทุกหน้า" → เลื่อน slider ความจางกลุ่มเมนู: ทุกหน้าเปลี่ยน real-time พร้อมกันขณะลาก (ไม่ใช่หน้าแรกอย่างเดียว)
+2. slider ความจางรูป + ความจางสี: real-time ทุกหน้าเหมือนกัน
+3. ปล่อยเมาส์: ค่าคงเดิม (commit ถูกต้อง) + markDirty มีจุด undo
+4. scope คี่/คู่/ช่วง: live เฉพาะหน้าในขอบเขต
 
 ## ขั้นถัดไป (หลังผู้ใช้ยืนยันผ่าน)
-commit งานทั้งหมดรอบนี้ (พื้นหลัง layer ซ้อน + ความจางสี + ความจางกลุ่มเมนู) → push (ฐาน 547a397)
+commit ทั้งชุด → push (ฐานล่าสุด f08c076)
 
-## ค้างสะสม (ยังไม่ commit ทั้งหมด)
-- พื้นหลัง layer ซ้อน (สี+รูป ไม่ลบกัน) + ความจางสีแยกความจางรูป
-- ความจางกลุ่มเมนู (semi-transparent panel ต่อหน้า)
+## ค้างสะสม (ยังไม่ commit)
+1. รูปพื้นหลังเลื่อนด้วยปุ่มลูกศร (window._bgNudgeBound) — ทดสอบผ่านแล้ว
+2. ปุ่มซ่อนเนื้อหา scope-aware (.page.pgcontenthide) — ทดสอบผ่านแล้ว
+3. ปุ่ม toggle พาเนลเขียวตอน active (.ep-mini.on) — ทดสอบผ่านแล้ว
+4. slider ความจาง live ทุกหน้า (3 ตัว) — รอทดสอบ
+
+## บันทึกแล้ว
+- agent instruction ข้อ 11 (ปุ่ม toggle active เขียว) — PUBLISHED แล้ว (ผู้ใช้สั่ง publish 22 ต.ค.)
+
+## ค้างตัดสิน
+- GF_Knowledge_Notes.md จะเก็บใน repo หรือถอด (git rm --cached)

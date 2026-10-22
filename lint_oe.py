@@ -1773,7 +1773,7 @@ def main():
     if "okKey:'bg.apply'" in txt or 'onOk:_pageBgApplyScope' in txt:
         errors.append('พื้นหลังต้องไม่มีปุ่มนำไปใช้ (okKey bg.apply/onOk) — instant: ทาทันทีเมื่อเลือกสี/รูป/จาง/ล้าง (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'onchange="_bgDimCommit(+this.value)"' not in txt or 'function _bgDimCommit' not in txt:
-        errors.append('สไลเดอร์ความจางต้อง live ขณะลาก (_bgDimLive หน้าแรกในขอบเขต) + commit ทั้งขอบเขตตอนปล่อย (onchange _bgDimCommit) — กันค้างตอนหลายหน้า (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+        errors.append('สไลเดอร์ความจางต้อง live ขณะลาก (_bgDimLive ทุกหน้าในขอบเขต) + commit ทั้งขอบเขตตอนปล่อย (onchange _bgDimCommit) — real-time ทุกหน้าในขอบเขต ไม่ใช่เฉพาะหน้าแรก (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'function _bgApply(col){' not in txt or '_pageBgSetColor(_pageBgScope(), col)' not in txt:
         errors.append('_bgApply ต้องทาสีทันที (_pageBgSetColor ตามขอบเขต) ไม่ใช่ตั้ง pending (ผู้ใช้ 21 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     # ---- 83) ถาดสีพื้นหลัง = ถาดสีกลาง (cp-* เดียวกับสีตัวหนังสือ) · ใช้ SWATCHES ร่วม + custom localStorage คีย์เดียวกัน · จำสีปัจจุบันตอนเปิด · ห้าม native color picker (ผู้ใช้ 20 ต.ค. 2026) ----
@@ -1809,6 +1809,37 @@ def main():
         errors.append('ขาดสไลเดอร์ความจางกลุ่มเมนู (_bgSecDimLive live + _bgSecDimCommit commit ตามขอบเขต) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
     if "'bg.menuDim'" not in txt:
         errors.append('ขาด i18n bg.menuDim (ความจางกลุ่มเมนู) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 86) รูปพื้นหลังเลื่อนตำแหน่งด้วยปุ่มลูกศร (เหมือน .fimg) ตอน pgbgmode + เลือกรูป (ผู้ใช้ 22 ต.ค. 2026) ----
+    if 'window._bgNudgeBound' not in txt:
+        errors.append('รูปพื้นหลังต้องเลื่อนตำแหน่งด้วยปุ่มลูกศรได้เหมือนรูปพื้นหน้า (.fimg) — ขาด window._bgNudgeBound (keydown nudge ตอน pgbgmode เลือกรูปพื้นหลัง · 1mm/Shift 5mm · reapply ตามขอบเขต) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    # ---- 87) ซ่อนเนื้อหาต่อหน้า (ตาม scope) บนจอ: .page.pgcontenthide > *:not(.pgbg) · ปุ่มในพาเนลพื้นหลัง · เคารพ scope เหมือนสี/รูป/ความจาง · เฉพาะจอ ไม่กระทบพิมพ์/บันทึก/undo (ผู้ใช้ 22 ต.ค. 2026) ----
+    if '.page.pgcontenthide' not in _css or ':not(.pgbg)' not in _css:
+        errors.append('ขาด CSS .page.pgcontenthide > *:not(.pgbg) — ซ่อนเนื้อหาต่อหน้า (ตาม scope) เหลือพื้นหลัง (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 3.1)')
+    if 'body.pgcontenthide' in _css:
+        errors.append('ห้ามใช้ body.pgcontenthide (ซ่อนทั้งเอกสาร) — ต้องเป็น .page.pgcontenthide ต่อหน้าตาม scope: เลือก "เฉพาะหน้านี้" ต้องซ่อนเฉพาะหน้าที่เลือก ไม่ใช่ทุกหน้า (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    if 'function togglePgContentHide' not in txt or 'id="btnPgContentHide"' not in txt or 'function _pgContentHideSync' not in txt:
+        errors.append('ขาดปุ่มซ่อนเนื้อหา (btnPgContentHide + togglePgContentHide + _pgContentHideSync) ในพาเนลพื้นหลัง (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    _ftg = txt[txt.find('function togglePgContentHide'):txt.find('function togglePgContentHide')+500] if 'function togglePgContentHide' in txt else ''
+    if '_pageBgTargets' not in _ftg:
+        errors.append('togglePgContentHide ต้องซ่อนตาม scope (_pageBgTargets) ไม่ใช่ทั้ง body — "เฉพาะหน้านี้" ต้องซ่อนเฉพาะหน้าที่เลือก (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    _fsy = txt[txt.find('function _pgContentHideSync'):txt.find('function _pgContentHideSync')+400] if 'function _pgContentHideSync' in txt else ''
+    if '_pageBgTargets' not in _fsy:
+        errors.append('_pgContentHideSync ต้องเช็คสถานะปุ่มตาม scope (_pageBgTargets) — ปุ่ม on/off ตรงกับหน้าในขอบเขต (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    if "remove('pgcontenthide')" not in txt:
+        errors.append('ปิดพาเนลพื้นหลัง (_bgSelClear) ต้อง reset .pgcontenthide ทุกหน้า — ไม่ค้างซ่อนหลังออกจากโหมด (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if txt.count(".page.pgcontenthide')") < 3:
+        errors.append('ต้อง strip .page.pgcontenthide ทั้งใน snapshot (_serializePages) + save (cleanForSave + buildMenuHtml) — สถานะซ่อน (view) ไม่ติดไฟล์/undo (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    if '#edpanel .ep-mini.on{background:#217346' not in _css:
+        errors.append('ปุ่ม toggle ในพาเนล (.ep-mini ที่สลับ .on เช่น ซ่อนเนื้อหา) ต้องเป็นสีเขียว #217346 ตอน active — ทุกปุ่มที่ "เปิดอยู่/ทำงานอยู่" ต้องเขียวตามมาตรฐาน (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
+    if "'bg.hideContent'" not in txt or "'bg.showContent'" not in txt:
+        errors.append('ขาด i18n bg.hideContent/bg.showContent (ปุ่มซ่อน/แสดงเนื้อหา) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 88) สไลเดอร์ความจางทั้ง 3 (รูป/สี/กลุ่มเมนู) ต้อง live ทุกหน้าในขอบเขต real-time ไม่ใช่เฉพาะหน้าแรก (ผู้ใช้ 22 ต.ค. 2026) ----
+    for _lf88 in ('_bgDimLive','_bgColorDimLive','_bgSecDimLive'):
+        _seg88 = txt[txt.find('function '+_lf88):txt.find('function '+_lf88)+320] if ('function '+_lf88) in txt else ''
+        if '_pageBgTargets' not in _seg88 or '.forEach' not in _seg88:
+            errors.append(_lf88+' ต้อง live ทุกหน้าในขอบเขต (_pageBgTargets(...).forEach) ไม่ใช่เฉพาะหน้าแรก t[0] — เลื่อน slider ต้องเห็นผล real-time ทุกหน้าที่เลือก (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+        if 't&&t[0]' in _seg88 or 't[0]' in _seg88:
+            errors.append(_lf88+' ยังใช้ t[0] (หน้าแรกอย่างเดียว) — ต้อง loop ทุกหน้าในขอบเขต (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

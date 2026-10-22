@@ -1829,6 +1829,9 @@ def main():
         errors.append('ปิดพาเนลพื้นหลัง (_bgSelClear) ต้อง reset .pgcontenthide ทุกหน้า — ไม่ค้างซ่อนหลังออกจากโหมด (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if txt.count(".page.pgcontenthide')") < 3:
         errors.append('ต้อง strip .page.pgcontenthide ทั้งใน snapshot (_serializePages) + save (cleanForSave + buildMenuHtml) — สถานะซ่อน (view) ไม่ติดไฟล์/undo (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
+    _fsp = txt[txt.find('function _bgSelectPage'):txt.find('function _bgSelectPage')+500] if 'function _bgSelectPage' in txt else ''
+    if '_pgContentHideSync' not in _fsp:
+        errors.append('_bgSelectPage (คลิกเลือกหน้า) ต้องเรียก _pgContentHideSync — scope "เฉพาะหน้านี้" เปลี่ยนหน้า=เปลี่ยนเป้าหมายปุ่มซ่อนเนื้อหา ปุ่มต้อง sync ตามหน้าใหม่ ไม่งั้นปุ่มบอกสถานะผิด (signifier หลอก ข้อ 6) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 6)')
     if '#edpanel .ep-mini.on{background:#217346' not in _css:
         errors.append('ปุ่ม toggle ในพาเนล (.ep-mini ที่สลับ .on เช่น ซ่อนเนื้อหา) ต้องเป็นสีเขียว #217346 ตอน active — ทุกปุ่มที่ "เปิดอยู่/ทำงานอยู่" ต้องเขียวตามมาตรฐาน (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
     if "'bg.hideContent'" not in txt or "'bg.showContent'" not in txt:
@@ -1840,6 +1843,23 @@ def main():
             errors.append(_lf88+' ต้อง live ทุกหน้าในขอบเขต (_pageBgTargets(...).forEach) ไม่ใช่เฉพาะหน้าแรก t[0] — เลื่อน slider ต้องเห็นผล real-time ทุกหน้าที่เลือก (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
         if 't&&t[0]' in _seg88 or 't[0]' in _seg88:
             errors.append(_lf88+' ยังใช้ t[0] (หน้าแรกอย่างเดียว) — ต้อง loop ทุกหน้าในขอบเขต (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 89) เพิ่มหน้า: panel กรอกจำนวน 1-20/ครั้ง + batch DocumentFragment + เตือน ~200 + ปุ่ม active เขียว (ผู้ใช้ 22 ต.ค. 2026) ----
+    _fap = txt[txt.find('function addPage('):txt.find('function addPage(')+120] if 'function addPage(' in txt else ''
+    if '_addPagesBatch(1)' not in _fap:
+        errors.append('ปุ่มเพิ่มหน้าหลัก (addPage) ต้องเพิ่ม 1 หน้าทันที (_addPagesBatch(1)) ไม่เปิด panel — เคสปกติกดครั้งเดียวจบ (ผู้ใช้ 22 ต.ค. 2026 · ตรง InDesign New Page) (ดู UI_STANDARD.md ข้อ 5)')
+    _fapm = txt[txt.find('function openAddPagesPanel('):txt.find('function openAddPagesPanel(')+600] if 'function openAddPagesPanel(' in txt else ''
+    if 'openPanel' not in _fapm:
+        errors.append('ปุ่ม caret เพิ่มหลายหน้า (openAddPagesPanel) ต้องเปิด panel กรอกจำนวน (openPanel prompt) แยกจากปุ่มหลัก (ผู้ใช้ 22 ต.ค. 2026 · ตรง InDesign Insert Pages) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'id="btnAddPageMore"' not in txt or 'class="addpage-caret"' not in txt:
+        errors.append('ขาดปุ่ม caret เพิ่มหลายหน้า (btnAddPageMore / .addpage-caret) ข้างปุ่มเพิ่มหน้า — split button ตรง InDesign (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if 'function _addPagesBatch' not in txt or 'createDocumentFragment' not in txt:
+        errors.append('เพิ่มหลายหน้าต้อง batch ด้วย DocumentFragment (_addPagesBatch) — clone N หน้าทีเดียว เรียก renumber/decorate/checkOverflow/_snapNow ครั้งเดียวตอนจบ (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pnl.addPageLabel'" not in txt or "'pnl.addPagePreview'" not in txt or "'pnl.addPageMax'" not in txt or "'pnl.addPageWarn'" not in txt:
+        errors.append('ขาด i18n เพิ่มหน้า (pnl.addPageLabel/addPagePreview/addPageMax/addPageWarn) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if "'pnl.addPageSuf'" not in txt or 'ep-suffix' not in txt or 'suffixKey' not in txt:
+        errors.append('panel เพิ่มหลายหน้าต้องเป็น "เพิ่ม [จำนวน] หน้า" — label (pnl.addPageLabel) นำหน้าช่อง + suffix (pnl.addPageSuf/.ep-suffix) ต่อท้ายช่อง ผ่าน openPanel suffixKey (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    if '#edbar #btnAddPageMore.on' not in _css:
+        errors.append('ปุ่ม caret เพิ่มหลายหน้า (btnAddPageMore) ตอนเปิด panel ต้องเขียว #217346 — ต้องมี #edbar #btnAddPageMore.on ตามกฎปุ่ม active เขียว ข้อ 11 (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

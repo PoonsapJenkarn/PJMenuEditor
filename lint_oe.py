@@ -2152,6 +2152,8 @@ def main():
             _e94.append('ไม่พบธีม ' + _t94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
+    if 'data-theme="dark-gold"] .crab' not in _css:
+        _e94.append('ธีมเข้มไม่ override สีตัวหนังสือกล่องโน้ต (.crab อ่านไม่ออกบนพื้นเข้ม)')
     _mseg94 = re.search(r'#edpanel \.ep-seg \.theme-opt\{([^}]*)\}', _css)
     if not _mseg94 or 'border:none' not in _mseg94.group(1):
         _e94.append('ปุ่มธีมใน .ep-seg ต้อง border:none กันขอบซ้อน 2 ชั้น')

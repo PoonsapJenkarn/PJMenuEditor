@@ -2152,8 +2152,11 @@ def main():
             _e94.append('ไม่พบธีม ' + _t94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
-    if '#edpanel .theme-opt.on' not in _css:
-        _e94.append('ปุ่มเลือกธีมไม่มี active เขียว (.theme-opt.on)')
+    _mseg94 = re.search(r'#edpanel \.ep-seg \.theme-opt\{([^}]*)\}', _css)
+    if not _mseg94 or 'border:none' not in _mseg94.group(1):
+        _e94.append('ปุ่มธีมใน .ep-seg ต้อง border:none กันขอบซ้อน 2 ชั้น')
+    if '#edpanel .ep-mini.on' not in _css:
+        _e94.append('ปุ่มธีมไม่มี active เขียว (.ep-mini.on)')
     if '#edbar #btnTheme.on' not in _css:
         _e94.append('btnTheme ไม่มี active เขียวในแถบ (ข้อ 11)')
     for _fn94 in ('function _themeApply(','function _themeLoad(','function openThemePanel(','function _themePick('):

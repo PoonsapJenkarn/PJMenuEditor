@@ -2155,11 +2155,10 @@ def main():
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
     if 'data-theme="dark-gold"] .crab' not in _css:
         _e94.append('ธีมเข้มไม่ override สีตัวหนังสือกล่องโน้ต (.crab อ่านไม่ออกบนพื้นเข้ม)')
-    _mseg94 = re.search(r'#edpanel \.ep-seg \.theme-opt\{([^}]*)\}', _css)
-    if not _mseg94 or 'border:none' not in _mseg94.group(1):
-        _e94.append('ปุ่มธีมใน .ep-seg ต้อง border:none กันขอบซ้อน 2 ชั้น')
-    if '#edpanel .ep-mini.on' not in _css:
-        _e94.append('ปุ่มธีมไม่มี active เขียว (.ep-mini.on)')
+    if 'ep-theme-sel' not in txt:
+        _e94.append('preset ธีมต้องเป็น dropdown (.ep-theme-sel)')
+    if 'onchange="_themePick(this.value)"' not in txt:
+        _e94.append('dropdown ธีมไม่ได้ผูก _themePick')
     if '#edbar #btnTheme.on' not in _css:
         _e94.append('btnTheme ไม่มี active เขียวในแถบ (ข้อ 11)')
     for _fn94 in ('function _themeApply(','function _themeLoad(','function openThemePanel(','function _themePick('):
@@ -2191,7 +2190,7 @@ def main():
     if "'oe_theme_custom'" not in txt: _e95.append('ไม่พบคีย์ oe_theme_custom')
     if 'var _THEME_VARS' not in txt: _e95.append('ไม่พบ _THEME_VARS')
     if "id==='custom'" not in txt: _e95.append('_themePick ไม่จัดการ custom')
-    for _k95 in ('th.custom','th.resetCustom','th.zNoteBg','th.zNoteBd','th.zHeadBg','th.zBodyBg','th.zGrpBd','th.zName','th.zPrice','th.zNote','th.zDot'):
+    for _k95 in ('th.custom','th.resetCustom','th.grpNote','th.grpGroup','th.grpText','th.zNoteBg','th.zNoteBd','th.zHeadBg','th.zBodyBg','th.zGrpBd','th.zName','th.zPrice','th.zNote','th.zDot'):
         if ("'"+_k95+"'") not in txt: _e95.append('ไม่พบ i18n ' + _k95)
     if '.cp-actions' not in _css: _e95.append('ไม่พบ .cp-actions (ตกลง/ยกเลิก ต้องอยู่แถวล่างของตัวเอง)')
     if '<div class="cp-actions">' not in txt: _e95.append('markup ไม่มี .cp-actions ครอบปุ่มตกลง/ยกเลิก')

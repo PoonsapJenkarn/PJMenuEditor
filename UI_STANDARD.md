@@ -514,3 +514,20 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - CSS: .zoomctl .zfitic svg{width:17px;height:17px;stroke:#3a3937;fill:none;stroke-width:2;...} (สีเส้นตรงกับ +/− ในแถบ)
 - ลบ i18n key 'zoom.fit' (ทั้ง th+en) เพราะไม่ใช้แล้ว (ไอคอนใช้ tooltip แทน · no dead code) · 'zoom.a4' ยังอยู่ (ปุ่ม A4 เป็นข้อความ 'A4' = label สั้นชัดสุด แทนด้วยไอคอนไม่ได้ดีกว่า จึงคงไว้)
 - lint #69(g): เอา zoom.fit ออกจาก tuple i18n + เพิ่มเช็ก 'zbtn zfitic' ต้องมี (ล็อกว่า Fit เป็นไอคอน) · ttl.zoomFit ยังต้องมี (tooltip)
+
+
+## 14) มาตรฐานปุ่มถาดสี (cp-trigger) = split เดียวกับปุ่ม A4 — lint #97 (ผู้ใช้ 23 ต.ค. 2026)
+
+ปุ่มเปิดถาดสีทุกจุดต้องเป็น split button กรอบเดียว แบบเดียวกับปุ่ม A4 (ข้อ 10.2):
+
+**โครง:** `.cp-trigger` = กรอบนอกชั้นเดียว (`border:1px solid #d2d0ce; border-radius:6px; height:30px`) ครอบ 2 เซลล์
+- **เซลล์หลัก** (`.cp-apply` > `.cp-current`): สีเต็มเซลล์ (`width:34px; align-self:stretch; border:none; border-radius:5px 0 0 5px`) — **ห้ามมีขอบ chip ซ้อน** (`border:1px solid #bbb` คือบั๊ก box-in-box ที่แก้ไปแล้ว) · สีขาว/อ่อนเห็นขอบได้จากกรอบนอก
+- **เซลล์ caret** (`.cp-caretbtn`): กว้างคงที่ `22px`, เส้นคั่น `border-left:1px solid #d2d0ce`, มุมขวาโค้ง `0 5px 5px 0`, ▾ 11px #666
+
+**สถานะ (ตาม A4):** hover = พื้น `#eef7f1` + ขอบเขียว `#217346` + ▾ เขียว · active = `#dce9e0` (ต้องมี `:not(.on)` กันทับพื้นเขียว toggle ตามข้อ 1)
+
+**ยึดค่ากลาง:** ขอบ `#d2d0ce` · สูง 30px · เขียว `#217346` — เหมือนปุ่ม A4 ทุกจุด
+
+**ใช้กับ:** สีตัวอักษร (typobar), สีพื้นหลังหน้า (edpanel), สีธีม×9 (edpanel) · ปุ่มขอบตัวหนังสือ "A" คงปุ่ม A เป็นเซลล์หลัก (toggle เปิด/ปิดขอบ) แต่จับ frame/caret ให้เป็นมาตรฐานเดียวกัน
+
+lint #97 ล็อก: ทั้ง 2 scope ต้องใช้ #d2d0ce + caret 22px + cp-current ห้ามมีขอบ #bbb

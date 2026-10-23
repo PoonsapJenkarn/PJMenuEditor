@@ -2206,6 +2206,22 @@ def main():
     if "cl('.cp-ok')" not in txt: _e96.append('ถาดขอบไม่มีปุ่มตกลง (_olCommit)')
     if _e96: errors.append('lint #96 (มาตรฐานถาดสี ตกลง/ยกเลิก): '+' · '.join(_e96))
 
+    # ---- 97) มาตรฐานปุ่มถาดสี (cp-trigger) = split เดียวกับ A4: ขอบ #d2d0ce · caret 22px · สีเต็มกล่องไม่มีขอบซ้อน (ผู้ใช้ 23 ต.ค. 2026) ----
+    _e97=[]
+    for _sc97 in ('#typobar','#edpanel'):
+        _mt97=re.search(re.escape(_sc97+' .cp-trigger{')+r'([^}]*)\}', _css)
+        if not _mt97 or '#d2d0ce' not in _mt97.group(1): _e97.append(_sc97+' .cp-trigger ขอบไม่ใช่ #d2d0ce')
+        _mc97=re.search(re.escape(_sc97+' .cp-trigger .cp-caretbtn{')+r'([^}]*)\}', _css)
+        if not _mc97 or 'width:22px' not in _mc97.group(1): _e97.append(_sc97+' caret ไม่กว้าง 22px')
+        _mcur97=re.search(re.escape(_sc97+' .cp-trigger .cp-current{')+r'([^}]*)\}', _css)
+        if not _mcur97: _e97.append(_sc97+' ไม่พบ cp-current')
+        elif '1px solid #bbb' in _mcur97.group(1): _e97.append(_sc97+' cp-current ยังมีขอบซ้อน #bbb')
+    _mol97=re.search(r'#typobar \.olpick\{([^}]*)\}', _css)
+    if not _mol97 or '#d2d0ce' not in _mol97.group(1): _e97.append('ปุ่มขอบ A (.olpick) frame ไม่ใช้ #d2d0ce')
+    _moc97=re.search(r'#typobar \.ttoggle\.olcaret\{([^}]*)\}', _css)
+    if not _moc97 or 'width:22px' not in _moc97.group(1): _e97.append('olcaret ไม่กว้าง 22px')
+    if _e97: errors.append('lint #97 (ปุ่มถาดสี): '+' · '.join(_e97))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

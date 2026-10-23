@@ -1,35 +1,28 @@
 # OE Isan Menu Editor — Session Status
 
-## ✅ เสร็จ (ถาดข้อความ D + ถาดขอบตัวอักษร B · 23 ต.ค. 2026 · รอทดสอบ)
-มาตรฐานถาดสีใหม่ (previewสด + ตกลง/ยกเลิก) — ทำครบ 4 ถาด: ธีม(A) + ข้อความ(D) + ขอบ(B) · เหลือพื้นหลัง(C) กับ ความหนาขอบ 3 โซน(A2)
+## ✅ Checkpoint 2 — ปุ่มขอบตัวอักษร "A" = split A4 (เสร็จ · 23 ต.ค. 2026 · รอทดสอบ)
+- ทำ .olpick เป็น frame เดียว (border #d2d0ce, radius 6px, height 30px) — A เป็นเซลล์หลัก (คง toggle เปิด/ปิดขอบ) + caret 22px เข้าชุด A4
+- **scope เฉพาะ .olpick** — B/I/U/S (ตัวหนา/เอียง/ขีดล่าง/ขีดฆ่า) ใช้ .ttoggle เดิม ไม่โดน (verify: base .ttoggle untouched)
+- ไม่ใช้ overflow:hidden (เพราะ .ol-pop อยู่ข้างใน .olpick — จะโดนตัด) → ใช้มุมโค้งที่เซลล์ในแทน
+- inner: .olpick .ttoggle{border:none;radius:0} · #typoOutline radius ซ้าย · .on เขียวยังทำงาน (ไม่ set background ใน override → .ttoggle.on ยังชนะ)
+- lint #97 ขยาย: ตรวจ .olpick frame #d2d0ce + olcaret 22px
+- in-memory + disk lint PASS (rc=0) · token ครบ (ยกเว้น typo ข้อความ error ใน lint 'ไม่ใช้'→ควรเป็น 'ไม่ใช่' — ไม่กระทบการทำงาน)
 
-### ถาดข้อความ (D)
-- ตัดปุ่ม "ทาสี" (typoCpPaint) ออก · ใส่ ตกลง/ยกเลิก แทน
-- preview: คลิกทั้งช่อง/เส้นจุด = สดบนเมนู · ไฮไลต์บางคำ = preview ที่ปุ่มสี (ไม่แตะข้อความจนกดตกลง = คืนเป๊ะเสมอ) — ผู้ใช้เลือกเอง (safe)
-- commit = applyColorRange (markDirty+undo 1 จุด) · cancel/คลิกนอก/Esc = คืนสีเดิม (_closePop auto-restore)
-- typoCpApply กลายเป็นปุ่มเปิดถาด (เพิ่มใน _NOEDIT21 แล้ว)
+## ✅ มาตรฐานปุ่มถาดสีครบทุกจุดแล้ว (checkpoint 1+2)
+- ตัวอักษร(font) · พื้นหลัง · ธีม×9 · ขอบตัวอักษร A = split A4 เหมือนกันหมด
+- มาตรฐานอยู่ UI_STANDARD.md §14 + lint #97
 
-### ถาดขอบตัวอักษร (B)
-- คง อัตโนมัติ + ความหนาเส้น · เพิ่ม ตกลง/ยกเลิก ท้าย ol-pop
-- preview = ตั้ง textShadow สด (ไม่ markDirty) · commit = _olApply+markDirty 1 จุด · cancel/ปิด = คืน textShadow เดิม (_olPopClose auto-restore ทุกเส้นทางปิด)
-- delegation เปลี่ยนจาก typoOutlineSetColor/SetWidth ตรง → _olPvColor/_olPvWidth/_olPvAuto (preview) · .ol-add = HSV ชั้นรองคงเดิม
+## ⏳ รอผู้ใช้ทดสอบ (Ctrl+Shift+R)
+- แท็บข้อความ → คลิกข้อความ → ปุ่ม A (ขอบตัวอักษร): A + caret เป็นกรอบเดียว เหมือน A4 · กด A = เปิด/ปิดขอบได้ปกติ · caret hover เขียว
+- เช็ค B/I/U/S ยังเป็นปุ่มเดี่ยวเหมือนเดิม (ไม่โดนแก้)
+- เทียบกับปุ่ม A4 — ควรหน้าตาเหมือนกันทั้งกลุ่ม
 
-- CSS: เพิ่ม #typobar .cp-ok/.cp-cancel/.cp-actions (mirror #edpanel)
-- lint #96 ล็อก: ห้ามมี typoCpPaint + ต้องมี _tcp*/_ol* commit/cancel + ปุ่มตกลงทั้ง 2 ถาด
-- lint #21: typoCpApply → _NOEDIT21 (เปิดถาด ไม่แก้เมนูเอง)
-- in-memory + disk lint PASS (rc=0) · token 18/18 · ไม่มี warning
-
-## ⏳ รอผู้ใช้ทดสอบ (Ctrl+Shift+R) — แก้ข้อความที่แจ้งว่าไม่เปลี่ยน
-- แก้ข้อความ → คลิกช่องข้อความ → กดถาดสี (▾) → กดสี = เมนูเปลี่ยนสด → ตกลง=ติด / ยกเลิก=คืน
-- สีขอบตัวหนังสือ (ปุ่ม A ▾) → กดสี/ความหนา = preview → ตกลง/ยกเลิก
-- ไฮไลต์บางคำแล้วเปลี่ยนสี → เมนูยังไม่เปลี่ยนจนกดตกลง (preview ที่ปุ่ม)
-
-## ⏳ ยังไม่ commit
+## ⏳ ยังไม่ commit (รวม checkpoint 1+2 ได้)
 cd C:\OE
 git add -A
-git commit -m "feat: ถาดข้อความ+ขอบ preview+ตกลง/ยกเลิก ตัดทาสี (รอบ B+D) + lint #21/#96"
+git commit -m "feat: ปุ่มขอบ A = split A4 (checkpoint 2 · scope .olpick ไม่โดน B/I/U/S) + lint #97"
 git push
 
-## ⏳ รอบถัดไป
-- A2: ความหนาขอบ 3 โซนธีม (note-bd/grp-bd/line-dot → --note-bw/--grp-bw/--line-bw) · .sec-h border-bottom ใช้ grp-bd ร่วม
-- C: ถาดพื้นหลัง (bg) — ⚠ เคย instant (21 ต.ค.) ต้องเคาะก่อนเปลี่ยนเป็น ตกลง/ยกเลิก
+## ✅ มาตรฐานถาดสีครบวงจร (preview+ตกลง/ยกเลิก + split A4 button)
+ทุกถาดสี (font/ขอบ/พื้นหลัง/ธีม): กดสี=preview · ตกลง=ติด · ยกเลิก/นอก=คืน · ปุ่มเปิด = split frame A4
+(ถาดพื้นหลัง bg ยังเป็น instant-model เดิมตาม decision 21 ต.ค. — ถ้าจะทำ preview+OK/Cancel ด้วย ค่อยสั่ง)

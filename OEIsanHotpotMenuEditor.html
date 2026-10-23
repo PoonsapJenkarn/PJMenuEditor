@@ -387,8 +387,13 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .ol-bar{display:block;width:18px;height:4px;border-radius:1px;border:1px solid rgba(0,0,0,.35);box-sizing:border-box;}  /* แถบสีใต้ A = สีขอบที่ปุ่ม A ใช้ (ผู้ใช้ 8 ต.ค. 2026) */
 #typobar .ol-bar.none{background:transparent !important;border:1px dashed #8a8f94;}  /* ยังไม่มีสีที่ใช้ได้ */
 #typobar #typoOutline.on .ol-bar,#typobar #typoOutline.on .ol-bar.none{border-color:#fff;}
-#typobar .olpick{position:relative;display:inline-flex;align-items:center;gap:1px;}
-#typobar .ttoggle.olcaret{width:16px;padding:0;font-size:11px;color:#666;}
+/* ปุ่มขอบ A = split frame เดียวกับ A4 (ผู้ใช้ 23 ต.ค. 2026 · scope .olpick — B/I/U/S ไม่โดน) · ไม่ใช้ overflow:hidden เพราะ .ol-pop อยู่ข้างใน */
+#typobar .olpick{position:relative;display:inline-flex;align-items:stretch;height:30px;border:1px solid #d2d0ce;border-radius:6px;}
+#typobar .olpick .ttoggle{height:auto;border:none;border-radius:0;}
+#typobar .olpick #typoOutline{border-radius:5px 0 0 5px;}
+#typobar .ttoggle.olcaret{width:22px;padding:0;font-size:11px;color:#666;border-left:1px solid #d2d0ce;border-radius:0 5px 5px 0;}
+#typobar .olpick .olcaret:hover:not(:disabled):not(.on){background:#eef7f1;color:#217346;}
+#typobar .olpick .olcaret:active:not(:disabled):not(.on){background:#dce9e0;}
 #typobar .ol-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}
 #typobar .ol-auto{display:flex;align-items:center;gap:8px;width:100%;height:26px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;padding:0 8px;margin:0 0 8px;font-family:inherit;font-size:14px;}
 #typobar .ol-auto .ol-autosw{width:16px;height:16px;border:1px solid #bbb;border-radius:3px;flex:none;}
@@ -417,12 +422,14 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #typobar .sizebox .szbtn:disabled{opacity:.4;cursor:not-allowed;}
 #typobar .sizebox #typoSize{width:40px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:30px;font-family:inherit;font-size:16px;}
 #typobar .colorpick{position:relative;display:inline-flex;align-items:center;}
-#typobar .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #ccc;border-radius:6px;overflow:hidden;}
-#typobar .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0 6px;display:inline-flex;align-items:center;}
+#typobar .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;}
+#typobar .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0;display:inline-flex;align-items:stretch;}
 #typobar .cp-trigger .cp-apply:hover{background:#eef7f1;}
-#typobar .cp-trigger .cp-current{width:20px;height:20px;border-radius:4px;border:1px solid #bbb;display:inline-block;}
-#typobar .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #ccc;background:#fff;cursor:pointer;padding:0 5px;display:inline-flex;align-items:center;}
-#typobar .cp-trigger .cp-caretbtn:hover{background:#eef7f1;}
+#typobar .cp-trigger .cp-current{width:34px;align-self:stretch;border:none;border-radius:5px 0 0 5px;display:block;}
+#typobar .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #d2d0ce;background:#fff;cursor:pointer;width:22px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:0 5px 5px 0;}
+#typobar .cp-trigger .cp-caretbtn:active:not(:disabled):not(.on){background:#dce9e0;}
+#typobar .cp-trigger .cp-caretbtn:hover .cp-caret{color:#217346;}
+#typobar .cp-trigger .cp-caretbtn:hover{background:#eef7f1;border-color:#217346;}
 #typobar .cp-trigger .cp-caret{font-size:11px;color:#666;}
 #typobar .cp-trigger .cp-apply:disabled,#typobar .cp-trigger .cp-caretbtn:disabled{opacity:.4;cursor:not-allowed;}
 #typobar .cp-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}
@@ -467,12 +474,14 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #edpanel .sizebox .szbtn:disabled{opacity:.4;cursor:not-allowed;}
 #edpanel .sizebox #typoSize{width:40px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:30px;font-family:inherit;font-size:16px;}
 #edpanel .colorpick{position:relative;display:inline-flex;align-items:center;}
-#edpanel .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #ccc;border-radius:6px;overflow:hidden;}
-#edpanel .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0 6px;display:inline-flex;align-items:center;}
+#edpanel .cp-trigger{display:inline-flex;align-items:stretch;height:30px;border:1px solid #d2d0ce;border-radius:6px;overflow:hidden;}
+#edpanel .cp-trigger .cp-apply{border:none;background:#fff;cursor:pointer;padding:0;display:inline-flex;align-items:stretch;}
 #edpanel .cp-trigger .cp-apply:hover{background:#eef7f1;}
-#edpanel .cp-trigger .cp-current{width:20px;height:20px;border-radius:4px;border:1px solid #bbb;display:inline-block;}
-#edpanel .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #ccc;background:#fff;cursor:pointer;padding:0 5px;display:inline-flex;align-items:center;}
-#edpanel .cp-trigger .cp-caretbtn:hover{background:#eef7f1;}
+#edpanel .cp-trigger .cp-current{width:34px;align-self:stretch;border:none;border-radius:5px 0 0 5px;display:block;}
+#edpanel .cp-trigger .cp-caretbtn{border:none;border-left:1px solid #d2d0ce;background:#fff;cursor:pointer;width:22px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:0 5px 5px 0;}
+#edpanel .cp-trigger .cp-caretbtn:active:not(:disabled):not(.on){background:#dce9e0;}
+#edpanel .cp-trigger .cp-caretbtn:hover .cp-caret{color:#217346;}
+#edpanel .cp-trigger .cp-caretbtn:hover{background:#eef7f1;border-color:#217346;}
 #edpanel .cp-trigger .cp-caret{font-size:11px;color:#666;}
 #edpanel .cp-trigger .cp-apply:disabled,#edpanel .cp-trigger .cp-caretbtn:disabled{opacity:.4;cursor:not-allowed;}
 #edpanel .cp-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:10px;width:216px;}

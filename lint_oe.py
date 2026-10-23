@@ -2265,7 +2265,8 @@ def main():
     _mcar=re.search(r'\[contenteditable="true"\][^{]*\{([^}]*)\}', _css)
     if not _mcar or 'caret-color:currentColor' not in _mcar.group(1): errors.append('lint #100: caret-color ต้องเป็น currentColor (กันหายในธีมเข้ม)')
     _msn=re.search(r'body\.editmode \.secnote\[contenteditable\]\{([^}]*)\}', _css)
-    if not _msn or 'text-align:left' not in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ต้อง text-align:left (cursor ชิดซ้าย ไม่ชนกากบาท)')
+    if not _msn or 'padding-right' not in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ต้อง padding-right (เว้นที่ให้ปุ่ม × — cursor ไม่ชน)')
+    if _msn and 'text-align:left' in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ห้าม text-align:left (ต้อง WYSIWYG ชิดขวาเหมือนตอนพิมพ์)')
 
     # ---- report ----
     print("=" * 54)

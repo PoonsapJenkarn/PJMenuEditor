@@ -1,27 +1,32 @@
 # OE Isan Menu — SESSION STATUS
 
-อัปเดตล่าสุด: Fri 23 Oct 2026, 10:06 +07
+อัปเดตล่าสุด: Fri 23 Oct 2026, 10:42 +07
 
-## งานล่าสุด: #edbar fixed → sticky (แก้จอแคบเนื้อหาหาย · เกณฑ์ยั่งยืน)
-ผู้ใช้เลือก B (sticky) · scope B-เฉพาะ top bar (bottom bar/actlog ไม่แตะ)
+## งานล่าสุด (2 ชิ้นเล็ก ยังไม่ commit)
+### 1. ปุ่มซ่อนริบบอน (btnFocus) เอา icon ออก เหลือ text
+- ผู้ใช้เลือก text อย่างเดียว · icon วงเล็บมุมสื่อ 'เต็มจอ' ไม่ใช่ 'ซ่อนริบบอน'
+- markup: ลบ svg เหลือ span · CSS: ลบ 4 rule svg (dead) · btnFocus.on เขียว toggle ยังอยู่
 
-## สถานะ: ✅ ทดสอบผ่านแล้ว (ย่อเฉพาะกว้าง เห็น scrollbar แนวนอน + เนื้อหาครบ) — รอ commit
-- ผู้ใช้ทดสอบ: ย่อ browser เฉพาะด้านกว้าง → มี scrollbar แนวนอนด้านล่าง · toolbar + เมนูแสดงครบ ไม่หาย (ภาพ 23 ต.ค. 10:05)
-- lint จากดิสก์ PASS (rc=0) · braces 3401:3401
+### 2. ปุ่มคืนค่าในพาเนลพื้นหลัง: "คืนค่าพื้นเดิม" → "คืนค่า"
+- ผู้ใช้เลือก "คืนค่า" (สั้น · consistent กับปุ่มคืนค่า typobar · บริบทพาเนลบอกขอบเขตแล้ว)
+- เปลี่ยน 3 จุด: hardcoded markup (\u escape) + i18n TH 'คืนค่า' + i18n EN 'Reset' (เดิม 'Reset background')
+- bg.reset ใช้จุดเดียว · lint ไม่ผูก · ไม่กระทบปุ่มคืนค่า typobar (คนละ key)
+
+## สถานะ: ✅ ทั้ง 2 ชิ้นเขียนลงดิสก์แล้ว · lint จริงจากดิสก์ PASS (rc=0) — รอผู้ใช้ทดสอบ
+- braces 3397:3397 สมดุล
+- checks ผ่าน: btnFocus svg ออก · bg.reset = คืนค่า/Reset · ไม่เหลือ พื้นเดิม/Reset background
 - **ยังไม่ commit**
 
-## สิ่งที่เปลี่ยน (B-เฉพาะ top bar)
-- #edbar: position:fixed → position:sticky;top:0;min-width:960px
-- body: + min-width:960px (จอแคบกว่านี้ scroll แนวนอน เนื้อหาไม่หด/หาย)
-- ตัด body{padding-top:56px} + ตัด paddingTop ใน syncBarHeight (sticky กินที่เอง · ลด hack)
-- _pageFitMetrics: padT จาก #edbar.offsetHeight แทน cs.paddingTop
-- bottom bar (#edstatus/#actlog) ไม่แตะ · paddingBottom คงเดิม
-- lint ข้อ 92 ล็อก: #edbar sticky + min-width:960 (body+#edbar) + syncBarHeight ห้ามตั้ง paddingTop
+## รอทดสอบ (browser · refresh F5 ก่อน)
+1. ปุ่มซ่อนริบบอน = text 'ซ่อนริบบอน' ไม่มี icon · กดแล้ว toggle เขียว + เปลี่ยนเป็น 'แสดงริบบอน'
+2. เปิดพาเนลพื้นหลัง → ปุ่มขวาสุด = 'คืนค่า' (เดิม 'คืนค่าพื้นเดิม') · กดแล้วล้างพื้นหลังเหมือนเดิม
+3. สลับ EN: ปุ่ม = 'Reset'
 
-## ขั้นถัดไป
-commit → push (ฐานล่าสุด 2fc242e)
+## ขั้นถัดไป (หลังผู้ใช้ยืนยันผ่าน)
+commit รวม 2 ชิ้น → push (ฐานล่าสุด 3b93ed7)
 
 ## ค้างตัดสิน / งานถัดไป
-- icon identity (glyph generic ดูเป็น AI โหล) — งานใหญ่แยก · ยังไม่ตัดสิน (A รื้อ system / B เปลี่ยนชุด / C ทีละจุด)
-- GF_Knowledge_Notes.md จะเก็บใน repo หรือถอด (git rm --cached)
+- ช่วงขนาด UI (A−/A+): 90%–150% · คุยค้างว่าจะขยาย max เป็น 175–200% (accessibility WCAG) ไหม — ต้องทดสอบ wrap ก่อน · ผู้ใช้ยังไม่เลือก
+- icon identity (glyph generic) — งานใหญ่แยก · ยังไม่ตัดสิน (A รื้อ system / B เปลี่ยนชุด / C ทีละจุด)
+- GF_Knowledge_Notes.md จะเก็บใน repo หรือถอด
 - slider ความจาง จะให้ sync ตามหน้าที่เลือกด้วยไหม (ค่าเป็น global)

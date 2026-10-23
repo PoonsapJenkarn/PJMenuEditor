@@ -2148,9 +2148,12 @@ def main():
 
     # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
     _e94=[]
-    for _t94 in ('white-green','dark-gold','paper-brick'):
+    for _t94 in ('white-green','dark-gold','paper-brick','bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
         if (':root[data-theme="'+_t94+'"]') not in _css:
             _e94.append('ไม่พบธีม ' + _t94)
+    _m_themes94=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
+    for _tid94 in ('bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
+        if not _m_themes94 or ("'"+_tid94+"'") not in _m_themes94.group(1): _e94.append('_THEMES ขาด ' + _tid94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
     if 'data-theme="dark-gold"] .crab' not in _css:
@@ -2167,7 +2170,7 @@ def main():
     if "'oe_theme'" not in txt: _e94.append('ไม่พบคีย์ oe_theme')
     if 'id="btnTheme"' not in txt: _e94.append('ไม่พบปุ่ม btnTheme')
     if '_themeLoad();' not in txt: _e94.append('ไม่เรียก _themeLoad() ตอนเปิดแอป')
-    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick'):
+    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard'):
         if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
     if _e94: errors.append('lint #94 (ธีมสี): ' + ' · '.join(_e94))
 
@@ -2201,6 +2204,9 @@ def main():
     if not _mch95 or 'font-size:13px' not in _mch95.group(1): _e95.append('.thcp-cat-h ต้อง 13px (เท่าป้ายกลุ่ม ribbon .rgl)')
     _msep95=re.search(r'#edpanel \.thcp-sep\{([^}]*)\}', _css)
     if not _msep95 or '#b3b0ad' not in _msep95.group(1): _e95.append('.thcp-sep ต้อง #b3b0ad (เส้นคั่นชัดเท่า ribbon)')
+    _nsep95=_css.count('.thcp-sep')
+    _ntr95=txt.count('<span class="thcp-sep">')
+    if _ntr95 < 4: _e95.append('ต้องมีเส้นคั่นอย่างน้อย 4 เส้น (3 คั่นกลุ่ม + 1 ปิดท้าย) — พบ '+str(_ntr95))
     if _e95: errors.append('lint #95 (ธีมกำหนดเอง): ' + ' · '.join(_e95))
 
     # ---- 96) มาตรฐานถาดสีใหม่: ถาดข้อความ/ขอบใช้ ตกลง/ยกเลิก (preview+commit) · ตัด 'ทาสี' (ผู้ใช้ 23 ต.ค. 2026) ----

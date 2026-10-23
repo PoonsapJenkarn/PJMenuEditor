@@ -2148,11 +2148,11 @@ def main():
 
     # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
     _e94=[]
-    for _t94 in ('white-green','dark-gold','paper-brick','bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
+    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
         if (':root[data-theme="'+_t94+'"]') not in _css:
             _e94.append('ไม่พบธีม ' + _t94)
     _m_themes94=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
-    for _tid94 in ('bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
+    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
         if not _m_themes94 or ("'"+_tid94+"'") not in _m_themes94.group(1): _e94.append('_THEMES ขาด ' + _tid94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
@@ -2170,8 +2170,12 @@ def main():
     if "'oe_theme'" not in txt: _e94.append('ไม่พบคีย์ oe_theme')
     if 'id="btnTheme"' not in txt: _e94.append('ไม่พบปุ่ม btnTheme')
     if '_themeLoad();' not in txt: _e94.append('ไม่เรียก _themeLoad() ตอนเปิดแอป')
-    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard'):
+    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.whiteGray','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard'):
         if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
+    _mdd94=re.search(r"ep-theme-sel[^>]*>'\s*\n?\s*\+\s*mk\('([a-z-]+)'", txt)
+    if not _mdd94 or _mdd94.group(1)!='custom': _e94.append('dropdown ธีม: กำหนดเองต้องเป็นลำดับแรก (mk custom ก่อน cream)')
+    if ':root[data-theme="bw"] .sec-h' not in _css:
+        _e94.append('ธีมขาว-ดำไม่ override สีหัวกลุ่มเป็นขาว (หัวกลุ่มพื้นดำอ่านไม่ออก)')
     if _e94: errors.append('lint #94 (ธีมสี): ' + ' · '.join(_e94))
 
     # ---- 95) ธีมกำหนดเอง (custom theme): 9 โซนเลือกสีเอง + mode theme ในหน้าต่างสีกลาง + หัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026) ----
@@ -2200,13 +2204,21 @@ def main():
     _mtr95=re.search(r'#edpanel \.thcp-row\{([^}]*)\}', _css)
     if not _mtr95 or 'flex-start' not in _mtr95.group(1): _e95.append('.thcp-row ต้อง align-items:flex-end (baseline ถาดสี/dropdown/คืนค่าตรงกัน)')
     if '#edpanel .thcp-head' not in _css: _e95.append('ไม่พบ .thcp-head (dropdown ธีมต้องชิดล่าง)')
+    _mgl95=re.search(r'#edpanel \.thcp-grp \.thcp-gl\{([^}]*)\}', _css)
+    if not _mgl95 or 'font-size:16px' not in _mgl95.group(1): _e95.append('.thcp-gl ป้ายโซนต้อง 16px (อ่านง่ายเท่าปุ่ม ribbon)')
+    elif 'font-weight:600' in _mgl95.group(1) or 'font-weight:700' in _mgl95.group(1) or 'font-weight:bold' in _mgl95.group(1): _e95.append('.thcp-gl ห้าม bold (คงความเป็น panel ไม่หนา)')
     _mch95=re.search(r'#edpanel \.thcp-cat-h\{([^}]*)\}', _css)
     if not _mch95 or 'font-size:13px' not in _mch95.group(1): _e95.append('.thcp-cat-h ต้อง 13px (เท่าป้ายกลุ่ม ribbon .rgl)')
     _msep95=re.search(r'#edpanel \.thcp-sep\{([^}]*)\}', _css)
     if not _msep95 or '#b3b0ad' not in _msep95.group(1): _e95.append('.thcp-sep ต้อง #b3b0ad (เส้นคั่นชัดเท่า ribbon)')
     _nsep95=_css.count('.thcp-sep')
     _ntr95=txt.count('<span class="thcp-sep">')
-    if _ntr95 < 4: _e95.append('ต้องมีเส้นคั่นอย่างน้อย 4 เส้น (3 คั่นกลุ่ม + 1 ปิดท้าย) — พบ '+str(_ntr95))
+    if _ntr95 < 5: _e95.append('ต้องมีเส้นคั่นอย่างน้อย 5 เส้น (1 หน้ากลุ่มแรก + 3 คั่นกลุ่ม + 1 ปิดท้าย) — พบ '+str(_ntr95))
+    for _epc95,_epn95 in (('ep-sel','dropdown'),('ep-flabel','ป้าย label'),('ep-mini','ปุ่มเล็ก')):
+        _mep95=re.search(r'#edpanel \.'+_epc95+r'\{([^}]*)\}', _css)
+        if not _mep95 or 'font-size:16px' not in _mep95.group(1): _e95.append('.'+_epc95+' ('+_epn95+') ต้อง 16px (สม่ำเสมอกับป้ายโซน)')
+    _mfl95b=re.search(r'#edpanel \.ep-flabel\{([^}]*)\}', _css)
+    if _mfl95b and ('font-weight:600' in _mfl95b.group(1) or 'font-weight:700' in _mfl95b.group(1) or 'font-weight:bold' in _mfl95b.group(1)): _e95.append('.ep-flabel ห้าม bold (panel ไม่หนา)')
     if _e95: errors.append('lint #95 (ธีมกำหนดเอง): ' + ' · '.join(_e95))
 
     # ---- 96) มาตรฐานถาดสีใหม่: ถาดข้อความ/ขอบใช้ ตกลง/ยกเลิก (preview+commit) · ตัด 'ทาสี' (ผู้ใช้ 23 ต.ค. 2026) ----
@@ -2233,6 +2245,20 @@ def main():
     _moc97=re.search(r'#typobar \.ttoggle\.olcaret\{([^}]*)\}', _css)
     if not _moc97 or 'width:22px' not in _moc97.group(1): _e97.append('olcaret ไม่กว้าง 22px')
     if _e97: errors.append('lint #97 (ปุ่มถาดสี): '+' · '.join(_e97))
+
+    # ---- 98) checkOverflow ต้องเก็บ/คืน scrollTop รอบ measuring (กัน scroll เด้งหน้า 2 ตอนเข้าโหมดแก้/เพิ่ม/ลบ · ผู้ใช้ 23 ต.ค. 2026) ----
+    _co98=re.search(r'function checkOverflow\([\s\S]*?\n  \}', txt)
+    if _co98:
+        _cob98=_co98.group(0)
+        if 'scrollTop' not in _cob98 or '_sy98' not in _cob98:
+            errors.append('lint #98: checkOverflow ไม่เก็บ/คืน scrollTop รอบ measuring (scroll จะเด้งหน้าตอนแก้/เพิ่ม/ลบ)')
+
+    # ---- 99) toggleEdit ต้องตรึงหน้าที่ดูอยู่ (เข้าโหมดแก้→หน้าสูงขึ้น ไม่เด้งไปหน้าอื่น · ผู้ใช้ 23 ต.ค. 2026) ----
+    _te99=re.search(r'function toggleEdit\([\s\S]*?\n\}', txt)
+    if _te99:
+        _teb99=_te99.group(0)
+        if '_veIdx99' not in _teb99 or '_priceVisiblePage' not in _teb99 or 'scrollTop' not in _teb99:
+            errors.append('lint #99: toggleEdit ไม่ตรึงหน้าที่ดูอยู่ (จะเด้งหน้าตอนเข้าโหมดแก้)')
 
     # ---- report ----
     print("=" * 54)

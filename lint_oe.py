@@ -2190,10 +2190,17 @@ def main():
     if "'oe_theme_custom'" not in txt: _e95.append('ไม่พบคีย์ oe_theme_custom')
     if 'var _THEME_VARS' not in txt: _e95.append('ไม่พบ _THEME_VARS')
     if "id==='custom'" not in txt: _e95.append('_themePick ไม่จัดการ custom')
-    for _k95 in ('th.custom','th.resetCustom','th.grpNote','th.grpGroup','th.grpText','th.zNoteBg','th.zNoteBd','th.zHeadBg','th.zBodyBg','th.zGrpBd','th.zName','th.zPrice','th.zNote','th.zDot'):
+    for _k95 in ('th.custom','th.resetCustom','th.grpSet','th.grpNote','th.grpGroup','th.grpText','th.zNoteBg','th.zNoteBd','th.zHeadBg','th.zBodyBg','th.zGrpBd','th.zName','th.zPrice','th.zNote','th.zDot'):
         if ("'"+_k95+"'") not in txt: _e95.append('ไม่พบ i18n ' + _k95)
     if '.cp-actions' not in _css: _e95.append('ไม่พบ .cp-actions (ตกลง/ยกเลิก ต้องอยู่แถวล่างของตัวเอง)')
     if '<div class="cp-actions">' not in txt: _e95.append('markup ไม่มี .cp-actions ครอบปุ่มตกลง/ยกเลิก')
+    _mtr95=re.search(r'#edpanel \.thcp-row\{([^}]*)\}', _css)
+    if not _mtr95 or 'flex-start' not in _mtr95.group(1): _e95.append('.thcp-row ต้อง align-items:flex-end (baseline ถาดสี/dropdown/คืนค่าตรงกัน)')
+    if '#edpanel .thcp-head' not in _css: _e95.append('ไม่พบ .thcp-head (dropdown ธีมต้องชิดล่าง)')
+    _mch95=re.search(r'#edpanel \.thcp-cat-h\{([^}]*)\}', _css)
+    if not _mch95 or 'font-size:13px' not in _mch95.group(1): _e95.append('.thcp-cat-h ต้อง 13px (เท่าป้ายกลุ่ม ribbon .rgl)')
+    _msep95=re.search(r'#edpanel \.thcp-sep\{([^}]*)\}', _css)
+    if not _msep95 or '#b3b0ad' not in _msep95.group(1): _e95.append('.thcp-sep ต้อง #b3b0ad (เส้นคั่นชัดเท่า ribbon)')
     if _e95: errors.append('lint #95 (ธีมกำหนดเอง): ' + ' · '.join(_e95))
 
     # ---- 96) มาตรฐานถาดสีใหม่: ถาดข้อความ/ขอบใช้ ตกลง/ยกเลิก (preview+commit) · ตัด 'ทาสี' (ผู้ใช้ 23 ต.ค. 2026) ----

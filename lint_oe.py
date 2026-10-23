@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -286,6 +286,7 @@ def main():
     #   ทางที่นับว่าสร้างจุด Undo: markDirty( / _snapNow( / openPanel( (onOk ของ panel) / document.execCommand(คำสั่งแก้ข้อความ) (เบราว์เซอร์ยิง input → markDirty)
     #   ไล่จาก onclick หรือ addEventListener('click') ของปุ่ม ลึก 4 ชั้น · ปุ่มที่ไม่ได้แก้เมนูต้องอยู่ใน _NOEDIT21 พร้อมเหตุผล · ดู UI_STANDARD.md ข้อ 6
     _NOEDIT21 = {
+        'typoCpApply': 'เปิด/ปิดถาดสี (ตกลงในถาด = _tcpCommit → applyColorRange ซึ่งมี markDirty)',
         'typoCpCaret': 'เปิด/ปิดกล่องเลือกสี',
         'typoCpAdd': 'เปิดหน้าต่างสีที่กำหนดเอง (ตกลงในหน้าต่าง = ทาสีผ่าน applyColorRange ซึ่งมี markDirty)',
         'typoCpDlgCancel': 'ปิดหน้าต่างสีโดยไม่เปลี่ยนอะไร',
@@ -2170,6 +2171,40 @@ def main():
     for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick'):
         if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
     if _e94: errors.append('lint #94 (ธีมสี): ' + ' · '.join(_e94))
+
+    # ---- 95) ธีมกำหนดเอง (custom theme): 9 โซนเลือกสีเอง + mode theme ในหน้าต่างสีกลาง + หัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026) ----
+    _e95=[]
+    if ':root[data-theme="custom"] .sec-h' not in _css:
+        _e95.append('ธีมกำหนดเองไม่ override สีหัวกลุ่ม (อ่านไม่ออกบนพื้นเข้ม)')
+    if '#edpanel .thcp-grp' not in _css:
+        _e95.append('ไม่พบ CSS กลุ่มพิกเกอร์ธีม (.thcp-grp)')
+    if '.thcp-dot' in _css:
+        _e95.append('ยังมี .thcp-dot (ปุ่มกรอบเดี่ยวแบบเก่า — ต้องใช้ถาดสี cp-trigger)')
+    if 'id="thcpPop"' not in txt or 'id="thcpGrid"' not in txt or 'id="thcpHex"' not in txt:
+        _e95.append('ไม่พบถาดสีธีม (thcpPop/thcpGrid)')
+    for _fn95 in ('function _themeCustomSet(','function _themeEnterCustom(','function _themeCpOpen(','function _themeVarHex(','function _themeRenderPanel(','function _themeApplyCustomVars(','function _themeClearCustomInline(','function _themeSwatchOpen(','function _themePickSwatch(','function _themeMkSw(','function _themeCpCommit(','function _themeCpCancel(','function _themePreviewVar('):
+        if _fn95 not in txt: _e95.append('ไม่พบ ' + _fn95)
+    if '_thcpOrig' not in txt: _e95.append('ไม่พบ _thcpOrig (snapshot สีเดิมก่อน preview)')
+    if 'onclick="_themeCpCommit()"' not in txt: _e95.append('ปุ่มตกลงถาดธีมไม่ได้ผูก _themeCpCommit')
+    if "_cpMode==='theme'" not in txt: _e95.append('หน้าต่างสีกลางไม่มี mode theme')
+    if 'thcpPick_' not in txt: _e95.append('ไม่พบ home element พิกเกอร์ (thcpPick_)')
+    if "'oe_theme_custom'" not in txt: _e95.append('ไม่พบคีย์ oe_theme_custom')
+    if 'var _THEME_VARS' not in txt: _e95.append('ไม่พบ _THEME_VARS')
+    if "id==='custom'" not in txt: _e95.append('_themePick ไม่จัดการ custom')
+    for _k95 in ('th.custom','th.resetCustom','th.zNoteBg','th.zNoteBd','th.zHeadBg','th.zBodyBg','th.zGrpBd','th.zName','th.zPrice','th.zNote','th.zDot'):
+        if ("'"+_k95+"'") not in txt: _e95.append('ไม่พบ i18n ' + _k95)
+    if '.cp-actions' not in _css: _e95.append('ไม่พบ .cp-actions (ตกลง/ยกเลิก ต้องอยู่แถวล่างของตัวเอง)')
+    if '<div class="cp-actions">' not in txt: _e95.append('markup ไม่มี .cp-actions ครอบปุ่มตกลง/ยกเลิก')
+    if _e95: errors.append('lint #95 (ธีมกำหนดเอง): ' + ' · '.join(_e95))
+
+    # ---- 96) มาตรฐานถาดสีใหม่: ถาดข้อความ/ขอบใช้ ตกลง/ยกเลิก (preview+commit) · ตัด 'ทาสี' (ผู้ใช้ 23 ต.ค. 2026) ----
+    _e96=[]
+    if 'id="typoCpPaint"' in txt: _e96.append('ถาดข้อความยังมีปุ่มทาสี typoCpPaint (ต้องตัดออก)')
+    for _fn96 in ('function _tcpCommit(','function _tcpCancel(','function _tcpPreview(','function _tcpSnap(','function _tcpRestore(','function _olCommit(','function _olCancel(','function _olPvSnap(','function _olPvColor(','function _olPvWidth('):
+        if _fn96 not in txt: _e96.append('ไม่พบ '+_fn96)
+    if 'onclick="_tcpCommit()"' not in txt: _e96.append('ถาดข้อความไม่มีปุ่มตกลง')
+    if "cl('.cp-ok')" not in txt: _e96.append('ถาดขอบไม่มีปุ่มตกลง (_olCommit)')
+    if _e96: errors.append('lint #96 (มาตรฐานถาดสี ตกลง/ยกเลิก): '+' · '.join(_e96))
 
     # ---- report ----
     print("=" * 54)

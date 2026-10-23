@@ -2117,6 +2117,34 @@ def main():
     if 'body.boardmode .sec-h .sechead{text-shadow' not in _css: _e74.append('จอป้ายไม่บังคับขอบขาวหัวข้อกลุ่ม (text-shadow) — ขอบที่ผู้ใช้ตั้งเองจะค้าง ไม่เป็นดำ/ขอบขาวตามมาตรฐานจอป้าย')
     if _e74: errors.append('lint #74 (โหมดจอป้าย): ' + ' · '.join(_e74))
 
+    # ---- 93) ธีมสี: :root ตัวแปรสีกลาง 5 โซน + สีตัวอักษร · ห้าม hardcode สีเดิมกลับ (ผู้ใช้ 23 ต.ค. 2026 · รอบ1 refactor) ----
+    _e93 = []
+    if ':root{' not in _css and ':root {' not in _css:
+        _e93.append('ไม่พบ :root ใน CSS')
+    for _v93 in ('--note-bd','--note-bg','--grp-bd','--grp-head-bg','--grp-body-bg','--txt-name','--txt-note','--txt-price','--line-dot'):
+        if (_v93 + ':') not in _css:
+            _e93.append('ไม่พบตัวแปร ' + _v93)
+    _zones93 = [
+        (r'\.crab\{([^}]*)\}', ('var(--note-bg)','var(--note-bd)'), ('#ffffff','#d8ccb8'), '.crab'),
+        (r'\.sec\{break-inside:avoid;([^}]*)\}', ('var(--grp-bd)','rgba(var(--grp-body-bg)'), ('#e3d8c6','rgba(255,255,255'), '.sec'),
+        (r'\.sec-h\{([^}]*)\}', ('rgba(var(--grp-head-bg)','var(--grp-bd)'), ('rgba(245,239,228','#e3d8c6'), '.sec-h'),
+        (r'\.nm\{([^}]*)\}', ('var(--txt-name)',), ('#171a1e',), '.nm'),
+        (r'\.nm \.note\{([^}]*)\}', ('var(--txt-note)',), ('#6f6456',), '.nm .note'),
+        (r'\.ln\{([^}]*)\}', ('var(--line-dot)',), ('#cdbfa8',), '.ln'),
+        (r'\.pr\{([^}]*)\}', ('var(--txt-price)',), ('#2b3038',), '.pr'),
+        (r'\.secnote\{([^}]*)\}', ('var(--txt-note)',), ('#6f6456',), '.secnote'),
+    ]
+    for _rx93,_need93,_ban93,_nm93 in _zones93:
+        _m93 = re.search(_rx93, _css)
+        if not _m93:
+            _e93.append(_nm93 + ' ไม่พบบล็อก'); continue
+        _b93 = _m93.group(1)
+        for _nd93 in _need93:
+            if _nd93 not in _b93: _e93.append(_nm93 + ' ขาด ' + _nd93)
+        for _bn93 in _ban93:
+            if _bn93 in _b93: _e93.append(_nm93 + ' ยัง hardcode ' + _bn93)
+    if _e93: errors.append('lint #93 (ตัวแปรสีกลาง/ธีม): ' + ' · '.join(_e93))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

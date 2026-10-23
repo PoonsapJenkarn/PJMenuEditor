@@ -2260,6 +2260,13 @@ def main():
         if '_veIdx99' not in _teb99 or '_priceVisiblePage' not in _teb99 or 'scrollTop' not in _teb99:
             errors.append('lint #99: toggleEdit ไม่ตรึงหน้าที่ดูอยู่ (จะเด้งหน้าตอนเข้าโหมดแก้)')
 
+    # ---- 100) cursor/caret: หนาขึ้น (caret-shape:block) + เห็นทุกธีม (currentColor) · note โหมดแก้ cursor ชิดซ้าย (ผู้ใช้ 23 ต.ค. 2026) ----
+    if 'caret-shape:block' not in _css: errors.append('lint #100: ไม่พบ caret-shape:block (cursor หนาทั้งแอป)')
+    _mcar=re.search(r'\[contenteditable="true"\][^{]*\{([^}]*)\}', _css)
+    if not _mcar or 'caret-color:currentColor' not in _mcar.group(1): errors.append('lint #100: caret-color ต้องเป็น currentColor (กันหายในธีมเข้ม)')
+    _msn=re.search(r'body\.editmode \.secnote\[contenteditable\]\{([^}]*)\}', _css)
+    if not _msn or 'text-align:left' not in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ต้อง text-align:left (cursor ชิดซ้าย ไม่ชนกากบาท)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

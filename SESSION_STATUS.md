@@ -1,26 +1,29 @@
 # OE Isan Menu Editor — Session Status
 
-## ✅ Checkpoint 2 — ตรึงหน้าใน toggleEdit (เสร็จ · 23 ต.ค. 2026 · รอทดสอบ)
+## ✅ cursor หมายเหตุชิดซ้าย + caret หนาขึ้นทั้งแอป (เสร็จ · 23 ต.ค. 2026 · รอทดสอบ)
 
-### ต้นเหตุ (คนละกลไกกับ #98)
-รอบ #98 แก้ measuring clamp ใน checkOverflow ไปแล้ว — แต่เข้าโหมดแก้ยังเด้งเพราะอีกกลไก: ตอนเข้า editmode ทุกหน้า **สูงขึ้น** (.page height:auto + padding/ปุ่มโหมดแก้) → หน้าใหม่ (หน้า 3) ถูกดันลง → viewport ไปจบที่ท้ายหน้า 2
+### 1. cursor หมายเหตุไปติดกากบาทแดง
+- สาเหตุ: .secnote text-align:right (ดีไซน์ตั้งใจ) → cursor ไปขวาชนกากบาท ×
+- แก้: body.editmode .secnote[contenteditable] += text-align:left (เฉพาะตอนแก้) → พิมพ์ชิดซ้าย cursor อยู่หน้า
+- base .secnote ยัง right — บนเมนูจริง/ตอนพิมพ์คงชิดขวาตามดีไซน์เดิม
 
-### วิธีแก้ (pixel-perfect ไม่กระโดด)
-- ต้น toggleEdit: จับ _veIdx99=_priceVisiblePage() + _veTop99=rect.top ของหน้านั้น **ก่อน** toggle editmode
-- ท้ายฟังก์ชัน (หลัง checkOverflow): ถ้า on → scrollTop += (rect.topใหม่ - _veTop99) = ชดเชยส่วนที่สูงขึ้นด้านบน → หน้าที่ดูอยู่คงตำแหน่งเดิมเป๊ะ
-- reuse _priceVisiblePage (generic — หาหน้าที่เห็นมากสุดระหว่าง bar/status)
-- ไม่ใช้ scrollIntoView (จะกระโดดไปหัวหน้า) — ใช้ scrollTop += delta แทน
-- lint #99 ล็อก: toggleEdit ต้องมี _veIdx99 + _priceVisiblePage + scrollTop
-- in-memory + disk lint PASS (rc=0) · token 9/9 · capture ก่อน toggle / restore หลัง checkOverflow ยืนยันแล้ว
+### 2. caret ทั้งแอป (ทุกช่องที่พิมพ์ได้)
+- selector: [contenteditable="true"] + input ใน edbar/edpanel/typobar/edtabs/calModal
+- caret-shape:block = หนาขึ้นจริง (Chrome/Edge ใหม่รองรับ · ไม่รองรับ = เส้นปกติ ไม่ error)
+- **สำคัญ: caret-color:currentColor ไม่ใช่ #171a1e ตายตัว** — เพราะสีดำตายจะหายในธีมเข้ม-ทอง (ตัวอักษรสว่างบนพื้นเข้ม) · currentColor = ตามตัวอักษร = พื้นสว่างได้เข้ม (=ดำตามที่ขอ) · ธีมเข้มได้สว่างไม่หาย
+- lint #100 ล็อก: caret-shape:block + caret-color:currentColor + secnote edit text-align:left
+
+- in-memory + disk lint PASS (rc=0) · token 4/4
 
 ## ⏳ รอผู้ใช้ทดสอบ — Ctrl+Shift+R
-เพิ่มหน้าใหม่ → (อยู่หน้าใหม่) → คลิก "แก้ไขข้อความ" → ควรอยู่หน้าใหม่ที่เดิม (ตำแหน่งเดิม) ไม่เด้งไปท้ายหน้า 2
-รวมกับ #98: เพิ่ม/ลบรายการก็ไม่เด้ง → ครบทั้ง 2 เคสแล้ว
+1. แก้ไขข้อความ → กด "+ หมายเหตุ" → cursor อยู่ซ้าย ไม่ชน × แดง
+2. cursor ทุกช่องพิมพ์ (ชื่อเมนู/ราคา/ช่อง HEX/ซูม) → หนาขึ้นเป็นบล็อก (ถ้าใช้ Chrome/Edge)
+3. ลองธีมเข้ม-ทอง → แก้ข้อความ → caret ยังเห็น (สว่าง) — ไม่หาย
 
-## ⏳ ยังไม่ commit (รวม #98 + #99 — ค้างทั้งคู่)
+## ⏳ ยังไม่ commit
 cd C:\OE
 git add -A
-git commit -m "fix: ตรึงหน้าตอนเข้าโหมดแก้ (scrollTopชดเชยความสูง toggleEdit) + lint #99"
+git commit -m "feat: cursor หมายเหตุชิดซ้าย(ตอนแก้) + caret หนาขึ้น block + สีตามตัวอักษร + lint #100"
 git push
 
 ## ค้าง (ตามลำดับ)

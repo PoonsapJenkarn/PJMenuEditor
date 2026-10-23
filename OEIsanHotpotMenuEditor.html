@@ -210,13 +210,15 @@ body{background:#e8e2d9;color:#2b2320;min-width:960px;
    ปุ่ม + หมายเหตุ / × เฉพาะจอในโหมดแก้ข้อความ ไม่เก็บในไฟล์ · × ลอยขวา (float) ไว้หน้าหมายเหตุ ไม่อยู่ในช่องข้อความ (ไม่ปนกับตัวอักษร) */
 .secnote:empty{display:none;}
 .ed-noteadd,.ed-notedel{display:none;}
-@media screen{body.editmode .secnote[contenteditable]{outline:1px dashed #1592d9;background:rgba(21,146,217,.08);border-radius:3px;cursor:text;}}
+@media screen{body.editmode .secnote[contenteditable]{outline:1px dashed #1592d9;background:rgba(21,146,217,.08);border-radius:3px;cursor:text;text-align:left;}}
 @media screen{body.editmode .secnote[contenteditable]:empty{display:block;min-height:1.3em;}}
 @media screen{body.editmode .ed-noteadd{display:block;margin:4px 0 0 auto;border:1px dashed #1592d9;background:rgba(21,146,217,.06);color:#1592d9;border-radius:6px;padding:1px 9px;font-size:12px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;}}
 @media screen{body.editmode .ed-noteadd:hover{background:rgba(21,146,217,.16);}}
 @media screen{body.editmode .ed-notedel{display:inline-flex;align-items:center;justify-content:center;float:right;margin:6px 0 0 6px;border:none;background:#e0332a;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:1;cursor:pointer;padding:0;}}
 @media screen{body.editmode .ed-notedel:hover{background:#b8231b;}}
 @media screen{body.editmode .sec-b > .ed-add{clear:both;}}
+/* cursor (caret) ทั้งแอป (ผู้ใช้ 23 ต.ค. 2026): หนาขึ้นด้วย caret-shape:block (เบราว์เซอร์ไม่มีความหนาโดยตรง) · สี currentColor = เข้มตามตัวอักษร (พื้นสว่าง=เข้ม · ธีมเข้ม=สว่างไม่หาย) · caret-shape ไม่รองรับ=เส้นปกติ */
+[contenteditable="true"],#edbar input,#edpanel input,#typobar input,#edtabs input,#calModal input{caret-color:currentColor;caret-shape:block;}
 .kai{font-family:'Noto Sans Thai',sans-serif;font-weight:700;}
 @media print{body{background:#fff;}.page{margin:0;box-shadow:none;}}
 @media (max-width:720px){.page{width:auto;min-height:0;padding:20px;}.grid{flex-direction:column;}}

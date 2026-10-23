@@ -1878,6 +1878,17 @@ def main():
         errors.append('ขนาด UI ต้องจำค่าใน localStorage (UISCALE_KEY) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
     if "'ttl.uiOut'" not in txt or "'ttl.uiIn'" not in txt:
         errors.append('ขาด i18n ปุ่มขนาด UI (ttl.uiOut/ttl.uiIn) (ผู้ใช้ 22 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 5)')
+    # ---- 92) #edbar = sticky (ไม่ fixed) → เลื่อนตาม scroll แนวนอนตอนจอแคบ ปุ่มขวาเข้าถึงครบ + อยู่ใน flow กินที่เอง · body/#edbar min-width:960 กันเนื้อหาหด/หายตอนจอแคบ (ผู้ใช้ 23 ต.ค. 2026) ----
+    _eb92=re.search(r'#edbar\{[^}]*\}', _css)
+    if not _eb92 or 'position:sticky' not in _eb92.group(0):
+        errors.append('#edbar ต้อง position:sticky (ไม่ใช่ fixed) — เลื่อนตาม scroll แนวนอนตอนจอแคบ ปุ่มขวาเข้าถึงได้ + อยู่ใน flow กินที่เอง (เลิก fixed+syncBarHeight paddingTop hack) (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 7)')
+    if not _eb92 or 'min-width:960px' not in _eb92.group(0):
+        errors.append('#edbar ต้องมี min-width:960px — toolbar ไม่ wrap/หดตอนจอแคบ (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 7)')
+    _bd92=re.search(r'(?<![.\w])body\{[^}]*background:#e8e2d9[^}]*\}', _css)
+    if not _bd92 or 'min-width:960px' not in _bd92.group(0):
+        errors.append('body ต้องมี min-width:960px — จอแคบกว่านี้ scroll แนวนอน เนื้อหาไม่หด/หาย (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 7)')
+    if re.search(r'function syncBarHeight\([^)]*\)\{[^}]*?style\.paddingTop', txt):
+        errors.append('syncBarHeight ต้องไม่ตั้ง body paddingTop — #edbar เป็น sticky อยู่ใน flow กินที่เอง (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 7)')
     if 'display:grid !important' not in _css or 'grid-template-columns:repeat(var(--pcols' not in _css:
         errors.append('โหมดนำเสนอไม่ได้ใช้ grid หลายคอลัมน์ (body.presentmode ต้อง display:grid + grid-template-columns repeat(var(--pcols)) ) (ดู UI_STANDARD.md ข้อ 5)')
     if 'grid-auto-rows:var(--prowh' not in _css or 'align-items:center !important' not in _css:

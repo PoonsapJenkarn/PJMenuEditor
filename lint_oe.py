@@ -2145,6 +2145,27 @@ def main():
             if _bn93 in _b93: _e93.append(_nm93 + ' ยัง hardcode ' + _bn93)
     if _e93: errors.append('lint #93 (ตัวแปรสีกลาง/ธีม): ' + ' · '.join(_e93))
 
+    # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
+    _e94=[]
+    for _t94 in ('white-green','dark-gold','paper-brick'):
+        if (':root[data-theme="'+_t94+'"]') not in _css:
+            _e94.append('ไม่พบธีม ' + _t94)
+    if 'data-theme="dark-gold"] .sec-h' not in _css:
+        _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
+    if '#edpanel .theme-opt.on' not in _css:
+        _e94.append('ปุ่มเลือกธีมไม่มี active เขียว (.theme-opt.on)')
+    if '#edbar #btnTheme.on' not in _css:
+        _e94.append('btnTheme ไม่มี active เขียวในแถบ (ข้อ 11)')
+    for _fn94 in ('function _themeApply(','function _themeLoad(','function openThemePanel(','function _themePick('):
+        if _fn94 not in txt: _e94.append('ไม่พบ ' + _fn94)
+    if 'var _THEMES' not in txt: _e94.append('ไม่พบ _THEMES')
+    if "'oe_theme'" not in txt: _e94.append('ไม่พบคีย์ oe_theme')
+    if 'id="btnTheme"' not in txt: _e94.append('ไม่พบปุ่ม btnTheme')
+    if '_themeLoad();' not in txt: _e94.append('ไม่เรียก _themeLoad() ตอนเปิดแอป')
+    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick'):
+        if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
+    if _e94: errors.append('lint #94 (ธีมสี): ' + ' · '.join(_e94))
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

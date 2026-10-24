@@ -78,7 +78,7 @@
 }
 :root[data-theme="bw"] .sec-h,
 :root[data-theme="bw"] .sec-h .sechead,
-:root[data-theme="bw"] .sec-h .sechead *{color:#ffffff !important;}
+:root[data-theme="bw"] .sec-h .sechead *{color:#ffffff !important;text-shadow:none !important;}
 :root[data-theme="pine-cream"]{
   --note-bd:#c9d8c0; --note-bg:#f7f4e9;
   --grp-bd:#c9d8c0; --grp-head-bg:230,238,222; --grp-body-bg:247,244,233;
@@ -136,6 +136,7 @@
 #edpanel .thcp-cat-h{font-size:13px;color:#8a8886;margin-top:3px;letter-spacing:.2px;}
 #edpanel .thcp-cat-z{display:inline-flex;gap:10px;align-items:flex-start;flex-wrap:wrap;}
 #edpanel .thcp-sep{width:1px;align-self:stretch;background:#b3b0ad;margin:0 2px;}
+#edpanel .thcp-unit{display:contents;}
 #edpanel .ep-theme-sel{min-width:150px;}
 /* ปุ่มพิกเกอร์ธีม = cp-trigger/cp-current + ถาดสี cp-pop มาตรฐาน (เลิกใช้ thcp-dot · ผู้ใช้ 23 ต.ค. 2026) */
 
@@ -587,7 +588,7 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #edpanel .cp-dlg-msg{color:#c0392b;font-size:13px;margin:-2px 0 8px;}
 #edpanel .cp-dlg-msg:empty{display:none;}
 #edpanel .cp-dlg-btns{display:flex;justify-content:flex-end;gap:6px;}
-#edpanel .cp-dlg-ok{height:28px;padding:0 16px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
+#edpanel .cp-dlg-ok{height:28px;padding:0 16px;border:1px solid #217346;background:#217346;color:#fff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:400;}
 #edpanel .cp-dlg-ok:disabled{opacity:.45;cursor:not-allowed;}
 #edpanel .cp-dlg-cancel{height:28px;padding:0 12px;border:1px solid #d2d0ce;background:#fff;color:#323130;border-radius:5px;cursor:pointer;font-family:inherit;font-size:14px;}
 @media screen{#edpanel .cp-dlg-ok:hover:not(:disabled){background:#1a5c38;} #edpanel .cp-dlg-cancel:hover,#edpanel .cp-eye:hover{background:#eef7f1;border-color:#217346;}}
@@ -856,36 +857,36 @@ body.presentmode #presentBar{display:flex;}
 #edpanel .ep-ic svg{width:21px;height:21px;fill:none;stroke-width:1.9;}
 #edpanel .ep-msg{font-size:14px;font-weight:500;color:#2e3440;line-height:1.4;flex:1 1 220px;min-width:0;}
 #edpanel .ep-msg b{font-weight:700;}
-#edpanel .ep-label{font-size:14px;font-weight:600;color:#3a3937;white-space:nowrap;}
-#edpanel .ep-suffix{font-size:14px;font-weight:600;color:#3a3937;white-space:nowrap;}
-#edpanel .ep-input{font-family:inherit;font-size:14px;font-weight:500;padding:5px 10px;border:1px solid #c8ccd2;border-radius:6px;width:160px;outline:none;}
+#edpanel .ep-label{font-size:16px;font-weight:400;color:#3a3937;white-space:nowrap;}
+#edpanel .ep-suffix{font-size:16px;font-weight:400;color:#3a3937;white-space:nowrap;}
+#edpanel .ep-input{font-family:inherit;font-size:16px;font-weight:500;padding:5px 10px;border:1px solid #c8ccd2;border-radius:6px;width:160px;outline:none;}
 #edpanel .ep-input:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
 #edpanel .ep-preview{font-size:13px;color:#6b7280;white-space:normal;line-height:1.35;flex:1 1 180px;min-width:0;}  /* ข้อความยาว = ขึ้นบรรทัดในพื้นที่ตัวเอง ไม่ดันส่วนอื่น */
 #edpanel .ep-preview b{color:#c0392b;font-weight:700;}
 #edpanel .ep-preview.ep-err{color:#c0392b;font-weight:600;}
-#edpanel .ep-goset{margin-left:8px;font-family:inherit;font-size:13px;font-weight:600;color:#217346;background:#fff;border:1px solid #217346;border-radius:6px;padding:2px 10px;cursor:pointer;vertical-align:middle;}
+#edpanel .ep-goset{margin-left:8px;font-family:inherit;font-size:13px;font-weight:400;color:#217346;background:#fff;border:1px solid #217346;border-radius:6px;padding:2px 10px;cursor:pointer;vertical-align:middle;}
 #edpanel .ep-goset:hover{background:#217346;color:#fff;}
-#edpanel .ep-chk{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;color:#3a3937;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-chk{display:inline-flex;align-items:center;gap:4px;font-size:16px;font-weight:400;color:#3a3937;cursor:pointer;white-space:nowrap;}
 #edpanel .ep-chk input{accent-color:#217346;margin:0;cursor:pointer;}
 #edpanel .ep-chk:has(input:disabled){opacity:.45;cursor:not-allowed;}
 #edpanel .ep-chk:has(input:disabled) input{cursor:not-allowed;}
-#edpanel .ep-btns{display:flex;gap:6px;margin-left:auto;}
+#edpanel .ep-btns{display:flex;gap:6px;margin-left:auto;align-self:flex-start;}
 #edpanel .ep-pf{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 #edpanel .ep-seg{display:inline-flex;border:1px solid #c8ccd2;border-radius:6px;overflow:hidden;}
-#edpanel .ep-seg label{font-size:14px;font-weight:600;color:#605e5c;padding:5px 11px;cursor:pointer;background:#fff;white-space:nowrap;}
+#edpanel .ep-seg label{font-size:16px;font-weight:400;color:#605e5c;padding:5px 11px;cursor:pointer;background:#fff;white-space:nowrap;}
 #edpanel .ep-seg label:not(:last-child){border-right:1px solid #c8ccd2;}
 #edpanel .ep-seg input{position:absolute;opacity:0;pointer-events:none;}
 #edpanel .ep-seg input:checked+span{color:#fff;}
 #edpanel .ep-seg label:has(input:checked){background:#217346;color:#fff;}
 #edpanel .ep-seg label span{pointer-events:none;}
-#edpanel .ep-num{font-family:inherit;font-size:14px;font-weight:600;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;width:70px;outline:none;text-align:center;}
+#edpanel .ep-num{font-family:inherit;font-size:16px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;width:70px;outline:none;text-align:center;}
 #edpanel .ep-num:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
 #edpanel .ep-price{width:130px;}
 #edpanel .ep-sel{font-family:inherit;font-size:16px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;outline:none;max-width:190px;}
 #edpanel .ep-sel:focus{border-color:#217346;box-shadow:0 0 0 2px rgba(33,115,70,.15);}
 #edpanel .ep-flabel{font-size:16px;font-weight:400;color:#3a3937;white-space:nowrap;}
-#edpanel .ep-ok{color:#fff;border:none;border-radius:6px;padding:6px 16px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;}
-#edpanel .ep-cancel{background:#fff;color:#605e5c;border:1px solid #c8ccd2;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:500;font-size:14px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-ok{color:#fff;border:none;border-radius:6px;padding:6px 16px;font-family:inherit;font-weight:400;font-size:16px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-cancel{background:#fff;color:#605e5c;border:1px solid #c8ccd2;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:400;font-size:16px;cursor:pointer;white-space:nowrap;}
 #edpanel.info{background:#eef7f1;border-top-color:#bfe0cc;}
 #edpanel.info .ep-ic svg{stroke:#217346;}
 #edpanel.info .ep-ok{background:#217346;}
@@ -896,13 +897,13 @@ body.presentmode #presentBar{display:flex;}
 #edpanel.danger{background:#fdecea;border-top-color:#e6a49b;}
 #edpanel.danger .ep-ic svg{stroke:#c0392b;}
 #edpanel.danger .ep-ok{background:#c0392b;}
-#edpanel .ep-clearonly{background:#fff;color:#c0392b;border:1px solid #c0392b;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-clearonly{background:#fff;color:#c0392b;border:1px solid #c0392b;border-radius:6px;padding:6px 14px;font-family:inherit;font-weight:400;font-size:16px;cursor:pointer;white-space:nowrap;}
 #edpanel .ep-clearonly:hover{background:#fdecea;}
 #edpanel .ep-clearonly:disabled{opacity:.45;cursor:not-allowed;}
 #edpanel .ep-color{width:44px;height:28px;padding:0;border:1px solid #d2d0ce;border-radius:6px;cursor:pointer;background:#fff;}
 #edpanel .ep-range{width:120px;vertical-align:middle;}
-#edpanel .ep-mini{height:28px;padding:0 12px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:16px;}
-#edpanel #bgFit{height:28px;border:1px solid #d2d0ce;background:#fff;color:#3a3937;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:13px;padding:0 6px;}
+#edpanel .ep-mini{height:28px;padding:0 12px;border:1px solid #d2d0ce;background:#fff;color:#605e5c;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:16px;font-weight:400;}
+#edpanel #bgFit{height:28px;border:1px solid #d2d0ce;background:#fff;color:#605e5c;border-radius:6px;cursor:pointer;font-family:'Prompt',sans-serif;font-size:13px;padding:0 6px;font-weight:400;}
 #edpanel .ep-mini:hover{background:#eef7f1;border-color:#217346;color:#217346;}
 #edpanel .ep-mini.on{background:#217346;color:#fff;border-color:#217346;}
 #edpanel .ep-mini.on:hover{background:#1a5c38;color:#fff;border-color:#1a5c38;}
@@ -2330,7 +2331,7 @@ window.addEventListener('load', function(){ renumber(); _lastSnap=_serializePage
 });
 /* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
 var I18N={
- th:{'btn.addGFont':'＋ ฟอนต์ Google','ttl.addGFont':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.title':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.inlbl':'ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)','gfont.add':'เพิ่มฟอนต์ที่เลือก','btn.gfontSearch':'ค้นหา','gfont.browselbl':'ฟอนต์ที่ใช้ได้ทั้งหมด','gfont.browsehint':'คลิกเพื่อเลือก','fl.gfontNoMatch':'ไม่พบฟอนต์ "{q}" — ลองพิมพ์ชื่อให้ตรง','gfont.oflPre':'ทุกฟอนต์เป็น OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม','fl.gfontLoading':'กำลังโหลดฟอนต์ "{name}" จาก Google…','fl.gfontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วใช้ได้เลย','fl.gfontNotFound':'ไม่พบฟอนต์ "{name}" บน Google — ตรวจชื่อให้ตรง','fl.gfontOffline':'โหลดฟอนต์ "{name}" ไม่ได้ — ต้องต่อเน็ตตอนเพิ่มฟอนต์ Google','fl.gfontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.fontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.gfontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','font.baseGroup':'ฟอนต์มากับแอป','ttl.addFont':'เลือกไฟล์ฟอนต์ (.ttf/.otf/.woff/.woff2) ที่โหลดไว้ในเครื่อง · โหลดฟอนต์ฟรีเพิ่มได้จาก fonts.google.com','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์','tab.screen':'หน้าจอ','grp.viewmode':'มุมมอง','btn.pageBg':'พื้นหลัง','grp.bg':'พื้นหลัง','btn.theme':'ธีม','grp.theme':'ธีม','th.pick':'ธีม','th.cream':'ครีม-น้ำตาล','th.whiteGreen':'ขาว-เขียว','th.darkGold':'เข้ม-ทอง','th.paperBrick':'กระดาษ-แดงอิฐ','th.whiteGray':'ขาว-เทา','th.bw':'ขาว-ดำ','th.pineCream':'เขียวไพร-ครีม','th.navyWhite':'น้ำเงิน-ขาว','th.maroonCream':'แดงเข้ม-ครีม','th.terracotta':'ส้ม-ดินเผา','th.plum':'ม่วงมะเขือ','th.teal':'เขียวน้ำทะเล','th.mustard':'เหลืองมัสตาร์ด','fl.themeSet':'เปลี่ยนธีมแล้ว','ttl.theme':'เลือกธีมสีเมนู','th.custom':'กำหนดเอง','th.resetCustom':'คืนค่า','th.grpSet':'ตั้งค่า','th.grpNote':'กล่องโน้ต','th.grpGroup':'กลุ่มเมนู','th.grpText':'ตัวอักษร','th.zNoteBg':'พื้นโน้ต','th.zNoteBd':'ขอบโน้ต','th.zHeadBg':'พื้นหัวกลุ่ม','th.zBodyBg':'พื้นเนื้อกลุ่ม','th.zGrpBd':'ขอบกลุ่ม','th.zName':'ชื่อเมนู','th.zPrice':'ราคา','th.zNote':'หมายเหตุ','th.zDot':'เส้นจุด','bg.scope':'ขอบเขต','bg.thisPage':'เฉพาะหน้านี้','bg.allPages':'ทุกหน้า','bg.color':'สี','bg.image':'รูป','bg.pick':'เลือกรูป','bg.dim':'ความจางรูป','bg.colorDim':'ความจางสี','bg.menuDim':'ความจางกลุ่มเมนู','bg.hideContent':'ซ่อนเนื้อหา','bg.showContent':'แสดงเนื้อหา','bg.contentHidden':'ซ่อนเนื้อหาแล้ว (เฉพาะจอ)','bg.contentShown':'แสดงเนื้อหาแล้ว','bg.reset':'คืนค่า','bg.pageSel':'เลือกหน้า','bg.posSet':'ย้ายตำแหน่งรูปแล้ว','bg.zoomSet':'ปรับขนาดรูปแล้ว','bg.odd':'หน้าคี่','bg.even':'หน้าคู่','bg.range':'ระบุ','bg.rangeHint':'เช่น 1,3,5-7','bg.rangeTip':'ระบุหน้า เช่น 1,3,5-7','bg.applied':'ใช้พื้นหลังกับหน้าที่เลือกแล้ว','bg.noPages':'ไม่มีหน้าในขอบเขตที่ระบุ',
+ th:{'btn.addGFont':'＋ ฟอนต์ Google','ttl.addGFont':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.title':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.inlbl':'ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)','gfont.add':'เพิ่มฟอนต์ที่เลือก','btn.gfontSearch':'ค้นหา','gfont.browselbl':'ฟอนต์ที่ใช้ได้ทั้งหมด','gfont.browsehint':'คลิกเพื่อเลือก','fl.gfontNoMatch':'ไม่พบฟอนต์ "{q}" — ลองพิมพ์ชื่อให้ตรง','gfont.oflPre':'ทุกฟอนต์เป็น OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม','fl.gfontLoading':'กำลังโหลดฟอนต์ "{name}" จาก Google…','fl.gfontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วใช้ได้เลย','fl.gfontNotFound':'ไม่พบฟอนต์ "{name}" บน Google — ตรวจชื่อให้ตรง','fl.gfontOffline':'โหลดฟอนต์ "{name}" ไม่ได้ — ต้องต่อเน็ตตอนเพิ่มฟอนต์ Google','fl.gfontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.fontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.gfontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','font.baseGroup':'ฟอนต์มากับแอป','ttl.addFont':'เลือกไฟล์ฟอนต์ (.ttf/.otf/.woff/.woff2) ที่โหลดไว้ในเครื่อง · โหลดฟอนต์ฟรีเพิ่มได้จาก fonts.google.com','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์','tab.screen':'หน้าจอ','grp.viewmode':'มุมมอง','btn.pageBg':'พื้นหลัง','grp.bg':'พื้นหลัง','btn.theme':'ธีม','grp.theme':'ธีม','th.pick':'ธีม','th.cream':'ครีม-น้ำตาล','th.whiteGreen':'ขาว-เขียว','th.darkGold':'เข้ม-ทอง','th.paperBrick':'กระดาษ-แดงอิฐ','th.whiteGray':'ขาว-เทา','th.bw':'ขาว-ดำ','th.pineCream':'เขียวไพร-ครีม','th.navyWhite':'น้ำเงิน-ขาว','th.maroonCream':'แดงเข้ม-ครีม','th.terracotta':'ส้ม-ดินเผา','th.plum':'ม่วงมะเขือ','th.teal':'เขียวน้ำทะเล','th.mustard':'เหลืองมัสตาร์ด','fl.themeSet':'เปลี่ยนธีมแล้ว','ttl.theme':'เลือกธีมสีเมนู','th.custom':'กำหนดเอง','th.resetCustom':'คืนค่า','th.grpSet':'ตั้งค่า','th.grpNote':'กล่องโน้ต','th.grpGroup':'กลุ่มเมนู','th.grpText':'ตัวอักษร','th.zNoteBg':'พื้นโน้ต','th.zNoteBd':'ขอบโน้ต','th.zHeadBg':'พื้นหัวกลุ่ม','th.zBodyBg':'พื้นเนื้อกลุ่ม','th.zGrpBd':'ขอบกลุ่ม','th.zName':'ชื่อเมนู','th.zPrice':'ราคา','th.zNote':'หมายเหตุ','th.zDot':'เส้นจุด','bg.scope':'ขอบเขต','bg.thisPage':'เฉพาะหน้านี้','bg.allPages':'ทุกหน้า','bg.color':'สี','bg.image':'รูป','bg.pick':'เลือกรูป','bg.dim':'ความจางรูป','bg.colorDim':'ความจางสี','bg.menuDim':'ความจางกลุ่มเมนู','bg.grpColorImg':'สี · รูป','bg.grpDim':'ความจาง','bg.grpContent':'เนื้อหา','bg.menuShort':'กลุ่มเมนู','bg.hideContent':'ซ่อนเนื้อหา','bg.showContent':'แสดงเนื้อหา','bg.contentHidden':'ซ่อนเนื้อหาแล้ว (เฉพาะจอ)','bg.contentShown':'แสดงเนื้อหาแล้ว','bg.reset':'คืนค่า','bg.pageSel':'เลือกหน้า','bg.posSet':'ย้ายตำแหน่งรูปแล้ว','bg.zoomSet':'ปรับขนาดรูปแล้ว','bg.odd':'หน้าคี่','bg.even':'หน้าคู่','bg.range':'ระบุ','bg.rangeHint':'เช่น 1,3,5-7','bg.rangeTip':'ระบุหน้า เช่น 1,3,5-7','bg.applied':'ใช้พื้นหลังกับหน้าที่เลือกแล้ว','bg.noPages':'ไม่มีหน้าในขอบเขตที่ระบุ',
   'grp.mode':'โหมด','grp.font':'ฟอนต์','grp.format':'จัดรูปแบบ','grp.imgtools':'จัดการรูป','grp.pagetools':'หน้า','grp.file':'ไฟล์','grp.print':'พิมพ์',
   'btn.editText':'แก้ข้อความ','btn.editImage':'แก้รูป','btn.applyAll':'ใช้ทั้งประเภท','btn.reset':'คืนค่า',
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ','btn.resetSize':'คืนขนาด','btn.actualSize':'ขนาดจริง',
@@ -2347,7 +2348,7 @@ var I18N={
   'pnl.delPageLabel':'ลบหน้า','pnl.addPageLabel':'เพิ่ม','pnl.addPageSuf':'หน้า','pnl.addPageOk':'เพิ่ม','pnl.addPageHint':'ตอนนี้ {total} หน้า · ใส่จำนวนหน้าที่จะเพิ่ม (1–20)','pnl.addPagePreview':'ตอนนี้ {total} หน้า → เพิ่ม {n} → รวม {sum} หน้า','pnl.addPageMax':'เพิ่มได้ครั้งละไม่เกิน 20 หน้า','pnl.addPageWarn':'หน้าเยอะ ({sum}) อาจทำให้แก้ไข/พิมพ์ช้าลง','pnl.addPageNotEntered':'ใส่จำนวนหน้าที่จะเพิ่ม','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กด Ctrl+Z เพื่อย้อนได้ (ก่อนปิดหรือรีเฟรชหน้า)',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
   'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม'},
- en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.screen':'Screen','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','th.pick':'Theme','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','fl.themeSet':'Theme changed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
+ en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.screen':'Screen','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','th.pick':'Theme','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','fl.themeSet':'Theme changed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.grpColorImg':'Color & image','bg.grpDim':'Fade','bg.grpContent':'Content','bg.menuShort':'Menu','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
   'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
   'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink','btn.resetSize':'Reset Size','btn.actualSize':'Actual Size',
@@ -4378,8 +4379,8 @@ function _bulkPricePreview(p){
   var v=_bulkPriceRead(p), isSet=(v.task==='set');
   function show(sel,on,disp){ var e=p.querySelector(sel); if(e) e.style.display=on?(disp||'inline-flex'):'none'; }
   show('.ep-gwrap',v.scope==='group'); show('.ep-pwrap',v.scope==='page');
-  show('.ep-adjwrap',!isSet); show('.ep-fwrap',isSet);
-  show('.ep-setwrap',isSet);
+  show('.ep-adjwrap',!isSet,'contents'); show('.ep-fwrap',isSet,'contents');
+  show('.ep-setwrap',isSet,'contents');
   /* โฟกัสช่องกรอกของโหมดนั้นเมื่อ selector ครบ (scope + dropdown ถ้าเฉพาะกลุ่ม/หน้า) — ปรับราคา→.ep-amt(จำนวน) · ใส่ราคา→.ep-price(ราคา) · เพิ่ม/ลด·บาท/% มี default = ครบเสมอ · ครบเมื่อไร focus เมื่อนั้น (ทุกการเลือก · ยังไม่เลือกกลุ่ม = ยังไม่ครบ จึงไม่แย่ง dropdown) · setTimeout 0 ให้พ้น event · document.contains กัน element ที่ถูกลบ · ผู้ใช้ 11 ต.ค. 2026 · lint ข้อ 45 */
   var _selDone=(!!v.scope) && !(v.scope==='group'&&v.gidx<0) && !(v.scope==='page'&&v.pidx<0);
   if(_selDone){ var _fsel=isSet?'.ep-price':'.ep-amt'; setTimeout(function(){ var fi=p.querySelector(_fsel); if(fi && document.contains(fi) && fi.focus){ fi.focus(); } },0); }
@@ -4388,7 +4389,7 @@ function _bulkPricePreview(p){
   var ok=p.querySelector('.ep-ok'), pv=p.querySelector('.ep-preview');
   if(ok) ok.textContent=t(isSet?'pr.setApply':'pr.apply');  /* ปุ่มยืนยัน = คำกริยาของงานที่เลือก */
   var err=_bulkPriceCheck(v);
-  if(err){ if(ok) ok.disabled=true; if(pv){ pv.className='ep-preview'; pv.textContent=(err===t('pr.errAmt'))?t('pr.enterAmt'):err; } return; }
+  if(err){ if(ok) ok.disabled=true; if(pv){ pv.className='ep-preview'; pv.textContent=(err===t('pnl.needScope'))?'':((err===t('pr.errAmt'))?t('pr.enterAmt'):err); } return; }
   var targets=_bulkPriceTargets(v.scope, v.gidx, v.pidx);
   if(isSet){
     var pl=_bulkSetPlan(targets,v);
@@ -4614,22 +4615,38 @@ function openPageBgPanel(){
   var pin=document.getElementById('pageBgInput');
   if(pin && !pin._bgbound){ pin._bgbound=true; pin.addEventListener('change', function(){ var f=this.files&&this.files[0]; this.value=''; if(!f) return; _readImageFile(f, function(uri){ var im=new Image(); im.onload=function(){ var ar=(im.naturalWidth&&im.naturalHeight)?(im.naturalWidth/im.naturalHeight):0; var box=_bgAddBox(im.naturalWidth,im.naturalHeight); if(!_bgCur) _bgCur={}; _bgCur.image=uri; _bgCur.dim=_pageBgDim; _bgCur.ar=ar; _bgCur.x=box.x; _bgCur.y=box.y; _bgCur.w=box.w; _pageBgSetImage(_pageBgScope(), uri); }; im.onerror=function(){ _bgCur={mode:'image',image:uri,dim:_pageBgDim,ar:0}; _pageBgSetImage(_pageBgScope(), uri); }; im.src=uri; }); }); }
   var body=''
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.scope">\u0e02\u0e2d\u0e1a\u0e40\u0e02\u0e15</span><span class="ep-seg">'
-    +'<label><input type="radio" name="pgbgScope" value="page" checked><span data-i18n="bg.thisPage">\u0e40\u0e09\u0e1e\u0e32\u0e30\u0e2b\u0e19\u0e49\u0e32\u0e19\u0e35\u0e49</span></label>'
-    +'<label><input type="radio" name="pgbgScope" value="all"><span data-i18n="bg.allPages">\u0e17\u0e38\u0e01\u0e2b\u0e19\u0e49\u0e32</span></label>'
+    +'<span class="ep-pf thcp-row">'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="ep-seg">'
+    +'<label><input type="radio" name="pgbgScope" value="page" checked><span data-i18n="bg.thisPage">เฉพาะหน้านี้</span></label>'
+    +'<label><input type="radio" name="pgbgScope" value="all"><span data-i18n="bg.allPages">ทุกหน้า</span></label>'
     +'<label><input type="radio" name="pgbgScope" value="odd"><span data-i18n="bg.odd">หน้าคี่</span></label>'
     +'<label><input type="radio" name="pgbgScope" value="even"><span data-i18n="bg.even">หน้าคู่</span></label>'
     +'<label><input type="radio" name="pgbgScope" value="range"><span data-i18n="bg.range">ระบุ</span></label>'
     +'</span>'
-    +'<span id="bgRangeWrap" style="display:none;align-items:center;gap:6px"><input type="text" id="bgRange" class="ep-num" style="width:120px" spellcheck="false" data-i18n-title="bg.rangeTip" title="ระบุหน้า เช่น 1,3,5-7"><span class="ep-flabel" data-i18n="bg.rangeHint">เช่น 1,3,5-7</span></span>'
-    +'</span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.color">\u0e2a\u0e35</span><span class="cp-trigger" style="position:relative"><button type="button" class="cp-apply" id="bgCpApply" title="ใช้สีปัจจุบัน"><span class="cp-current" id="bgCpCurrent" style="background:#fbf8f3"></span></button><button type="button" class="cp-caretbtn" id="bgCpCaret"><span class="cp-caret">▾</span></button><div class="cp-pop" id="bgCpPop"><div class="cp-sec-label" data-i18n="cp.swatchLbl">สีมาตรฐาน</div><div class="cp-custom" id="bgCpGrid"></div><div class="cp-sec-label" data-i18n="cp.customLbl">สีที่กำหนดเอง</div><div class="cp-custom" id="bgCpCustom"></div><div class="cp-foot"><input type="text" id="bgHex" value="#FBF8F3" maxlength="7" spellcheck="false" data-i18n-title="ttl.hex" title="พิมพ์รหัสสี HEX"><button type="button" class="cp-add" id="bgCpAdd" data-i18n="cp.addCustom">+ กำหนดเอง</button><button type="button" class="cp-paint" id="bgCpPaint" data-i18n="cp.paint">ทาสี</button></div></div></span><span id="bgCpPick" style="position:relative;display:inline-block"></span></span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.image">\u0e23\u0e39\u0e1b</span><button type="button" class="ep-mini" onclick="_pageBgPick()" data-i18n="bg.pick">\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e23\u0e39\u0e1b</button></span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.dim">\u0e04\u0e27\u0e32\u0e21\u0e08\u0e32\u0e07\u0e23\u0e39\u0e1b</span><input type="range" class="ep-range" min="0" max="80" value="40" oninput="_bgDimLive(+this.value)" onchange="_bgDimCommit(+this.value)"></span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.colorDim">ความจางสี</span><input type="range" class="ep-range" min="0" max="100" value="0" oninput="_bgColorDimLive(+this.value)" onchange="_bgColorDimCommit(+this.value)"></span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="bg.menuDim">ความจางกลุ่มเมนู</span><input type="range" class="ep-range" min="0" max="80" value="0" oninput="_bgSecDimLive(+this.value)" onchange="_bgSecDimCommit(+this.value)"></span>'
-    +'<span class="ep-pf"><button type="button" class="ep-mini" id="btnPgContentHide" onclick="togglePgContentHide()" data-i18n="bg.hideContent">ซ่อนเนื้อหา</button></span>'
-    +'<span class="ep-pf"><button type="button" class="ep-mini" onclick="_bgClearLive()" data-i18n="bg.reset">\u0e04\u0e37\u0e19\u0e04\u0e48\u0e32</button></span>';
+    +'<span id="bgRangeWrap" style="display:none;align-items:center;gap:6px"><input type="text" id="bgRange" class="ep-num" style="width:120px" spellcheck="false" data-i18n-title="bg.rangeTip" title="ระบุหน้า เช่น 1,3,5-7"><span class="thcp-gl" data-i18n="bg.rangeHint">เช่น 1,3,5-7</span></span>'
+    +'</span><span class="thcp-cat-h" data-i18n="bg.scope">ขอบเขต</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="bg.color">สี</span><span class="cp-trigger" style="position:relative"><button type="button" class="cp-apply" id="bgCpApply" title="ใช้สีปัจจุบัน"><span class="cp-current" id="bgCpCurrent" style="background:#fbf8f3"></span></button><button type="button" class="cp-caretbtn" id="bgCpCaret"><span class="cp-caret">▾</span></button><div class="cp-pop" id="bgCpPop"><div class="cp-sec-label" data-i18n="cp.swatchLbl">สีมาตรฐาน</div><div class="cp-custom" id="bgCpGrid"></div><div class="cp-sec-label" data-i18n="cp.customLbl">สีที่กำหนดเอง</div><div class="cp-custom" id="bgCpCustom"></div><div class="cp-foot"><input type="text" id="bgHex" value="#FBF8F3" maxlength="7" spellcheck="false" data-i18n-title="ttl.hex" title="พิมพ์รหัสสี HEX"><button type="button" class="cp-add" id="bgCpAdd" data-i18n="cp.addCustom">+ กำหนดเอง</button><button type="button" class="cp-paint" id="bgCpPaint" data-i18n="cp.paint">ทาสี</button></div></div></span><span id="bgCpPick" style="position:relative;display:inline-block"></span></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="bg.image">รูป</span><button type="button" class="ep-mini" onclick="_pageBgPick()" data-i18n="bg.pick">เลือกรูป</button></span>'
+    +'</span><span class="thcp-cat-h" data-i18n="bg.grpColorImg">สี · รูป</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="bg.image">รูป</span><input type="range" class="ep-range" min="0" max="80" value="40" oninput="_bgDimLive(+this.value)" onchange="_bgDimCommit(+this.value)"></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="bg.color">สี</span><input type="range" class="ep-range" min="0" max="100" value="0" oninput="_bgColorDimLive(+this.value)" onchange="_bgColorDimCommit(+this.value)"></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="bg.menuShort">กลุ่มเมนู</span><input type="range" class="ep-range" min="0" max="80" value="0" oninput="_bgSecDimLive(+this.value)" onchange="_bgSecDimCommit(+this.value)"></span>'
+    +'</span><span class="thcp-cat-h" data-i18n="bg.grpDim">ความจาง</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<button type="button" class="ep-mini" id="btnPgContentHide" onclick="togglePgContentHide()" data-i18n="bg.hideContent">ซ่อนเนื้อหา</button>'
+    +'</span><span class="thcp-cat-h" data-i18n="bg.grpContent">เนื้อหา</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<button type="button" class="ep-mini" onclick="_bgClearLive()" data-i18n="bg.reset">คืนค่า</button>'
+    +'</span><span class="thcp-cat-h" data-i18n="th.grpSet">ตั้งค่า</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'</span>';
   openPanel({mode:'custom', tone:'info', hideCancel:true, noOutsideClose:true, toggleBtn:'btnPageBg', activeBtn:'btnPageBg', bodyHtml:body, hideOk:true, onClose:_bgSelClear});
   _bgWirePalette();
 }
@@ -4643,11 +4660,15 @@ function openPricePanel(){
   var pages=document.querySelectorAll('.page'), pOpts='<option value=""'+(curPg<0?' selected':'')+' disabled>'+epEsc(t('pnl.pickPage'))+'</option>';
   for(var i=0;i<pages.length;i++){ pOpts+='<option value="'+i+'"'+(i===curPg?' selected':'')+'>'+epEsc(t('sc.pageOpt',{p:i+1}))+'</option>'; }
   var body=''
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.task">งาน</span><span class="ep-seg">'
+    +'<span class="ep-pf thcp-row">'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpTask" value="adjust" checked><span data-i18n="pr.apply">ปรับราคา</span></label>'
     +'<label><input type="radio" name="bpTask" value="set"><span data-i18n="pr.setApply">ใส่ราคา</span></label>'
-    +'</span></span>'
-    +'<span class="ep-pf"><span class="ep-flabel" data-i18n="pr.scope">ขอบเขต</span>'
+    +'</span>'
+    +'</span><span class="thcp-cat-h" data-i18n="pr.task">งาน</span></span>'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
     +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpScope" value="group"><span data-i18n="pr.oneGroup">เฉพาะกลุ่ม</span></label>'
     +'<label><input type="radio" name="bpScope" value="page"><span data-i18n="pr.onePage">เฉพาะหน้า</span></label>'
@@ -4655,24 +4676,38 @@ function openPricePanel(){
     +'</span>'
     +'<span class="ep-gwrap" style="display:none"><select class="ep-sel ep-gsel">'+gOpts+'</select></span>'
     +'<span class="ep-pwrap" style="display:none"><select class="ep-sel ep-psel">'+pOpts+'</select></span>'
-    +'</span>'
-    +'<span class="ep-pf ep-fwrap" style="display:none"><span class="ep-flabel" data-i18n="pr.fillLbl">ใส่ในช่อง</span><span class="ep-seg">'
+    +'</span><span class="thcp-cat-h" data-i18n="pr.scope">ขอบเขต</span></span>'
+    +'<span class="thcp-unit ep-fwrap" style="display:none">'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpFill" value="empty"><span data-i18n="pr.fillEmpty">เฉพาะช่องว่าง</span></label>'
     +'<label><input type="radio" name="bpFill" value="all"><span data-i18n="pr.fillAll">แทนที่ทุกช่อง</span></label>'
-    +'</span></span>'
-    /* เรียงให้อ่านเป็นประโยค: จำนวน · เพิ่ม|ลด · [ ] · บาท|% = "เพิ่ม 10 บาท" · ช่องว่างตอนเปิด (ไม่มีค่าที่ตั้งเอง) · ทั้งชุดซ่อนในโหมดใส่ราคา */
-    +'<span class="ep-pf"><span class="ep-adjwrap" style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.amtLbl">จำนวน</span><span class="ep-seg">'
+    +'</span>'
+    +'</span><span class="thcp-cat-h" data-i18n="pr.fillLbl">ใส่ในช่อง</span></span>'
+    +'</span>'
+    +'<span class="thcp-unit ep-adjwrap" style="display:contents">'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpDir" value="up" checked><span data-i18n="pr.up">เพิ่ม</span></label>'
     +'<label><input type="radio" name="bpDir" value="down"><span data-i18n="pr.down">ลด</span></label>'
     +'</span>'
-    +'<input class="ep-num ep-amt" type="text" inputmode="numeric" autocomplete="off" value="">'  /* ไม่ใช้ type=number: หมุนลูกกลิ้ง/กดลูกศรแล้วค่าเปลี่ยนเอง · กรองใน _bulkPriceCleanInput */
+    +'<input class="ep-num ep-amt" type="text" inputmode="numeric" autocomplete="off" value="">'
     +'<span class="ep-seg">'
     +'<label><input type="radio" name="bpMode" value="baht" checked><span data-i18n="pr.baht">บาท</span></label>'
     +'<label><input type="radio" name="bpMode" value="pct"><span>%</span></label>'
     +'</span>'
-    +'<label class="ep-chk"><input type="checkbox" name="bpIncl"><span data-i18n="pr.inclEmpty">รวมช่องว่าง (นับเป็น 0)</span></label>'  /* ไม่ติ๊กไว้ก่อน · ใช้ได้เฉพาะ เพิ่ม+บาท (0+X=X) — ลด/% ช่องว่างจะได้ 0 จึงปิดไว้ */
+    +'<label class="ep-chk"><input type="checkbox" name="bpIncl"><span data-i18n="pr.inclEmpty">รวมช่องว่าง (นับเป็น 0)</span></label>'
+    +'</span><span class="thcp-cat-h" data-i18n="pr.amtLbl">จำนวน</span></span>'
     +'</span>'
-    +'<span class="ep-setwrap" style="display:none;gap:6px;align-items:center"><span class="ep-flabel" data-i18n="pr.priceLbl">ราคา</span><input class="ep-num ep-price" type="text" inputmode="numeric" autocomplete="off"></span>'  /* label นอกช่อง ไม่มี placeholder — ตัวอย่างอยู่ใน .ep-preview (UI_STANDARD ข้อ 6) */
+    +'<span class="thcp-unit ep-setwrap" style="display:none">'
+    +'<span class="thcp-sep"></span>'
+    +'<span class="thcp-cat"><span class="thcp-cat-z">'
+    +'<input class="ep-num ep-price" type="text" inputmode="numeric" autocomplete="off">'
+    +'</span><span class="thcp-cat-h" data-i18n="pr.priceLbl">ราคา</span></span>'
+    +'</span>'
+    +'<span class="thcp-sep"></span>'
     +'</span>';
   openPanel({mode:'custom', tone:'info', keepOpen:true, hideCancel:true, noDocEnter:true, toggleBtn:'btnBulkPrice', activeBtn:'btnBulkPrice', noOutsideClose:true, bodyHtml:body, okKey:'pr.apply', cancelKey:'pnl.cancel', onRelang:_bulkPriceSync,  /* สร้างตัวเลือกกลุ่ม/หน้าใหม่ คงค่าที่เลือก (ตาม element) */
     onCustom:_bulkPricePreview,

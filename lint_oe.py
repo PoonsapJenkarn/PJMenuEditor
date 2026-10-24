@@ -2268,6 +2268,124 @@ def main():
     if not _msn or 'padding-right' not in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ต้อง padding-right (เว้นที่ให้ปุ่ม × — cursor ไม่ชน)')
     if _msn and 'text-align:left' in _msn.group(1): errors.append('lint #100: หมายเหตุโหมดแก้ห้าม text-align:left (ต้อง WYSIWYG ชิดขวาเหมือนตอนพิมพ์)')
 
+    # ---- 101) panel มาตรฐานเดียวกับต้นแบบธีม: ฟอนต์ control 16px + ปรับราคาแบ่งกลุ่ม thcp (ผู้ใช้ 24 ต.ค. 2026) ----
+    for _sel,_rule in [('.ep-seg label','.ep-seg label{'),('.ep-num','.ep-num{'),('.ep-chk','.ep-chk{'),('.ep-label','.ep-label{'),('.ep-input','.ep-input{'),('.ep-suffix','.ep-suffix{')]:
+        _m101=re.search(re.escape(_rule)+r'([^}]*)\}', _css)
+        if not _m101:
+            errors.append('lint #101: ไม่พบ CSS rule '+_sel)
+        elif 'font-size:16px' not in _m101.group(1):
+            errors.append('lint #101: '+_sel+' ต้อง font-size:16px (control tier เท่ากันทุก panel แบบต้นแบบธีม)')
+    if '#edpanel .thcp-unit{display:contents' not in _css:
+        errors.append('lint #101: ไม่พบ .thcp-unit{display:contents} (หน่วยกลุ่มซ่อน-แสดงพร้อมเส้นคั่น)')
+    _pp101=re.search(r'function openPricePanel\(\)\{[\s\S]*?openPanel\(\{mode:', txt)
+    if not _pp101:
+        errors.append('lint #101: หา openPricePanel ไม่เจอ')
+    else:
+        _ppb=_pp101.group(0)
+        for _tok in ['thcp-row','thcp-cat-z','thcp-cat-h','thcp-sep','thcp-unit']:
+            if _tok not in _ppb:
+                errors.append('lint #101: panel ปรับราคาต้องใช้โครง '+_tok+' (แบ่งกลุ่มแบบต้นแบบธีม)')
+        for _lbl in ['pr.task','pr.scope','pr.fillLbl','pr.amtLbl','pr.priceLbl']:
+            if ('thcp-cat-h" data-i18n="'+_lbl) not in _ppb:
+                errors.append('lint #101: ชื่อกลุ่ม '+_lbl+' ต้องอยู่ใน .thcp-cat-h (ใต้ control)')
+        if 'ep-flabel' in _ppb:
+            errors.append('lint #101: panel ปรับราคาห้ามใช้ ep-flabel แล้ว (ย้ายชื่อกลุ่มไป thcp-cat-h ใต้ control)')
+    # ---- 101b) control tier ห้ามหนา (<=500) + ปรับราคามีเส้นปิดท้ายกลุ่มสุดท้าย (ผู้ใช้ 24 ต.ค. 2026) ----
+    for _sel2,_rule2 in [('.ep-seg label','.ep-seg label{'),('.ep-num','.ep-num{'),('.ep-chk','.ep-chk{'),('.ep-label','.ep-label{'),('.ep-suffix','.ep-suffix{')]:
+        _mw=re.search(re.escape(_rule2)+r'([^}]*)\}', _css)
+        if _mw:
+            _wm=re.search(r'font-weight:(\d+)', _mw.group(1))
+            if _wm and int(_wm.group(1))>500:
+                errors.append('lint #101: '+_sel2+' ห้าม font-weight>500 (ตัวหนาเกิน — ต้องเสมอต้นแบบธีมที่ไม่หนา)')
+    if _pp101:
+        _ppb2=_pp101.group(0)
+        if _ppb2.rfind('thcp-sep') < _ppb2.rfind('class="thcp-cat"'):
+            errors.append('lint #101: panel ปรับราคาต้องมีเส้นคั่นปิดท้าย (thcp-sep หลังกลุ่มสุดท้าย — ปิดกลุ่มสองฝั่งแบบต้นแบบธีม)')
+
+    # ---- 101c) panel พื้นหลังใช้โครงกลุ่มต้นแบบธีม + ห้ามเส้นคั่นนำหน้ากลุ่มแรก + i18n ครบ (ผู้ใช้ 24 ต.ค. 2026) ----
+    _bg101=re.search(r'function openPageBgPanel\(\)\{[\s\S]*?openPanel\(\{mode:', txt)
+    if not _bg101:
+        errors.append('lint #101: หา openPageBgPanel ไม่เจอ')
+    else:
+        _bgb=_bg101.group(0)
+        for _tok in ['thcp-row','thcp-cat-z','thcp-cat-h','thcp-sep','thcp-grp']:
+            if _tok not in _bgb:
+                errors.append('lint #101: panel พื้นหลังต้องใช้โครง '+_tok+' (แบ่งกลุ่มแบบต้นแบบธีม)')
+        for _lbl in ['bg.scope','bg.grpColorImg','bg.grpDim','bg.grpContent','th.grpSet']:
+            if ('thcp-cat-h" data-i18n="'+_lbl) not in _bgb:
+                errors.append('lint #101: ชื่อกลุ่ม '+_lbl+' ต้องอยู่ใน .thcp-cat-h (panel พื้นหลัง)')
+        if 'ep-flabel' in _bgb:
+            errors.append('lint #101: panel พื้นหลังห้ามใช้ ep-flabel แล้ว (ย้ายชื่อไป thcp-gl/thcp-cat-h)')
+        if _bgb.rfind('thcp-sep') < _bgb.rfind('class="thcp-cat"'):
+            errors.append('lint #101: panel พื้นหลังต้องมีเส้นคั่นปิดท้ายกลุ่มสุดท้าย')
+        for _idk in ['bgCpApply','bgCpCurrent','bgCpCaret','bgCpPop','bgCpGrid','bgCpCustom','bgHex','bgCpAdd','bgCpPaint','bgCpPick','bgRangeWrap','bgRange','btnPgContentHide']:
+            if _idk not in _bgb:
+                errors.append('lint #101: panel พื้นหลังต้องคง id '+_idk+' (JS ผูกด้วย id)')
+    # ห้ามเส้นคั่นนำหน้ากลุ่มแรก ทั้ง price และ bg (ชิดขอบ panel อยู่แล้ว · ผู้ใช้ 24 ต.ค. 2026)
+    for _nm,_m in [('ปรับราคา',_pp101),('พื้นหลัง',_bg101)]:
+        if _m:
+            _b=_m.group(0); _ir=_b.find('thcp-row')
+            if _ir>=0:
+                _ic=_b.find('thcp-cat',_ir); _is=_b.find('thcp-sep',_ir)
+                if _is>=0 and _ic>=0 and _is<_ic:
+                    errors.append('lint #101: panel '+_nm+' ห้ามมีเส้นคั่นนำหน้ากลุ่มแรก (ชิดขอบ panel อยู่แล้ว)')
+    # needScope ไม่โชว์เป็นข้อความ preview (ลอยเดี่ยว ผู้ใช้ไม่เอา · ปุ่มที่ปิดอยู่คือ signifier แล้ว)
+    _mp=re.search(r'var err=_bulkPriceCheck\(v\);\s*\n\s*if\(err\)\{([^\n]*)\}', txt)
+    if _mp and "needScope" not in _mp.group(1):
+        errors.append('lint #101: preview ปรับราคาต้องซ่อนข้อความ needScope (โชว์ค่าว่างแทน — ไม่ลอยเดี่ยว)')
+    # i18n ครบ 4 key กลุ่มใหม่ (TH+EN = 2 ครั้ง)
+    for _k in ['bg.grpColorImg','bg.grpDim','bg.grpContent','bg.menuShort']:
+        if txt.count("'"+_k+"':'")<2:
+            errors.append('lint #101: i18n key '+_k+' ต้องมีครบทั้ง TH+EN')
+
+    # ---- 102) ตีม ขาว-ดำ (bw) ต้องล้างขอบตัวอักษรหัวกลุ่ม (text-shadow:none) — ตัวขาวบนพื้นดำ ขอบขาวทำให้เป็นก้อนทึบ (ผู้ใช้ 24 ต.ค. 2026) ----
+    _m102=re.search(r':root\[data-theme="bw"\] \.sec-h \.sechead \*\{([^}]*)\}', _css)
+    if not _m102:
+        errors.append('lint #102: ไม่พบ bw override .sec-h .sechead *')
+    elif 'text-shadow:none' not in _m102.group(1):
+        errors.append('lint #102: ตีม bw ต้องมี text-shadow:none !important (เอาขอบขาวรอบหัวกลุ่มออก — กันก้อนขาวทึบบนพื้นดำ)')
+
+    # ---- 103) ปุ่มเครื่องมือใน panel (.ep-mini / #bgFit) ต้องบาง: font-weight:400 + สีไม่เข้มเกิน (#605e5c เท่าป้าย ไม่ใช่ #3a3937 ที่ตาอ่านเป็นหนา) ทุก panel (ผู้ใช้ 24 ต.ค. 2026) ----
+    for _m103 in re.finditer(r'\.ep-mini\{([^}]*)\}', _css):
+        _bd=_m103.group(1)
+        if 'font-weight:400' not in _bd:
+            errors.append('lint #103: .ep-mini ต้องมี font-weight:400 (ปุ่ม panel บาง ไม่หนา)')
+        if 'color:#3a3937' in _bd:
+            errors.append('lint #103: .ep-mini ห้ามสีเข้ม #3a3937 (ตาอ่านเป็นหนา — ใช้ #605e5c เท่าป้าย)')
+    _mbgf=re.search(r'#edpanel #bgFit\{([^}]*)\}', _css)
+    if _mbgf:
+        if 'font-weight:400' not in _mbgf.group(1):
+            errors.append('lint #103: #bgFit ต้องมี font-weight:400')
+        if 'color:#3a3937' in _mbgf.group(1):
+            errors.append('lint #103: #bgFit ห้ามสีเข้ม #3a3937 (ใช้ #605e5c)')
+
+    # ---- 104) ปุ่ม action/ยืนยันใน panel (.ep-ok/.ep-cancel/.ep-clearonly/.cp-dlg-ok/.ep-goset) ต้องบาง font-weight:400 เท่าปุ่มอื่นใน panel — ไม่มี 600 (ผู้ใช้ 24 ต.ค. 2026: ปุ่มปรับราคายังหนา ข้ามไป) ----
+    for _sel104,_rule104 in [('.ep-ok','#edpanel .ep-ok{'),('.ep-cancel','#edpanel .ep-cancel{'),('.ep-clearonly','#edpanel .ep-clearonly{'),('.cp-dlg-ok','#edpanel .cp-dlg-ok{'),('.ep-goset','#edpanel .ep-goset{')]:
+        _m104=re.search(re.escape(_rule104)+r'([^}]*)\}', _css)
+        if not _m104:
+            errors.append('lint #104: ไม่พบ CSS rule '+_sel104)
+        else:
+            _b104=_m104.group(1)
+            if 'font-weight:400' not in _b104:
+                errors.append('lint #104: '+_sel104+' ต้อง font-weight:400 (ปุ่ม panel บาง ไม่หนา)')
+            if 'font-weight:600' in _b104 or 'font-weight:500' in _b104:
+                errors.append('lint #104: '+_sel104+' ห้าม font-weight 500/600 (ปุ่ม panel ต้องบางเท่ากันหมด)')
+
+    # ---- 105) ปุ่ม action ระดับ toolbar ใน panel (.ep-ok/.ep-cancel/.ep-clearonly) ต้อง font-size:16px เท่า .ep-mini (ผู้ใช้ 24 ต.ค. 2026: ปุ่มปรับราคา 14px ไม่เท่าปุ่มอื่น) · cp-dlg/cp-ok (กล่องสี) + ep-goset (inline preview) คนละบริบท ไม่รวม ----
+    for _sel105,_rule105 in [('.ep-ok','#edpanel .ep-ok{'),('.ep-cancel','#edpanel .ep-cancel{'),('.ep-clearonly','#edpanel .ep-clearonly{')]:
+        _m105=re.search(re.escape(_rule105)+r'([^}]*)\}', _css)
+        if not _m105:
+            errors.append('lint #105: ไม่พบ CSS rule '+_sel105)
+        elif 'font-size:16px' not in _m105.group(1):
+            errors.append('lint #105: '+_sel105+' ต้อง font-size:16px (ปุ่ม toolbar ใน panel เท่า .ep-mini)')
+
+    # ---- 106) ปุ่ม action (.ep-btns) ต้อง align-self:flex-start — อยู่ระดับแถว control ไม่ลอยกลางความสูงรวมของ panel (panel 2 ชั้น: control บน + label ล่าง) · ผู้ใช้เลือก align แถว control 24 ต.ค. 2026 ----
+    _m106=re.search(r'#edpanel \.ep-btns\{([^}]*)\}', _css)
+    if not _m106:
+        errors.append('lint #106: ไม่พบ #edpanel .ep-btns')
+    elif 'align-self:flex-start' not in _m106.group(1):
+        errors.append('lint #106: .ep-btns ต้อง align-self:flex-start (ปุ่ม action ตรงแถว control ไม่ลอยกลางความสูง panel)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

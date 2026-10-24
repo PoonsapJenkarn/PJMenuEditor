@@ -2386,6 +2386,23 @@ def main():
     elif 'align-self:flex-start' not in _m106.group(1):
         errors.append('lint #106: .ep-btns ต้อง align-self:flex-start (ปุ่ม action ตรงแถว control ไม่ลอยกลางความสูง panel)')
 
+    # ---- 107) พรีวิวเพิ่มหน้า (pnl.addPagePreview) ต้องสั้น: บอกเฉพาะผลรวม {sum} ไม่เล่าย้อน 'ตอนนี้/เพิ่ม/ลูกศร' (ผู้ใช้ 24 ต.ค. 2026: ตอนนี้ X/เพิ่ม Y ซ้ำกับที่เห็นบนจอแล้ว) ----
+    _m107=re.findall(r"'pnl\.addPagePreview':'([^']*)'", txt)
+    if not _m107:
+        errors.append('lint #107: ไม่พบ pnl.addPagePreview')
+    for _v107 in _m107:
+        if '{sum}' not in _v107:
+            errors.append('lint #107: addPagePreview ต้องมี {sum} (ผลรวมสุดท้าย)')
+        if '→' in _v107 or 'ตอนนี้ {total}' in _v107 or '{total} now' in _v107:
+            errors.append('lint #107: addPagePreview ต้องไม่เล่าย้อน (ห้าม → / ตอนนี้ {total} / {total} now) — บอกเฉพาะผลรวม')
+
+    # ---- 108) บรรทัดพรีวิวใน panel (.ep-preview) ต้อง font-size:16px (ผู้ใช้ 24 ต.ค. 2026: 'รวมเป็น N หน้า' เป็น 16) ----
+    _m108=re.search(r'#edpanel \.ep-preview\{([^}]*)\}', _css)
+    if not _m108:
+        errors.append('lint #108: ไม่พบ #edpanel .ep-preview')
+    elif 'font-size:16px' not in _m108.group(1):
+        errors.append('lint #108: .ep-preview ต้อง font-size:16px')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

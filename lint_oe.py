@@ -2158,10 +2158,12 @@ def main():
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
     if 'data-theme="dark-gold"] .crab' not in _css:
         _e94.append('ธีมเข้มไม่ override สีตัวหนังสือกล่องโน้ต (.crab อ่านไม่ออกบนพื้นเข้ม)')
-    if 'ep-theme-sel' not in txt:
-        _e94.append('preset ธีมต้องเป็น dropdown (.ep-theme-sel)')
-    if 'onchange="_themePick(this.value)"' not in txt:
-        _e94.append('dropdown ธีมไม่ได้ผูก _themePick')
+    if 'function _themeDdHtml(' not in txt:
+        _e94.append('preset ธีมต้องเป็น custom dropdown (_themeDdHtml)')
+    if 'onmouseenter="_themeDdPreview(' not in txt:
+        _e94.append('dropdown ธีมต้อง live preview ตอนชี้ (_themeDdPreview)')
+    if 'onclick="_themeDdCommit(' not in txt:
+        _e94.append('dropdown ธีมต้อง commit ตอนคลิก (_themeDdCommit)')
     if '#edbar #btnTheme.on' not in _css:
         _e94.append('btnTheme ไม่มี active เขียวในแถบ (ข้อ 11)')
     for _fn94 in ('function _themeApply(','function _themeLoad(','function openThemePanel(','function _themePick('):
@@ -2172,8 +2174,8 @@ def main():
     if '_themeLoad();' not in txt: _e94.append('ไม่เรียก _themeLoad() ตอนเปิดแอป')
     for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.whiteGray','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard'):
         if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
-    _mdd94=re.search(r"ep-theme-sel[^>]*>'\s*\n?\s*\+\s*mk\('([a-z-]+)'", txt)
-    if not _mdd94 or _mdd94.group(1)!='custom': _e94.append('dropdown ธีม: กำหนดเองต้องเป็นลำดับแรก (mk custom ก่อน cream)')
+    _mdd94=re.search(r"var _THEME_ORDER=\['([a-z-]+)'", txt)
+    if not _mdd94 or _mdd94.group(1)!='custom': _e94.append('dropdown ธีม: กำหนดเองต้องเป็นลำดับแรก (_THEME_ORDER[0]==custom)')
     if ':root[data-theme="bw"] .sec-h' not in _css:
         _e94.append('ธีมขาว-ดำไม่ override สีหัวกลุ่มเป็นขาว (หัวกลุ่มพื้นดำอ่านไม่ออก)')
     if _e94: errors.append('lint #94 (ธีมสี): ' + ' · '.join(_e94))
@@ -2402,6 +2404,14 @@ def main():
         errors.append('lint #108: ไม่พบ #edpanel .ep-preview')
     elif 'font-size:16px' not in _m108.group(1):
         errors.append('lint #108: .ep-preview ต้อง font-size:16px')
+
+    # ---- 109) custom dropdown ธีม + live preview (ผู้ใช้ 24 ต.ค. 2026): ชี้/เลื่อน=ดูจริง, คลิก=ยืนยัน, Esc/นอก/ปิด=คืนเดิม ----
+    for _fn109 in ('function _themePreviewVisual(','function _themeDdHtml(','function _themeDdToggle(','function _themeDdOpen(','function _themeDdClose(','function _themeDdPreview(','function _themeDdCommit(','function _themeDdKey(','var _THEME_ORDER='):
+        if _fn109 not in txt: errors.append('lint #109: ไม่พบ '+_fn109+' (custom dropdown ธีม live preview)')
+    if '_themePreviewVisual(committed)' not in txt:
+        errors.append('lint #109: ปิด dropdown ไม่ยืนยันต้องคืนธีมเดิม (_themePreviewVisual committed)')
+    if '.ep-dd-pop' not in _css:
+        errors.append('lint #109: ไม่พบ CSS .ep-dd-pop')
 
     # ---- report ----
     print("=" * 54)

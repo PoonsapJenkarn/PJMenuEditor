@@ -137,7 +137,14 @@
 #edpanel .thcp-cat-z{display:inline-flex;gap:10px;align-items:flex-start;flex-wrap:wrap;}
 #edpanel .thcp-sep{width:1px;align-self:stretch;background:#b3b0ad;margin:0 2px;}
 #edpanel .thcp-unit{display:contents;}
-#edpanel .ep-theme-sel{min-width:150px;}
+#edpanel .ep-ddwrap{position:relative;display:inline-block;}
+#edpanel .ep-dd-trigger{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;min-width:150px;font-family:inherit;font-size:16px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;background:#fff;cursor:pointer;}
+#edpanel .ep-dd-trigger .cp-caret{color:#8a8886;}
+#edpanel .ep-dd-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:4px;min-width:170px;max-height:320px;overflow-y:auto;}
+#edpanel .ep-dd-pop.open{display:block;}
+#edpanel .ep-dd-opt{display:block;width:100%;text-align:left;font-family:inherit;font-size:16px;font-weight:400;color:#3a3937;padding:6px 10px;border:none;background:none;border-radius:5px;cursor:pointer;white-space:nowrap;}
+#edpanel .ep-dd-opt:hover,#edpanel .ep-dd-opt.hl{background:#eef7f1;color:#217346;}
+#edpanel .ep-dd-opt.sel{font-weight:500;}
 /* ปุ่มพิกเกอร์ธีม = cp-trigger/cp-current + ถาดสี cp-pop มาตรฐาน (เลิกใช้ thcp-dot · ผู้ใช้ 23 ต.ค. 2026) */
 
 /* ===== Embedded fonts (offline, OFL) — no Google CDN ===== */
@@ -4550,7 +4557,7 @@ function _themeCpRestoreOrig(){ if(_thcpOrig && _cpThemeVar){ _themePreviewVar(_
 function _themeCpCancel(){ _themeCpRestoreOrig(); var pop=document.getElementById('thcpPop'); if(pop) pop.classList.remove('open'); _thcpOrig=null; }
 function _themeMkSw(varkey,c){ var b=document.createElement('button'); b.type='button'; b.className='cp-sw'+(String(c).toUpperCase()==='#FFFFFF'?' white':''); b.style.background=c; b.title=c; b.setAttribute('data-c',c); b.addEventListener('click',function(){ _themePickSwatch(varkey,this.getAttribute('data-c')); }); return b; }
 function _themeUpdateTrigger(varkey,hex){ var el=document.querySelector('#thcpPick_'+varkey+' .cp-current'); if(el) el.style.background=hex; }
-function _themeSwatchActiveSeg(){ var _sel=document.querySelector('#edpanel .ep-theme-sel'); if(_sel) _sel.value='custom'; }
+function _themeSwatchActiveSeg(){ var c=document.getElementById('themeDdCur'); if(c){ c.setAttribute('data-i18n','th.custom'); c.textContent=t('th.custom'); } var pop=document.getElementById('themeDdPop'); if(pop){ pop.querySelectorAll('.ep-dd-opt').forEach(function(b){ b.classList.toggle('sel', b.getAttribute('data-tid')==='custom'); }); } }
 function _themePickSwatch(varkey,c){ _themePreviewVar(varkey,c); _themeUpdateTrigger(varkey,c); var hx=document.getElementById('thcpHex'); if(hx) hx.value=String(c).toUpperCase(); }
 function _themeCpFromPop(){ _themeCpRestoreOrig(); var pop=document.getElementById('thcpPop'); if(pop) pop.classList.remove('open'); if(_cpThemeVar) _themeCpOpen(_cpThemeVar); }
 function _themeSwatchOpen(varkey){
@@ -4581,12 +4588,55 @@ function _themePick(id){
   _themeRenderPanel();
   if(typeof flashStatus==='function') flashStatus('info', tk('fl.themeSet'));
 }
+/* ===== custom dropdown ธีม + live preview (ผู้ใช้ 24 ต.ค. 2026): ชี้/เลื่อน=ดูธีมจริงทันที, คลิก=ยืนยัน, Esc/คลิกนอก/ปิด=คืนธีมเดิม ===== */
+var _THEME_ORDER=['custom','cream','white-green','dark-gold','paper-brick','white-gray','bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'];
+var _THEME_KEYS={custom:'th.custom',cream:'th.cream','white-green':'th.whiteGreen','dark-gold':'th.darkGold','paper-brick':'th.paperBrick','white-gray':'th.whiteGray',bw:'th.bw','pine-cream':'th.pineCream','navy-white':'th.navyWhite','maroon-cream':'th.maroonCream',terracotta:'th.terracotta',plum:'th.plum',teal:'th.teal',mustard:'th.mustard'};
+var _themeDd=null;
+function _themeCustomVarsSaved(){ try{ return JSON.parse(localStorage.getItem(THEME_CUSTOM_KEY))||null; }catch(e){ return null; } }
+function _themeApplyInlineVars(obj){ if(!obj) return; _THEME_VARS.forEach(function(k){ if(obj[k]!=null) document.documentElement.style.setProperty('--'+k,obj[k]); }); }
+function _themePreviewVisual(id){
+  if(id==='custom'){ _themeApplyInlineVars(_themeCustomVarsSaved()); document.documentElement.setAttribute('data-theme','custom'); }
+  else { _THEME_VARS.forEach(function(k){ document.documentElement.style.removeProperty('--'+k); }); document.documentElement.setAttribute('data-theme',id); }
+}
+function _themeDdHtml(){
+  var cur=_theme, html='<span class="ep-ddwrap" id="themeDdWrap"><button type="button" class="ep-dd-trigger" id="themeDdTrigger" aria-haspopup="listbox" onclick="_themeDdToggle(event)"><span class="ep-dd-cur" id="themeDdCur" data-i18n="'+(_THEME_KEYS[cur]||'th.cream')+'">'+epEsc(t(_THEME_KEYS[cur]||'th.cream'))+'</span><span class="cp-caret">▾</span></button><div class="ep-dd-pop" id="themeDdPop" role="listbox">';
+  _THEME_ORDER.forEach(function(id){ html+='<button type="button" class="ep-dd-opt'+(cur===id?' sel':'')+'" role="option" data-tid="'+id+'" data-i18n="'+_THEME_KEYS[id]+'" onmouseenter="_themeDdPreview(\''+id+'\')" onfocus="_themeDdPreview(\''+id+'\')" onclick="_themeDdCommit(\''+id+'\')">'+epEsc(t(_THEME_KEYS[id]))+'</button>'; });
+  html+='</div></span>'; return html;
+}
+function _themeDdSetHl(id){ var pop=document.getElementById('themeDdPop'); if(!pop) return; pop.querySelectorAll('.ep-dd-opt').forEach(function(b){ b.classList.toggle('hl', b.getAttribute('data-tid')===id); }); }
+function _themeDdToggle(e){ if(e){ e.stopPropagation(); } if(_themeDd&&_themeDd.open) _themeDdClose(true); else _themeDdOpen(); }
+function _themeDdOpen(){
+  var pop=document.getElementById('themeDdPop'); if(!pop) return;
+  _themeDd={open:true, committed:_theme};
+  pop.classList.add('open');
+  _themeDdSetHl(_theme);
+  var cur=pop.querySelector('.ep-dd-opt.sel'); if(cur&&cur.scrollIntoView) cur.scrollIntoView({block:'nearest'});
+  _themeDd.onDoc=function(ev){ var w=document.getElementById('themeDdWrap'); if(w&&!w.contains(ev.target)) _themeDdClose(true); };
+  _themeDd.onKey=function(ev){ _themeDdKey(ev); };
+  document.addEventListener('mousedown',_themeDd.onDoc,true);
+  document.addEventListener('keydown',_themeDd.onKey,true);
+}
+function _themeDdDetach(){ if(!_themeDd) return; if(_themeDd.onDoc) document.removeEventListener('mousedown',_themeDd.onDoc,true); if(_themeDd.onKey) document.removeEventListener('keydown',_themeDd.onKey,true); _themeDd.onDoc=_themeDd.onKey=null; }
+function _themeDdClose(revert){
+  if(!_themeDd||!_themeDd.open){ _themeDdDetach(); return; }
+  var committed=_themeDd.committed; _themeDd.open=false; _themeDdDetach();
+  var pop=document.getElementById('themeDdPop'); if(pop) pop.classList.remove('open');
+  if(revert) _themePreviewVisual(committed);
+}
+function _themeDdPreview(id){ if(!_themeDd||!_themeDd.open) return; _themePreviewVisual(id); _themeDdSetHl(id); }
+function _themeDdCommit(id){ _themeDdDetach(); if(_themeDd) _themeDd.open=false; _themeDd=null; _themePick(id); }
+function _themeDdKey(e){
+  if(!_themeDd||!_themeDd.open) return;
+  var ids=_THEME_ORDER, pop=document.getElementById('themeDdPop');
+  var hl=pop?pop.querySelector('.ep-dd-opt.hl'):null, ci=hl?ids.indexOf(hl.getAttribute('data-tid')):ids.indexOf(_themeDd.committed);
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); var ni=ci+(e.key==='ArrowDown'?1:-1); if(ni<0)ni=ids.length-1; if(ni>=ids.length)ni=0; _themeDdPreview(ids[ni]); var el=pop.querySelector('.ep-dd-opt.hl'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); }
+  else if(e.key==='Enter'){ e.preventDefault(); if(hl) _themeDdCommit(hl.getAttribute('data-tid')); }
+  else if(e.key==='Escape'){ e.preventDefault(); _themeDdClose(true); }
+  else if(e.key==='Tab'){ _themeDdClose(true); }
+}
 function _themeRenderPanel(){
   var cur=_theme;
-  function mk(id,key){ return '<option value="'+id+'"'+(cur===id?' selected':'')+' data-i18n="'+key+'">'+epEsc(t(key))+'</option>'; }
-  var body='<span class="ep-pf thcp-head"><span class="ep-flabel" data-i18n="th.pick">'+epEsc(t('th.pick'))+'</span><select class="ep-sel ep-theme-sel" onchange="_themePick(this.value)">'
-    + mk('custom','th.custom') + mk('cream','th.cream') + mk('white-green','th.whiteGreen') + mk('dark-gold','th.darkGold') + mk('paper-brick','th.paperBrick') + mk('white-gray','th.whiteGray') + mk('bw','th.bw') + mk('pine-cream','th.pineCream') + mk('navy-white','th.navyWhite') + mk('maroon-cream','th.maroonCream') + mk('terracotta','th.terracotta') + mk('plum','th.plum') + mk('teal','th.teal') + mk('mustard','th.mustard')
-    + '</select></span>';
+  var body='<span class="ep-pf thcp-head"><span class="ep-flabel" data-i18n="th.pick">'+epEsc(t('th.pick'))+'</span>'+_themeDdHtml()+'</span>';
   if(cur==='custom'){
     body += '<span class="ep-pf thcp-row">'
       + '<span class="thcp-sep"></span>'
@@ -4601,7 +4651,7 @@ function _themeRenderPanel(){
       + '<div class="cp-pop" id="thcpPop"><div class="cp-sec-label" data-i18n="cp.swatchLbl">'+epEsc(t('cp.swatchLbl'))+'</div><div class="cp-custom" id="thcpGrid"></div><div class="cp-sec-label" data-i18n="cp.customLbl">'+epEsc(t('cp.customLbl'))+'</div><div class="cp-custom" id="thcpCustom"></div><div class="cp-foot"><input type="text" id="thcpHex" maxlength="7" spellcheck="false" data-i18n-title="ttl.hex" title="พิมพ์รหัสสี HEX"><button type="button" class="cp-add" onclick="_themeCpFromPop()" data-i18n="cp.addCustom">'+epEsc(t('cp.addCustom'))+'</button><div class="cp-actions"><button type="button" class="cp-ok" onclick="_themeCpCommit()" data-i18n="cp.ok">'+epEsc(t('cp.ok'))+'</button><button type="button" class="cp-cancel" onclick="_themeCpCancel()" data-i18n="cp.cancel">'+epEsc(t('cp.cancel'))+'</button></div></div></div>'
       + '</span>';
   }
-  openPanel({mode:'custom', tone:'info', hideCancel:true, noOutsideClose:true, toggleBtn:'btnTheme', activeBtn:'btnTheme', bodyHtml:body, hideOk:true, onClose:function(){ if(typeof _cpDlgClose==='function') _cpDlgClose(); }});
+  openPanel({mode:'custom', tone:'info', hideCancel:true, noOutsideClose:true, toggleBtn:'btnTheme', activeBtn:'btnTheme', bodyHtml:body, hideOk:true, onRelang:function(){ _themeRenderPanel(); }, onClose:function(){ if(typeof _cpDlgClose==='function') _cpDlgClose(); _themeDdClose(true); }});
 }
 function openThemePanel(){
   var btn=document.getElementById('btnTheme');

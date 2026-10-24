@@ -2413,6 +2413,28 @@ def main():
     if '.ep-dd-pop' not in _css:
         errors.append('lint #109: ไม่พบ CSS .ep-dd-pop')
 
+    # ---- 110) เส้นคั่นใต้ส่วนหัว (.rule): สีตามตีม var(--line-dot) ไม่ฝัง #c9a227 + ซ่อนได้จอ+พิมพ์ (html[data-rulehide], ติดไปกับไฟล์) + ปุ่ม btnRuleHide แท็บหน้า active เขียว (ผู้ใช้ 24 ต.ค. 2026) ----
+    _mr110=re.search(r'\.rule\{([^}]*)\}', _css)
+    if not _mr110:
+        errors.append('lint #110: ไม่พบ .rule')
+    else:
+        if 'var(--line-dot)' not in _mr110.group(1):
+            errors.append('lint #110: .rule ต้องใช้ var(--line-dot) (สีตามตีม)')
+        if '#c9a227' in _mr110.group(1):
+            errors.append('lint #110: .rule ห้ามฝังสีทอง #c9a227 (ต้องตามตีม)')
+    if 'html[data-rulehide] .rule' not in _css:
+        errors.append('lint #110: ไม่พบ html[data-rulehide] .rule (ซ่อนเส้น จอ+พิมพ์)')
+    for _f110 in ('function toggleRuleHide(','function _ruleHideSync('):
+        if _f110 not in txt: errors.append('lint #110: ไม่พบ '+_f110)
+    if 'id="btnRuleHide"' not in txt:
+        errors.append('lint #110: ไม่พบปุ่ม btnRuleHide')
+    if '#edbar #btnRuleHide.on' not in _css:
+        errors.append('lint #110: btnRuleHide ไม่มี active เขียว (ข้อ 11)')
+    if '_ruleHideSync();' not in txt:
+        errors.append('lint #110: ไม่เรียก _ruleHideSync() ตอนเปิดแอป')
+    for _k110 in ('btn.ruleHide','btn.ruleShow','grp.rule','ttl.ruleHide'):
+        if txt.count("'"+_k110+"':'")<2: errors.append('lint #110: i18n '+_k110+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

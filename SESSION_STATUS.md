@@ -1,36 +1,34 @@
 # SESSION STATUS - OE Isan Menu Editor
 
-ปรับปรุงล่าสุด: 2026-10-24 13:00 (+07)
+ปรับปรุงล่าสุด: 2026-10-24 13:54 (+07)
 
-## เสร็จรอบนี้ (ยังไม่ commit) - custom dropdown ธีม + live preview
-- เปลี่ยนตัวเลือกธีมจาก native <select> เป็น custom dropdown (listbox เอง) เพราะ native select เลื่อน/ชี้ในลิสต์ที่เปิดอยู่ไม่ยิง event = preview ตอนเลื่อนไม่ได้ (ข้อจำกัดเบราว์เซอร์)
-- พฤติกรรม: ชี้/เลื่อน(ลูกศร)=ดูธีมจริงบนหน้าทันที (ไม่ persist) · คลิก/Enter=ยืนยัน(commit+บันทึก) · Esc/คลิกนอก/ปิด panel=คืนธีมเดิม
-- JS ใหม่: _themePreviewVisual (ภาพอย่างเดียว ไม่แตะ _theme) + _themeDdHtml/Toggle/Open/Close/Detach/Preview/Commit/Key/SetHl · _THEME_ORDER (custom แรกเสมอ) + _THEME_KEYS
-- preview รองรับทั้ง preset (ถอด inline vars) และ custom (ใส่ inline vars จาก localStorage กลับ) · revert = _themePreviewVisual(committed)
-- keyboard: ArrowUp/Down เลื่อน+preview, Enter=commit, Esc/Tab=ปิด+คืนเดิม · a11y role=listbox/option
-- เก็บ document listener (mousedown/keydown capture) ตอนเปิด ถอดตอนปิด (กัน leak) · commit ตั้ง _themeDd=null ก่อนเรียก _themePick เพื่อไม่ให้ onClose ของ panel revert ธีมที่เพิ่ง commit
-- แก้ _themeSwatchActiveSeg: เดิม set select.value='custom' -> เปลี่ยนเป็นอัปเดต trigger label (#themeDdCur) + mark option custom (เพราะ select ไม่มีแล้ว)
-- panel theme เพิ่ม onRelang:_themeRenderPanel (เปลี่ยนภาษา = rebuild ทั้ง dropdown) + onClose เพิ่ม _themeDdClose(true)
-- CSS: .ep-ddwrap/.ep-dd-trigger/.ep-dd-pop/.ep-dd-opt (แทน .ep-theme-sel ที่ถอดออก) · hover/hl เขียว #217346
-- ลบ dead: .ep-theme-sel CSS rule + ฟังก์ชัน mk() + native select markup + query .ep-theme-sel (เหลือ ep-theme-sel 1 ตัวใน comment เก่าเท่านั้น ไม่ใช่โค้ดทำงาน)
-- lint: อัปเดต #94 (3 จุดที่ผูกกับ select -> ตรวจ _themeDdHtml/_themeDdPreview/_themeDdCommit + _THEME_ORDER custom-first) + เพิ่ม #109 (ล็อกฟังก์ชัน dropdown+preview+revert+CSS)
-- lint PASS (rc=0), เขียนดิสก์ (html 8,137,370 bytes)
+## เสร็จรอบนี้ (ยังไม่ commit) - เส้นคั่นใต้ส่วนหัว: สีตามตีม + ซ่อนได้
+### สีตามตีม
+- .rule เดิมสีทองฝังตาย #c9a227 -> ใช้ var(--line-dot) (token สีเส้นของแต่ละตีม เส้นจุด .ln ใช้อยู่แล้ว) -> เปลี่ยนตามตีมครบ 13 ตีม + custom อัตโนมัติ ไม่ต้องเพิ่มค่าทีละตีม
+- ผลข้างเคียง: ตีมครีมเส้นเปลี่ยนจากทอง -> เบจอ่อน #cdbfa8 (เข้าชุดตีม) · ตีมเข้ม/เย็น (ขาว-ดำ/น้ำเงิน/เขียวทะเล) เส้นเข้าโทนแล้ว ไม่ลอย
+### ซ่อนได้ (จอ + พิมพ์ + ติดไปกับไฟล์)
+- โมเดล data-rulehide บน <html> (เลียน data-theme) -> CSS html[data-rulehide] .rule{display:none !important} ไม่มี @media = มีผลทั้งจอและพิมพ์
+- save ทั้ง 2 แบบ (buildEditorHtml/buildMenuHtml) clone documentElement -> attribute ติดไปกับไฟล์ที่เซฟ -> เมนูที่เซฟก็ซ่อนเส้นตอนพิมพ์
+- ไม่ใช้ localStorage (ต่างจาก pgcontenthide) - สถานะเป็นของเอกสาร เก็บไปกับไฟล์ ไม่ใช่ global
+- ปุ่ม btnRuleHide แท็บ หน้า กลุ่มใหม่ 'เส้นคั่น' (ต่อจากกลุ่มธีม) · toggle ซ่อน<->แสดง สลับ label (btn.ruleHide/ruleShow) · active = เขียว #217346 (เพิ่มเข้า list 3 selector ตามข้อ 11)
+- toggleRuleHide() + _ruleHideSync() · เรียก _ruleHideSync() ตอนเปิดแอป (ต่อจาก _themeLoad) sync ปุ่มกับสถานะไฟล์ · markDirty เมื่อ toggle
+- i18n ครบ TH+EN (btn.ruleHide/ruleShow/grp.rule/ttl.ruleHide)
+- lint #110 ล็อก: var(--line-dot) + ห้าม #c9a227 + html[data-rulehide] + 2 ฟังก์ชัน + ปุ่ม + active เขียว + startup call + i18n ครบ
+- lint PASS (rc=0), เขียนดิสก์ (html 8,138,790 bytes)
 
-## รอผู้ใช้ทดสอบ (F5 ก่อน)
-1. แท็บ หน้า > ธีม > คลิก dropdown -> ชี้/เลื่อนเมาส์แต่ละธีม = หน้าเมนูเปลี่ยนตามทันที (preview)
-2. คลิกธีม = ยืนยัน (ค้างธีมนั้น) · กด Esc หรือคลิกนอก = เด้งกลับธีมเดิม (ไม่ค้างธีมที่แค่ชี้)
-3. ลูกศรขึ้น-ลง = เลื่อน+preview, Enter = ยืนยัน
-4. เลือก กำหนดเอง = เข้าโหมดแก้ 9 โซน (เหมือนเดิม) · แก้สีโซน -> trigger โชว์ "กำหนดเอง"
-5. custom อยู่บนสุดของลิสต์เสมอ
+## รอผู้ใช้ทดสอบ (F5)
+1. แท็บ หน้า > เลื่อนธีม (dropdown) -> เส้นคั่นเปลี่ยนสีตามตีมทุกตีม (ไม่ใช่ทองตายตัวแล้ว)
+2. แท็บ หน้า > กลุ่ม 'เส้นคั่น' > ปุ่ม 'ซ่อนเส้นคั่น' -> เส้นหาย ปุ่มเขียว label เป็น 'แสดงเส้นคั่น'
+3. ลองพิมพ์ (Ctrl+P) ตอนซ่อน -> เส้นต้องหายในตัวอย่างพิมพ์ด้วย
+4. Save Menu ตอนซ่อน -> เปิดไฟล์เมนูที่เซฟ เส้นต้องยังซ่อน (ติดไปกับไฟล์)
 
 ## ค้างถัดไป
-- comment เก่าใน CSS ยังมีคำ .ep-theme-sel (cosmetic เท่านั้น) - เก็บกวาดได้ถ้าต้องการ
 - contrast .ep-preview #6b7280 = 4.42 ยังตก WCAG 4.5
 - ปุ่มยืนยัน ปรับราคา แยกโซนด้วยเส้นคั่น? · ตัวคั่น สี · รูป รอเลือกแบบ · popup เล็ก
 
 ## commit ที่จะใช้ (ผู้ใช้รันเองที่ C:\OE)
 git add -A
-git commit -m "feat: custom dropdown ธีม + live preview (ชี้=ดูจริง คลิก=ยืนยัน Esc/นอก=คืนเดิม) + lint #94/#109"
+git commit -m "feat: เส้นคั่นใต้ส่วนหัวสีตามตีม (var --line-dot) + ปุ่มซ่อนเส้น จอ+พิมพ์+ติดไฟล์ (btnRuleHide แท็บหน้า) + lint #110"
 git push
 
-HEAD ก่อนหน้า: a9ddd6f
+HEAD ก่อนหน้า: c387b4b

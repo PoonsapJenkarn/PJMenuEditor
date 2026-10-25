@@ -1,36 +1,44 @@
 # SESSION STATUS - OE Isan Menu Editor
 
-ปรับปรุงล่าสุด: 2026-10-25 18:45 (+07)
+ปรับปรุงล่าสุด: 2026-10-25 21:15 (+07)
 
-## เสร็จรอบนี้ (ยังไม่ commit) - เส้นกรอบปรับความหนา+แบบเส้นได้ (Theme Checkpoint 2)
-- .crab (กล่องโน้ต): border -> var(--note-bw,1.5px) var(--note-bs,solid) var(--note-bd) · คงสีตีมเดิม
-- .sec (กล่องกลุ่มเมนู): border -> var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd)
-- .sec-h (เส้นใต้หัวกลุ่ม): border-bottom -> var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd) = คุมด้วย grp-bw/bs ร่วมกับกล่องกลุ่ม (เข้าชุดกัน)
-- กลุ่มใหม่ "ขอบกล่อง" ในพาเนลธีม โผล่เสมอ (ไม่เฉพาะตีม custom): body += _themeBorderGroupHtml() หลัง dropdown head
-  - กล่องโน้ต: หนา (dropdown 0.5-3px) + แบบ (ทึบ/ประ/จุด/ไม่มี)
-  - กล่องกลุ่ม: หนา + แบบ
-- เก็บเป็น inline CSS var บน <html> (--note-bw/bs, --grp-bw/bs) อิสระจากตีม: _themeApply ลบแค่ _THEME_VARS (9 สี) ไม่แตะ border vars -> สลับตีมไม่รีเซ็ต · clone documentElement จับ inline style -> ติดไฟล์+พิมพ์
-  - ไม่ใช้ localStorage (เป็น document setting แบบ data-rulehide) · default ผ่าน var() fallback · markDirty เมื่อเปลี่ยน
-- native select onchange = apply ทันที (live) · อ่านค่าปัจจุบันจาก documentElement.style ตอน render panel = sync เสมอ
-- i18n ครบ TH+EN (th.bw/bs/grpNoteEdge/grpGrpEdge/bsSolid/bsDashed/bsDotted/bsNone)
-- lint #112 ล็อก: .crab/.sec/.sec-h ใช้ var(bw/bs) + ฟังก์ชัน + panel insert + i18n ครบ
-- lint PASS (rc=0), เขียนดิสก์ (html 8,141,552 bytes)
+## เสร็จรอบนี้ (ยังไม่ commit) - รวม tool เส้น/ขอบ เป็นพาเนลเดียว + แก้บั๊ก key ชน
+### แก้บั๊ก key ชน (สำคัญ)
+- th.bw/th.bs (ที่ใช้เป็น หนา/แบบ ของขอบกล่อง) ไปชนกับ th.bw ชื่อตีม "ขาว-ดำ" -> ป้ายขึ้น "ขาว-ดำ" แทน "หนา"
+- แก้: เปลี่ยน key ขอบเป็น th.edgeW (หนา/Width) + th.edgeS (แบบ/Style) · th.bw คงเป็นชื่อตีมอย่างเดียว
+- (lint #112 เดิมจับไม่เจอเพราะนับ key ที่ชนกันเอง - แก้ check แล้ว)
+
+### รวมเป็นพาเนลเดียว "เส้น·ขอบ" ในแท็บหน้า
+- ถอดกลุ่ม "ขอบกล่อง" ออกจากพาเนลธีม (ลบ _themeBorderGroupHtml + body += ...) เพราะเป็น global ไม่ผูกตีม อยู่ในธีมแล้วสับสน
+- ถอดปุ่ม "ซ่อนเส้นคั่น" (btnRuleHide) ออกจากริบบอน
+- สร้างปุ่มใหม่ btnLineEdge "เส้น·ขอบ" ในแท็บหน้า (แทนตำแหน่ง btnRuleHide เดิม) เปิดพาเนลรวม
+- _lineEdgeRenderPanel + openLineEdgePanel: พาเนลรวม 3 กลุ่มใน thcp-row เดียว
+  - เส้นคั่น: toggle ซ่อน/แสดง (btnRuleHide ย้ายมาอยู่ในพาเนล เป็น ep-mini.on เขียว)
+  - ขอบกล่องโน้ต: หนา (th.edgeW) + แบบ (th.edgeS)
+  - ขอบกล่องกลุ่ม: หนา + แบบ
+- active-green สลับ btnRuleHide -> btnLineEdge (3 selector ใน #edbar)
+- _ruleHideSync เพิ่ม else b.textContent (ปุ่มในพาเนลไม่มี span)
+- i18n ใหม่ TH+EN: btn.lineEdge/grp.lineEdge/ttl.lineEdge · เปลี่ยน th.bw/bs -> th.edgeW/edgeS
+- lint #110 ปรับ: ตรวจ btnLineEdge active เขียว + openLineEdgePanel + btnLineEdge exist
+- lint #112 ปรับ: _lineEdgeRenderPanel + note-bw/grp-bw ในพาเนล + toggleRuleHide ในพาเนล + i18n th.edgeW/edgeS
+- lint PASS (rc=0), เขียนดิสก์ (html 8,142,810 bytes)
 
 ## รอผู้ใช้ทดสอบ (F5)
-1. แท็บ หน้า > ธีม: มีกลุ่ม "ขอบกล่อง" โผล่เสมอ (ทั้งตีมสำเร็จรูปและ custom)
-2. เปลี่ยน หนา/แบบ ของกล่องโน้ต -> กรอบกล่อง * ทางร้านไม่มีเมนูปู เปลี่ยนทันที
-3. เปลี่ยน หนา/แบบ ของกล่องกลุ่ม -> กรอบกล่องเมนูหมู/เนื้อ + เส้นใต้หัวกลุ่ม เปลี่ยนพร้อมกัน
-4. สลับตีม (dropdown) -> ความหนา/แบบ ไม่รีเซ็ต (คงค่าที่ตั้ง) · สีกรอบเปลี่ยนตามตีม
-5. เลือกแบบ "ไม่มี" -> กรอบหาย
+1. แท็บ หน้า: ปุ่ม "เส้น·ขอบ" (แทน "ซ่อนเส้นคั่น" เดิม) · พาเนลธีมไม่มีกลุ่มขอบกล่องแล้ว
+2. กดปุ่ม "เส้น·ขอบ" -> พาเนลรวม: toggle ซ่อนเส้นคั่น + ขอบกล่องโน้ต(หนา/แบบ) + ขอบกล่องกลุ่ม(หนา/แบบ)
+3. ป้าย dropdown ความหนาต้องขึ้น "หนา" (ไม่ใช่ "ขาว-ดำ" แล้ว)
+4. toggle ซ่อนเส้นคั่น -> เส้นคั่นใต้ส่วนหัวหาย ปุ่มเขียว label เป็น "แสดงเส้นคั่น"
+5. ปุ่ม "เส้น·ขอบ" เขียวตอนเปิดพาเนล
+6. สลับภาษา TH/EN ขณะเปิดพาเนล -> ป้ายแปลถูก
 
 ## ค้างถัดไป
 - contrast .ep-preview #6b7280 = 4.42 ยังตก WCAG 4.5
 - ปุ่มยืนยัน ปรับราคา แยกโซนด้วยเส้นคั่น? · ตัวคั่น สี · รูป รอเลือกแบบ · popup เล็ก
-- local override ต่อ element (คลิกกล่องแต่ละอันปรับเฉพาะอัน) - ยังไม่ทำ (รอบนี้ทำ global)
+- local override ต่อ element (คลิกกล่องปรับเฉพาะอัน) - ยังไม่ทำ
 
 ## commit ที่จะใช้ (ผู้ใช้รันเองที่ C:\OE)
 git add -A
-git commit -m "feat: เส้นกรอบกล่องโน้ต/กลุ่มเมนู ปรับความหนา+แบบเส้นได้ (global อิสระจากตีม ติดไฟล์+พิมพ์) + lint #112"
+git commit -m "feat: รวม tool เส้น/ขอบ เป็นพาเนลเดียว 'เส้น·ขอบ' แท็บหน้า (ซ่อนเส้นคั่น+ขอบกล่องโน้ต/กลุ่ม) + แก้บั๊ก key ชน th.bw + lint #110/#112"
 git push
 
 HEAD ก่อนหน้า: 0a6add4

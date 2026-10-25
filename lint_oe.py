@@ -2428,8 +2428,12 @@ def main():
         if _f110 not in txt: errors.append('lint #110: ไม่พบ '+_f110)
     if 'id="btnRuleHide"' not in txt:
         errors.append('lint #110: ไม่พบปุ่ม btnRuleHide')
-    if '#edbar #btnRuleHide.on' not in _css:
-        errors.append('lint #110: btnRuleHide ไม่มี active เขียว (ข้อ 11)')
+    if '#edbar #btnLineEdge.on' not in _css:
+        errors.append('lint #110: btnLineEdge ไม่มี active เขียว (ข้อ 11)')
+    if 'function openLineEdgePanel(' not in txt:
+        errors.append('lint #110: ไม่พบ openLineEdgePanel (ปุ่มเส้น·ขอบเปิดพาเนลรวม)')
+    if 'id="btnLineEdge"' not in txt:
+        errors.append('lint #110: ไม่พบปุ่ม btnLineEdge')
     if '_ruleHideSync();' not in txt:
         errors.append('lint #110: ไม่เรียก _ruleHideSync() ตอนเปิดแอป')
     for _k110 in ('btn.ruleHide','btn.ruleShow','grp.rule','ttl.ruleHide'):
@@ -2454,11 +2458,13 @@ def main():
     _msh112=re.search(r'\.sec-h\{([^}]*)\}', _css)
     if not _msh112 or 'border-bottom:var(--grp-bw' not in _msh112.group(1):
         errors.append('lint #112: .sec-h เส้นใต้หัวกลุ่มต้องใช้ var(--grp-bw) ด้วย (คุมไปพร้อมกล่องกลุ่ม)')
-    for _f112 in ('function _themeBorderGroupHtml(','function _borderSet(','function _borderVal(','var _BORDER_WIDTHS=','var _BORDER_STYLES='):
+    for _f112 in ('function _lineEdgeRenderPanel(','function _borderSet(','function _borderVal(','var _BORDER_WIDTHS=','var _BORDER_STYLES='):
         if _f112 not in txt: errors.append('lint #112: ไม่พบ '+_f112)
-    if 'body += _themeBorderGroupHtml();' not in txt:
-        errors.append('lint #112: พาเนลธีมไม่ได้ใส่กลุ่มขอบกล่อง (ต้องโผล่เสมอ)')
-    for _k112 in ('th.bw','th.bs','th.grpNoteEdge','th.grpGrpEdge','th.bsSolid','th.bsDashed','th.bsDotted','th.bsNone'):
+    if 'note-bw' not in txt or 'grp-bw' not in txt:
+        errors.append('lint #112: พาเนลเส้น·ขอบไม่ได้คุมขอบกล่องโน้ต/กลุ่ม')
+    if 'onclick="toggleRuleHide()"' not in txt:
+        errors.append('lint #112: พาเนลเส้น·ขอบต้องมี toggle ซ่อนเส้นคั่น')
+    for _k112 in ('th.edgeW','th.edgeS','th.grpNoteEdge','th.grpGrpEdge','th.bsSolid','th.bsDashed','th.bsDotted','th.bsNone'):
         if txt.count("'"+_k112+"':'")<2: errors.append('lint #112: i18n '+_k112+' ไม่ครบ TH+EN')
 
     # ---- report ----

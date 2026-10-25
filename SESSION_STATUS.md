@@ -1,28 +1,36 @@
 # SESSION STATUS - OE Isan Menu Editor
 
-ปรับปรุงล่าสุด: 2026-10-25 18:05 (+07)
+ปรับปรุงล่าสุด: 2026-10-25 18:45 (+07)
 
-## เสร็จรอบนี้ (ยังไม่ commit) - แก้บั๊กพิมพ์ไม่เต็มหน้า (ROOT CAUSE เจอแล้ว)
-- ปัญหา: print/PDF หน้าถูกย่อ ~74-80 เปอร์เซ็นต์ ชิดมุมซ้ายบน แม้ Margins=None (เป็นมาหลายรอบ ผู้ใช้ยืนยัน reproduce ได้)
-- ROOT CAUSE: body{min-width:960px} อยู่ใน CSS หลัก (เพิ่มตอนแก้บั๊กจอแคบ) แต่ @media print ไม่ได้ reset -> ตอนพิมพ์ body ถูกบังคับ 960px = 254mm เกิน A4 210mm -> Chrome ย่อทั้งหน้าลงชิดมุมซ้ายบน
-- ทำไมหลงทางนาน: ไม่เกี่ยว Margins/เครื่องพิมพ์/Borderless เลย · เทสต์กรอบแดงเต็ม A4 เพราะไฟล์เทสต์ไม่มี min-width · screenshot วัดไม่แม่น (ดู anti-pattern memory)
-- FIX: @media print{body{...min-width:0 !important;width:auto !important;}} (reset ตอนพิมพ์ให้ body กลับมาพอดี A4)
-- lint #111 ล็อก: @media print body ต้องมี min-width:0
-- lint PASS (rc=0), เขียนดิสก์ (html 8,138,835 bytes)
+## เสร็จรอบนี้ (ยังไม่ commit) - เส้นกรอบปรับความหนา+แบบเส้นได้ (Theme Checkpoint 2)
+- .crab (กล่องโน้ต): border -> var(--note-bw,1.5px) var(--note-bs,solid) var(--note-bd) · คงสีตีมเดิม
+- .sec (กล่องกลุ่มเมนู): border -> var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd)
+- .sec-h (เส้นใต้หัวกลุ่ม): border-bottom -> var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd) = คุมด้วย grp-bw/bs ร่วมกับกล่องกลุ่ม (เข้าชุดกัน)
+- กลุ่มใหม่ "ขอบกล่อง" ในพาเนลธีม โผล่เสมอ (ไม่เฉพาะตีม custom): body += _themeBorderGroupHtml() หลัง dropdown head
+  - กล่องโน้ต: หนา (dropdown 0.5-3px) + แบบ (ทึบ/ประ/จุด/ไม่มี)
+  - กล่องกลุ่ม: หนา + แบบ
+- เก็บเป็น inline CSS var บน <html> (--note-bw/bs, --grp-bw/bs) อิสระจากตีม: _themeApply ลบแค่ _THEME_VARS (9 สี) ไม่แตะ border vars -> สลับตีมไม่รีเซ็ต · clone documentElement จับ inline style -> ติดไฟล์+พิมพ์
+  - ไม่ใช้ localStorage (เป็น document setting แบบ data-rulehide) · default ผ่าน var() fallback · markDirty เมื่อเปลี่ยน
+- native select onchange = apply ทันที (live) · อ่านค่าปัจจุบันจาก documentElement.style ตอน render panel = sync เสมอ
+- i18n ครบ TH+EN (th.bw/bs/grpNoteEdge/grpGrpEdge/bsSolid/bsDashed/bsDotted/bsNone)
+- lint #112 ล็อก: .crab/.sec/.sec-h ใช้ var(bw/bs) + ฟังก์ชัน + panel insert + i18n ครบ
+- lint PASS (rc=0), เขียนดิสก์ (html 8,141,552 bytes)
 
-## รอผู้ใช้ทดสอบ (F5 + print preview)
-- รีเฟรช (F5) แล้วเปิด print preview (Ctrl+P) / Save as PDF Margins=None
-- คาดผล: พื้นครีมเต็มความกว้าง A4 ไม่ย่อ ไม่ชิดมุมซ้ายบนแล้ว (เนื้อหายังเว้น padding 8/12mm ตามดีไซน์ = ปกติ)
-- ถ้าเต็มแล้ว = จบบั๊กพิมพ์
+## รอผู้ใช้ทดสอบ (F5)
+1. แท็บ หน้า > ธีม: มีกลุ่ม "ขอบกล่อง" โผล่เสมอ (ทั้งตีมสำเร็จรูปและ custom)
+2. เปลี่ยน หนา/แบบ ของกล่องโน้ต -> กรอบกล่อง * ทางร้านไม่มีเมนูปู เปลี่ยนทันที
+3. เปลี่ยน หนา/แบบ ของกล่องกลุ่ม -> กรอบกล่องเมนูหมู/เนื้อ + เส้นใต้หัวกลุ่ม เปลี่ยนพร้อมกัน
+4. สลับตีม (dropdown) -> ความหนา/แบบ ไม่รีเซ็ต (คงค่าที่ตั้ง) · สีกรอบเปลี่ยนตามตีม
+5. เลือกแบบ "ไม่มี" -> กรอบหาย
 
-## ค้างถัดไป (ถ้าผู้ใช้ต้องการ)
-- ลด padding .page ถ้าอยากให้เนื้อหาชิดขอบกระดาษกว่านี้
+## ค้างถัดไป
 - contrast .ep-preview #6b7280 = 4.42 ยังตก WCAG 4.5
 - ปุ่มยืนยัน ปรับราคา แยกโซนด้วยเส้นคั่น? · ตัวคั่น สี · รูป รอเลือกแบบ · popup เล็ก
+- local override ต่อ element (คลิกกล่องแต่ละอันปรับเฉพาะอัน) - ยังไม่ทำ (รอบนี้ทำ global)
 
 ## commit ที่จะใช้ (ผู้ใช้รันเองที่ C:\OE)
 git add -A
-git commit -m "fix: พิมพ์ไม่เต็มหน้า - reset body min-width ตอนพิมพ์ (body 960px เกิน A4 ทำ Chrome ย่อหน้า) + lint #111"
+git commit -m "feat: เส้นกรอบกล่องโน้ต/กลุ่มเมนู ปรับความหนา+แบบเส้นได้ (global อิสระจากตีม ติดไฟล์+พิมพ์) + lint #112"
 git push
 
-HEAD ก่อนหน้า: c387b4b
+HEAD ก่อนหน้า: 0a6add4

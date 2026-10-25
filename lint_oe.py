@@ -2444,6 +2444,23 @@ def main():
         if 'min-width:0' not in _b111:
             errors.append('lint #111: @media print body ต้อง min-width:0 !important (กัน body 960px ย่อหน้าตอนพิมพ์ไม่เต็ม A4)')
 
+    # ---- 112) ขอบกล่องปรับได้ (ความหนา+แบบเส้น) อิสระจากตีม + คุมเส้นใต้หัวกลุ่มด้วย (ผู้ใช้ 25 ต.ค. 2026) ----
+    _mcrab=re.search(r'\.crab\{([^}]*)\}', _css)
+    if not _mcrab or 'var(--note-bw' not in _mcrab.group(1):
+        errors.append('lint #112: .crab ต้องใช้ var(--note-bw)/var(--note-bs) (ขอบกล่องโน้ตปรับได้)')
+    _msec=re.search(r'\.sec\{break-inside:avoid;([^}]*)\}', _css)
+    if not _msec or 'var(--grp-bw' not in _msec.group(1):
+        errors.append('lint #112: .sec ต้องใช้ var(--grp-bw)/var(--grp-bs) (ขอบกล่องกลุ่มปรับได้)')
+    _msh112=re.search(r'\.sec-h\{([^}]*)\}', _css)
+    if not _msh112 or 'border-bottom:var(--grp-bw' not in _msh112.group(1):
+        errors.append('lint #112: .sec-h เส้นใต้หัวกลุ่มต้องใช้ var(--grp-bw) ด้วย (คุมไปพร้อมกล่องกลุ่ม)')
+    for _f112 in ('function _themeBorderGroupHtml(','function _borderSet(','function _borderVal(','var _BORDER_WIDTHS=','var _BORDER_STYLES='):
+        if _f112 not in txt: errors.append('lint #112: ไม่พบ '+_f112)
+    if 'body += _themeBorderGroupHtml();' not in txt:
+        errors.append('lint #112: พาเนลธีมไม่ได้ใส่กลุ่มขอบกล่อง (ต้องโผล่เสมอ)')
+    for _k112 in ('th.bw','th.bs','th.grpNoteEdge','th.grpGrpEdge','th.bsSolid','th.bsDashed','th.bsDotted','th.bsNone'):
+        if txt.count("'"+_k112+"':'")<2: errors.append('lint #112: i18n '+_k112+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

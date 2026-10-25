@@ -2148,11 +2148,11 @@ def main():
 
     # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
     _e94=[]
-    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
+    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'):
         if (':root[data-theme="'+_t94+'"]') not in _css:
             _e94.append('ไม่พบธีม ' + _t94)
     _m_themes94=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
-    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard'):
+    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'):
         if not _m_themes94 or ("'"+_tid94+"'") not in _m_themes94.group(1): _e94.append('_THEMES ขาด ' + _tid94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')

@@ -2424,10 +2424,7 @@ def main():
             errors.append('lint #110: .rule ห้ามฝังสีทอง #c9a227 (ต้องตามตีม)')
     if 'html[data-rulehide] .rule' not in _css:
         errors.append('lint #110: ไม่พบ html[data-rulehide] .rule (ซ่อนเส้น จอ+พิมพ์)')
-    for _f110 in ('function toggleRuleHide(','function _ruleHideSync('):
-        if _f110 not in txt: errors.append('lint #110: ไม่พบ '+_f110)
-    if 'id="btnRuleHide"' not in txt:
-        errors.append('lint #110: ไม่พบปุ่ม btnRuleHide')
+    if 'function _ruleHideSync(' not in txt: errors.append('lint #110: ไม่พบ function _ruleHideSync(')
     if '#edbar #btnLineEdge.on' not in _css:
         errors.append('lint #110: btnLineEdge ไม่มี active เขียว (ข้อ 11)')
     if 'function openLineEdgePanel(' not in txt:
@@ -2436,8 +2433,7 @@ def main():
         errors.append('lint #110: ไม่พบปุ่ม btnLineEdge')
     if '_ruleHideSync();' not in txt:
         errors.append('lint #110: ไม่เรียก _ruleHideSync() ตอนเปิดแอป')
-    for _k110 in ('btn.ruleHide','btn.ruleShow','grp.rule','ttl.ruleHide'):
-        if txt.count("'"+_k110+"':'")<2: errors.append('lint #110: i18n '+_k110+' ไม่ครบ TH+EN')
+    if txt.count("'grp.rule':'")<2: errors.append('lint #110: i18n grp.rule ไม่ครบ TH+EN')
 
     # ---- 111) @media print ต้อง reset body min-width:0 (body มี min-width:960px สำหรับจอแคบ แต่ถ้าไม่ปลดตอนพิมพ์ body=254mm เกิน A4 210mm -> Chrome ย่อทั้งหน้าชิดมุมซ้ายบน = พิมพ์ไม่เต็ม · ผู้ใช้ 25 ต.ค. 2026) ----
     _mp111=re.search(r'@media print\{body\{([^}]*)\}', _css)
@@ -2462,10 +2458,39 @@ def main():
         if _f112 not in txt: errors.append('lint #112: ไม่พบ '+_f112)
     if 'note-bw' not in txt or 'grp-bw' not in txt:
         errors.append('lint #112: พาเนลเส้น·ขอบไม่ได้คุมขอบกล่องโน้ต/กลุ่ม')
-    if 'onclick="toggleRuleHide()"' not in txt:
-        errors.append('lint #112: พาเนลเส้น·ขอบต้องมี toggle ซ่อนเส้นคั่น')
     for _k112 in ('th.edgeW','th.edgeS','th.grpNoteEdge','th.grpGrpEdge','th.bsSolid','th.bsDashed','th.bsDotted','th.bsNone'):
         if txt.count("'"+_k112+"':'")<2: errors.append('lint #112: i18n '+_k112+' ไม่ครบ TH+EN')
+
+    # ---- 113) เส้นคั่นปรับได้ (หนา --rule-h ถึง 8px + แบบ ไล่เฉด/ทึบ/ประ/จุด/ไม่มี ผ่าน data-rule-style) + ขอบกล่องหนาถึง 5px + ความโค้งมุม --note-radius/--grp-radius (ผู้ใช้ 25 ต.ค. 2026) ----
+    _mrule113=re.search(r'\.rule\{([^}]*)\}', _css)
+    if not _mrule113 or 'var(--rule-h' not in _mrule113.group(1):
+        errors.append('lint #113: .rule ต้องใช้ var(--rule-h) (เส้นคั่นปรับความหนาได้)')
+    for _rs113 in ('solid','dashed','dotted'):
+        if ('html[data-rule-style="'+_rs113+'"] .rule') not in _css:
+            errors.append('lint #113: ไม่พบ rule-style '+_rs113+' (เส้นคั่นแบบเส้น)')
+    _mcrab113=re.search(r'\.crab\{([^}]*)\}', _css)
+    if not _mcrab113 or 'var(--note-radius' not in _mcrab113.group(1):
+        errors.append('lint #113: .crab ต้องใช้ var(--note-radius) (ความโค้งมุมกล่องโน้ต)')
+    _msec113=re.search(r'\.sec\{break-inside:avoid;([^}]*)\}', _css)
+    if not _msec113 or 'var(--grp-radius' not in _msec113.group(1):
+        errors.append('lint #113: .sec ต้องใช้ var(--grp-radius) (ความโค้งมุมกล่องกลุ่ม)')
+    for _f113 in ('function _ruleStyleSet(','function _ruleCur(','function _ruleWidthOpts(','function _ruleStyleOpts(','function _radiusOpts(','var _RULE_WIDTHS=','var _RULE_STYLES=','var _RADIUS_VALS='):
+        if _f113 not in txt: errors.append('lint #113: ไม่พบ '+_f113)
+    if "'8px'" not in re.search(r'var _RULE_WIDTHS=\[([^\]]*)\]', txt).group(1):
+        errors.append('lint #113: _RULE_WIDTHS ต้องมีถึง 8px')
+    if "'5px'" not in re.search(r'var _BORDER_WIDTHS=\[([^\]]*)\]', txt).group(1):
+        errors.append('lint #113: _BORDER_WIDTHS ต้องขยายถึง 5px')
+    if "_radiusOpts('note-radius'" not in txt or "_radiusOpts('grp-radius'" not in txt:
+        errors.append('lint #113: พาเนลเส้น·ขอบต้องมี dropdown ความโค้งมุม (note-radius/grp-radius)')
+    if 'id="ruleStyleSel"' not in txt:
+        errors.append('lint #113: พาเนลต้องมี rule style dropdown (ruleStyleSel) sync กับ toggle')
+    if _mrule113 and 'max-width:70%' in _mrule113.group(1):
+        errors.append('lint #113: .rule ห้าม max-width:70% (เส้นคั่น header ยืดเต็มความกว้างเนื้อหา · ผู้ใช้ 25 ต.ค. 2026)')
+    _mle113=re.search(r'function _lineEdgeRenderPanel\(\)\{[\s\S]*?openPanel\(\{mode', txt)
+    if _mle113 and _mle113.group(0).rfind('thcp-sep') < _mle113.group(0).rfind('data-i18n="th.grpGrpEdge"'):
+        errors.append('lint #113: พาเนลเส้น·ขอบต้องมีเส้นคั่นปิดท้ายกลุ่มสุดท้าย (เข้าชุดพาเนลปรับราคา/พื้นหลัง)')
+    for _k113 in ('th.edgeR','th.bsGradient'):
+        if txt.count("'"+_k113+"':'")<2: errors.append('lint #113: i18n '+_k113+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

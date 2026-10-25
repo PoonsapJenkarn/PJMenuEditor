@@ -2435,6 +2435,15 @@ def main():
     for _k110 in ('btn.ruleHide','btn.ruleShow','grp.rule','ttl.ruleHide'):
         if txt.count("'"+_k110+"':'")<2: errors.append('lint #110: i18n '+_k110+' ไม่ครบ TH+EN')
 
+    # ---- 111) @media print ต้อง reset body min-width:0 (body มี min-width:960px สำหรับจอแคบ แต่ถ้าไม่ปลดตอนพิมพ์ body=254mm เกิน A4 210mm -> Chrome ย่อทั้งหน้าชิดมุมซ้ายบน = พิมพ์ไม่เต็ม · ผู้ใช้ 25 ต.ค. 2026) ----
+    _mp111=re.search(r'@media print\{body\{([^}]*)\}', _css)
+    if not _mp111:
+        errors.append('lint #111: ไม่พบ @media print body rule')
+    else:
+        _b111=_mp111.group(1)
+        if 'min-width:0' not in _b111:
+            errors.append('lint #111: @media print body ต้อง min-width:0 !important (กัน body 960px ย่อหน้าตอนพิมพ์ไม่เต็ม A4)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

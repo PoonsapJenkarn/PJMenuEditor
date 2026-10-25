@@ -229,7 +229,7 @@ html[data-rulehide] .rule{display:none !important;}
 /* cursor (caret) ทั้งแอป (ผู้ใช้ 23 ต.ค. 2026): หนาขึ้นด้วย caret-shape:block (เบราว์เซอร์ไม่มีความหนาโดยตรง) · สี currentColor = เข้มตามตัวอักษร (พื้นสว่าง=เข้ม · ธีมเข้ม=สว่างไม่หาย) · caret-shape ไม่รองรับ=เส้นปกติ */
 [contenteditable="true"],#edbar input,#edpanel input,#typobar input,#edtabs input,#calModal input{caret-color:currentColor;caret-shape:block;}
 .kai{font-family:'Noto Sans Thai',sans-serif;font-weight:700;}
-@media print{body{background:#fff;}.page{margin:0;box-shadow:none;}}
+@media print{body{background:#fff;min-width:0 !important;width:auto !important;}.page{margin:0;box-shadow:none;}}
 @media (max-width:720px){.page{width:auto;min-height:0;padding:20px;}.grid{flex-direction:column;}}
 
 /* ===== IMAGE PLACEMENT (added) ===== */

@@ -196,13 +196,13 @@ body{background:#e8e2d9;color:#2b2320;min-width:960px;
 .logo{display:block;flex:none;max-width:100%;width:173px;height:auto;}
 .brand h1{font-family:'Prompt',sans-serif;font-weight:700;font-size:34px;margin:0;
   color:#5a2b23;letter-spacing:.5px;}
-.rule{height:var(--rule-h,2px);background:linear-gradient(90deg,transparent,var(--line-dot),transparent);margin:6px auto 8px;}
+.rule{height:var(--rule-h,1px);background:linear-gradient(90deg,transparent,var(--line-dot),transparent);margin:6px auto 8px;}
 html[data-rulehide] .rule{display:none !important;}
-html[data-rule-style="solid"] .rule{background:none;height:0;border-top:var(--rule-h,2px) solid var(--line-dot);}
-html[data-rule-style="dashed"] .rule{background:none;height:0;border-top:var(--rule-h,2px) dashed var(--line-dot);}
-html[data-rule-style="dotted"] .rule{background:none;height:0;border-top:var(--rule-h,2px) dotted var(--line-dot);}
+html[data-rule-style="solid"] .rule{background:none;height:0;border-top:var(--rule-h,1px) solid var(--line-dot);}
+html[data-rule-style="dashed"] .rule{background:none;height:0;border-top:var(--rule-h,1px) dashed var(--line-dot);}
+html[data-rule-style="dotted"] .rule{background:none;height:0;border-top:var(--rule-h,1px) dotted var(--line-dot);}
 .noterow{display:flex;align-items:center;gap:16px;margin:2px 0 8px;}
-.crab{display:flex;align-items:center;gap:12px;background:var(--note-bg);border:var(--note-bw,1.5px) var(--note-bs,solid) var(--note-bd);border-radius:var(--note-radius,10px);padding:6px 16px;flex:1;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.crab{display:flex;align-items:center;gap:12px;background:var(--note-bg);border:var(--note-bw,1px) var(--note-bs,solid) var(--note-bd);border-radius:var(--note-radius,8px);padding:6px 16px;flex:1;box-shadow:0 1px 4px rgba(0,0,0,.06);}
 /* ซ่อนกล่องโน้ต / เลขหน้า (ผู้ใช้ 26 ต.ค. 2026): เพิ่มพื้นที่เมนู · attribute บน <html> จอ+พิมพ์+ติดไฟล์ · วางหลัง base .crab โดยตั้งใจ */
 html[data-notehide] .crab{display:none !important;}
 html[data-notehide] .pagelabel{margin-left:auto;}
@@ -221,7 +221,7 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
 /* Layout C (3 คอลัมน์ · เฟส 2 · CSS columns): .col{display:contents} ยก .sec ขึ้นเป็น flow items ให้ multicol จัด 3 คอลัมน์ · .sec{break-inside:avoid} กันกลุ่มแตกข้ามคอลัมน์ */
 :root[data-layout="3col"] .grid{display:block;column-count:3;column-gap:14px;}
 :root[data-layout="3col"] .col{display:contents;}
-.sec{break-inside:avoid;border:var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd);border-radius:var(--grp-radius,10px);overflow:hidden;
+.sec{break-inside:avoid;border:var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd);border-radius:var(--grp-radius,8px);overflow:hidden;
   margin-bottom:9px;background:rgba(var(--grp-body-bg),var(--secalpha,1));box-shadow:0 1px 3px rgba(90,60,30,.06);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 .col section.sec:last-of-type{margin-bottom:0;}  /* section สุดท้ายในคอลัมน์ไม่ต้องมี margin ล่าง — เดิมทิ้งระยะเกิน 9px (2.38mm) ท้ายหน้า ทำให้ตัวตรวจเตือนล้นทั้งที่ขอบหน้า 8mm ให้ที่ว่างอยู่แล้ว · :last-of-type จับ <section> ตัวสุดท้าย (ปุ่มเพิ่มกลุ่มเป็น child ท้ายสุด) · ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 59 */
 .sec-h{color:var(--accent);background:rgba(var(--grp-head-bg),var(--secalpha,1)) !important;padding:8px 13px;font-family:'Prompt',sans-serif;font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px;border-bottom:var(--grp-bw,1px) var(--grp-bs,solid) var(--grp-bd);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -4725,7 +4725,7 @@ function _ruleStyleSet(val){
   if(typeof _ruleHideSync==='function') _ruleHideSync();
   if(typeof markDirty==='function') markDirty();
 }
-function _ruleWidthOpts(){ var cur=_borderVal('rule-h','2px'),h=''; _RULE_WIDTHS.forEach(function(w){ h+='<option value="'+w+'"'+(cur===w?' selected':'')+'>'+w.replace('px',' px')+'</option>'; }); return h; }
+function _ruleWidthOpts(){ var cur=_borderVal('rule-h','1px'),h=''; _RULE_WIDTHS.forEach(function(w){ h+='<option value="'+w+'"'+(cur===w?' selected':'')+'>'+w.replace('px',' px')+'</option>'; }); return h; }
 function _ruleStyleOpts(){ var cur=_ruleCur(),h=''; _RULE_STYLES.forEach(function(s){ h+='<option value="'+s[0]+'"'+(cur===s[0]?' selected':'')+' data-i18n="'+s[1]+'">'+epEsc(t(s[1]))+'</option>'; }); return h; }
 function _radiusOpts(v,def){ var cur=_borderVal(v,def),h=''; _RADIUS_VALS.forEach(function(r){ h+='<option value="'+r+'"'+(cur===r?' selected':'')+'>'+(r==='0'?'0':r.replace('px',' px'))+'</option>'; }); return h; }
 function _lineEdgeRenderPanel(){
@@ -4736,15 +4736,15 @@ function _lineEdgeRenderPanel(){
     +'</span><span class="thcp-cat-h" data-i18n="grp.rule">'+epEsc(t('grp.rule'))+'</span></span>'
     +'<span class="thcp-sep"></span>'
     +'<span class="thcp-cat"><span class="thcp-cat-z">'
-    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeW">'+epEsc(t('th.edgeW'))+'</span><select class="ep-sel" onchange="_borderSet(\'note-bw\',this.value)">'+_borderWidthOpts('note-bw','1.5px')+'</select></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeW">'+epEsc(t('th.edgeW'))+'</span><select class="ep-sel" onchange="_borderSet(\'note-bw\',this.value)">'+_borderWidthOpts('note-bw','1px')+'</select></span>'
     +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeS">'+epEsc(t('th.edgeS'))+'</span><select class="ep-sel" onchange="_borderSet(\'note-bs\',this.value)">'+_borderStyleOpts('note-bs','solid')+'</select></span>'
-    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeR">'+epEsc(t('th.edgeR'))+'</span><select class="ep-sel" onchange="_borderSet(\'note-radius\',this.value)">'+_radiusOpts('note-radius','10px')+'</select></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeR">'+epEsc(t('th.edgeR'))+'</span><select class="ep-sel" onchange="_borderSet(\'note-radius\',this.value)">'+_radiusOpts('note-radius','8px')+'</select></span>'
     +'</span><span class="thcp-cat-h" data-i18n="th.grpNoteEdge">'+epEsc(t('th.grpNoteEdge'))+'</span></span>'
     +'<span class="thcp-sep"></span>'
     +'<span class="thcp-cat"><span class="thcp-cat-z">'
     +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeW">'+epEsc(t('th.edgeW'))+'</span><select class="ep-sel" onchange="_borderSet(\'grp-bw\',this.value)">'+_borderWidthOpts('grp-bw','1px')+'</select></span>'
     +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeS">'+epEsc(t('th.edgeS'))+'</span><select class="ep-sel" onchange="_borderSet(\'grp-bs\',this.value)">'+_borderStyleOpts('grp-bs','solid')+'</select></span>'
-    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeR">'+epEsc(t('th.edgeR'))+'</span><select class="ep-sel" onchange="_borderSet(\'grp-radius\',this.value)">'+_radiusOpts('grp-radius','10px')+'</select></span>'
+    +'<span class="thcp-grp"><span class="thcp-gl" data-i18n="th.edgeR">'+epEsc(t('th.edgeR'))+'</span><select class="ep-sel" onchange="_borderSet(\'grp-radius\',this.value)">'+_radiusOpts('grp-radius','8px')+'</select></span>'
     +'</span><span class="thcp-cat-h" data-i18n="th.grpGrpEdge">'+epEsc(t('th.grpGrpEdge'))+'</span></span>'
     +'<span class="thcp-sep"></span>'
     +'</span>';

@@ -66,9 +66,9 @@
   --txt-name:#2b1a14; --txt-note:#7a5a48; --txt-price:#a83224; --line-dot:#cbb48c;
 }
 :root[data-theme="white-gray"]{
-  --note-bd:#cfcfcf; --note-bg:#ffffff;
-  --grp-bd:#cfcfcf; --grp-head-bg:240,240,240; --grp-body-bg:255,255,255;
-  --txt-name:#171a1e; --txt-note:#555555; --txt-price:#171a1e; --line-dot:#bdbdbd;
+  --note-bd:#d6d6d6; --note-bg:#f4f4f4;
+  --grp-bd:#d6d6d6; --grp-head-bg:232,232,232; --grp-body-bg:247,247,247;
+  --txt-name:#2b2b2b; --txt-note:#666666; --txt-price:#2b2b2b; --line-dot:#c4c4c4;
 }
 /* ขาว-ดำจริง: ดำ #171A1E คมชัดทั้งขอบ/เส้น/ตัวอักษร · หัวกลุ่มพื้นดำตัวอักษรขาว (override — ผู้ใช้ 23 ต.ค. 2026) */
 :root[data-theme="bw"]{
@@ -79,6 +79,36 @@
 :root[data-theme="bw"] .sec-h,
 :root[data-theme="bw"] .sec-h .sechead,
 :root[data-theme="bw"] .sec-h .sechead *{color:#ffffff !important;text-shadow:none !important;}
+/* หัวกลุ่มพื้นสีจัด/เข้ม (สีแท้ 3 + ดำ-ขาว): ตัวหัวกลุ่มขาว ไม่มีขอบตัวอักษร (ผู้ใช้ 26 ต.ค. 2026) */
+:root[data-theme="vivid-red"] .sec-h,
+:root[data-theme="vivid-red"] .sec-h .sechead,
+:root[data-theme="vivid-red"] .sec-h .sechead *,
+:root[data-theme="vivid-blue"] .sec-h,
+:root[data-theme="vivid-blue"] .sec-h .sechead,
+:root[data-theme="vivid-blue"] .sec-h .sechead *,
+:root[data-theme="vivid-green"] .sec-h,
+:root[data-theme="vivid-green"] .sec-h .sechead,
+:root[data-theme="vivid-green"] .sec-h .sechead *,
+:root[data-theme="mono-dark"] .sec-h,
+:root[data-theme="mono-dark"] .sec-h .sechead,
+:root[data-theme="mono-dark"] .sec-h .sechead *{color:#ffffff !important;text-shadow:none !important;}
+/* พื้นเข้ม (กรมท่า/ไวน์): หัวกลุ่มตามสีชื่อเมนู ไม่มีขอบตัวอักษร */
+:root[data-theme="navy-dark"] .sec-h,
+:root[data-theme="navy-dark"] .sec-h .sechead,
+:root[data-theme="navy-dark"] .sec-h .sechead *,
+:root[data-theme="wine-dark"] .sec-h,
+:root[data-theme="wine-dark"] .sec-h .sechead,
+:root[data-theme="wine-dark"] .sec-h .sechead *{color:var(--txt-name) !important;text-shadow:none !important;}
+/* พื้นเข้ม: กล่องโน้ตพื้นเข้ม -> ตัวหนังสือสว่าง (ดอกจันแดงคงไว้) */
+:root[data-theme="navy-dark"] .crab b,
+:root[data-theme="navy-dark"] .crab .body,
+:root[data-theme="wine-dark"] .crab b,
+:root[data-theme="wine-dark"] .crab .body,
+:root[data-theme="mono-dark"] .crab b,
+:root[data-theme="mono-dark"] .crab .body{color:var(--txt-name) !important;}
+:root[data-theme="navy-dark"] .crab .sub,
+:root[data-theme="wine-dark"] .crab .sub,
+:root[data-theme="mono-dark"] .crab .sub{color:var(--txt-note) !important;}
 :root[data-theme="pine-cream"]{
   --note-bd:#c9d8c0; --note-bg:#f7f4e9;
   --grp-bd:#c9d8c0; --grp-head-bg:230,238,222; --grp-body-bg:247,244,233;
@@ -114,6 +144,57 @@
   --grp-bd:#a7cfe6; --grp-head-bg:221,238,249; --grp-body-bg:238,247,252;
   --txt-name:#0d3b5c; --txt-note:#4a6b82; --txt-price:#0077b6; --line-dot:#a3c9e2;
 }
+/* ธีมหมวดใหม่ (ผู้ใช้ 26 ต.ค. 2026): สีแท้ / พื้นเข้ม / หม่นอมเทา / ขาวดำ */
+:root[data-theme="vivid-red"]{
+  --note-bd:#e53935; --note-bg:#ffffff;
+  --grp-bd:#e53935; --grp-head-bg:229,57,53; --grp-body-bg:255,255,255;
+  --txt-name:#1a1a1a; --txt-note:#5a5a5a; --txt-price:#c62828; --line-dot:#f0a3a1;
+}
+:root[data-theme="vivid-blue"]{
+  --note-bd:#1e63e9; --note-bg:#ffffff;
+  --grp-bd:#1e63e9; --grp-head-bg:30,99,233; --grp-body-bg:255,255,255;
+  --txt-name:#1a1a1a; --txt-note:#5a5a5a; --txt-price:#1e63e9; --line-dot:#a9c3f5;
+}
+:root[data-theme="vivid-green"]{
+  --note-bd:#12a150; --note-bg:#ffffff;
+  --grp-bd:#12a150; --grp-head-bg:18,161,80; --grp-body-bg:255,255,255;
+  --txt-name:#1a1a1a; --txt-note:#5a5a5a; --txt-price:#0b7a3b; --line-dot:#9fd8b5;
+}
+:root[data-theme="navy-dark"]{
+  --note-bd:#34507a; --note-bg:#1b2a41;
+  --grp-bd:#34507a; --grp-head-bg:22,36,58; --grp-body-bg:27,42,65;
+  --txt-name:#f2f5fa; --txt-note:#a9b8cc; --txt-price:#7fc4ff; --line-dot:#3d5a82;
+}
+:root[data-theme="wine-dark"]{
+  --note-bd:#6e2a31; --note-bg:#3a1418;
+  --grp-bd:#6e2a31; --grp-head-bg:58,18,24; --grp-body-bg:46,16,20;
+  --txt-name:#f8ece9; --txt-note:#d3aeb0; --txt-price:#ff9a8b; --line-dot:#6e3a40;
+}
+:root[data-theme="sage"]{
+  --note-bd:#b9c2b0; --note-bg:#eef0ea;
+  --grp-bd:#b9c2b0; --grp-head-bg:200,208,192; --grp-body-bg:238,240,234;
+  --txt-name:#2f3a2c; --txt-note:#6a7464; --txt-price:#5d7356; --line-dot:#b0b9a6;
+}
+:root[data-theme="dusty-blue"]{
+  --note-bd:#aebacb; --note-bg:#ebeef2;
+  --grp-bd:#aebacb; --grp-head-bg:196,206,220; --grp-body-bg:236,239,243;
+  --txt-name:#26303d; --txt-note:#636e7c; --txt-price:#4f6582; --line-dot:#a8b4c4;
+}
+:root[data-theme="dusty-rose"]{
+  --note-bd:#cdb3b3; --note-bg:#f3ecec;
+  --grp-bd:#cdb3b3; --grp-head-bg:222,204,204; --grp-body-bg:244,237,237;
+  --txt-name:#3b2a2a; --txt-note:#7a6262; --txt-price:#9c5f5f; --line-dot:#c9b0b0;
+}
+:root[data-theme="mono-dark"]{
+  --note-bd:#4a4a4a; --note-bg:#1c1c1c;
+  --grp-bd:#4a4a4a; --grp-head-bg:17,17,17; --grp-body-bg:30,30,30;
+  --txt-name:#f2f2f2; --txt-note:#b8b8b8; --txt-price:#ffffff; --line-dot:#555555;
+}
+:root[data-theme="mono-gray"]{
+  --note-bd:#9e9e9e; --note-bg:#d9d9d9;
+  --grp-bd:#9e9e9e; --grp-head-bg:190,190,190; --grp-body-bg:214,214,214;
+  --txt-name:#262626; --txt-note:#4d4d4d; --txt-price:#1f1f1f; --line-dot:#9a9a9a;
+}
 :root[data-theme="mustard"]{
   --note-bd:#e6d49a; --note-bg:#fdfaef;
   --grp-bd:#e6d49a; --grp-head-bg:247,238,206; --grp-body-bg:253,250,239;
@@ -145,11 +226,16 @@
 #edpanel .ep-ddwrap{position:relative;display:inline-block;}
 #edpanel .ep-dd-trigger{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;min-width:150px;font-family:inherit;font-size:16px;font-weight:500;padding:5px 8px;border:1px solid #c8ccd2;border-radius:6px;background:#fff;cursor:pointer;}
 #edpanel .ep-dd-trigger .cp-caret{color:#8a8886;}
-#edpanel .ep-dd-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:4px;min-width:170px;max-height:320px;overflow-y:auto;}
+#edpanel .ep-dd-pop{position:absolute;top:34px;left:0;z-index:50;display:none;background:#fff;border:1px solid #d2d0ce;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);padding:4px;min-width:250px;max-height:320px;overflow-y:auto;}
 #edpanel .ep-dd-pop.open{display:block;}
 #edpanel .ep-dd-opt{display:block;width:100%;text-align:left;font-family:inherit;font-size:16px;font-weight:400;color:#3a3937;padding:6px 10px;border:none;background:none;border-radius:5px;cursor:pointer;white-space:nowrap;}
 #edpanel .ep-dd-opt:hover,#edpanel .ep-dd-opt.hl{background:#eef7f1;color:#217346;}
 #edpanel .ep-dd-opt.sel{font-weight:500;}
+#edpanel .ep-dd-grp{font-size:13px;color:#8a8886;padding:8px 10px 3px;border-top:1px solid #edebe9;margin-top:4px;letter-spacing:.2px;cursor:default;}
+#edpanel .ep-dd-ink{float:right;margin-left:14px;font-size:12px;font-weight:400;color:#8a8886;}
+#edpanel .ep-dd-ink.ink-hi{color:#a4262c;}
+#edpanel .ep-dd-empty{padding:8px 10px;font-size:14px;color:#8a8886;cursor:default;}
+#edpanel .thcp-head .ep-flt-gap{margin-left:10px;}
 /* ปุ่มพิกเกอร์ธีม = cp-trigger/cp-current + ถาดสี cp-pop มาตรฐาน (เลิกใช้ thcp-dot · ผู้ใช้ 23 ต.ค. 2026) */
 
 /* ===== Embedded fonts (offline, OFL) — no Google CDN ===== */
@@ -2373,7 +2459,7 @@ window.addEventListener('load', function(){ renumber(); _lastSnap=_serializePage
 });
 /* ===== i18n engine (Phase 1, v27) — UI ของแอปเท่านั้น ไม่แตะเนื้อหาเมนู ===== */
 var I18N={
- th:{'btn.addGFont':'＋ ฟอนต์ Google','ttl.addGFont':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.title':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.inlbl':'ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)','gfont.add':'เพิ่มฟอนต์ที่เลือก','btn.gfontSearch':'ค้นหา','gfont.browselbl':'ฟอนต์ที่ใช้ได้ทั้งหมด','gfont.browsehint':'คลิกเพื่อเลือก','fl.gfontNoMatch':'ไม่พบฟอนต์ "{q}" — ลองพิมพ์ชื่อให้ตรง','gfont.oflPre':'ทุกฟอนต์เป็น OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม','fl.gfontLoading':'กำลังโหลดฟอนต์ "{name}" จาก Google…','fl.gfontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วใช้ได้เลย','fl.gfontNotFound':'ไม่พบฟอนต์ "{name}" บน Google — ตรวจชื่อให้ตรง','fl.gfontOffline':'โหลดฟอนต์ "{name}" ไม่ได้ — ต้องต่อเน็ตตอนเพิ่มฟอนต์ Google','fl.gfontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.fontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.gfontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','font.baseGroup':'ฟอนต์มากับแอป','ttl.addFont':'เลือกไฟล์ฟอนต์ (.ttf/.otf/.woff/.woff2) ที่โหลดไว้ในเครื่อง · โหลดฟอนต์ฟรีเพิ่มได้จาก fonts.google.com','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์','tab.template':'เท็มเพลต','tab.screen':'หน้าจอ','lay.2col':'2 คอลัมน์','lay.1col':'1 คอลัมน์','lay.3col':'3 คอลัมน์','grp.layout':'เลย์เอาต์','btn.noteHide':'ซ่อนโน้ต','btn.noteShow':'แสดงโน้ต','btn.plabelHide':'ซ่อนเลขหน้า','btn.plabelShow':'แสดงเลขหน้า','grp.show':'แสดง/ซ่อน','ttl.noteHide':'ซ่อนกล่องหมายเหตุ (เพิ่มพื้นที่เมนู · มีผลพิมพ์)','ttl.plabelHide':'ซ่อนเลขหน้า (เพิ่มพื้นที่เมนู · มีผลพิมพ์)','fl.layoutSet':'เปลี่ยนเลย์เอาต์แล้ว','grp.viewmode':'มุมมอง','btn.pageBg':'พื้นหลัง','grp.bg':'พื้นหลัง','btn.theme':'ธีม','grp.theme':'ธีม','grp.rule':'เส้นคั่นส่วนหัว','th.pick':'ธีม','th.edgeW':'หนา','th.edgeS':'แบบ','th.edgeR':'มุม','th.bsGradient':'ไล่เฉด','btn.lineEdge':'เส้น·ขอบ','grp.lineEdge':'เส้น·ขอบ','ttl.lineEdge':'ปรับเส้นคั่นและขอบกล่อง (หนา·แบบ · มีผลตอนพิมพ์)','th.grpNoteEdge':'ขอบกล่องโน้ต','th.grpGrpEdge':'ขอบกล่องกลุ่ม','th.bsSolid':'ทึบ','th.bsDashed':'ประ','th.bsDotted':'จุด','th.bsNone':'ไม่มี','th.cream':'ครีม-น้ำตาล','th.whiteGreen':'ขาว-เขียว','th.darkGold':'เข้ม-ทอง','th.paperBrick':'กระดาษ-แดงอิฐ','th.whiteGray':'ขาว-เทา','th.bw':'ขาว-ดำ','th.pineCream':'เขียวไพร-ครีม','th.navyWhite':'น้ำเงิน-ขาว','th.maroonCream':'แดงเข้ม-ครีม','th.terracotta':'ส้ม-ดินเผา','th.plum':'ม่วงมะเขือ','th.teal':'เขียวน้ำทะเล','th.mustard':'เหลืองมัสตาร์ด','th.blueOcean':'น้ำเงินมหาสมุทร','fl.themeSet':'เปลี่ยนธีมแล้ว','ttl.theme':'เลือกธีมสีเมนู','th.custom':'กำหนดเอง','th.resetCustom':'คืนค่า','th.grpSet':'ตั้งค่า','th.grpNote':'กล่องโน้ต','th.grpGroup':'กลุ่มเมนู','th.grpText':'ตัวอักษร','th.zNoteBg':'พื้นโน้ต','th.zNoteBd':'ขอบโน้ต','th.zHeadBg':'พื้นหัวกลุ่ม','th.zBodyBg':'พื้นเนื้อกลุ่ม','th.zGrpBd':'ขอบกลุ่ม','th.zName':'ชื่อเมนู','th.zPrice':'ราคา','th.zNote':'หมายเหตุ','th.zDot':'เส้นจุด','bg.scope':'ขอบเขต','bg.thisPage':'เฉพาะหน้านี้','bg.allPages':'ทุกหน้า','bg.color':'สี','bg.image':'รูป','bg.pick':'เลือกรูป','bg.dim':'ความจางรูป','bg.colorDim':'ความจางสี','bg.menuDim':'ความจางกลุ่มเมนู','bg.grpColorImg':'สี · รูป','bg.grpDim':'ความจาง','bg.grpContent':'เนื้อหา','bg.menuShort':'กลุ่มเมนู','bg.hideContent':'ซ่อนเนื้อหา','bg.showContent':'แสดงเนื้อหา','bg.contentHidden':'ซ่อนเนื้อหาแล้ว (เฉพาะจอ)','bg.contentShown':'แสดงเนื้อหาแล้ว','bg.reset':'คืนค่า','bg.pageSel':'เลือกหน้า','bg.posSet':'ย้ายตำแหน่งรูปแล้ว','bg.zoomSet':'ปรับขนาดรูปแล้ว','bg.odd':'หน้าคี่','bg.even':'หน้าคู่','bg.range':'ระบุ','bg.rangeHint':'เช่น 1,3,5-7','bg.rangeTip':'ระบุหน้า เช่น 1,3,5-7','bg.applied':'ใช้พื้นหลังกับหน้าที่เลือกแล้ว','bg.noPages':'ไม่มีหน้าในขอบเขตที่ระบุ',
+ th:{'btn.addGFont':'＋ ฟอนต์ Google','ttl.addGFont':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.title':'เพิ่มฟอนต์จาก Google โดยต่อ internet (เฉพาะฟอนต์รองรับภาษาไทย-อังกฤษเท่านั้น)','gfont.inlbl':'ค้นหาฟอนต์จากรายการด้านบน (พิมพ์ชื่อ แล้วกดค้นหา)','gfont.add':'เพิ่มฟอนต์ที่เลือก','btn.gfontSearch':'ค้นหา','gfont.browselbl':'ฟอนต์ที่ใช้ได้ทั้งหมด','gfont.browsehint':'คลิกเพื่อเลือก','fl.gfontNoMatch':'ไม่พบฟอนต์ "{q}" — ลองพิมพ์ชื่อให้ตรง','gfont.oflPre':'ทุกฟอนต์เป็น OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' ฝัง/แจก/ใช้เชิงพาณิชย์ได้ฟรี) · ฟอนต์ติดไปกับไฟล์ บันทึกแล้วเปิดเครื่องอื่นก็เห็นฟอนต์เดิม','fl.gfontLoading':'กำลังโหลดฟอนต์ "{name}" จาก Google…','fl.gfontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วใช้ได้เลย','fl.gfontNotFound':'ไม่พบฟอนต์ "{name}" บน Google — ตรวจชื่อให้ตรง','fl.gfontOffline':'โหลดฟอนต์ "{name}" ไม่ได้ — ต้องต่อเน็ตตอนเพิ่มฟอนต์ Google','fl.gfontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.fontDup':'ฟอนต์ "{name}" มีอยู่แล้ว','fl.gfontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','btn.addFont':'＋ ฟอนต์','font.userGroup':'ฟอนต์ที่เพิ่ม','font.baseGroup':'ฟอนต์มากับแอป','ttl.addFont':'เลือกไฟล์ฟอนต์ (.ttf/.otf/.woff/.woff2) ที่โหลดไว้ในเครื่อง · โหลดฟอนต์ฟรีเพิ่มได้จาก fonts.google.com','fl.fontAdded':'✓ เพิ่มฟอนต์ "{name}" แล้ว — เลือกข้อความแล้วเลือกฟอนต์นี้เพื่อใช้','fl.fontBadType':'ไฟล์ "{name}" ไม่ใช่ฟอนต์ (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'เพิ่มฟอนต์ "{name}" ไม่สำเร็จ','tab.text':'ข้อความ','tab.image':'รูป','tab.page':'หน้า','tab.file':'ไฟล์','tab.template':'เท็มเพลต','tab.screen':'หน้าจอ','lay.2col':'2 คอลัมน์','lay.1col':'1 คอลัมน์','lay.3col':'3 คอลัมน์','grp.layout':'เลย์เอาต์','btn.noteHide':'ซ่อนโน้ต','btn.noteShow':'แสดงโน้ต','btn.plabelHide':'ซ่อนเลขหน้า','btn.plabelShow':'แสดงเลขหน้า','grp.show':'แสดง/ซ่อน','ttl.noteHide':'ซ่อนกล่องหมายเหตุ (เพิ่มพื้นที่เมนู · มีผลพิมพ์)','ttl.plabelHide':'ซ่อนเลขหน้า (เพิ่มพื้นที่เมนู · มีผลพิมพ์)','fl.layoutSet':'เปลี่ยนเลย์เอาต์แล้ว','grp.viewmode':'มุมมอง','btn.pageBg':'พื้นหลัง','grp.bg':'พื้นหลัง','btn.theme':'ธีม','grp.theme':'ธีม','grp.rule':'เส้นคั่นส่วนหัว','th.pick':'ธีม','th.edgeW':'หนา','th.edgeS':'แบบ','th.edgeR':'มุม','th.bsGradient':'ไล่เฉด','btn.lineEdge':'เส้น·ขอบ','grp.lineEdge':'เส้น·ขอบ','ttl.lineEdge':'ปรับเส้นคั่นและขอบกล่อง (หนา·แบบ · มีผลตอนพิมพ์)','th.grpNoteEdge':'ขอบกล่องโน้ต','th.grpGrpEdge':'ขอบกล่องกลุ่ม','th.bsSolid':'ทึบ','th.bsDashed':'ประ','th.bsDotted':'จุด','th.bsNone':'ไม่มี','th.cream':'ครีม-น้ำตาล','th.whiteGreen':'ขาว-เขียว','th.darkGold':'เข้ม-ทอง','th.paperBrick':'กระดาษ-แดงอิฐ','th.whiteGray':'ขาว-เทา','th.bw':'ขาว-ดำ','th.pineCream':'เขียวไพร-ครีม','th.navyWhite':'น้ำเงิน-ขาว','th.maroonCream':'แดงเข้ม-ครีม','th.terracotta':'ส้ม-ดินเผา','th.plum':'ม่วงมะเขือ','th.teal':'เขียวน้ำทะเล','th.mustard':'เหลืองมัสตาร์ด','th.blueOcean':'น้ำเงินมหาสมุทร','th.vividRed':'แดงสด','th.vividBlue':'น้ำเงินสด','th.vividGreen':'เขียวสด','th.navyDark':'กรมท่าเข้ม','th.wineDark':'ไวน์แดงเข้ม','th.sage':'เขียวเซจ','th.dustyBlue':'ฟ้าหม่น','th.dustyRose':'ชมพูหม่น','th.monoDark':'ดำ-ขาว','th.monoGray':'เทากลาง','thg.red':'แดง · ชมพู','thg.orange':'ส้ม · น้ำตาล','thg.yellow':'เหลือง · ทอง','thg.green':'เขียว','thg.blue':'น้ำเงิน · ฟ้า','thg.purple':'ม่วง','thg.mono':'ขาวดำ','ink.lo':'หมึกน้อย','ink.mid':'หมึกปานกลาง','ink.hi':'หมึกมาก','tht.vivid':'สีแท้','tht.pastel':'พาสเทล','tht.dark':'พื้นเข้ม','tht.muted':'หม่นอมเทา','flt.type':'ประเภท','flt.color':'สี','flt.all':'ทั้งหมด','flt.none':'ไม่มีธีมตามที่เลือก','fl.themeSet':'เปลี่ยนธีมแล้ว','fl.themeInkHi':'เปลี่ยนธีมแล้ว · ธีมนี้พิมพ์แล้วใช้หมึกมาก','ttl.theme':'เลือกธีมสีเมนู','th.custom':'กำหนดเอง','th.resetCustom':'คืนค่า','th.grpSet':'ตั้งค่า','th.grpNote':'กล่องโน้ต','th.grpGroup':'กลุ่มเมนู','th.grpText':'ตัวอักษร','th.zNoteBg':'พื้นโน้ต','th.zNoteBd':'ขอบโน้ต','th.zHeadBg':'พื้นหัวกลุ่ม','th.zBodyBg':'พื้นเนื้อกลุ่ม','th.zGrpBd':'ขอบกลุ่ม','th.zName':'ชื่อเมนู','th.zPrice':'ราคา','th.zNote':'หมายเหตุ','th.zDot':'เส้นจุด','bg.scope':'ขอบเขต','bg.thisPage':'เฉพาะหน้านี้','bg.allPages':'ทุกหน้า','bg.color':'สี','bg.image':'รูป','bg.pick':'เลือกรูป','bg.dim':'ความจางรูป','bg.colorDim':'ความจางสี','bg.menuDim':'ความจางกลุ่มเมนู','bg.grpColorImg':'สี · รูป','bg.grpDim':'ความจาง','bg.grpContent':'เนื้อหา','bg.menuShort':'กลุ่มเมนู','bg.hideContent':'ซ่อนเนื้อหา','bg.showContent':'แสดงเนื้อหา','bg.contentHidden':'ซ่อนเนื้อหาแล้ว (เฉพาะจอ)','bg.contentShown':'แสดงเนื้อหาแล้ว','bg.reset':'คืนค่า','bg.pageSel':'เลือกหน้า','bg.posSet':'ย้ายตำแหน่งรูปแล้ว','bg.zoomSet':'ปรับขนาดรูปแล้ว','bg.odd':'หน้าคี่','bg.even':'หน้าคู่','bg.range':'ระบุ','bg.rangeHint':'เช่น 1,3,5-7','bg.rangeTip':'ระบุหน้า เช่น 1,3,5-7','bg.applied':'ใช้พื้นหลังกับหน้าที่เลือกแล้ว','bg.noPages':'ไม่มีหน้าในขอบเขตที่ระบุ',
   'grp.mode':'โหมด','grp.font':'ฟอนต์','grp.format':'จัดรูปแบบ','grp.imgtools':'จัดการรูป','grp.pagetools':'หน้า','grp.file':'ไฟล์','grp.print':'พิมพ์',
   'btn.editText':'แก้ข้อความ','btn.editImage':'แก้รูป','btn.applyAll':'ใช้ทั้งประเภท','btn.reset':'คืนค่า',
   'btn.addImage':'เพิ่มรูป','btn.applyToAll':'ใส่ทุกหน้า','btn.enlarge':'ขยาย','btn.shrink':'ย่อ','btn.resetSize':'คืนขนาด','btn.actualSize':'ขนาดจริง',
@@ -2390,7 +2476,7 @@ var I18N={
   'pnl.delPageLabel':'ลบหน้า','pnl.addPageLabel':'เพิ่ม','pnl.addPageSuf':'หน้า','pnl.addPageOk':'เพิ่ม','pnl.addPageHint':'ตอนนี้ {total} หน้า · ใส่จำนวนหน้าที่จะเพิ่ม (1–20)','pnl.addPagePreview':'รวมเป็น {sum} หน้า','pnl.addPageMax':'เพิ่มได้ครั้งละไม่เกิน 20 หน้า','pnl.addPageWarn':'หน้าเยอะ ({sum}) อาจทำให้แก้ไข/พิมพ์ช้าลง','pnl.addPageNotEntered':'ใส่จำนวนหน้าที่จะเพิ่ม','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กด Ctrl+Z เพื่อย้อนได้ (ก่อนปิดหรือรีเฟรชหน้า)',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
   'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม'},
- en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.template':'Template','tab.screen':'Screen','lay.2col':'2 columns','lay.1col':'1 column','lay.3col':'3 columns','grp.layout':'Layout','btn.noteHide':'Hide note','btn.noteShow':'Show note','btn.plabelHide':'Hide page number','btn.plabelShow':'Show page number','grp.show':'Show/Hide','ttl.noteHide':'Hide note box (more menu space · affects print)','ttl.plabelHide':'Hide page number (more menu space · affects print)','fl.layoutSet':'Layout changed','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','grp.rule':'Header divider','th.pick':'Theme','th.edgeW':'Width','th.edgeS':'Style','th.edgeR':'Corner','th.bsGradient':'Gradient','btn.lineEdge':'Lines & borders','grp.lineEdge':'Lines & borders','ttl.lineEdge':'Adjust divider & box borders (width·style · affects print)','th.grpNoteEdge':'Note box border','th.grpGrpEdge':'Group box border','th.bsSolid':'Solid','th.bsDashed':'Dashed','th.bsDotted':'Dotted','th.bsNone':'None','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','th.blueOcean':'Blue Ocean','fl.themeSet':'Theme changed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.grpColorImg':'Color & image','bg.grpDim':'Fade','bg.grpContent':'Content','bg.menuShort':'Menu','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
+ en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.template':'Template','tab.screen':'Screen','lay.2col':'2 columns','lay.1col':'1 column','lay.3col':'3 columns','grp.layout':'Layout','btn.noteHide':'Hide note','btn.noteShow':'Show note','btn.plabelHide':'Hide page number','btn.plabelShow':'Show page number','grp.show':'Show/Hide','ttl.noteHide':'Hide note box (more menu space · affects print)','ttl.plabelHide':'Hide page number (more menu space · affects print)','fl.layoutSet':'Layout changed','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','grp.rule':'Header divider','th.pick':'Theme','th.edgeW':'Width','th.edgeS':'Style','th.edgeR':'Corner','th.bsGradient':'Gradient','btn.lineEdge':'Lines & borders','grp.lineEdge':'Lines & borders','ttl.lineEdge':'Adjust divider & box borders (width·style · affects print)','th.grpNoteEdge':'Note box border','th.grpGrpEdge':'Group box border','th.bsSolid':'Solid','th.bsDashed':'Dashed','th.bsDotted':'Dotted','th.bsNone':'None','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','th.blueOcean':'Blue Ocean','th.vividRed':'Vivid Red','th.vividBlue':'Vivid Blue','th.vividGreen':'Vivid Green','th.navyDark':'Dark Navy','th.wineDark':'Dark Wine','th.sage':'Sage','th.dustyBlue':'Dusty Blue','th.dustyRose':'Dusty Rose','th.monoDark':'Dark Mono','th.monoGray':'Mid Gray','thg.red':'Red · Pink','thg.orange':'Orange · Brown','thg.yellow':'Yellow · Gold','thg.green':'Green','thg.blue':'Blue','thg.purple':'Purple','thg.mono':'Mono','ink.lo':'Low ink','ink.mid':'Medium ink','ink.hi':'High ink','tht.vivid':'Vivid','tht.pastel':'Pastel','tht.dark':'Dark','tht.muted':'Muted','flt.type':'Type','flt.color':'Color','flt.all':'All','flt.none':'No theme matches','fl.themeSet':'Theme changed','fl.themeInkHi':'Theme changed · this theme uses a lot of ink when printed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.grpColorImg':'Color & image','bg.grpDim':'Fade','bg.grpContent':'Content','bg.menuShort':'Menu','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
   'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
   'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
   'btn.addImage':'Add Image','btn.applyToAll':'Apply to All Pages','btn.enlarge':'Enlarge','btn.shrink':'Shrink','btn.resetSize':'Reset Size','btn.actualSize':'Actual Size',
@@ -4535,7 +4621,7 @@ function _bgWirePalette(){
   if(!window._bgNudgeBound){ window._bgNudgeBound=true; document.addEventListener('keydown', function(e){ if(!document.body.classList.contains('pgbgmode')) return; if(!_bgCur||!_bgCur.image) return; var sel=document.querySelector('.page.pgcur .pgbgimg.sel')||document.querySelector('.pgbgimg.sel'); if(!sel) return; var tg=e.target; if(tg&&tg.closest&&tg.closest('input,textarea,[contenteditable="true"]')) return; if(e.ctrlKey||e.metaKey||e.altKey) return; var k=e.key; if(k!=='ArrowUp'&&k!=='ArrowDown'&&k!=='ArrowLeft'&&k!=='ArrowRight') return; e.preventDefault(); if(_bgCur.w==null){ _bgCur.x=parseFloat(sel.style.left)||0; _bgCur.y=parseFloat(sel.style.top)||0; _bgCur.w=parseFloat(sel.style.width)||100; } if(_bgCur.x==null) _bgCur.x=0; if(_bgCur.y==null) _bgCur.y=0; var stepMM=e.shiftKey?5:1; var xs=stepMM/210*100, ys=stepMM/297*100; if(k==='ArrowUp') _bgCur.y-=ys; else if(k==='ArrowDown') _bgCur.y+=ys; else if(k==='ArrowLeft') _bgCur.x-=xs; else _bgCur.x+=xs; _bgCur.x=Math.round(_bgCur.x*100)/100; _bgCur.y=Math.round(_bgCur.y*100)/100; var st=_bgImgState(); _pageBgTargets(_pageBgScope()).forEach(function(pg){ var w=_pgbgImgOf(pg); _bgSetImgEl(w,st); }); if(typeof markDirty==='function') markDirty(); if(typeof flashStatus==='function') flashStatus('info', tk('bg.posSet')); }); }
   if(!window._bgOutsideBound){ window._bgOutsideBound=true; document.addEventListener('mousedown',function(e){ var pop=document.getElementById('bgCpPop'); if(!pop||!pop.classList.contains('open')) return; var wrap=pop.closest('.cp-trigger'); if(wrap && !wrap.contains(e.target)) pop.classList.remove('open'); }); document.addEventListener('keydown',function(e){ var pop=document.getElementById('bgCpPop'); if(e.key==='Escape' && pop && pop.classList.contains('open')){ e.preventDefault(); e.stopPropagation(); pop.classList.remove('open'); } }, true); }
 }
-var _THEMES=['cream','white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'];
+var _THEMES=['cream','white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray'];
 var THEME_KEY='oe_theme';
 var THEME_CUSTOM_KEY='oe_theme_custom';
 var _THEME_VARS=['note-bg','note-bd','grp-head-bg','grp-body-bg','grp-bd','txt-name','txt-price','txt-note','line-dot'];
@@ -4659,11 +4745,15 @@ function _themePick(id){
   _themeClearCustomInline();
   _themeApply(id, true);
   _themeRenderPanel();
-  if(typeof flashStatus==='function') flashStatus('info', tk('fl.themeSet'));
+  if(typeof flashStatus==='function'){ if(_THEME_INK[id]==='hi') flashStatus('warning', tk('fl.themeInkHi')); else flashStatus('info', tk('fl.themeSet')); }
 }
 /* ===== custom dropdown ธีม + live preview (ผู้ใช้ 24 ต.ค. 2026): ชี้/เลื่อน=ดูธีมจริงทันที, คลิก=ยืนยัน, Esc/คลิกนอก/ปิด=คืนธีมเดิม ===== */
-var _THEME_ORDER=['custom','cream','white-green','dark-gold','paper-brick','white-gray','bw','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'];
-var _THEME_KEYS={custom:'th.custom',cream:'th.cream','white-green':'th.whiteGreen','dark-gold':'th.darkGold','paper-brick':'th.paperBrick','white-gray':'th.whiteGray',bw:'th.bw','pine-cream':'th.pineCream','navy-white':'th.navyWhite','maroon-cream':'th.maroonCream',terracotta:'th.terracotta',plum:'th.plum',teal:'th.teal',mustard:'th.mustard','blue-ocean':'th.blueOcean'};
+var _THEME_ORDER=['custom','maroon-cream','paper-brick','dusty-rose','vivid-red','wine-dark','cream','terracotta','mustard','dark-gold','white-green','teal','pine-cream','sage','vivid-green','navy-white','blue-ocean','dusty-blue','vivid-blue','navy-dark','plum','white-gray','mono-gray','bw','mono-dark'];
+var _THEME_KEYS={custom:'th.custom',cream:'th.cream','white-green':'th.whiteGreen','dark-gold':'th.darkGold','paper-brick':'th.paperBrick','white-gray':'th.whiteGray',bw:'th.bw','pine-cream':'th.pineCream','navy-white':'th.navyWhite','maroon-cream':'th.maroonCream',terracotta:'th.terracotta',plum:'th.plum',teal:'th.teal',mustard:'th.mustard','blue-ocean':'th.blueOcean','vivid-red':'th.vividRed','vivid-blue':'th.vividBlue','vivid-green':'th.vividGreen','navy-dark':'th.navyDark','wine-dark':'th.wineDark','sage':'th.sage','dusty-blue':'th.dustyBlue','dusty-rose':'th.dustyRose','mono-dark':'th.monoDark','mono-gray':'th.monoGray'};
+var _THEME_GROUPS=[['thg.red',['maroon-cream','paper-brick','dusty-rose','vivid-red','wine-dark']],['thg.orange',['cream','terracotta']],['thg.yellow',['mustard','dark-gold']],['thg.green',['white-green','teal','pine-cream','sage','vivid-green']],['thg.blue',['navy-white','blue-ocean','dusty-blue','vivid-blue','navy-dark']],['thg.purple',['plum']],['thg.mono',['white-gray','mono-gray','bw','mono-dark']]];  /* หมวดตามสี เรียงอ่อน->แก่ · ลำดับต้องตรง _THEME_ORDER (lint #116) */
+var _THEME_INK={'maroon-cream':'lo','paper-brick':'lo','dusty-rose':'mid','vivid-red':'mid','wine-dark':'hi','cream':'lo','terracotta':'lo','mustard':'lo','dark-gold':'hi','white-green':'lo','teal':'lo','pine-cream':'lo','sage':'mid','vivid-green':'mid','navy-white':'lo','blue-ocean':'lo','dusty-blue':'mid','vivid-blue':'mid','navy-dark':'hi','plum':'lo','white-gray':'lo','mono-gray':'mid','bw':'mid','mono-dark':'hi'};  /* ป้ายหมึกใน dropdown · คำนวณจากสีพื้นกล่อง 0.75 เนื้อกลุ่ม + 0.20 หัวกลุ่ม + 0.05 กล่องโน้ต · lint #116 คำนวณซ้ำจาก CSS ต้องตรง */
+var _THEME_TYPE={'vivid-red':'vivid','vivid-blue':'vivid','vivid-green':'vivid','bw':'vivid','cream':'pastel','white-green':'pastel','paper-brick':'pastel','pine-cream':'pastel','navy-white':'pastel','maroon-cream':'pastel','terracotta':'pastel','plum':'pastel','teal':'pastel','mustard':'pastel','blue-ocean':'pastel','white-gray':'pastel','dark-gold':'dark','navy-dark':'dark','wine-dark':'dark','mono-dark':'dark','sage':'muted','dusty-blue':'muted','dusty-rose':'muted','mono-gray':'muted'};  /* ประเภทสี (สีแท้/พาสเทล/พื้นเข้ม/หม่นอมเทา) ใช้กรองใน dropdown · ขาวดำ 4 แบบกระจายตามประเภท · lint #117 */
+var _themeFlt={type:'',color:''};
 var _themeDd=null;
 function _themeCustomVarsSaved(){ try{ return JSON.parse(localStorage.getItem(THEME_CUSTOM_KEY))||null; }catch(e){ return null; } }
 function _themeApplyInlineVars(obj){ if(!obj) return; _THEME_VARS.forEach(function(k){ if(obj[k]!=null) document.documentElement.style.setProperty('--'+k,obj[k]); }); }
@@ -4671,10 +4761,45 @@ function _themePreviewVisual(id){
   if(id==='custom'){ _themeApplyInlineVars(_themeCustomVarsSaved()); document.documentElement.setAttribute('data-theme','custom'); }
   else { _THEME_VARS.forEach(function(k){ document.documentElement.style.removeProperty('--'+k); }); document.documentElement.setAttribute('data-theme',id); }
 }
+function _themeDdListHtml(){
+  var cur=_theme, html='', n=0;
+  function opt(id){ var ik=_THEME_INK[id]; return '<button type="button" class="ep-dd-opt'+(cur===id?' sel':'')+'" role="option" data-tid="'+id+'" onmouseenter="_themeDdPreview(\''+id+'\')" onfocus="_themeDdPreview(\''+id+'\')" onclick="_themeDdCommit(\''+id+'\')"><span data-i18n="'+_THEME_KEYS[id]+'">'+epEsc(t(_THEME_KEYS[id]))+'</span>'+(ik?'<span class="ep-dd-ink ink-'+ik+'" data-i18n="ink.'+ik+'">'+epEsc(t('ink.'+ik))+'</span>':'')+'</button>'; }
+  html+=opt('custom');
+  _THEME_GROUPS.forEach(function(g){
+    if(_themeFlt.color && g[0]!==_themeFlt.color) return;
+    var ids=g[1].filter(function(id){ return !_themeFlt.type || _THEME_TYPE[id]===_themeFlt.type; });
+    if(!ids.length) return;
+    n+=ids.length;
+    html+='<div class="ep-dd-grp" role="presentation" data-i18n="'+g[0]+'">'+epEsc(t(g[0]))+'</div>';
+    ids.forEach(function(id){ html+=opt(id); });
+  });
+  if(!n) html+='<div class="ep-dd-empty" role="presentation" data-i18n="flt.none">'+epEsc(t('flt.none'))+'</div>';
+  return html;
+}
 function _themeDdHtml(){
-  var cur=_theme, html='<span class="ep-ddwrap" id="themeDdWrap"><button type="button" class="ep-dd-trigger" id="themeDdTrigger" aria-haspopup="listbox" onclick="_themeDdToggle(event)"><span class="ep-dd-cur" id="themeDdCur" data-i18n="'+(_THEME_KEYS[cur]||'th.cream')+'">'+epEsc(t(_THEME_KEYS[cur]||'th.cream'))+'</span><span class="cp-caret">▾</span></button><div class="ep-dd-pop" id="themeDdPop" role="listbox">';
-  _THEME_ORDER.forEach(function(id){ html+='<button type="button" class="ep-dd-opt'+(cur===id?' sel':'')+'" role="option" data-tid="'+id+'" data-i18n="'+_THEME_KEYS[id]+'" onmouseenter="_themeDdPreview(\''+id+'\')" onfocus="_themeDdPreview(\''+id+'\')" onclick="_themeDdCommit(\''+id+'\')">'+epEsc(t(_THEME_KEYS[id]))+'</button>'; });
-  html+='</div></span>'; return html;
+  var cur=_theme;
+  return '<span class="ep-ddwrap" id="themeDdWrap"><button type="button" class="ep-dd-trigger" id="themeDdTrigger" aria-haspopup="listbox" onclick="_themeDdToggle(event)"><span class="ep-dd-cur" id="themeDdCur" data-i18n="'+(_THEME_KEYS[cur]||'th.cream')+'">'+epEsc(t(_THEME_KEYS[cur]||'th.cream'))+'</span><span class="cp-caret">\u25be</span></button><div class="ep-dd-pop" id="themeDdPop" role="listbox">'+_themeDdListHtml()+'</div></span>';
+}
+/* ตัวกรองธีม: ประเภท + กลุ่มสี (ผู้ใช้ 26 ต.ค. 2026) · ใช้ร่วมกันได้ · กรองรายการใน dropdown ธีม ไม่เปลี่ยนธีมเอง */
+function _themeFltCount(type,color){ var n=0; _THEME_GROUPS.forEach(function(g){ if(color && g[0]!==color) return; g[1].forEach(function(id){ if(!type || _THEME_TYPE[id]===type) n++; }); }); return n; }
+function _themeFltMatch(id){ if(id==='custom') return true; var c=''; _THEME_GROUPS.forEach(function(g){ if(g[1].indexOf(id)>=0) c=g[0]; }); return (!_themeFlt.type || _THEME_TYPE[id]===_themeFlt.type) && (!_themeFlt.color || c===_themeFlt.color); }
+function _themeFltFirst(){ for(var i=0;i<_THEME_ORDER.length;i++){ var id=_THEME_ORDER[i]; if(id!=='custom' && _themeFltMatch(id)) return id; } return null; }
+function _themeFltHtml(){
+  /* ตัวเลือกที่ไม่มีธีมเลยเมื่อรวมกับอีกช่อง = disabled (ผู้ใช้ 26 ต.ค. 2026) */
+  function o(v,key,curv,dis){ return '<option value="'+v+'"'+(curv===v?' selected':'')+(dis?' disabled':'')+' data-i18n="'+key+'">'+epEsc(t(key))+'</option>'; }
+  var ty=o('','flt.all',_themeFlt.type,false)+['vivid','pastel','dark','muted'].map(function(k){ return o(k,'tht.'+k,_themeFlt.type,!_themeFltCount(k,_themeFlt.color)); }).join('');
+  var co=o('','flt.all',_themeFlt.color,false)+_THEME_GROUPS.map(function(g){ return o(g[0],g[0],_themeFlt.color,!_themeFltCount(_themeFlt.type,g[0])); }).join('');
+  return '<span class="ep-flabel" data-i18n="flt.type">'+epEsc(t('flt.type'))+'</span><select class="ep-sel" id="themeFltType" onchange="_themeFltSet(\'type\',this.value)">'+ty+'</select>'
+    +'<span class="ep-flabel ep-flt-gap" data-i18n="flt.color">'+epEsc(t('flt.color'))+'</span><select class="ep-sel" id="themeFltColor" onchange="_themeFltSet(\'color\',this.value)">'+co+'</select>';
+}
+function _themeFltSet(k,v){
+  _themeFlt[k]=v||'';
+  if(!_themeFltCount(_themeFlt.type,_themeFlt.color)) _themeFlt[k==='type'?'color':'type']='';  /* กันชุดที่ไม่มีธีม (ปกติ option ถูก disable อยู่แล้ว) */
+  var fid=k==='type'?'themeFltType':'themeFltColor';
+  /* ธีมปัจจุบันต้องตรงตัวกรองเสมอ: ไม่ตรง -> เปลี่ยนเป็นธีมแรก (อ่อนสุด) ที่ตรง · ธีมกำหนดเองไม่เปลี่ยน (เปลี่ยนแล้วสีที่ตั้งเองจะหาย) */
+  var nid=(_theme!=='custom' && !_themeFltMatch(_theme)) ? _themeFltFirst() : null;
+  if(nid) _themePick(nid); else _themeRenderPanel();
+  var f=document.getElementById(fid); if(f) f.focus();
 }
 function _themeDdSetHl(id){ var pop=document.getElementById('themeDdPop'); if(!pop) return; pop.querySelectorAll('.ep-dd-opt').forEach(function(b){ b.classList.toggle('hl', b.getAttribute('data-tid')===id); }); }
 function _themeDdToggle(e){ if(e){ e.stopPropagation(); } if(_themeDd&&_themeDd.open) _themeDdClose(true); else _themeDdOpen(); }
@@ -4700,7 +4825,7 @@ function _themeDdPreview(id){ if(!_themeDd||!_themeDd.open) return; _themePrevie
 function _themeDdCommit(id){ _themeDdDetach(); if(_themeDd) _themeDd.open=false; _themeDd=null; _themePick(id); }
 function _themeDdKey(e){
   if(!_themeDd||!_themeDd.open) return;
-  var ids=_THEME_ORDER, pop=document.getElementById('themeDdPop');
+  var pop=document.getElementById('themeDdPop'), ids=pop?[].map.call(pop.querySelectorAll('.ep-dd-opt'),function(b){ return b.getAttribute('data-tid'); }):['custom'];  /* เดินตามรายการที่แสดงจริง (หลังกรอง) */
   var hl=pop?pop.querySelector('.ep-dd-opt.hl'):null, ci=hl?ids.indexOf(hl.getAttribute('data-tid')):ids.indexOf(_themeDd.committed);
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); var ni=ci+(e.key==='ArrowDown'?1:-1); if(ni<0)ni=ids.length-1; if(ni>=ids.length)ni=0; _themeDdPreview(ids[ni]); var el=pop.querySelector('.ep-dd-opt.hl'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); }
   else if(e.key==='Enter'){ e.preventDefault(); if(hl) _themeDdCommit(hl.getAttribute('data-tid')); }
@@ -4757,7 +4882,7 @@ function openLineEdgePanel(){
 }
 function _themeRenderPanel(){
   var cur=_theme;
-  var body='<span class="ep-pf thcp-head"><span class="ep-flabel" data-i18n="th.pick">'+epEsc(t('th.pick'))+'</span>'+_themeDdHtml()+'</span>';
+  var body='<span class="ep-pf thcp-head">'+_themeFltHtml()+'<span class="ep-flabel ep-flt-gap" data-i18n="th.pick">'+epEsc(t('th.pick'))+'</span>'+_themeDdHtml()+'</span>';
   if(cur==='custom'){
     body += '<span class="ep-pf thcp-row">'
       + '<span class="thcp-sep"></span>'

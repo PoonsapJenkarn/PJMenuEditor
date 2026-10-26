@@ -2148,11 +2148,11 @@ def main():
 
     # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
     _e94=[]
-    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'):
+    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray'):
         if (':root[data-theme="'+_t94+'"]') not in _css:
             _e94.append('ไม่พบธีม ' + _t94)
     _m_themes94=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
-    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean'):
+    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray'):
         if not _m_themes94 or ("'"+_tid94+"'") not in _m_themes94.group(1): _e94.append('_THEMES ขาด ' + _tid94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
@@ -2172,7 +2172,7 @@ def main():
     if "'oe_theme'" not in txt: _e94.append('ไม่พบคีย์ oe_theme')
     if 'id="btnTheme"' not in txt: _e94.append('ไม่พบปุ่ม btnTheme')
     if '_themeLoad();' not in txt: _e94.append('ไม่เรียก _themeLoad() ตอนเปิดแอป')
-    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.whiteGray','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard'):
+    for _k94 in ('btn.theme','grp.theme','th.pick','th.cream','th.whiteGreen','th.darkGold','th.paperBrick','th.bw','th.whiteGray','th.pineCream','th.navyWhite','th.maroonCream','th.terracotta','th.plum','th.teal','th.mustard','th.blueOcean','th.vividRed','th.vividBlue','th.vividGreen','th.navyDark','th.wineDark','th.sage','th.dustyBlue','th.dustyRose','th.monoDark','th.monoGray'):
         if ("'"+_k94+"'") not in txt: _e94.append('ไม่พบ i18n ' + _k94)
     _mdd94=re.search(r"var _THEME_ORDER=\['([a-z-]+)'", txt)
     if not _mdd94 or _mdd94.group(1)!='custom': _e94.append('dropdown ธีม: กำหนดเองต้องเป็นลำดับแรก (_THEME_ORDER[0]==custom)')
@@ -2536,6 +2536,85 @@ def main():
     if '_noteHideSync();' not in txt: errors.append('lint #115: ไม่เรียก _noteHideSync() ตอนเปิดแอป')
     for _k115 in ('btn.noteHide','btn.noteShow','btn.plabelHide','btn.plabelShow','grp.show'):
         if txt.count("'"+_k115+"':'")<2: errors.append('lint #115: i18n '+_k115+' ไม่ครบ TH+EN')
+
+    # ---- 116) ธีมเรียงตามสี 7 หมวด (แดง·ชมพู/ส้ม·น้ำตาล/เหลือง·ทอง/เขียว/น้ำเงิน·ฟ้า/ม่วง/ขาวดำ) อ่อน->แก่ · ป้ายหมึก น้อย/ปานกลาง/มาก คำนวณจากสีพื้น (ผู้ใช้ 26 ต.ค. 2026) ----
+    _mg116=re.search(r"var _THEME_GROUPS=\[(.*?)\];", txt)
+    _mo116=re.search(r"var _THEME_ORDER=\[([^\]]*)\]", txt)
+    _mt116=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
+    _mi116=re.search(r"var _THEME_INK=\{([^}]*)\}", txt)
+    if not (_mg116 and _mo116 and _mt116 and _mi116):
+        errors.append('lint #116: ไม่พบ _THEME_GROUPS/_THEME_ORDER/_THEMES/_THEME_INK')
+    else:
+        _gk116=re.findall(r"\['(thg\.[a-z]+)'", _mg116.group(1))
+        _gi116=re.findall(r"'([a-z-]+)'", re.sub(r"'thg\.[a-z]+'", "", _mg116.group(1)))
+        _oi116=re.findall(r"'([a-z-]+)'", _mo116.group(1))
+        _ti116=re.findall(r"'([a-z-]+)'", _mt116.group(1))
+        if _gk116!=['thg.red','thg.orange','thg.yellow','thg.green','thg.blue','thg.purple','thg.mono']:
+            errors.append('lint #116: หมวดธีมต้องเรียงตามสี แดง·ชมพู/ส้ม·น้ำตาล/เหลือง·ทอง/เขียว/น้ำเงิน·ฟ้า/ม่วง/ขาวดำ')
+        if _oi116[:1]!=['custom'] or _oi116[1:]!=_gi116:
+            errors.append('lint #116: _THEME_ORDER ต้อง = custom + ธีมใน _THEME_GROUPS ตามลำดับ (keyboard nav ใช้ลำดับนี้)')
+        if sorted(_gi116)!=sorted(_ti116) or len(set(_gi116))!=len(_gi116):
+            errors.append('lint #116: ทุกธีมใน _THEMES ต้องอยู่ใน _THEME_GROUPS ครั้งเดียวพอดี')
+        _ink116=dict(re.findall(r"'?([a-z-]+)'?:'(lo|mid|hi)'", _mi116.group(1)))
+        for _t116 in _ti116:
+            _blk116=re.search(r':root\{([^}]*--grp-body-bg[^}]*)\}', _css) if _t116=='cream' else re.search(r':root\[data-theme="'+re.escape(_t116)+r'"\]\{([^}]*)\}', _css)
+            if not _blk116:
+                errors.append('lint #116: ไม่พบ CSS ธีม '+_t116); continue
+            _b116=_blk116.group(1)
+            try:
+                _bd116=[int(x) for x in re.search(r'--grp-body-bg:([0-9, ]+);', _b116).group(1).split(',')]
+                _hd116=[int(x) for x in re.search(r'--grp-head-bg:([0-9, ]+);', _b116).group(1).split(',')]
+                _nh116=re.search(r'--note-bg:#([0-9a-fA-F]{6})', _b116).group(1)
+                _nt116=[int(_nh116[i:i+2],16) for i in (0,2,4)]
+            except Exception:
+                errors.append('lint #116: อ่านสีธีม '+_t116+' ไม่ได้'); continue
+            _sc116=0.75*(1-sum(_bd116)/765.0)+0.20*(1-sum(_hd116)/765.0)+0.05*(1-sum(_nt116)/765.0)
+            _lv116='lo' if _sc116<0.08 else ('mid' if _sc116<0.40 else 'hi')
+            if _ink116.get(_t116)!=_lv116:
+                errors.append('lint #116: ป้ายหมึกธีม '+_t116+' ต้องเป็น '+_lv116+' (คำนวณได้ '+('%.3f'%_sc116)+') แต่ _THEME_INK เป็น '+str(_ink116.get(_t116)))
+    if '#edpanel .ep-dd-grp' not in _css or 'class="ep-dd-grp"' not in txt:
+        errors.append('lint #116: dropdown ธีมต้องมีหัวหมวด .ep-dd-grp')
+    if '#edpanel .ep-dd-ink' not in _css or 'class="ep-dd-ink ink-' not in txt:
+        errors.append('lint #116: dropdown ธีมต้องมีป้ายหมึก .ep-dd-ink')
+    if "_THEME_INK[id]==='hi'" not in txt:
+        errors.append('lint #116: เลือกธีมหมึกมากต้องเตือนในแถบล่าง (fl.themeInkHi)')
+    for _t116 in ('navy-dark','wine-dark','mono-dark'):
+        if (':root[data-theme="'+_t116+'"] .crab b') not in _css:
+            errors.append('lint #116: ธีมพื้นเข้ม '+_t116+' ต้อง override สีตัวหนังสือกล่องโน้ต')
+    for _t116 in ('vivid-red','vivid-blue','vivid-green','mono-dark','navy-dark','wine-dark'):
+        if (':root[data-theme="'+_t116+'"] .sec-h .sechead *') not in _css:
+            errors.append('lint #116: ธีม '+_t116+' ต้อง override สีหัวกลุ่ม')
+    for _k116 in ('thg.red','thg.orange','thg.yellow','thg.green','thg.blue','thg.purple','thg.mono','ink.lo','ink.mid','ink.hi','fl.themeInkHi'):
+        if txt.count("'"+_k116+"':'")<2: errors.append('lint #116: i18n '+_k116+' ไม่ครบ TH+EN')
+    for _k116 in ('thg.vivid','thg.pastel','thg.dark','thg.muted'):
+        if ("'"+_k116+"':'") in txt: errors.append('lint #116: ลบ i18n หมวดเก่า '+_k116+' ไม่หมด')
+
+    # ---- 117) ตัวกรองธีม ประเภท + กลุ่มสี (ผู้ใช้ 26 ต.ค. 2026) · _THEME_TYPE ครอบทุกธีมครั้งเดียว · คีย์บอร์ดเดินตามรายการที่แสดงจริง ----
+    _mty117=re.search(r"var _THEME_TYPE=\{([^}]*)\}", txt)
+    _mth117=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
+    if not _mty117 or not _mth117:
+        errors.append('lint #117: ไม่พบ _THEME_TYPE / _THEMES')
+    else:
+        _ty117=re.findall(r"'([a-z-]+)':'([a-z]+)'", _mty117.group(1))
+        _th117=re.findall(r"'([a-z-]+)'", _mth117.group(1))
+        if sorted(k for k,v in _ty117)!=sorted(_th117) or len(_ty117)!=len(set(k for k,v in _ty117)):
+            errors.append('lint #117: _THEME_TYPE ต้องครอบทุกธีมใน _THEMES ครั้งเดียวพอดี')
+        _bad117=[k for k,v in _ty117 if v not in ('vivid','pastel','dark','muted')]
+        if _bad117: errors.append('lint #117: ประเภทธีมไม่ถูกต้อง '+','.join(_bad117))
+    for _f117 in ('function _themeDdListHtml(','function _themeFltHtml(','function _themeFltSet(','var _themeFlt='):
+        if _f117 not in txt: errors.append('lint #117: ไม่พบ '+_f117)
+    if 'id="themeFltType"' not in txt or 'id="themeFltColor"' not in txt:
+        errors.append('lint #117: แผงธีมต้องมีตัวกรอง ประเภท + สี')
+    if "var ids=_THEME_ORDER" in txt:
+        errors.append('lint #117: คีย์บอร์ดใน dropdown ธีมต้องเดินตามรายการที่แสดงจริง ไม่ใช่ _THEME_ORDER ทั้งหมด')
+    for _f117 in ('function _themeFltCount(','function _themeFltMatch(','function _themeFltFirst('):
+        if _f117 not in txt: errors.append('lint #117: ไม่พบ '+_f117)
+    if "!_themeFltCount(k,_themeFlt.color)" not in txt or "!_themeFltCount(_themeFlt.type,g[0])" not in txt or "(dis?' disabled':'')" not in txt:
+        errors.append('lint #117: ตัวเลือกประเภท/สีที่ไม่มีธีมเมื่อรวมกับอีกช่อง ต้อง disabled')
+    if "_theme!=='custom' && !_themeFltMatch(_theme)" not in txt or "_themePick(nid)" not in txt:
+        errors.append('lint #117: เปลี่ยนตัวกรองแล้วธีมปัจจุบันไม่ตรง ต้องเปลี่ยนเป็นธีมแรกที่ตรง (ยกเว้นกำหนดเอง)')
+    for _k117 in ('tht.vivid','tht.pastel','tht.dark','tht.muted','flt.type','flt.color','flt.all','flt.none'):
+        if txt.count("'"+_k117+"':'")<2: errors.append('lint #117: i18n '+_k117+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

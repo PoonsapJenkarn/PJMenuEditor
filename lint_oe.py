@@ -2495,6 +2495,19 @@ def main():
     # ---- 114) ระบบเลย์เอาต์ (เท็มเพลต เฟส 1): default 2col(A) + 1col(B) ผ่าน :root[data-layout] · แท็บเท็มเพลต + ปุ่มเลือก active เขียว · measuring override กัน overflow เพี้ยน · ติดไฟล์ (ผู้ใช้ 26 ต.ค. 2026) ----
     if ':root[data-layout="1col"] .grid' not in _css:
         errors.append('lint #114: ไม่พบ CSS :root[data-layout="1col"] .grid (Layout B)')
+    if ':root[data-layout="3col"] .grid' not in _css or 'column-count:3' not in _css:
+        errors.append('lint #114: ไม่พบ CSS 3col (column-count:3 · Layout C)')
+    if ':root[data-layout="3col"] .col' not in _css or 'display:contents' not in _css:
+        errors.append('lint #114: 3col ต้องมี .col{display:contents} (ยก .sec เป็น flow items)')
+    _msecbi=re.search(r'\.sec\{break-inside:avoid', _css)
+    if not _msecbi:
+        errors.append('lint #114: .sec ต้องมี break-inside:avoid (กันกลุ่มแตกข้ามคอลัมน์ใน 3col)')
+    if 'id="btnLayout_3col"' not in txt:
+        errors.append('lint #114: ไม่พบปุ่ม btnLayout_3col')
+    if "'3col'" not in re.search(r'var _LAYOUTS=\[([^\]]*)\]', txt).group(1):
+        errors.append('lint #114: _LAYOUTS ต้องมี 3col')
+    if txt.count("'lay.3col':'")<2:
+        errors.append('lint #114: i18n lay.3col ไม่ครบ TH+EN')
     if ':root[data-layout="1col"] body.measuring .grid' not in _css:
         errors.append('lint #114: ต้อง override measuring ของ 1col เป็น column (กันแบ่งหน้าเพี้ยน)')
     for _f114 in ('var _LAYOUTS=','function _layoutApply(','function _layoutLoad(','function _layoutPick(','function _layoutSyncBtns('):

@@ -2492,6 +2492,22 @@ def main():
     for _k113 in ('th.edgeR','th.bsGradient'):
         if txt.count("'"+_k113+"':'")<2: errors.append('lint #113: i18n '+_k113+' ไม่ครบ TH+EN')
 
+    # ---- 114) ระบบเลย์เอาต์ (เท็มเพลต เฟส 1): default 2col(A) + 1col(B) ผ่าน :root[data-layout] · แท็บเท็มเพลต + ปุ่มเลือก active เขียว · measuring override กัน overflow เพี้ยน · ติดไฟล์ (ผู้ใช้ 26 ต.ค. 2026) ----
+    if ':root[data-layout="1col"] .grid' not in _css:
+        errors.append('lint #114: ไม่พบ CSS :root[data-layout="1col"] .grid (Layout B)')
+    if ':root[data-layout="1col"] body.measuring .grid' not in _css:
+        errors.append('lint #114: ต้อง override measuring ของ 1col เป็น column (กันแบ่งหน้าเพี้ยน)')
+    for _f114 in ('var _LAYOUTS=','function _layoutApply(','function _layoutLoad(','function _layoutPick(','function _layoutSyncBtns('):
+        if _f114 not in txt: errors.append('lint #114: ไม่พบ '+_f114)
+    for _id114 in ('btnLayout_2col','btnLayout_1col'):
+        if ('id="'+_id114+'"') not in txt: errors.append('lint #114: ไม่พบปุ่ม '+_id114)
+    if 'data-tab="template"' not in txt: errors.append('lint #114: ไม่พบแท็บ template')
+    if 'data-pane="template"' not in txt: errors.append('lint #114: ไม่พบ rpane template')
+    if '#edbar #btnLayout_2col.on' not in _css: errors.append('lint #114: ปุ่มเลย์เอาต์ไม่มี active เขียว (ข้อ 11)')
+    if '_layoutLoad();' not in txt: errors.append('lint #114: ไม่เรียก _layoutLoad() ตอนเปิดแอป')
+    for _k114 in ('tab.template','lay.2col','lay.1col','grp.layout','fl.layoutSet'):
+        if txt.count("'"+_k114+"':'")<2: errors.append('lint #114: i18n '+_k114+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

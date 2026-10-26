@@ -2521,6 +2521,22 @@ def main():
     for _k114 in ('tab.template','lay.2col','lay.1col','grp.layout','fl.layoutSet'):
         if txt.count("'"+_k114+"':'")<2: errors.append('lint #114: i18n '+_k114+' ไม่ครบ TH+EN')
 
+    # ---- 115) ซ่อนกล่องโน้ต/ป้ายหน้า (เพิ่มพื้นที่เมนู): data-notehide/data-plabelhide บน <html> จอ+พิมพ์+ติดไฟล์ · ปุ่ม toggle ในแท็บเท็มเพลต active เขียว (ผู้ใช้ 26 ต.ค. 2026) ----
+    if 'html[data-notehide] .crab' not in _css:
+        errors.append('lint #115: ไม่พบ html[data-notehide] .crab (ซ่อนกล่องโน้ต)')
+    if 'html[data-plabelhide] .pagelabel' not in _css:
+        errors.append('lint #115: ไม่พบ html[data-plabelhide] .pagelabel (ซ่อนป้ายหน้า)')
+    if 'html[data-notehide][data-plabelhide] .noterow' not in _css:
+        errors.append('lint #115: ซ่อนทั้งคู่ต้องซ่อน .noterow (คืน margin)')
+    for _f115 in ('function _noteHideSync(','function toggleNoteHide(','function togglePageLabelHide('):
+        if _f115 not in txt: errors.append('lint #115: ไม่พบ '+_f115)
+    for _id115 in ('btnNoteHide','btnPLabelHide'):
+        if ('id="'+_id115+'"') not in txt: errors.append('lint #115: ไม่พบปุ่ม '+_id115)
+    if '#edbar #btnNoteHide.on' not in _css: errors.append('lint #115: ปุ่มซ่อนโน้ต/ป้ายหน้าไม่มี active เขียว (ข้อ 11)')
+    if '_noteHideSync();' not in txt: errors.append('lint #115: ไม่เรียก _noteHideSync() ตอนเปิดแอป')
+    for _k115 in ('btn.noteHide','btn.noteShow','btn.plabelHide','btn.plabelShow','grp.show'):
+        if txt.count("'"+_k115+"':'")<2: errors.append('lint #115: i18n '+_k115+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

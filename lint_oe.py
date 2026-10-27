@@ -2868,6 +2868,24 @@ def main():
     if not _md127 or 'preventDefault' in _md127.group(0):
         errors.append('lint #127: ตัวจับกดค้างห้าม preventDefault ตอน mousedown (แถบตัวอักษรต้องเก็บข้อความที่เลือกไว้)')
 
+    # ---- 128) หมุนล้อเมาส์บนช่องตัวเลข เฉพาะช่องที่โฟกัส (ผู้ใช้ 27 ต.ค. 2026 รอบ 5/5) ----
+    _mw128=re.search(r'var _WHEEL_FIELDS=\{([\s\S]*?)\n\};', txt)
+    if not _mw128:
+        errors.append('lint #128: ไม่พบ _WHEEL_FIELDS')
+    else:
+        for _id128 in ('typoSize','zoomLvl','calInch'):
+            if ('\n  '+_id128+':function(d)') not in ('\n'+_mw128.group(1)): errors.append('lint #128: ช่อง '+_id128+' ต้องหมุนล้อปรับได้')
+        for _no128 in ('ep-amt','ep-price','shdNum'):
+            if _no128 in _mw128.group(1): errors.append('lint #128: ห้ามใช้ล้อกับ '+_no128+' (เงิน/เงา)')
+    if 'document.activeElement!==el) return;' not in txt:
+        errors.append('lint #128: หมุนล้อต้องเปลี่ยนค่าเฉพาะช่องที่โฟกัส (ชี้ผ่านเฉยๆ ต้องเลื่อนหน้าตามปกติ)')
+    if "if(e.ctrlKey||e.metaKey) return;\n  var el=e.target;" not in txt:
+        errors.append('lint #128: Ctrl+ล้อ ต้องปล่อยให้ซูมหน้าเดิมทำงาน')
+    if 'Math.abs(_wheelAcc)>=50' not in txt:
+        errors.append('lint #128: ต้องสะสม deltaY เป็นขั้น (ทัชแพดไม่รัว)')
+    if txt.count("'ttl.calInchWheel':'")<2:
+        errors.append('lint #128: i18n ttl.calInchWheel ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

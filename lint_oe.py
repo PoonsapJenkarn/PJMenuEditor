@@ -2886,6 +2886,26 @@ def main():
     if txt.count("'ttl.calInchWheel':'")<2:
         errors.append('lint #128: i18n ttl.calInchWheel ไม่ครบ TH+EN')
 
+    # ---- 129) หน้า A4 เปล่า (ผู้ใช้ 27 ต.ค. 2026 ขั้น A · แบบที่ 2): ปุ่มแยก [หน้าเปล่า ▾] ข้าง [เพิ่มหน้า ▾] ทำงานเหมือนกัน · หน้าเปล่าเหลือแค่ .pgbg · หน้าเมนูใหม่คัดจากหน้าเมนูล่าสุด ----
+    if 'function _addPagesBatch(n,type){' not in txt or 'function _lastMenuPage(' not in txt:
+        errors.append('lint #129: _addPagesBatch ต้องรับแบบหน้า + มี _lastMenuPage')
+    if "np.classList.add('pgblank'); Array.prototype.slice.call(np.children).forEach(function(c){ if(!c.classList.contains('pgbg')) c.remove(); });" not in txt:
+        errors.append('lint #129: หน้าเปล่าต้องเหลือแค่ .pgbg (ไม่มีหัว/เส้นคั่น/โน้ต/เลขหน้า/กลุ่ม)')
+    if "src=blank?last:_lastMenuPage();" not in txt or "flashStatus('warning',tk('fl.addPageNoMenu'))" not in txt:
+        errors.append('lint #129: หน้าเมนูใหม่ต้องคัดจากหน้าเมนูล่าสุด (ไม่ใช่หน้าเปล่า) และเตือนเมื่อไม่มีหน้าเมนู')
+    if 'function addPage(){ _addPagesBatch(1); }' not in txt or 'id="btnAddPageMore" onclick="openAddPagesPanel()"' not in txt:
+        errors.append('lint #129: เพิ่มหน้า ▾ ต้องคงเดิม (ปุ่มหลัก +1 หน้าเมนู · ▾ = panel เพิ่มหลายหน้า)')
+    if 'id="btnAddBlank" onclick="addBlankPage()"' not in txt or "function addBlankPage(){ _addPagesBatch(1,'blank'); }" not in txt:
+        errors.append('lint #129: ต้องมีปุ่ม หน้าเปล่า (+1 หน้าเปล่าทันที)')
+    if """id="btnAddBlankMore" onclick="openAddPagesPanel('blank')\"""" not in txt or "_addPagesBatch(n,_blank?'blank':'menu');" not in txt:
+        errors.append('lint #129: หน้าเปล่า ▾ ต้องเปิด panel เพิ่มหลายหน้าเดียวกัน (แบบหน้าเปล่า)')
+    if '#edbar #btnAddBlankMore.on' not in _css:
+        errors.append('lint #129: ▾ หน้าเปล่าตอน panel เปิดต้องเป็นสีเขียว (ข้อ 11)')
+    for _b129 in ('addPgDdPop','_addPgDd','addPgType','opts.preHtml','addPgBlankItem'):
+        if _b129 in txt: errors.append('lint #129: ห้ามเหลือของแบบเก่า '+_b129+' (เมนูเลื่อนลง/ตัวเลือก แบบหน้า)')
+    for _k129 in ('btn.addBlank','ttl.addBlank','ttl.addBlankMore','pnl.addBlankLabel','fl.addBlank','fl.addBlanks','fl.addPageNoMenu'):
+        if txt.count("'"+_k129+"':'")<2: errors.append('lint #129: i18n '+_k129+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

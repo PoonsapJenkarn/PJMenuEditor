@@ -2906,6 +2906,34 @@ def main():
     for _k129 in ('btn.addBlank','ttl.addBlank','ttl.addBlankMore','pnl.addBlankLabel','fl.addBlank','fl.addBlanks','fl.addPageNoMenu'):
         if txt.count("'"+_k129+"':'")<2: errors.append('lint #129: i18n '+_k129+' ไม่ครบ TH+EN')
 
+    # ---- 130) กล่องข้อความลอย (ผู้ใช้ 27 ต.ค. 2026 ขั้น B · แบบ 1 คลิก=เลือก ดับเบิลคลิก=พิมพ์) ----
+    if 'id="btnFtextAdd" onclick="ftextAdd()"' not in txt or 'data-i18n="grp.insert"' not in txt:
+        errors.append('lint #130: แท็บข้อความต้องมีปุ่ม กล่องข้อความ (กลุ่ม แทรก)')
+    for _f130 in ('function ftextAdd(','function _ftSelect(','function _ftDeselect(','function _ftStartEdit(','function _ftStopEdit(','function _ftDelete(','function _ftHandles('):
+        if _f130 not in txt: errors.append('lint #130: ไม่พบ '+_f130)
+    if "{key:'ftext',      sel:'.ftext .ftxt'" not in txt:
+        errors.append('lint #130: แถบตัวอักษรต้องรู้จักกล่องข้อความ (TYPO_TYPES ftext)')
+    if "document.addEventListener('dblclick',function(e){\n  if(!document.body.classList.contains('editmode')) return;" not in txt or "_ftStartEdit(box,e.clientX,e.clientY);" not in txt:
+        errors.append('lint #130: ดับเบิลคลิก = พิมพ์ (แบบ 1)')
+    if "if(_ftEdit===box && !hd) return;" not in txt:
+        errors.append('lint #130: คลิกครั้งเดียวต้องเลือก/ลาก ไม่เข้าโหมดพิมพ์ (กำลังพิมพ์ = วางเคอร์เซอร์)')
+    if '@media screen{body.editmode .ftext{pointer-events:auto;' not in _css or not re.search(r'(?m)^\.ftext\{[^}]*pointer-events:none', _css):
+        errors.append('lint #130: กล่องข้อความต้องคลิกได้เฉพาะโหมดแก้ข้อความ (ไม่บังรูป/พื้นหลังในโหมดอื่น)')
+    if not re.search(r'(?m)^\.ftext\{[^}]*color:var\(--txt-name\)', _css):
+        errors.append('lint #130: สีเริ่มต้นกล่องข้อความต้องตามธีม (--txt-name)')
+    if txt.count('.rz,.delbtn,.sizetag,.fth,.ftdel')!=3 or txt.count("querySelectorAll('.ftext').forEach(function(el){el.classList.remove('sel','fedit');")!=3:
+        errors.append('lint #130: ปุ่มจับ/สถานะเลือกของกล่องข้อความต้องถูกตัดออกทั้ง บันทึก editor · ดาวน์โหลดเมนู · snapshot')
+    if '@media print{.ftext{outline:none !important;}.ftext .fth,.ftext .ftdel{display:none !important;}}' not in _css:
+        errors.append('lint #130: พิมพ์ต้องไม่มีกรอบ/ปุ่มจับกล่องข้อความ')
+    if "if(!on && typeof _ftDeselect==='function') _ftDeselect();" not in txt or "_ftSel=null; _ftEdit=null; _ftDrag=null;" not in txt:
+        errors.append('lint #130: ออกจากโหมดแก้ข้อความ/undo ต้องล้างสถานะกล่องข้อความ')
+    if "np.querySelectorAll('.fimg,.ftext')" not in txt:
+        errors.append('lint #130: หน้าใหม่ต้องไม่คัดกล่องข้อความจากหน้าต้นแบบ')
+    if "x.appendChild(document.createTextNode(t('ft.default')))" not in txt:
+        errors.append('lint #130: คำเริ่มต้นในกล่อง = เนื้อหาผู้ใช้ ห้ามผูก data-i18n (สลับภาษาจะทับข้อความที่พิมพ์)')
+    for _k130 in ('typ.ftext','btn.ftextAdd','ttl.ftextAdd','grp.insert','ttl.ftextDel','ft.default','fl.ftextAdd','fl.ftextDel','fl.ftextEmpty','st.ftextSel','st.ftextEdit'):
+        if txt.count("'"+_k130+"':'")<2: errors.append('lint #130: i18n '+_k130+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

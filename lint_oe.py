@@ -2848,6 +2848,26 @@ def main():
     if txt.count('function _ddOpen(')!=1:
         errors.append('lint #126: ต้องใช้ engine _ddOpen เดียว')
 
+    # ---- 127) กดค้าง −/+ ค่าเปลี่ยนต่อเนื่อง (ผู้ใช้ 27 ต.ค. 2026 รอบ 4/5) ----
+    _mh127=re.search(r'var _HOLD_BTNS=\{([\s\S]*?)\n\};', txt)
+    if not _mh127:
+        errors.append('lint #127: ไม่พบ _HOLD_BTNS')
+    else:
+        for _id127 in ('typoSizeUp','typoSizeDown','zoomIn','zoomOut','uiIn','uiOut'):
+            if ('\n  '+_id127+':{') not in ('\n'+_mh127.group(1)): errors.append('lint #127: ปุ่ม '+_id127+' ต้องกดค้างได้')
+            elif ('id="'+_id127+'"') not in txt: errors.append('lint #127: ไม่พบปุ่ม #'+_id127)
+    for _f127 in ('function _holdTick(','function _holdStop('):
+        if _f127 not in txt: errors.append('lint #127: ไม่พบ '+_f127)
+    if "document.addEventListener('mouseup',_holdStop,true);" not in txt or "window.addEventListener('blur',_holdStop);" not in txt:
+        errors.append('lint #127: ต้องหยุดเมื่อปล่อยเมาส์และเมื่อหน้าต่างเสียโฟกัส')
+    if 'if(c.val()===before || h.btn.disabled){ _holdStop(); return; }' not in txt:
+        errors.append('lint #127: ชนขอบต้องหยุด (ค่าไม่เปลี่ยน/ปุ่ม disabled)')
+    if '_holdSwallow=_hold.btn;' not in txt:
+        errors.append('lint #127: กดค้างแล้วปล่อยต้องกลืน click (ไม่นับเพิ่มอีก 1)')
+    _md127=re.search(r"document\.addEventListener\('mousedown',function\(e\)\{\n  if\(e\.button!==0[\s\S]*?\},true\);", txt)
+    if not _md127 or 'preventDefault' in _md127.group(0):
+        errors.append('lint #127: ตัวจับกดค้างห้าม preventDefault ตอน mousedown (แถบตัวอักษรต้องเก็บข้อความที่เลือกไว้)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

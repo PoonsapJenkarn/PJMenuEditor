@@ -5873,6 +5873,35 @@ function _zoomDdRevert(){ _zoomApply(); var a=_zoomDdAnchor; _zoomDdAnchor=null;
 function _zoomDdCommit(v){ _zoomDdAnchor=null; _zoomCommit(v); }
 function _zoomDdCfg(){ return {btn:'zoomDd', pop:'zoomDdPop', values:_zoomPresets(), cur:_zoom, preview:_zoomPreview, commit:_zoomDdCommit, revert:_zoomDdRevert, onOpen:_zoomDdAnchorSet}; }
 function _zoomDdToggle(e){ _ddToggle(e,_zoomDdCfg); }
+/* ===== กดค้างปุ่ม −/+ = ค่าเปลี่ยนต่อเนื่อง (ผู้ใช้ 27 ต.ค. 2026 รอบ 4/5 · แบบปุ่มเลื่อนค่าของ Windows/Office)
+   คลิกครั้งเดียว = ทีละขั้นเหมือนเดิม (onclick เดิมไม่แตะ) · ค้าง 400ms = เริ่มซ้ำ 120ms · ซ้ำ 8 ครั้งแล้วเร็วขึ้น 60ms
+   หยุดเมื่อ ปล่อยเมาส์ / ปุ่ม disabled / ค่าไม่เปลี่ยน (ชนขอบ) / หน้าต่างเสียโฟกัส · ซ้ำแล้ว = กลืน click ตอนปล่อย (ไม่ให้นับเพิ่มอีก 1)
+   ฟัง mousedown แบบไม่ preventDefault — แถบตัวอักษรใช้ mousedown กันข้อความที่เลือกหลุดอยู่แล้ว ===== */
+var _HOLD_BTNS={
+  typoSizeUp:{step:function(){ typoSizeStep(0.5); }, val:function(){ var i=document.getElementById('typoSize'); return i?i.value:''; }},
+  typoSizeDown:{step:function(){ typoSizeStep(-0.5); }, val:function(){ var i=document.getElementById('typoSize'); return i?i.value:''; }},
+  zoomIn:{step:function(){ zoomIn(); }, val:function(){ return _zoom; }},
+  zoomOut:{step:function(){ zoomOut(); }, val:function(){ return _zoom; }},
+  uiIn:{step:function(){ uiIn(); }, val:function(){ return _uiscale; }},
+  uiOut:{step:function(){ uiOut(); }, val:function(){ return _uiscale; }}
+};
+var _hold=null, _holdSwallow=null;
+function _holdStop(){ if(!_hold) return; clearTimeout(_hold.t); if(_hold.n>0){ _holdSwallow=_hold.btn; setTimeout(function(){ _holdSwallow=null; },0); } _hold=null; }
+function _holdTick(){
+  if(!_hold) return; var h=_hold, c=_HOLD_BTNS[h.btn.id];
+  if(h.btn.disabled){ _holdStop(); return; }
+  var before=c.val(); c.step(); h.n++;
+  if(c.val()===before || h.btn.disabled){ _holdStop(); return; }  /* ชนขอบ = หยุด (ไม่ขึ้นคำเตือนซ้ำรัว) */
+  h.t=setTimeout(_holdTick, h.n>=8?60:120);
+}
+document.addEventListener('mousedown',function(e){
+  if(e.button!==0 || !e.target || !e.target.closest) return;
+  var b=e.target.closest('button'); if(!b || !_HOLD_BTNS[b.id] || b.disabled) return;
+  _holdStop(); _hold={btn:b, n:0, t:setTimeout(_holdTick,400)};
+},true);
+document.addEventListener('mouseup',_holdStop,true);
+window.addEventListener('blur',_holdStop);
+document.addEventListener('click',function(e){ if(_holdSwallow && e.target && e.target.closest && e.target.closest('button')===_holdSwallow){ e.preventDefault(); e.stopPropagation(); _holdSwallow=null; } },true);
 _uiscaleLoad();
 _zoomLoad();
 var _ZWHEEL_MIN=20;

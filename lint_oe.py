@@ -2991,6 +2991,16 @@ def main():
     for _k134 in ('st.ftextMulti','fl.ftextDelN'):
         if txt.count("'"+_k134+"':'")<2: errors.append('lint #134: i18n '+_k134+' ไม่ครบ TH+EN')
 
+    # ---- 135) ซ่อน/แสดงริบบอน: กระดาษเลื่อนตามขอบล่างแถบ ไม่เกิดช่องว่าง (ผู้ใช้ 27 ต.ค. 2026) ----
+    if 'function _barKeep(fn){' not in txt or "window.scrollBy({top:now-(t0+d), behavior:'instant'}); }catch(_e){}" not in txt:
+        errors.append('lint #135: _barKeep ต้องชดเชยการเลื่อนใน try (ห้ามทำให้ปุ่มซ่อนริบบอนตาย)')
+    if "pg=pages[pi>=0?pi:0];" not in txt or "pg=(typeof _priceVisiblePage==='function' && _priceVisiblePage())" in txt:
+        errors.append('lint #135: _priceVisiblePage คืน index — ต้องแปลงเป็น element ก่อนใช้')
+    if 'function _barKeep(fn){' not in txt:
+        errors.append('lint #135: ต้องมี _barKeep ชดเชยการเลื่อนตามความสูงแถบที่เปลี่ยน')
+    if "function toggleFocus(){ _barKeep(function(){" not in txt or "if(tb){ _barKeep(function(){ document.body.classList.remove('focusmode');" not in txt:
+        errors.append('lint #135: ปุ่มซ่อนริบบอน + คลิกแท็บตอนซ่อน ต้องผ่าน _barKeep')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

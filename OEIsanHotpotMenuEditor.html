@@ -3320,8 +3320,16 @@ function _presentExit(){ document.body.classList.remove('presentmode'); if(_pres
 function togglePresent(){ if(document.body.classList.contains('presentmode')) _presentExit(); else _presentEnter(); }
 function _focusSync(){ var on=document.body.classList.contains('focusmode'), b=document.getElementById('btnFocus'); if(!b) return; b.classList.toggle('on',on); b.setAttribute('aria-pressed', on?'true':'false'); var p=document.getElementById('btnFocusPath'); if(p) p.setAttribute('d', on?'M6 9l6 6 6-6':'M6 15l6-6 6 6'); var k=on?'ttl.ribbonShow':'ttl.focusOn'; b.setAttribute('data-i18n-title',k); b.title=t(k); }  /* ปุ่มเดียวสลับ ⌃ ซ่อน / ⌄ แสดง (เขียวตอนพับ) */
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',_focusSync); else _focusSync();  /* เปิดไฟล์: สถานะปุ่มตรงกับริบบอนจริงเสมอ */  /* ปุ่มอยู่ในริบบอน: เห็นเฉพาะตอนริบบอนแสดง = ทำหน้าที่พับอย่างเดียว ไม่ต้องสลับสถานะ .on */
-function toggleFocus(){ document.body.classList.toggle('focusmode'); _focusSync(); if(typeof syncBarHeight==='function') syncBarHeight(); if(document.body.classList.contains('focusmode') && typeof flashStatus==='function') flashStatus('info', tk('fl.ribbonHidden')); }  /* บอกวิธีแสดงกลับ (คนเห็นครั้งแรกไม่รู้ว่าต้องคลิกแท็บ) */
-document.addEventListener('click', function(e){ if(!document.body.classList.contains('focusmode')) return; var tb=e.target&&e.target.closest&&e.target.closest('#edtabs .edtab'); if(tb){ document.body.classList.remove('focusmode'); _focusSync(); if(typeof syncBarHeight==='function') syncBarHeight(); } });
+function _barKeep(fn){  /* ซ่อน/แสดงริบบอน: กระดาษเลื่อนตามขอบล่างแถบ (แบบ Word) · เบราว์เซอร์ scroll anchoring ตรึงเนื้อหาไว้ที่เดิม = เกิดช่องว่าง (ผู้ใช้ 27 ต.ค. 2026) */
+  var bar=document.getElementById('edbar'), pages=document.querySelectorAll('.page'), pi=(typeof _priceVisiblePage==='function')?_priceVisiblePage():-1, pg=pages[pi>=0?pi:0];  /* _priceVisiblePage คืน index ไม่ใช่ element */
+  if(!bar||!pg){ fn(); return; }
+  var b0=bar.getBoundingClientRect().bottom, t0=pg.getBoundingClientRect().top;
+  fn();  /* สลับริบบอนเสมอ — ส่วนชดเชยการเลื่อนพังได้แต่ห้ามทำให้ปุ่มตาย */
+  try{ var d=bar.getBoundingClientRect().bottom-b0, now=pg.getBoundingClientRect().top;
+  window.scrollBy({top:now-(t0+d), behavior:'instant'}); }catch(_e){}
+}
+function toggleFocus(){ _barKeep(function(){ document.body.classList.toggle('focusmode'); _focusSync(); if(typeof syncBarHeight==='function') syncBarHeight(); }); if(document.body.classList.contains('focusmode') && typeof flashStatus==='function') flashStatus('info', tk('fl.ribbonHidden')); }  /* บอกวิธีแสดงกลับ (คนเห็นครั้งแรกไม่รู้ว่าต้องคลิกแท็บ) */
+document.addEventListener('click', function(e){ if(!document.body.classList.contains('focusmode')) return; var tb=e.target&&e.target.closest&&e.target.closest('#edtabs .edtab'); if(tb){ _barKeep(function(){ document.body.classList.remove('focusmode'); _focusSync(); if(typeof syncBarHeight==='function') syncBarHeight(); }); } });
 document.addEventListener('fullscreenchange', function(){ if(document.body.classList.contains('presentmode')){ if(!document.fullscreenElement){ _presentExit(); } else { _presentFit(); } } });
 window.addEventListener('resize', function(){ if(document.body.classList.contains('presentmode')) _presentFit(); });
 var _PRES_HOTZONE=64, _PRES_GRACE=4000, _presentHideT=null, _presentGrace=false, _presentGraceT=null;

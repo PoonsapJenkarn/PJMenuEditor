@@ -2931,6 +2931,17 @@ def main():
         errors.append('lint #130: หน้าใหม่ต้องไม่คัดกล่องข้อความจากหน้าต้นแบบ')
     if "x.appendChild(document.createTextNode(t('ft.default')))" not in txt:
         errors.append('lint #130: คำเริ่มต้นในกล่อง = เนื้อหาผู้ใช้ ห้ามผูก data-i18n (สลับภาษาจะทับข้อความที่พิมพ์)')
+    # 130b) × ข้างขวาระดับขอบบน (ไม่ยื่นเหนือกล่อง) · เส้นช่วยจัดแนว + ดูดเข้าแนว · ไม่ซ้อนกรอบฟ้า (ผู้ใช้ 27 ต.ค. 2026)
+    if '.ftext .ftdel{position:absolute;right:-30px;top:0;' not in _css:
+        errors.append('lint #130: × ของกล่องข้อความต้องอยู่ข้างขวา ระดับขอบบน (ไม่ยื่นเหนือกล่อง — วางเรียงแล้ว × ต้องติดกล่องตัวเอง)')
+    for _f130b in ('function _ftSnap(','function _ftTargets(','function _ftGuides(','function _ftGuideClear('):
+        if _f130b not in txt: errors.append('lint #130: ไม่พบ '+_f130b+' (ดูดเข้าแนว)')
+    if "var sn=e.altKey?{l:l,t:tp,w:w,h:h,gx:null,gy:null}:_ftSnap(D,l,tp,w,h);" not in txt or "_ftDrag=null; _ftGuideClear();" not in txt:
+        errors.append('lint #130: ลาก/ยืดต้องดูดเข้าแนว (Alt ค้าง = ปิด) และลบเส้นแนวตอนปล่อยเมาส์')
+    if '@media print{.ftguide{display:none !important;}}' not in _css or txt.count('.fth,.ftdel,.ftguide')!=3:
+        errors.append('lint #130: เส้นแนวต้องไม่พิมพ์ และถูกตัดออกตอนบันทึก/snapshot')
+    if '.ftext .ftxt.typosel{outline:none !important;}' not in _css:
+        errors.append('lint #130: กล่องข้อความห้ามซ้อนกรอบฟ้า typosel')
     for _k130 in ('typ.ftext','btn.ftextAdd','ttl.ftextAdd','grp.insert','ttl.ftextDel','ft.default','fl.ftextAdd','fl.ftextDel','fl.ftextEmpty','st.ftextSel','st.ftextEdit'):
         if txt.count("'"+_k130+"':'")<2: errors.append('lint #130: i18n '+_k130+' ไม่ครบ TH+EN')
 

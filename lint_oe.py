@@ -2799,31 +2799,24 @@ def main():
         errors.append('lint #124: รายการซูมต้องไม่พิมพ์ และต้องถูกตัดออกตอนบันทึก')
     if txt.count("'ttl.zoomDd':'")<2: errors.append('lint #124: i18n ttl.zoomDd ไม่ครบ TH+EN')
 
-    # ---- 125) ปุ่มพับริบบอน แบบ Office: ลูกศรหัวเดียว ⌃ มุมขวาล่างของริบบอน (ผู้ใช้ 27 ต.ค. 2026) ----
-    if '<div id="edribbon"><button type="button" id="btnFocus" class="rb-collapse"' not in txt:
-        errors.append('lint #125: ปุ่มพับริบบอน (#btnFocus) ต้องอยู่ใน #edribbon (มุมขวาล่าง) ไม่ใช่แถบบน')
-    if '<path d="M6 15l6-6 6 6"/>' not in txt:
-        errors.append('lint #125: ปุ่มพับริบบอนต้องเป็นลูกศรหัวเดียวชี้ขึ้น (chevron) ไม่มีหาง')
-    _mr125=re.search(r'#edribbon\{([^}]*)\}', _css); _mb125=re.search(r'#edribbon #btnFocus\{([^}]*)\}', _css)
-    if not _mr125 or 'position:relative' not in _mr125.group(1) or 'padding:7px 40px 7px 12px' not in _mr125.group(1):
-        errors.append('lint #125: #edribbon ต้อง position:relative + เว้นขวา 40px กันปุ่มทับกลุ่มสุดท้าย')
-    if not _mb125 or 'position:absolute' not in _mb125.group(1) or 'right:6px' not in _mb125.group(1) or 'bottom:4px' not in _mb125.group(1):
-        errors.append('lint #125: ปุ่มพับริบบอนต้องวางมุมขวาล่างของริบบอน (absolute right/bottom)')
-    if '#edtabs #btnFocus' in _css or "'btn.focus'" in txt or "ttl.focusOff" in txt:
-        errors.append('lint #125: ลบของเก่าไม่หมด (#edtabs #btnFocus / btn.focus / ttl.focusOff)')
-    if "flashStatus('info', tk('fl.ribbonHidden'))" not in txt or txt.count("'fl.ribbonHidden':'")<2:
-        errors.append('lint #125: ซ่อนริบบอนแล้วต้องบอกวิธีแสดงกลับ (fl.ribbonHidden TH+EN)')
-
-    # 125b) ตอนริบบอนพับ ต้องมีปุ่ม ⌄ ให้เห็นและกดแสดงกลับได้ (ผู้ใช้ 27 ต.ค. 2026: "เอาขึ้นแล้ว เอาลงยังไง")
-    if '<div id="edpanel" class="ep-hidden"></div>\n  <button type="button" id="btnRibbonShow" onclick="toggleFocus()"' not in txt or '<path d="M6 9l6 6 6-6"/>' not in txt:
-        errors.append('lint #125: ต้องมีปุ่ม ⌄ (#btnRibbonShow) ใน #edbar เรียก toggleFocus · ลูกศรหัวเดียวชี้ลง')
-    _ms125=re.search(r'#edbar #btnRibbonShow\{([^}]*)\}', _css)
-    if not _ms125 or 'display:none' not in _ms125.group(1) or 'position:absolute' not in _ms125.group(1) or 'right:6px' not in _ms125.group(1) or 'top:100%' not in _ms125.group(1):
-        errors.append('lint #125: ปุ่ม ⌄ ต้องซ่อนปกติ และห้อยใต้แถบบนทางขวาแนวเดียวกับ ⌃ (absolute right:6px top:100%)')
-    if '@media screen{body.focusmode #edbar #btnRibbonShow{display:inline-flex;}}' not in _css:
-        errors.append('lint #125: ปุ่ม ⌄ ต้องแสดงเมื่อริบบอนพับ (body.focusmode) เฉพาะบนจอ')
-    if txt.count("'ttl.ribbonShow':'")<2:
-        errors.append('lint #125: i18n ttl.ribbonShow ไม่ครบ TH+EN')
+    # ---- 125) ปุ่มพับริบบอน ปุ่มเดียว ขวาสุดถัด TH/EN (ผู้ใช้ 27 ต.ค. 2026 แบบ Google Docs) · ⌃ ซ่อน / ⌄ แสดง · เขียวตอนพับ (ข้อ 11) ----
+    if """<button id="langEN" onclick="setLang('en')">EN</button></span><button type="button" id="btnFocus" onclick="toggleFocus()\"""" not in txt:
+        errors.append('lint #125: ปุ่มพับริบบอน (#btnFocus) ต้องอยู่ถัดปุ่ม TH/EN ทางขวา')
+    if txt.count('id="btnFocus"')!=1 or 'btnRibbonShow' in txt or 'rb-collapse' in txt or '#edribbon #btnFocus' in _css:
+        errors.append('lint #125: ต้องมีปุ่มพับริบบอนปุ่มเดียว (ลบ ⌃ มุมริบบอน / ⌄ ห้อย ออกให้หมด)')
+    if "p.setAttribute('d', on?'M6 9l6 6 6-6':'M6 15l6-6 6 6')" not in txt or 'id="btnFocusPath" d="M6 15l6-6 6 6"' not in txt:
+        errors.append('lint #125: ปุ่มต้องเป็นลูกศรหัวเดียว ⌃ ตอนริบบอนแสดง และสลับเป็น ⌄ ตอนพับ')
+    if '#edtabs #btnFocus.on{background:#217346;border-color:#217346;color:#fff;}' not in _css or "b.classList.toggle('on',on);" not in txt:
+        errors.append('lint #125: ริบบอนพับ ปุ่มต้องเป็นพื้นเขียว (ข้อ 11)')
+    _mr125=re.search(r'#edribbon\{([^}]*)\}', _css)
+    if not _mr125 or 'padding:7px 12px;' not in _mr125.group(1):
+        errors.append('lint #125: ริบบอนต้องคืน padding เดิม (ไม่ต้องเว้นที่ให้ปุ่มแล้ว)')
+    if "ttl.focusOff" in txt or "'btn.focus'" in txt:
+        errors.append('lint #125: ห้ามเหลือ i18n เก่า btn.focus / ttl.focusOff')
+    if txt.count("'ttl.ribbonShow':'")<2 or "flashStatus('info', tk('fl.ribbonHidden'))" not in txt or txt.count("'fl.ribbonHidden':'")<2:
+        errors.append('lint #125: i18n ttl.ribbonShow / fl.ribbonHidden ไม่ครบ TH+EN')
+    if "document.addEventListener('DOMContentLoaded',_focusSync); else _focusSync();" not in txt:
+        errors.append('lint #125: เปิดไฟล์ต้อง sync สถานะปุ่มกับริบบอน')
 
     # ---- report ----
     print("=" * 54)

@@ -1555,7 +1555,7 @@ def main():
         _th69=txt.find('th:{',_i69); _en69=txt.find('en:{',_i69)
         _thb69=txt[_th69:_en69] if (_th69>=0 and _en69>_th69) else ''
         _enb69=txt[_en69:_en69+30000] if _en69>=0 else ''
-        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset','ttl.zoomFit','ttl.zoomA4','zoom.a4','cal.title','cal.desc','cal.card','cal.startlbl','cal.endlbl','cal.save','cal.cancel','cal.a4is','cal.note','btn.cal','cal.inchdesc','cal.method1','cal.method2','cal.inchlbl','cal.inchbtn','cal.reslbl','fl.a4Nominal'):
+        for _k69 in ('ttl.zoomIn','ttl.zoomOut','ttl.zoomReset','ttl.zoomFit','ttl.zoomA4','zoom.a4','cal.title','cal.desc','cal.card','cal.startlbl','cal.endlbl','cal.save','cal.cancel','cal.a4is','cal.note','btn.cal','cal.inchdesc','cal.method1','cal.method2','cal.inchlbl','cal.reslbl','fl.a4Nominal'):
             if ("'"+_k69+"'") not in _thb69: errors.append('i18n '+_k69+' ขาดใน th (ดู UI_STANDARD.md ข้อ 10)')
             if ("'"+_k69+"'") not in _enb69: errors.append('i18n '+_k69+' ขาดใน en (ดู UI_STANDARD.md ข้อ 10)')
     # (e) ช่อง % (#zoomLvl) ต้องเป็น <input> พิมพ์ค่าเองได้ + มี _zoomType รับค่า (ผู้ใช้ 16 ต.ค. 2026)
@@ -2722,6 +2722,16 @@ def main():
     _sc119=re.findall(r'name="pgbgScope" value="([a-z]+)"( checked)?', txt)
     if [v for v,c in _sc119]!=['all','page','odd','even','range'] or [v for v,c in _sc119 if c]!=['all']:
         errors.append('lint #119: ขอบเขตพื้นหลังต้องเรียง ทุกหน้า·เฉพาะหน้านี้·หน้าคี่·หน้าคู่·ระบุ และ ทุกหน้า เป็นค่าเริ่มต้น')
+
+    # ---- 120) ปรับเทียบจอ: % เปลี่ยนทันทีเมื่อพิมพ์นิ้ว/ทาบบัตร · ไม่มีปุ่ม ใช้ค่านี้ · ช่องนิ้วตามแถบบัตร (ผู้ใช้ 27 ต.ค. 2026) ----
+    if 'oninput="_calInchFilter(this);_calFromInches()"' not in txt:
+        errors.append('lint #120: ช่องนิ้วต้องคำนวณ % ทันทีขณะพิมพ์ (oninput -> _calFromInches)')
+    if 'cal.inchbtn' in txt:
+        errors.append('lint #120: ลบปุ่ม ใช้ค่านี้ ออกแล้ว (คำนวณทันที ปุ่มไม่มีหน้าที่) ห้ามเหลือ cal.inchbtn')
+    if "if(src!=='inch') _calInchSync(w);" not in txt or 'function _calInchSync(' not in txt or "_calSetWidth(diag/din/25.4*_CARD_MM,'inch')" not in txt:
+        errors.append('lint #120: ทาบบัตร/ปุ่ม -/+ ต้องอัปเดตช่องนิ้ว และพิมพ์นิ้วต้องไม่เขียนทับช่องที่กำลังพิมพ์')
+    if not re.search(r"function _calSetWidth\(w,src\)\{[^\n]*_calReadout\(\);", txt):
+        errors.append('lint #120: _calSetWidth ต้องอัปเดต % (_calReadout) ทุกครั้ง')
 
     # ---- report ----
     print("=" * 54)

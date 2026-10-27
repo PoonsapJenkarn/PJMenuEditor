@@ -2971,6 +2971,26 @@ def main():
     if '.page.pgblank > .ed-delpage{position:absolute;left:50%;bottom:10mm;' not in _css:
         errors.append('lint #133: ปุ่ม ลบหน้านี้ ของหน้าเปล่าต้องอยู่ล่างหน้า (เหมือนหน้าเมนู)')
 
+    # ---- 134) เลือกหลายกล่องข้อความ: Shift+คลิก + ลากกรอบเลือก · ลาก/ลูกศร/Delete ทั้งชุด · ดูดแนวด้วยกรอบรอบนอก (ผู้ใช้ 27 ต.ค. 2026) ----
+    for _f134 in ('function _ftToggle(','function _ftSyncHandles(','function _ftBBox(','function _ftDeleteSel(','function _ftMarqEnd(','var _ftSet=[], _ftMarq=null;'):
+        if _f134 not in txt: errors.append('lint #134: ไม่พบ '+_f134)
+    if "if(e.shiftKey && !hd){ _ftToggle(box);" not in txt:
+        errors.append('lint #134: Shift+คลิก ต้องเพิ่ม/เอาออกจากชุดที่เลือก')
+    if "else if(!(_ftSet.length>1 && _ftSet.indexOf(box)>=0 && !hd)) _ftSelect(box);" not in txt:
+        errors.append('lint #134: คลิกกล่องในชุดที่เลือกอยู่ต้องลากทั้งชุด (ไม่แตกชุด)')
+    if "if(!d && D.grp.length>1){" not in txt or "_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h)" not in txt:
+        errors.append('lint #134: ลากทั้งชุดต้องขยับทุกกล่องเท่ากัน + ดูดแนวด้วยกรอบรอบนอก')
+    if "(_ftSet.length?_ftSet:[b]).forEach(function(x){ x.style.left=" not in txt or "e.preventDefault(); _ftDeleteSel(); }" not in txt:
+        errors.append('lint #134: ลูกศร/Delete ต้องทำกับทั้งชุด')
+    if "if(_ftMarq){ _ftMarqEnd(); return; }" not in txt or "_ftMarq={pg:pgE," not in txt:
+        errors.append('lint #134: ต้องลากกรอบเลือกบนพื้นที่ว่างของหน้าได้')
+    if "function _ftTargets(ex,pxmm){" not in txt or "if(ex.indexOf(o)>=0) return;" not in txt:
+        errors.append('lint #134: แนวดูดต้องไม่รวมกล่องในชุดที่กำลังลาก')
+    if '@media print{.ftmarq{display:none !important;}}' not in _css or txt.count('.fth,.ftdel,.ftguide,.ftmarq')!=3 or "_ftSet=[]; _ftMarq=null; }" not in txt:
+        errors.append('lint #134: กรอบลากเลือกต้องไม่พิมพ์ · ตัดออกตอนบันทึก/snapshot · undo ล้างชุดที่เลือก')
+    for _k134 in ('st.ftextMulti','fl.ftextDelN'):
+        if txt.count("'"+_k134+"':'")<2: errors.append('lint #134: i18n '+_k134+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

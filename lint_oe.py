@@ -2737,6 +2737,26 @@ def main():
     if not re.search(r"_UIMIN=80,", txt):
         errors.append('lint #121: ขนาดเครื่องมือ A- ต้องลดได้ถึง 80% (_UIMIN=80)')
 
+    # ---- 122) ขนาดเครื่องมือ: คลิก % เปิดรายการ 80-150% (ผู้ใช้ 27 ต.ค. 2026) ----
+    if 'id="uiLvl" aria-haspopup="listbox"' not in txt or 'onclick="_uiDdToggle(event)"' not in txt or 'id="uiLvlTxt"' not in txt:
+        errors.append('lint #122: ตัวเลข % ต้องเป็นปุ่มเปิดรายการขนาด (#uiLvl + #uiLvlTxt)')
+    for _f122 in ('function _uiDdOpen(','function _uiDdClose(','function _uiDdPick(','function _uiDdKey(','function _uiDdOutside(','function _uiscalePreview(','function _uiScaleList('):
+        if _f122 not in txt: errors.append('lint #122: ไม่พบ '+_f122)
+    if 'for(var v=_UIMIN; v<=_UIMAX; v+=_UISTEP)' not in txt:
+        errors.append('lint #122: รายการขนาดต้องสร้างจาก _UIMIN.._UIMAX ห้ามเขียนตัวเลขตายตัว')
+    _mp122=re.search(r'function _uiscalePreview\(v\)\{[^\n]*', txt)
+    if not _mp122 or '_uiscale=' in _mp122.group(0) or 'localStorage' in _mp122.group(0):
+        errors.append('lint #122: ชี้ดูขนาดต้องไม่บันทึกค่า (ห้ามแตะ _uiscale/localStorage ใน _uiscalePreview)')
+    if 'document.body.appendChild(pop);' not in txt or 'pop.style.zoom' in txt:
+        errors.append('lint #122: รายการต้องอยู่ใน body นอกโซน zoom และไม่ใช้ zoom (กันรายการย่อขยายใต้เมาส์)')
+    if "else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); _uiDdClose(true); }" not in txt:
+        errors.append('lint #122: Esc ต้องคืนขนาดเดิม')
+    if '#edtabs .uiscalectl #uiLvl.on{background:#217346;color:#fff;border-color:#217346;}' not in _css:
+        errors.append('lint #122: ปุ่ม % ตอนรายการเปิดต้องเป็นสีเขียว (ข้อ 11)')
+    if '@media print{#uiDdPop{display:none !important;}}' not in _css or "'#uiDdPop','#calModal','#presentBar']" not in txt or "clone.querySelector('#uiDdPop')" not in txt:
+        errors.append('lint #122: รายการขนาดต้องไม่พิมพ์ และต้องถูกตัดออกตอนบันทึก')
+    if txt.count("'ttl.uiLvl':'")<2: errors.append('lint #122: i18n ttl.uiLvl ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

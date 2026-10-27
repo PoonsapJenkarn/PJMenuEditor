@@ -2473,16 +2473,16 @@ def main():
     _msec113=re.search(r'\.sec\{break-inside:avoid;([^}]*)\}', _css)
     if not _msec113 or 'var(--grp-radius' not in _msec113.group(1):
         errors.append('lint #113: .sec ต้องใช้ var(--grp-radius) (ความโค้งมุมกล่องกลุ่ม)')
-    for _f113 in ('function _ruleStyleSet(','function _ruleCur(','function _ruleWidthOpts(','function _ruleStyleOpts(','function _radiusOpts(','var _RULE_WIDTHS=','var _RULE_STYLES=','var _RADIUS_VALS='):
+    for _f113 in ('function _ruleStyleSet(','function _ruleStyleApply(','function _ruleCur(','function _edgeDdBtn(','function _edgeDdCfg(','var _RULE_WIDTHS=','var _RULE_STYLES=','var _RADIUS_VALS='):
         if _f113 not in txt: errors.append('lint #113: ไม่พบ '+_f113)
     if "'8px'" not in re.search(r'var _RULE_WIDTHS=\[([^\]]*)\]', txt).group(1):
         errors.append('lint #113: _RULE_WIDTHS ต้องมีถึง 8px')
     if "'5px'" not in re.search(r'var _BORDER_WIDTHS=\[([^\]]*)\]', txt).group(1):
         errors.append('lint #113: _BORDER_WIDTHS ต้องขยายถึง 5px')
-    if "_radiusOpts('note-radius'" not in txt or "_radiusOpts('grp-radius'" not in txt:
-        errors.append('lint #113: พาเนลเส้น·ขอบต้องมี dropdown ความโค้งมุม (note-radius/grp-radius)')
-    if 'id="ruleStyleSel"' not in txt:
-        errors.append('lint #113: พาเนลต้องมี rule style dropdown (ruleStyleSel) sync กับ toggle')
+    if "_edgeDdBtn('note-radius')" not in txt or "_edgeDdBtn('grp-radius')" not in txt:
+        errors.append('lint #113: พาเนลเส้น·ขอบต้องมีมุมโค้งทั้งกล่องโน้ตและกล่องกลุ่ม')
+    if "_edgeDdBtn('rule-style')" not in txt or "_edgeDdTrigSet('rule-style',_ruleCur())" not in txt:
+        errors.append('lint #113: พาเนลต้องมีแบบเส้นคั่นส่วนหัว และ sync ป้ายกับสถานะจริง (_ruleHideSync)')
     if _mrule113 and 'max-width:70%' in _mrule113.group(1):
         errors.append('lint #113: .rule ห้าม max-width:70% (เส้นคั่น header ยืดเต็มความกว้างเนื้อหา · ผู้ใช้ 25 ต.ค. 2026)')
     _mle113=re.search(r'function _lineEdgeRenderPanel\(\)\{[\s\S]*?openPanel\(\{mode', txt)
@@ -2817,6 +2817,36 @@ def main():
         errors.append('lint #125: i18n ttl.ribbonShow / fl.ribbonHidden ไม่ครบ TH+EN')
     if "document.addEventListener('DOMContentLoaded',_focusSync); else _focusSync();" not in txt:
         errors.append('lint #125: เปิดไฟล์ต้อง sync สถานะปุ่มกับริบบอน')
+
+    # ---- 126) เส้น·ขอบ ชี้ดูก่อน (ผู้ใช้ 27 ต.ค. 2026 รอบ 3/5): 8 ช่องเป็นรายการ engine _dd · ไม่มี <select> · ชี้ดูไม่ markDirty · Esc คืนค่าเดิม ----
+    _mp126=re.search(r'function _lineEdgeRenderPanel\(\)\{[\s\S]*?openPanel\(\{mode', txt)
+    if not _mp126 or '<select' in _mp126.group(0):
+        errors.append('lint #126: พาเนลเส้น·ขอบต้องไม่มี <select> (ใช้รายการชี้ดูก่อน)')
+    else:
+        for _k126 in ('rule-h','rule-style','note-bw','note-bs','note-radius','grp-bw','grp-bs','grp-radius'):
+            if ("_edgeDdBtn('"+_k126+"')") not in _mp126.group(0): errors.append('lint #126: ขาดรายการ '+_k126)
+    _mc126=re.search(r'function _edgeDdCfg\(key\)\{[\s\S]*?\n\}', txt)
+    if not _mc126:
+        errors.append('lint #126: ไม่พบ _edgeDdCfg')
+    else:
+        _pv126=re.search(r'preview:function\(v\)\{[^\n]*', _mc126.group(0))
+        if not _pv126 or 'markDirty' in _pv126.group(0) or '_borderSet' in _pv126.group(0) or '_ruleStyleSet' in _pv126.group(0):
+            errors.append('lint #126: ชี้ดูต้องเปลี่ยนภาพอย่างเดียว ห้าม markDirty/_borderSet/_ruleStyleSet')
+        if 'revert:function()' not in _mc126.group(0) or "he.style.removeProperty('--'+key)" not in _mc126.group(0):
+            errors.append('lint #126: ยกเลิกต้องคืนค่าเดิม (ไม่มีค่าเดิม = ลบ inline กลับค่าเริ่มต้น)')
+    _ma126=re.search(r'function _ruleStyleApply\(val\)\{[^\n]*', txt)
+    if not _ma126 or 'markDirty' in _ma126.group(0):
+        errors.append('lint #126: _ruleStyleApply ต้องไม่ markDirty')
+    for _f126 in ('function _borderWidthOpts(','function _borderStyleOpts(','function _ruleWidthOpts(','function _ruleStyleOpts(','function _radiusOpts(','ruleStyleSel'):
+        if _f126 in txt: errors.append('lint #126: ลบของเก่าไม่หมด '+_f126)
+    if "onClose:function(){ if(_dd) _ddClose(true); }" not in txt:
+        errors.append('lint #126: ปิดพาเนลระหว่างรายการเปิดต้องคืนค่าเดิม')
+    if '#edpanel .ep-dd-trigger.ep-edge-dd.on{background:#217346;border-color:#217346;color:#fff;}' not in _css:
+        errors.append('lint #126: ปุ่มรายการเส้น·ขอบตอนเปิดต้องเป็นสีเขียว (ข้อ 11)')
+    if '@media print{#edgeDdPop{display:none !important;}}' not in _css or "'#edgeDdPop','#zoomDdPop'" not in txt or "clone.querySelector('#edgeDdPop')" not in txt:
+        errors.append('lint #126: รายการเส้น·ขอบต้องไม่พิมพ์ และถูกตัดออกตอนบันทึก')
+    if txt.count('function _ddOpen(')!=1:
+        errors.append('lint #126: ต้องใช้ engine _ddOpen เดียว')
 
     # ---- report ----
     print("=" * 54)

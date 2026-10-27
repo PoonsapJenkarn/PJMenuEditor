@@ -2654,6 +2654,9 @@ def main():
         errors.append('lint #117: เลือกกำหนดเองต้องคืนสีที่จำไว้ และรีเซ็ตประเภทเป็น ทั้งหมด')
     if "_themeFltSet" in txt and re.search(r'id="themeFltType"[^>]*disabled', txt):
         errors.append('lint #117: ตัวกรองประเภทห้าม disabled')
+    # 117e) ช่องประเภทแสดงจำนวนธีม นับจากข้อมูลจริง (ผู้ใช้ 27 ต.ค. 2026)
+    if 'function _themeFltN(' not in txt or "' ('+_themeFltN(v)+')</option>'" not in txt:
+        errors.append('lint #117: ตัวเลือกประเภทต้องแสดงจำนวนธีม (นับด้วย _themeFltN ห้ามเขียนตัวเลขตายตัว)')
     for _k117 in ('tht.vivid','tht.pastel','tht.dark','tht.muted','flt.type','flt.all'):
         if txt.count("'"+_k117+"':'")<2: errors.append('lint #117: i18n '+_k117+' ไม่ครบ TH+EN')
     for _k117 in ('flt.color','flt.none'):

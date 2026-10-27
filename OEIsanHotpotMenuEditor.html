@@ -4968,9 +4968,11 @@ function _themeDdHtml(){
 /* ตัวกรองธีม: ประเภทอย่างเดียว (ผู้ใช้ 27 ต.ค. 2026 เอาช่องสีออก — ซ้ำกับรายการธีมที่เรียงตามสีอยู่แล้ว) · ธีมปัจจุบันต้องตรงประเภทเสมอ */
 function _themeFltMatch(id){ if(id==='custom') return !_themeFlt.type; return !_themeFlt.type || _THEME_TYPE[id]===_themeFlt.type; }  /* กำหนดเองไม่มีประเภท -> อยู่เฉพาะ ทั้งหมด */
 function _themeFltFirst(){ for(var i=0;i<_THEME_ORDER.length;i++){ var id=_THEME_ORDER[i]; if(id!=='custom' && _themeFltMatch(id)) return id; } return null; }
+function _themeFltN(type){ var n=0; _THEMES.forEach(function(id){ if(!type || _THEME_TYPE[id]===type) n++; }); return n; }
 function _themeFltHtml(){
   /* ตัวกรองประเภทเป็นอิสระเสมอ ไม่ล็อกแม้ธีมกำหนดเอง (ผู้ใช้ 27 ต.ค. 2026) */
-  function o(v,key){ return '<option value="'+v+'"'+(_themeFlt.type===v?' selected':'')+' data-i18n="'+key+'">'+epEsc(t(key))+'</option>'; }
+  /* จำนวนธีมต่อประเภท นับจากข้อมูลจริงทุกครั้ง ไม่เขียนตัวเลขตายตัว (ผู้ใช้ 27 ต.ค. 2026) · ทั้งหมด = ธีมสำเร็จรูปทั้งหมด ไม่นับ กำหนดเอง · ไม่ใส่ data-i18n เพราะตอนสลับภาษา panel สร้างใหม่ทั้งหมด (onRelang) */
+  function o(v,key){ return '<option value="'+v+'"'+(_themeFlt.type===v?' selected':'')+'>'+epEsc(t(key))+' ('+_themeFltN(v)+')</option>'; }
   var ty=o('','flt.all')+['vivid','pastel','dark','muted'].map(function(k){ return o(k,'tht.'+k); }).join('');
   return '<span class="ep-flabel" data-i18n="flt.type">'+epEsc(t('flt.type'))+'</span><select class="ep-sel" id="themeFltType" onchange="_themeFltSet(this.value)">'+ty+'</select>';
 }

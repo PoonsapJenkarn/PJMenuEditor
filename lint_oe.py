@@ -2949,6 +2949,21 @@ def main():
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
     if _ord131!=['page','home','image','template','screen','view']:
         errors.append('lint #131: ลำดับแท็บต้องเป็น หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ตอนนี้ '+','.join(_ord131)+')')
+    if not re.search(r'<button class="edtab active" data-tab="page"', txt) or not re.search(r'<div class="rpane active" data-pane="page">', txt) or 'function _tabStartup(' not in txt:
+        errors.append('lint #131: แท็บเริ่มต้นต้องเป็น หน้า (markup + _tabStartup ตอนเปิดไฟล์)')
+    if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:
+        errors.append('lint #131: ต้องมีแท็บ/ริบบอน active อย่างละ 1 เท่านั้น')
+    # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
+    if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "if(!ref){ var _all=pg.querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1]; }" not in txt:
+        errors.append('lint #132: กล่องใหม่ต้องวางต่อใต้กล่องที่เลือก หรือกล่องล่าสุดในหน้า (ไม่ทับที่เดิม)')
+    if 'if(top+rh>297-8){ left=Math.min(210-w,left+5);' not in txt:
+        errors.append('lint #132: ล้นขอบล่าง ต้องเยื้อง 5mm จากกล่องเดิม')
+    if "if(e.key==='Tab'){ e.preventDefault(); _ftCycle(_ftSel,e.shiftKey?-1:1); return; }" not in txt or 'function _ftCycle(' not in txt:
+        errors.append('lint #132: Tab / Shift+Tab ต้องวนเลือกกล่องในหน้า')
+    if txt.count("'st.ftextSel':'")<2 or '{i} / {n}' not in txt:
+        errors.append('lint #132: แถบล่างต้องบอก กล่อง i / n ในหน้านี้')
+    if '@media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;z-index:24;}}' not in _css:
+        errors.append('lint #132: กล่องที่เลือกต้องลอยหน้าสุด (เห็นจุดจับแม้ซ้อน)')
 
     # ---- report ----
     print("=" * 54)

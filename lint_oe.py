@@ -2718,6 +2718,11 @@ def main():
     for _k118 in ('th.zPageBg','th.paperReset','fl.paperSet'):
         if txt.count("'"+_k118+"':'")<2: errors.append('lint #118: i18n '+_k118+' ไม่ครบ TH+EN')
 
+    # ---- 119) พาเนลพื้นหลัง: ทุกหน้า = ปุ่มแรกซ้ายสุด + ค่าเริ่มต้น (ผู้ใช้ 27 ต.ค. 2026) ----
+    _sc119=re.findall(r'name="pgbgScope" value="([a-z]+)"( checked)?', txt)
+    if [v for v,c in _sc119]!=['all','page','odd','even','range'] or [v for v,c in _sc119 if c]!=['all']:
+        errors.append('lint #119: ขอบเขตพื้นหลังต้องเรียง ทุกหน้า·เฉพาะหน้านี้·หน้าคี่·หน้าคู่·ระบุ และ ทุกหน้า เป็นค่าเริ่มต้น')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

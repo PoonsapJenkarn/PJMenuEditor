@@ -1640,12 +1640,11 @@ def main():
     if not _pg75 or "font-family:'Prompt'" not in _pg75.group(0):
         errors.append('.page ต้องตั้ง font-family:\'Prompt\' — default font ของเมนูทุกหน้า (ชื่อเมนู/หมายเหตุสืบทอดจาก .page · ดู UI_STANDARD.md ข้อ 6)')
 
-    # ---- 77) แถบบน 2 โซน: [undo/redo · zoom+A4] ‖(.edbar-sep) [ซ่อนริบบอน · ขนาด UI · ภาษา] · ในโซน 8px · เส้นคั่นให้ boundary (ผู้ใช้ 23 ต.ค. 2026) ----
+    # ---- 77) แถบบน 2 โซน: [undo/redo · zoom+A4] ‖(.edbar-sep) [ขนาด UI · ภาษา] · ในโซน 8px · เส้นคั่นให้ boundary (ผู้ใช้ 23 ต.ค. 2026) ----
     #   ปรับเทียบจอ = caret ▾ ติด A4 (id=btnCal ยังอยู่) · โมโนโครม/นำเสนอ อยู่แท็บหน้าจอ · โซนในชิด 8px · ข้ามเส้นคั่น 14px
     for _s77, _need77, _msg77 in (
         ('#edtabs .zoomctl{', 'margin-left:8px', 'zoomctl (zoom · โซนเอกสาร) ชิด undo/redo 8px'),
-        ('#edtabs #btnFocus{', 'margin-left:0', 'btnFocus หลังเส้นคั่น (margin-left:0 — เส้นคั่นให้ระยะแล้ว)'),
-        ('#edtabs .uiscalectl{', 'margin-left:8px', 'uiscalectl (ขนาด UI · โซนสภาพแวดล้อม) 8px'),
+        ('#edtabs .uiscalectl{', 'margin-left:0', 'uiscalectl หลังเส้นคั่น (margin-left:0 — เส้นคั่นให้ระยะแล้ว · ปุ่มซ่อนริบบอนย้ายไปมุมริบบอน 27 ต.ค. 2026)'),
         ('#edtabs .langsw{', 'margin-left:8px', 'langsw (TH/EN · โซนสภาพแวดล้อม) 8px'),
     ):
         _m77=re.search(re.escape(_s77)+r'[^}]*\}', _css)
@@ -1654,7 +1653,7 @@ def main():
     if re.search(r'#edtabs \.qab\{[^}]*margin-right:8px', _css):
         errors.append('#edtabs .qab ยังมี margin-right:8px เก่า — ระยะกลุ่มต้องคุมด้วย margin-left:16px ที่กลุ่มถัดไป ไม่ใช่ margin-right มั่ว (ดู UI_STANDARD.md ข้อ 1)')
     if '#edtabs .edbar-sep{' not in _css or 'class="edbar-sep"' not in txt:
-        errors.append('แถบบนต้องมีเส้นคั่น 2 โซน (.edbar-sep): [undo/redo · zoom A4] ‖ [ซ่อนริบบอน · ขนาด UI · ภาษา] (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
+        errors.append('แถบบนต้องมีเส้นคั่น 2 โซน (.edbar-sep): [undo/redo · zoom A4] ‖ [ขนาด UI · ภาษา] (ผู้ใช้ 23 ต.ค. 2026) (ดู UI_STANDARD.md ข้อ 1)')
 
     # ---- 80) โหมดนำเสนอ (present/fullscreen): 2 แกน Fit Width + Fit Screen (preset หน้า/จอ 1/2/3/4/6/8 โชว์ครบเสมอ · ตัวเกินจำนวนหน้า = disabled+tooltip · เอนจินเลือกกริดใหญ่สุด) · รองรับหลายจอ (จำค่าล่าสุด localStorage + เตือนจอเล็ก + เพดานสเกล ultrawide) · แถบลอย+คีย์ 1/2/3/4/6/8 · เฉพาะจอ · strip ตอน save (ผู้ใช้ 18-19 ต.ค. 2026) ----
     if 'function togglePresent' not in txt:
@@ -1688,8 +1687,8 @@ def main():
         errors.append('ขาดช่องว่างหัวเพจ (.page margin-top ในโหมดแก้) — หน้ากระดาษชนริบบอน (ดู UI_STANDARD.md ข้อ 1)')
     if "closest('#edtabs .edtab')" not in txt:
         errors.append('โหมดโฟกัสไม่มี auto-exit ตอนคลิกแท็บเครื่องมือ — คลิกแท็บแล้วริบบอนไม่โผล่ = คลิกตาย (ดู UI_STANDARD.md ข้อ 6)')
-    if "'btn.focus'" not in txt:
-        errors.append('ขาด i18n btn.focus (ปุ่มโฟกัส) (ดู UI_STANDARD.md ข้อ 5)')
+    if txt.count("'ttl.focusOn':'")<2:
+        errors.append('ขาด i18n ttl.focusOn TH+EN (ชื่อปุ่มพับริบบอน · ปุ่มไม่มีตัวหนังสือ ใช้ title) (ดู UI_STANDARD.md ข้อ 5)')
     if 'data-tab="screen"' not in txt or "'tab.screen'" not in txt:
         errors.append('ขาดแท็บ หน้าจอ (data-tab="screen" + i18n tab.screen) (ดู UI_STANDARD.md ข้อ 5)')
     if 'data-pane="screen"' not in txt:
@@ -2740,7 +2739,7 @@ def main():
     # ---- 122) ขนาดเครื่องมือ: คลิก % เปิดรายการ 80-150% (ผู้ใช้ 27 ต.ค. 2026) ----
     if 'id="uiLvl" aria-haspopup="listbox"' not in txt or 'onclick="_uiDdToggle(event)"' not in txt or 'id="uiLvlTxt"' not in txt:
         errors.append('lint #122: ตัวเลข % ต้องเป็นปุ่มเปิดรายการขนาด (#uiLvl + #uiLvlTxt)')
-    for _f122 in ('function _uiDdOpen(','function _uiDdClose(','function _uiDdPick(','function _uiDdKey(','function _uiDdOutside(','function _uiscalePreview(','function _uiScaleList('):
+    for _f122 in ('function _ddOpen(','function _ddClose(','function _ddPick(','function _ddKey(','function _ddOutside(','function _ddHl(','function _uiscalePreview(','function _uiScaleList(','function _uiDdCfg('):
         if _f122 not in txt: errors.append('lint #122: ไม่พบ '+_f122)
     if 'for(var v=_UIMIN; v<=_UIMAX; v+=_UISTEP)' not in txt:
         errors.append('lint #122: รายการขนาดต้องสร้างจาก _UIMIN.._UIMAX ห้ามเขียนตัวเลขตายตัว')
@@ -2749,7 +2748,7 @@ def main():
         errors.append('lint #122: ชี้ดูขนาดต้องไม่บันทึกค่า (ห้ามแตะ _uiscale/localStorage ใน _uiscalePreview)')
     if 'document.body.appendChild(pop);' not in txt or 'pop.style.zoom' in txt:
         errors.append('lint #122: รายการต้องอยู่ใน body นอกโซน zoom และไม่ใช้ zoom (กันรายการย่อขยายใต้เมาส์)')
-    if "else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); _uiDdClose(true); }" not in txt:
+    if "else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); _ddClose(true); }" not in txt:
         errors.append('lint #122: Esc ต้องคืนขนาดเดิม')
     if '#edtabs .uiscalectl #uiLvl.on{background:#217346;color:#fff;border-color:#217346;}' not in _css:
         errors.append('lint #122: ปุ่ม % ตอนรายการเปิดต้องเป็นสีเขียว (ข้อ 11)')
@@ -2775,6 +2774,56 @@ def main():
         errors.append('lint #123: ความกว้างแถบต่ำสุดต้องใช้ _CAL_MINW ที่เดียว (ช่วงนิ้วคำนวณจากค่าเดียวกัน)')
     if txt.count("'cal.inchRange':'")<2 or '{a}' not in txt or '{b}' not in txt:
         errors.append('lint #123: i18n cal.inchRange ไม่ครบ TH+EN')
+
+    # ---- 124) ซูมหน้า A4: ปุ่ม ▾ ข้างช่อง % เปิดรายการสำเร็จรูป ชี้ดูก่อน (ผู้ใช้ 27 ต.ค. 2026) · ใช้ engine เดียวกับขนาดเครื่องมือ (ห้ามเขียนซ้ำ) ----
+    if 'id="zoomDd" aria-haspopup="listbox"' not in txt or 'onclick="_zoomDdToggle(event)"' not in txt:
+        errors.append('lint #124: ต้องมีปุ่ม ▾ (#zoomDd) ข้างช่อง % ซูม เปิดรายการ')
+    if not re.search(r'<span class="a4split"><input id="zoomLvl"[^>]*><button type="button" class="a4caret" id="zoomDd"', txt):
+        errors.append('lint #124: ช่อง % ซูมต้องยังพิมพ์ได้ และปุ่ม ▾ ต้องติดกันแบบ split (เหมือน A4 ▾)')
+    for _f124 in ('function _zoomPresets(','function _zoomPreview(','function _zoomDdRevert(','function _zoomDdAnchorSet(','function _zoomDdCfg('):
+        if _f124 not in txt: errors.append('lint #124: ไม่พบ '+_f124)
+    _mp124=re.search(r'function _zoomPreview\(v\)\{[^\n]*', txt)
+    if not _mp124 or '_zoom=' in _mp124.group(0) or 'localStorage' in _mp124.group(0):
+        errors.append('lint #124: ชี้ดูซูมต้องไม่บันทึกค่า (ห้ามแตะ _zoom/localStorage ใน _zoomPreview)')
+    if 'v>=_ZMIN && v<=_ZMAX' not in txt:
+        errors.append('lint #124: รายการซูมต้องกรองตาม _ZMIN.._ZMAX')
+    if 'sc.scrollTop=a.top; sc.scrollLeft=a.left;' not in txt:
+        errors.append('lint #124: ยกเลิกซูมต้องคืนตำแหน่งเลื่อนเดิม')
+    if 'function _zoomCommit(z){ if(_dd) _ddClose(true);' not in txt or 'function _uiscaleCommit(z){ if(_dd) _ddClose(true);' not in txt:
+        errors.append('lint #124: ปุ่ม +/− หรือ A−/A+ ระหว่างรายการเปิด ต้องปิดรายการและคืนค่าที่ชี้ดูก่อน')
+    if txt.count('function _ddOpen(')!=1 or 'function _uiDdOpen(' in txt or 'function _zoomDdOpen(' in txt:
+        errors.append('lint #124: รายการชี้ดูก่อนต้องใช้ engine เดียว (_ddOpen) ห้ามเขียนซ้ำ')
+    if '#edtabs #zoomDd.on,#edtabs #btnCal.on{' not in _css:
+        errors.append('lint #124: ปุ่ม ▾ ซูมตอนรายการเปิดต้องเป็นสีเขียว (ข้อ 11)')
+    if '@media print{#zoomDdPop{display:none !important;}}' not in _css or "'#zoomDdPop','#uiDdPop'" not in txt or "clone.querySelector('#zoomDdPop')" not in txt:
+        errors.append('lint #124: รายการซูมต้องไม่พิมพ์ และต้องถูกตัดออกตอนบันทึก')
+    if txt.count("'ttl.zoomDd':'")<2: errors.append('lint #124: i18n ttl.zoomDd ไม่ครบ TH+EN')
+
+    # ---- 125) ปุ่มพับริบบอน แบบ Office: ลูกศรหัวเดียว ⌃ มุมขวาล่างของริบบอน (ผู้ใช้ 27 ต.ค. 2026) ----
+    if '<div id="edribbon"><button type="button" id="btnFocus" class="rb-collapse"' not in txt:
+        errors.append('lint #125: ปุ่มพับริบบอน (#btnFocus) ต้องอยู่ใน #edribbon (มุมขวาล่าง) ไม่ใช่แถบบน')
+    if '<path d="M6 15l6-6 6 6"/>' not in txt:
+        errors.append('lint #125: ปุ่มพับริบบอนต้องเป็นลูกศรหัวเดียวชี้ขึ้น (chevron) ไม่มีหาง')
+    _mr125=re.search(r'#edribbon\{([^}]*)\}', _css); _mb125=re.search(r'#edribbon #btnFocus\{([^}]*)\}', _css)
+    if not _mr125 or 'position:relative' not in _mr125.group(1) or 'padding:7px 40px 7px 12px' not in _mr125.group(1):
+        errors.append('lint #125: #edribbon ต้อง position:relative + เว้นขวา 40px กันปุ่มทับกลุ่มสุดท้าย')
+    if not _mb125 or 'position:absolute' not in _mb125.group(1) or 'right:6px' not in _mb125.group(1) or 'bottom:4px' not in _mb125.group(1):
+        errors.append('lint #125: ปุ่มพับริบบอนต้องวางมุมขวาล่างของริบบอน (absolute right/bottom)')
+    if '#edtabs #btnFocus' in _css or "'btn.focus'" in txt or "ttl.focusOff" in txt:
+        errors.append('lint #125: ลบของเก่าไม่หมด (#edtabs #btnFocus / btn.focus / ttl.focusOff)')
+    if "flashStatus('info', tk('fl.ribbonHidden'))" not in txt or txt.count("'fl.ribbonHidden':'")<2:
+        errors.append('lint #125: ซ่อนริบบอนแล้วต้องบอกวิธีแสดงกลับ (fl.ribbonHidden TH+EN)')
+
+    # 125b) ตอนริบบอนพับ ต้องมีปุ่ม ⌄ ให้เห็นและกดแสดงกลับได้ (ผู้ใช้ 27 ต.ค. 2026: "เอาขึ้นแล้ว เอาลงยังไง")
+    if '<div id="edpanel" class="ep-hidden"></div>\n  <button type="button" id="btnRibbonShow" onclick="toggleFocus()"' not in txt or '<path d="M6 9l6 6 6-6"/>' not in txt:
+        errors.append('lint #125: ต้องมีปุ่ม ⌄ (#btnRibbonShow) ใน #edbar เรียก toggleFocus · ลูกศรหัวเดียวชี้ลง')
+    _ms125=re.search(r'#edbar #btnRibbonShow\{([^}]*)\}', _css)
+    if not _ms125 or 'display:none' not in _ms125.group(1) or 'position:absolute' not in _ms125.group(1) or 'right:6px' not in _ms125.group(1) or 'top:100%' not in _ms125.group(1):
+        errors.append('lint #125: ปุ่ม ⌄ ต้องซ่อนปกติ และห้อยใต้แถบบนทางขวาแนวเดียวกับ ⌃ (absolute right:6px top:100%)')
+    if '@media screen{body.focusmode #edbar #btnRibbonShow{display:inline-flex;}}' not in _css:
+        errors.append('lint #125: ปุ่ม ⌄ ต้องแสดงเมื่อริบบอนพับ (body.focusmode) เฉพาะบนจอ')
+    if txt.count("'ttl.ribbonShow':'")<2:
+        errors.append('lint #125: i18n ttl.ribbonShow ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

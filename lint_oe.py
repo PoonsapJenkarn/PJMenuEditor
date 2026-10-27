@@ -2945,6 +2945,11 @@ def main():
     for _k130 in ('typ.ftext','btn.ftextAdd','ttl.ftextAdd','grp.insert','ttl.ftextDel','ft.default','fl.ftextAdd','fl.ftextDel','fl.ftextEmpty','st.ftextSel','st.ftextEdit'):
         if txt.count("'"+_k130+"':'")<2: errors.append('lint #130: i18n '+_k130+' ไม่ครบ TH+EN')
 
+    # ---- 131) ลำดับแท็บ: หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด) ----
+    _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
+    if _ord131!=['page','home','image','template','screen','view']:
+        errors.append('lint #131: ลำดับแท็บต้องเป็น หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ตอนนี้ '+','.join(_ord131)+')')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

@@ -1261,9 +1261,10 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
 <div id="edbar">
   <div id="edtabs">
     <span class="edbrand" onclick="openAbout()" title="PJ Menu Editor"><svg width="30" height="30" viewBox="0 0 32 32" aria-label="POONSAP"><path fill="#d50000" d="M2 5 H30 L27 27 H5 Z"/><text x="16.3" y="24" font-family="'Montserrat','Prompt',Arial,sans-serif" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">P</text></svg></span>
+    <button class="edtab" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button>  <!-- แท็บ หน้า = แท็บแรกซ้ายสุด (ผู้ใช้ 27 ต.ค. 2026) · ข้อความ ยังเป็นแท็บเริ่มต้น (active) -->
     <button class="edtab active" data-tab="home" data-i18n="tab.text" onclick="switchTab('home')">ข้อความ</button>
     <button class="edtab" data-tab="image" data-i18n="tab.image" onclick="switchTab('image')">รูป</button>
-    <button class="edtab" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button><button class="edtab" data-tab="template" data-i18n="tab.template" onclick="switchTab('template')">เท็มเพลต</button>
+    <button class="edtab" data-tab="template" data-i18n="tab.template" onclick="switchTab('template')">เท็มเพลต</button>
     <button class="edtab" data-tab="screen" data-i18n="tab.screen" onclick="switchTab('screen')">หน้าจอ</button><button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button>
     <span class="hint" id="edhint"></span>
     <span class="qab"><button id="btnUndo" onclick="undo()" data-i18n-title="ttl.undo" title="ย้อนกลับ (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="qab-badge" id="undoBadge"></span></button><button id="btnRedo" onclick="redo()" data-i18n-title="ttl.redo" title="ทำซ้ำ (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="qab-badge" id="redoBadge"></span></button></span>

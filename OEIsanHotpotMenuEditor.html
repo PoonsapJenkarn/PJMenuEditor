@@ -5769,7 +5769,7 @@ function _pageFitMetrics(){
 function zoomFitPage(){ var m=_pageFitMetrics(); if(!m) return; _zoomFitCommit(Math.min(m.availW/m.pw, m.availH/m.ph)*100); }
 function _zoomLoad(){ try{ var v=parseInt(localStorage.getItem(ZOOM_KEY),10); if(v>=_ZMIN && v<=_ZMAX) _zoom=v; }catch(e){} _zoomApply(); }
 /* ===== ขนาด UI chrome (toolbar) — แยกจากซูมเพจโดยสิ้นเชิง: zoom เฉพาะ #edbar/#edstatus ไม่แตะ .page · ปุ่ม A−/A+ บน toolbar (ผู้ใช้ 22 ต.ค. 2026 · app บ้านๆ ต้องหาเจอง่าย) ===== */
-var UISCALE_KEY='oe_uiscale', _UIMIN=90, _UIMAX=150, _UISTEP=10, _uiscale=100;
+var UISCALE_KEY='oe_uiscale', _UIMIN=80, _UIMAX=150, _UISTEP=10, _uiscale=100;  /* ขนาดเครื่องมือ 80–150% (ผู้ใช้ 27 ต.ค. 2026 ลดต่ำสุด 90 -> 80) */
 function _uiscaleApply(){ document.body.style.setProperty('--uiscale',(_uiscale/100)); var el=document.getElementById('uiLvl'); if(el) el.textContent=_uiscale+'%'; var o=document.getElementById('uiOut'), i=document.getElementById('uiIn'); if(o) o.disabled=(_uiscale<=_UIMIN); if(i) i.disabled=(_uiscale>=_UIMAX); if(typeof syncBarHeight==='function') syncBarHeight(); }
 function _uiscaleCommit(z){ z=Math.round(z); z=Math.max(_UIMIN,Math.min(_UIMAX,z)); _uiscale=z; try{ localStorage.setItem(UISCALE_KEY,String(z)); }catch(e){} _uiscaleApply(); }
 function uiIn(){ _uiscaleCommit((Math.floor(_uiscale/_UISTEP)+1)*_UISTEP); }

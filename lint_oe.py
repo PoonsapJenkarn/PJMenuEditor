@@ -2733,6 +2733,10 @@ def main():
     if not re.search(r"function _calSetWidth\(w,src\)\{[^\n]*_calReadout\(\);", txt):
         errors.append('lint #120: _calSetWidth ต้องอัปเดต % (_calReadout) ทุกครั้ง')
 
+    # ---- 121) ขนาดเครื่องมือ (A-/A+) ต่ำสุด 80% (ผู้ใช้ 27 ต.ค. 2026) ----
+    if not re.search(r"_UIMIN=80,", txt):
+        errors.append('lint #121: ขนาดเครื่องมือ A- ต้องลดได้ถึง 80% (_UIMIN=80)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

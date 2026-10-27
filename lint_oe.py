@@ -2679,6 +2679,45 @@ def main():
     if "'tht.muted':'หม่น อมเทา'" not in txt or "'tht.muted':'หม่นอมเทา'" in txt:
         errors.append('lint #119: ป้ายประเภท tht.muted (TH) ต้องเป็น หม่น อมเทา (มีเว้นวรรค)')
 
+    # ---- 118) สีกระดาษ แยกจากธีม (ผู้ใช้ 27 ต.ค. 2026): ครีมเดิมทุกธีม · ช่อง พื้นกระดาษ ในแผงธีม · ตัวอักษรบนกระดาษสลับอัตโนมัติ ----
+    if 'background:var(--page-bg);' not in _css or 'linear-gradient(#fbf8f3' in _css or 'background:#fbf8f3' in _css:
+        errors.append('lint #118: .page ต้องใช้ var(--page-bg) ห้ามล็อก #fbf8f3 ตรงๆ')
+    _mr118=re.search(r':root\{([^}]*--grp-body-bg[^}]*)\}', _css)
+    if not _mr118 or '--page-bg:#fbf8f3' not in _mr118.group(1):
+        errors.append('lint #118: ค่าเริ่มต้นกระดาษต้องเป็นครีม #fbf8f3 ใน :root')
+    for _bk118 in re.findall(r':root\[data-theme="[a-z-]+"\]\{([^}]*)\}', _css):
+        if '--page-' in _bk118:
+            errors.append('lint #118: ธีมห้ามกำหนดสีกระดาษ/ตัวอักษรบนกระดาษ (กระดาษแยกจากธีม)'); break
+    _mv118=re.search(r"var _THEME_VARS=\[([^\]]*)\]", txt)
+    if not _mv118 or 'page-' in _mv118.group(1):
+        errors.append('lint #118: _THEME_VARS ห้ามมี page-* (ธีมกำหนดเองไม่ดูแลกระดาษ)')
+    for _sel118,_v118 in ((r'(?m)^\.brand h1\{([^}]*)\}','var(--page-title)'),(r'(?m)^\.contact \.ph\{([^}]*)\}','var(--page-txt)'),(r'(?m)^\.contact \.lbl\{([^}]*)\}','var(--page-sub)'),(r'(?m)^\.pagelabel\{([^}]*)\}','var(--page-sub)')):
+        _m118=re.search(_sel118, _css)
+        if not _m118 or _v118 not in _m118.group(1): errors.append('lint #118: '+_sel118+' ต้องใช้ '+_v118)
+    for _f118 in ('function _paperSet(','function _paperTextAuto(','function _paperTrigHtml(','function _paperReset(','id="thcpPick_page-bg"',"+_themeDdHtml()+_paperTrigHtml()+"):
+        if _f118 not in txt: errors.append('lint #118: ไม่พบ '+_f118)
+    if ":root[data-paper] .page{-webkit-print-color-adjust:exact;print-color-adjust:exact;}" not in _css:
+        errors.append('lint #118: เลือกสีกระดาษเองต้องพิมพ์สีกระดาษ')
+    if "if(_cpThemeVar==='page-bg'){ _thcpOrig=null; _paperSet(hex);" not in txt or "if(_cpThemeVar==='page-bg'){ _paperSet(h);" not in txt:
+        errors.append('lint #118: ตกลงสีกระดาษ (ถาด + HSV) ต้องไป _paperSet ไม่ใช่ _themeCustomSet (ห้ามเปลี่ยนธีมเป็นกำหนดเอง)')
+    def _l118(h):
+        _r=[]
+        for _i in (0,2,4):
+            _c=int(h[_i:_i+2],16)/255.0
+            _r.append(_c/12.92 if _c<=0.03928 else ((_c+0.055)/1.055)**2.4)
+        return 0.2126*_r[0]+0.7152*_r[1]+0.0722*_r[2]
+    def _c118(a,b):
+        _x,_y=_l118(a),_l118(b); return (max(_x,_y)+0.05)/(min(_x,_y)+0.05)
+    _dk118=re.search(r"var _PAPER_TXT_DARK=\{([^}]*)\}", txt); _lt118=re.search(r"var _PAPER_TXT_LIGHT=\{([^}]*)\}", txt)
+    if not _dk118 or not _lt118:
+        errors.append('lint #118: ไม่พบชุดสีตัวอักษรบนกระดาษ เข้ม/สว่าง')
+    else:
+        _dkv=re.findall(r"#([0-9a-fA-F]{6})", _dk118.group(1)); _ltv=re.findall(r"#([0-9a-fA-F]{6})", _lt118.group(1))
+        if any(_c118(_v,'fbf8f3')<4.5 for _v in _dkv): errors.append('lint #118: ชุดเข้มบนครีมต้อง contrast >= 4.5')
+        if any(_c118(_v,'1b1816')<4.5 for _v in _ltv): errors.append('lint #118: ชุดสว่างบนกระดาษเข้มต้อง contrast >= 4.5')
+    for _k118 in ('th.zPageBg','th.paperReset','fl.paperSet'):
+        if txt.count("'"+_k118+"':'")<2: errors.append('lint #118: i18n '+_k118+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

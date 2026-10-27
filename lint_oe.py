@@ -2757,6 +2757,25 @@ def main():
         errors.append('lint #122: รายการขนาดต้องไม่พิมพ์ และต้องถูกตัดออกตอนบันทึก')
     if txt.count("'ttl.uiLvl':'")<2: errors.append('lint #122: i18n ttl.uiLvl ไม่ครบ TH+EN')
 
+    # ---- 123) ปรับเทียบจอ ช่องขนาดจอ: ว่าง=คืนค่าก่อนพิมพ์ · นอกช่วง=ไม่ขยับ+บอกช่วง (ผู้ใช้ 27 ต.ค. 2026 แก้บั๊ก 205% ค้าง) ----
+    _mf123=re.search(r'function _calFromInches\(\)\{[\s\S]*?\n  _calHintSet\(null\); _calSetWidth', txt)
+    if not _mf123:
+        errors.append('lint #123: ไม่พบ _calFromInches แบบใหม่')
+    else:
+        _b123=_mf123.group(0)
+        if "if(!(din>0)||!(diag>0)){ _calHintSet(null); if(_calInchBase>0) _calSetWidth(_calInchBase,'inch'); return; }" not in _b123:
+            errors.append('lint #123: ช่องขนาดจอว่าง ต้องคืนแถบเป็นค่าก่อนพิมพ์')
+        if "if(w<_CAL_MINW||w>_calMaxWidth()){ _calHintSet(_calInchRange()); return; }" not in _b123:
+            errors.append('lint #123: ค่าที่แถบแสดงไม่ได้ ต้องไม่ขยับแถบ (ห้าม clamp ไปค้างสุดขอบ) และต้องบอกช่วงที่ใช้ได้')
+    if '_calInchBase=w; _calHintSet(null);' not in txt:
+        errors.append('lint #123: ทาบบัตร/ปุ่ม/เปิดหน้าต่าง ต้องตั้งค่าก่อนพิมพ์ใหม่ (_calInchBase)')
+    if 'id="calInchHint"' not in txt or "_calHintRelang();" not in txt:
+        errors.append('lint #123: ต้องมีข้อความช่วงที่ใช้ได้ (#calInchHint) และแปลภาษาใหม่ตอนสลับ TH/EN')
+    if 'Math.max(_CAL_MINW,' not in txt:
+        errors.append('lint #123: ความกว้างแถบต่ำสุดต้องใช้ _CAL_MINW ที่เดียว (ช่วงนิ้วคำนวณจากค่าเดียวกัน)')
+    if txt.count("'cal.inchRange':'")<2 or '{a}' not in txt or '{b}' not in txt:
+        errors.append('lint #123: i18n cal.inchRange ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

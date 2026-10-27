@@ -3006,10 +3006,16 @@ def main():
         if _f136 not in txt: errors.append('lint #136: ไม่พบ '+_f136)
     if "if(Math.abs(s.t-(q.t+q.h))<=0.5 && s.l<q.l+q.w && q.l<s.l+s.w) s.p=q;" not in txt or "if(s.p) s.b.style.top=(_ftNum(s.p.b.style.top)+s.p.b.getBoundingClientRect().height/D.pxmm)" not in txt:
         errors.append('lint #136: ยืดหลายกล่องต้องจัดกล่องที่ต่อกันให้ชิดกันใหม่ (ยึดมุมซ้ายบน)')
-    if "gx=Math.max(gx,10-D.minW); else gx=Math.min(gx,D.minW-10);" not in txt:
+    if "if(dd==='w') gx=Math.min(gx,D.minW-10); else gx=Math.max(gx,10-D.minW);" not in txt or "gy=Math.max(gy,G.h*D.minSc-G.h);" not in txt:
         errors.append('lint #136: กล่องแคบสุดต้องไม่ต่ำกว่า 10mm')
-    if "['w','e'].forEach(function(d){ var h=document.createElement('div'); h.className='ftgh';" not in txt:
-        errors.append('lint #136: กรอบชุดมีจุดจับเฉพาะซ้าย/ขวา (ความสูงมาจากข้อความ — ห้ามจุดจับที่ไม่ทำงานจริง)')
+    if "['n','w','e','s','se'].forEach(function(d){ var h=document.createElement('div'); h.className='ftgh';" not in txt:
+        errors.append('lint #136: กรอบชุดต้องมีจุดจับ บน/ซ้าย/ขวา/ล่าง/มุมขวาล่าง')
+    if "hasH=(dd==='s'||dd==='se'||dd==='n');" not in txt or "off=(G.t+G.h)-(B.t+B.h);" not in txt or '.ftgh[data-d="n"]{top:-6px;' not in _css:
+        errors.append('lint #136: จุดบนต้องปรับความสูงโดยขอบล่างชุดอยู่กับที่')
+    if "s.b.style.minHeight=(sc===1)?s.mh:(s.h*sc).toFixed(1)+'mm';" not in txt or 'mh:b.style.minHeight' not in txt:
+        errors.append('lint #136: ยืดความสูงหลายกล่องต้องขยายตามสัดส่วน + คืน min-height เดิมเมื่อกลับขนาดเดิม')
+    if '.ftgh[data-d="se"]{top:auto;bottom:-6px;right:-6px;cursor:nwse-resize;}' not in _css or '.ftgh[data-d="s"]{top:auto;bottom:-6px;' not in _css:
+        errors.append('lint #136: จุดจับล่าง/มุมขวาล่างต้องอยู่ขอบล่างกรอบ + cursor ถูกทิศ')
     if 'font-size' in txt[txt.find('if(D.grs){'):txt.find('if(D.grs){')+1500]:
         errors.append('lint #136: ยืดหลายกล่องต้องไม่เปลี่ยนขนาดตัวอักษร')
     if '@media print{.ftgrp{display:none !important;}}' not in _css or txt.count('.fth,.ftdel,.ftguide,.ftmarq,.ftgrp')!=3:

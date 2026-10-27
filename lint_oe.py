@@ -2148,11 +2148,11 @@ def main():
 
     # ---- 94) ธีมสี: 4 ธีม (:root[data-theme]) + ปุ่มเลือกธีม + JS + i18n · ธีมเข้มบังคับหัวกลุ่มอ่านออก (ผู้ใช้ 23 ต.ค. 2026 · รอบ2) ----
     _e94=[]
-    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray'):
+    for _t94 in ('white-green','dark-gold','paper-brick','bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray','vivid-orange','vivid-yellow','vivid-purple','forest-dark','coffee-dark','purple-dark','dusty-orange','dusty-yellow','dusty-purple','vivid-pink','pink-white','pink-dark','dusty-red','orange-dark','dusty-brown','red-white','blush','sakura','peach','orange-white','latte','kraft','vivid-brown','lemon','honey','denim-cream','lavender','lilac-cream'):
         if (':root[data-theme="'+_t94+'"]') not in _css:
             _e94.append('ไม่พบธีม ' + _t94)
     _m_themes94=re.search(r"var _THEMES=\[([^\]]*)\]", txt)
-    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray'):
+    for _tid94 in ('bw','white-gray','pine-cream','navy-white','maroon-cream','terracotta','plum','teal','mustard','blue-ocean','vivid-red','vivid-blue','vivid-green','navy-dark','wine-dark','sage','dusty-blue','dusty-rose','mono-dark','mono-gray','vivid-orange','vivid-yellow','vivid-purple','forest-dark','coffee-dark','purple-dark','dusty-orange','dusty-yellow','dusty-purple','vivid-pink','pink-white','pink-dark','dusty-red','orange-dark','dusty-brown','red-white','blush','sakura','peach','orange-white','latte','kraft','vivid-brown','lemon','honey','denim-cream','lavender','lilac-cream'):
         if not _m_themes94 or ("'"+_tid94+"'") not in _m_themes94.group(1): _e94.append('_THEMES ขาด ' + _tid94)
     if 'data-theme="dark-gold"] .sec-h' not in _css:
         _e94.append('ธีมเข้มไม่ override สีหัวกลุ่ม (.sec-h อ่านไม่ออกบนพื้นเข้ม)')
@@ -2512,6 +2512,9 @@ def main():
         errors.append('lint #114: ต้อง override measuring ของ 1col เป็น column (กันแบ่งหน้าเพี้ยน)')
     for _f114 in ('var _LAYOUTS=','function _layoutApply(','function _layoutLoad(','function _layoutPick(','function _layoutSyncBtns('):
         if _f114 not in txt: errors.append('lint #114: ไม่พบ '+_f114)
+    _p1=txt.find('id="btnLayout_1col"'); _p2=txt.find('id="btnLayout_2col"'); _p3=txt.find('id="btnLayout_3col"')
+    if not (0<=_p1<_p2<_p3):
+        errors.append('lint #114: ปุ่มเลย์เอาต์ต้องเรียง 1 คอลัมน์ · 2 คอลัมน์ · 3 คอลัมน์ (ผู้ใช้ 27 ต.ค. 2026)')
     for _id114 in ('btnLayout_2col','btnLayout_1col'):
         if ('id="'+_id114+'"') not in txt: errors.append('lint #114: ไม่พบปุ่ม '+_id114)
     if 'data-tab="template"' not in txt: errors.append('lint #114: ไม่พบแท็บ template')
@@ -2549,8 +2552,8 @@ def main():
         _gi116=re.findall(r"'([a-z-]+)'", re.sub(r"'thg\.[a-z]+'", "", _mg116.group(1)))
         _oi116=re.findall(r"'([a-z-]+)'", _mo116.group(1))
         _ti116=re.findall(r"'([a-z-]+)'", _mt116.group(1))
-        if _gk116!=['thg.red','thg.orange','thg.yellow','thg.green','thg.blue','thg.purple','thg.mono']:
-            errors.append('lint #116: หมวดธีมต้องเรียงตามสี แดง·ชมพู/ส้ม·น้ำตาล/เหลือง·ทอง/เขียว/น้ำเงิน·ฟ้า/ม่วง/ขาวดำ')
+        if _gk116!=['thg.red','thg.pink','thg.orange','thg.brown','thg.yellow','thg.green','thg.blue','thg.purple','thg.gray','thg.black']:
+            errors.append('lint #116: หมวดธีมต้องเป็น 10 สีหลัก แดง/ชมพู/ส้ม/น้ำตาล/เหลือง/เขียว/น้ำเงิน/ม่วง/เทา/ดำ ตามลำดับ')
         if _oi116[:1]!=['custom'] or _oi116[1:]!=_gi116:
             errors.append('lint #116: _THEME_ORDER ต้อง = custom + ธีมใน _THEME_GROUPS ตามลำดับ (keyboard nav ใช้ลำดับนี้)')
         if sorted(_gi116)!=sorted(_ti116) or len(set(_gi116))!=len(_gi116):
@@ -2572,22 +2575,22 @@ def main():
             _lv116='lo' if _sc116<0.08 else ('mid' if _sc116<0.40 else 'hi')
             if _ink116.get(_t116)!=_lv116:
                 errors.append('lint #116: ป้ายหมึกธีม '+_t116+' ต้องเป็น '+_lv116+' (คำนวณได้ '+('%.3f'%_sc116)+') แต่ _THEME_INK เป็น '+str(_ink116.get(_t116)))
-    if '#edpanel .ep-dd-grp' not in _css or 'class="ep-dd-grp"' not in txt:
-        errors.append('lint #116: dropdown ธีมต้องมีหัวหมวด .ep-dd-grp')
+    if 'ep-dd-grp' in txt or 'ep-dd-empty' in txt:
+        errors.append('lint #116: dropdown ธีมต้องไม่มีหัวหมวด/เส้นคั่น (ผู้ใช้ 27 ต.ค. 2026)')
     if '#edpanel .ep-dd-ink' not in _css or 'class="ep-dd-ink ink-' not in txt:
         errors.append('lint #116: dropdown ธีมต้องมีป้ายหมึก .ep-dd-ink')
     if "_THEME_INK[id]==='hi'" not in txt:
         errors.append('lint #116: เลือกธีมหมึกมากต้องเตือนในแถบล่าง (fl.themeInkHi)')
-    for _t116 in ('navy-dark','wine-dark','mono-dark'):
+    for _t116 in ('navy-dark','wine-dark','mono-dark','forest-dark','coffee-dark','purple-dark','pink-dark','orange-dark'):
         if (':root[data-theme="'+_t116+'"] .crab b') not in _css:
             errors.append('lint #116: ธีมพื้นเข้ม '+_t116+' ต้อง override สีตัวหนังสือกล่องโน้ต')
-    for _t116 in ('vivid-red','vivid-blue','vivid-green','mono-dark','navy-dark','wine-dark'):
+    for _t116 in ('vivid-red','vivid-blue','vivid-green','mono-dark','navy-dark','wine-dark','vivid-orange','vivid-purple','forest-dark','coffee-dark','purple-dark','vivid-pink','pink-dark','orange-dark','vivid-brown'):
         if (':root[data-theme="'+_t116+'"] .sec-h .sechead *') not in _css:
             errors.append('lint #116: ธีม '+_t116+' ต้อง override สีหัวกลุ่ม')
-    for _k116 in ('thg.red','thg.orange','thg.yellow','thg.green','thg.blue','thg.purple','thg.mono','ink.lo','ink.mid','ink.hi','fl.themeInkHi'):
+    for _k116 in ('ink.lo','ink.mid','ink.hi','fl.themeInkHi'):
         if txt.count("'"+_k116+"':'")<2: errors.append('lint #116: i18n '+_k116+' ไม่ครบ TH+EN')
-    for _k116 in ('thg.vivid','thg.pastel','thg.dark','thg.muted'):
-        if ("'"+_k116+"':'") in txt: errors.append('lint #116: ลบ i18n หมวดเก่า '+_k116+' ไม่หมด')
+    if re.search(r"'thg\.[a-z]+':'", txt):
+        errors.append('lint #116: ห้ามมี i18n หมวดสี thg.* (ไม่ได้แสดงแล้ว ผู้ใช้ 27 ต.ค. 2026)')
 
     # ---- 117) ตัวกรองธีม ประเภท + กลุ่มสี (ผู้ใช้ 26 ต.ค. 2026) · _THEME_TYPE ครอบทุกธีมครั้งเดียว · คีย์บอร์ดเดินตามรายการที่แสดงจริง ----
     _mty117=re.search(r"var _THEME_TYPE=\{([^}]*)\}", txt)
@@ -2603,18 +2606,75 @@ def main():
         if _bad117: errors.append('lint #117: ประเภทธีมไม่ถูกต้อง '+','.join(_bad117))
     for _f117 in ('function _themeDdListHtml(','function _themeFltHtml(','function _themeFltSet(','var _themeFlt='):
         if _f117 not in txt: errors.append('lint #117: ไม่พบ '+_f117)
-    if 'id="themeFltType"' not in txt or 'id="themeFltColor"' not in txt:
-        errors.append('lint #117: แผงธีมต้องมีตัวกรอง ประเภท + สี')
+    if 'id="themeFltType"' not in txt or 'themeFltColor' in txt or '_themeFlt.color' in txt:
+        errors.append('lint #117: แผงธีมต้องมีตัวกรองประเภทอย่างเดียว — ช่องสีถูกเอาออก (ผู้ใช้ 27 ต.ค. 2026)')
     if "var ids=_THEME_ORDER" in txt:
         errors.append('lint #117: คีย์บอร์ดใน dropdown ธีมต้องเดินตามรายการที่แสดงจริง ไม่ใช่ _THEME_ORDER ทั้งหมด')
-    for _f117 in ('function _themeFltCount(','function _themeFltMatch(','function _themeFltFirst('):
+    for _f117 in ('function _themeFltMatch(','function _themeFltFirst('):
         if _f117 not in txt: errors.append('lint #117: ไม่พบ '+_f117)
-    if "!_themeFltCount(k,_themeFlt.color)" not in txt or "!_themeFltCount(_themeFlt.type,g[0])" not in txt or "(dis?' disabled':'')" not in txt:
-        errors.append('lint #117: ตัวเลือกประเภท/สีที่ไม่มีธีมเมื่อรวมกับอีกช่อง ต้อง disabled')
-    if "_theme!=='custom' && !_themeFltMatch(_theme)" not in txt or "_themePick(nid)" not in txt:
+    if "var nid=!_themeFltMatch(_theme) ? _themeFltFirst() : null;" not in txt or "_themePick(nid)" not in txt:
         errors.append('lint #117: เปลี่ยนตัวกรองแล้วธีมปัจจุบันไม่ตรง ต้องเปลี่ยนเป็นธีมแรกที่ตรง (ยกเว้นกำหนดเอง)')
-    for _k117 in ('tht.vivid','tht.pastel','tht.dark','tht.muted','flt.type','flt.color','flt.all','flt.none'):
+    # 117b) ทุกช่อง ประเภท x สี (ยกเว้นหมวดขาวดำ) ต้องมีธีมอย่างน้อย 1 ตัว (ผู้ใช้ 26 ต.ค. 2026 เลือก "เติมให้ครบทุกช่อง")
+    if _mty117:
+        _tm117=dict(re.findall(r"'([a-z-]+)':'([a-z]+)'", _mty117.group(1)))
+        _mg117=re.search(r"var _THEME_GROUPS=\[(.*?)\];", txt)
+        if _mg117:
+            for _gk117,_gl117 in re.findall(r"\['(thg\.[a-z]+)',\[([^\]]*)\]\]", _mg117.group(1)):
+                if _gk117 in ('thg.gray','thg.black'): continue  # เทา/ดำ ไม่มีสี (achromatic) ไม่ต้องครบทุกประเภท
+                _ids117=re.findall(r"'([a-z-]+)'", _gl117)
+                for _ty117b in ('vivid','pastel','dark','muted'):
+                    if not any(_tm117.get(_i)==_ty117b for _i in _ids117):
+                        errors.append('lint #117: ช่องประเภท '+_ty117b+' x สี '+_gk117+' ไม่มีธีม')
+    # 117c) สีมีโครมา 8 สี: สีแท้ (สีหลัก) >=1 · พาสเทล >=3 · หม่น >=1 · พื้นเข้ม >=1 (ผู้ใช้ 26 ต.ค. 2026 เลือก "พาสเทล 3 ประเภทอื่น 1") · พาสเทลต้องหมึกน้อย
+    if _mty117:
+        _tm117c=dict(re.findall(r"'([a-z-]+)':'([a-z]+)'", _mty117.group(1)))
+        _mg117c=re.search(r"var _THEME_GROUPS=\[(.*?)\];", txt)
+        _mi117c=re.search(r"var _THEME_INK=\{([^}]*)\}", txt)
+        _ink117c=dict(re.findall(r"'([a-z-]+)':'(lo|mid|hi)'", _mi117c.group(1))) if _mi117c else {}
+        if _mg117c:
+            for _gk117c,_gl117c in re.findall(r"\['(thg\.[a-z]+)',\[([^\]]*)\]\]", _mg117c.group(1)):
+                if _gk117c in ('thg.gray','thg.black'): continue
+                _ids117c=re.findall(r"'([a-z-]+)'", _gl117c)
+                _np117c=sum(1 for _i in _ids117c if _tm117c.get(_i)=='pastel')
+                if _np117c<3: errors.append('lint #117: สี '+_gk117c+' ต้องมีพาสเทลอย่างน้อย 3 ธีม (มี '+str(_np117c)+')')
+                for _i in _ids117c:
+                    if _tm117c.get(_i)=='pastel' and _ink117c.get(_i)!='lo':
+                        errors.append('lint #117: ธีมพาสเทล '+_i+' ต้องหมึกน้อย')
+    if "var _fd=(_theme==='custom')" in txt or "if(_theme==='custom') return;  /* กันไว้อีกชั้น" in txt or "_themeFlt.type=''; }" in txt:
+        errors.append('lint #117: ตัวกรองประเภทต้องเป็นอิสระ ห้ามล็อก/รีเซ็ตเมื่อเป็นธีมกำหนดเอง (ผู้ใช้ 27 ต.ค. 2026)')
+    # 117d) กำหนดเอง แสดงเฉพาะประเภท ทั้งหมด · เลือกประเภทตอนกำหนดเอง -> เปลี่ยนเป็นธีมแรกของประเภท · จำสีกำหนดเองไว้ (ผู้ใช้ 27 ต.ค. 2026)
+    if "if(id==='custom') return !_themeFlt.type;" not in txt or "if(_themeFltMatch('custom')) html+=opt('custom');" not in txt:
+        errors.append('lint #117: กำหนดเองต้องแสดงเฉพาะประเภท ทั้งหมด')
+    for _f117d in ('function _themeCustomStash(','function _themeCustomStashSet(','function _themeCustomStashClear('):
+        if _f117d not in txt: errors.append('lint #117: ไม่พบ '+_f117d+' (จำสีกำหนดเอง)')
+    _mc117d=re.search(r'function _themeClearCustomInline\(\)\{[^\n]*', txt)
+    if not _mc117d or 'removeItem' in _mc117d.group(0) or 'StashClear' in _mc117d.group(0):
+        errors.append('lint #117: _themeClearCustomInline ต้องล้างเฉพาะสีบนหน้า ห้ามลบสีกำหนดเองที่จำไว้')
+    if "var st=_themeCustomStash()" not in txt or "_themeFlt.type='';  /* กำหนดเองไม่มีประเภท" not in txt:
+        errors.append('lint #117: เลือกกำหนดเองต้องคืนสีที่จำไว้ และรีเซ็ตประเภทเป็น ทั้งหมด')
+    if "_themeFltSet" in txt and re.search(r'id="themeFltType"[^>]*disabled', txt):
+        errors.append('lint #117: ตัวกรองประเภทห้าม disabled')
+    for _k117 in ('tht.vivid','tht.pastel','tht.dark','tht.muted','flt.type','flt.all'):
         if txt.count("'"+_k117+"':'")<2: errors.append('lint #117: i18n '+_k117+' ไม่ครบ TH+EN')
+    for _k117 in ('flt.color','flt.none'):
+        if ("'"+_k117+"':'") in txt: errors.append('lint #117: ลบ i18n '+_k117+' ไม่หมด (ช่องสีถูกเอาออก)')
+
+    # 118) รายการธีม (dropdown) ยืดตามพื้นที่จอจริง ห้ามความสูงตายตัว (ผู้ใช้ 27 ต.ค. 2026)
+    _m118=re.search(r'#edpanel \.ep-dd-pop\{[^}]*\}', txt)
+    if not _m118 or re.search(r'max-height:\s*\d+px', _m118.group(0)):
+        errors.append('lint #118: .ep-dd-pop ห้ามใช้ max-height เป็น px ตายตัว (ต้องคำนวณจากพื้นที่จอ)')
+    _f118=re.search(r'function _themeDdFit\(\)\{.*?\n\}', txt, re.S)
+    if not _f118 or 'edstatus' not in _f118.group(0) or 'innerHeight' not in _f118.group(0) or 'maxHeight' not in _f118.group(0):
+        errors.append('lint #118: ไม่พบ _themeDdFit ที่คำนวณจากขอบแถบสถานะ/ความสูงหน้าต่าง')
+    _o118=re.search(r'function _themeDdOpen\(\)\{.*?\n\}', txt, re.S)
+    if not _o118 or not re.search(r"pop\.classList\.add\('open'\);\s*_themeDdFit\(\);", _o118.group(0)) or "window.addEventListener('resize',_themeDd.onRes)" not in _o118.group(0):
+        errors.append('lint #118: _themeDdOpen ต้องเรียก _themeDdFit และฟัง resize')
+    if "window.removeEventListener('resize',_themeDd.onRes)" not in txt:
+        errors.append('lint #118: ต้องถอด resize listener ตอนปิดรายการธีม')
+
+    # 119) ป้ายประเภท หม่น อมเทา ต้องมีเว้นวรรค ให้อ่านง่าย (ผู้ใช้ 27 ต.ค. 2026)
+    if "'tht.muted':'หม่น อมเทา'" not in txt or "'tht.muted':'หม่นอมเทา'" in txt:
+        errors.append('lint #119: ป้ายประเภท tht.muted (TH) ต้องเป็น หม่น อมเทา (มีเว้นวรรค)')
 
     # ---- report ----
     print("=" * 54)

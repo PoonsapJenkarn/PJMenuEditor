@@ -2965,6 +2965,12 @@ def main():
     if '@media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;z-index:24;}}' not in _css:
         errors.append('lint #132: กล่องที่เลือกต้องลอยหน้าสุด (เห็นจุดจับแม้ซ้อน)')
 
+    # ---- 133) หน้าใหม่ไม่ซ่อนขอบบนใต้ริบบอน + ปุ่มลบหน้านี้ของหน้าเปล่าอยู่ล่างหน้า (ผู้ใช้ 27 ต.ค. 2026) ----
+    if 'function _scrollToPageTop(' not in txt or 'if(firstNew) _scrollToPageTop(firstNew);' not in txt or "firstNew.scrollIntoView(" in txt:
+        errors.append('lint #133: เพิ่มหน้าแล้วต้องเลื่อนให้ขอบบนกระดาษอยู่ใต้ริบบอน (ห้าม scrollIntoView start — แถบ sticky บังขอบบน)')
+    if '.page.pgblank > .ed-delpage{position:absolute;left:50%;bottom:10mm;' not in _css:
+        errors.append('lint #133: ปุ่ม ลบหน้านี้ ของหน้าเปล่าต้องอยู่ล่างหน้า (เหมือนหน้าเมนู)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

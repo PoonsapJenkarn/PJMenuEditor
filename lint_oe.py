@@ -3001,6 +3001,22 @@ def main():
     if "function toggleFocus(){ _barKeep(function(){" not in txt or "if(tb){ _barKeep(function(){ document.body.classList.remove('focusmode');" not in txt:
         errors.append('lint #135: ปุ่มซ่อนริบบอน + คลิกแท็บตอนซ่อน ต้องผ่าน _barKeep')
 
+    # ---- 136) ยืด/หดความกว้างหลายกล่องพร้อมกัน · ตัวอักษรคงขนาด · ยึดมุมซ้ายบน กล่องที่ต่อกันยังชิดกัน (ผู้ใช้ 27 ต.ค. 2026) ----
+    for _f136 in ('function _ftGrpFrame(','if(D.grs){',"tg.classList.contains('ftgh') && _ftSet.length>1"):
+        if _f136 not in txt: errors.append('lint #136: ไม่พบ '+_f136)
+    if "if(Math.abs(s.t-(q.t+q.h))<=0.5 && s.l<q.l+q.w && q.l<s.l+s.w) s.p=q;" not in txt or "if(s.p) s.b.style.top=(_ftNum(s.p.b.style.top)+s.p.b.getBoundingClientRect().height/D.pxmm)" not in txt:
+        errors.append('lint #136: ยืดหลายกล่องต้องจัดกล่องที่ต่อกันให้ชิดกันใหม่ (ยึดมุมซ้ายบน)')
+    if "gx=Math.max(gx,10-D.minW); else gx=Math.min(gx,D.minW-10);" not in txt:
+        errors.append('lint #136: กล่องแคบสุดต้องไม่ต่ำกว่า 10mm')
+    if "['w','e'].forEach(function(d){ var h=document.createElement('div'); h.className='ftgh';" not in txt:
+        errors.append('lint #136: กรอบชุดมีจุดจับเฉพาะซ้าย/ขวา (ความสูงมาจากข้อความ — ห้ามจุดจับที่ไม่ทำงานจริง)')
+    if 'font-size' in txt[txt.find('if(D.grs){'):txt.find('if(D.grs){')+1500]:
+        errors.append('lint #136: ยืดหลายกล่องต้องไม่เปลี่ยนขนาดตัวอักษร')
+    if '@media print{.ftgrp{display:none !important;}}' not in _css or txt.count('.fth,.ftdel,.ftguide,.ftmarq,.ftgrp')!=3:
+        errors.append('lint #136: กรอบชุดต้องไม่พิมพ์ + ตัดออกตอนบันทึก/snapshot')
+    for _k136 in ('st.ftextMultiW','ttl.ftgrpW'):
+        if txt.count("'"+_k136+"':'")<2: errors.append('lint #136: i18n '+_k136+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

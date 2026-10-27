@@ -549,6 +549,12 @@ body:not(.editmode) .ftext .fth,body:not(.editmode) .ftext .ftdel{display:none !
 @media print{.ftguide{display:none !important;}}
 .ftmarq{position:absolute;z-index:26;box-sizing:border-box;border:1px dashed #217346;background:rgba(33,115,70,.08);pointer-events:none;}  /* กรอบลากเลือกหลายกล่อง (ของจอชั่วคราว) */
 @media print{.ftmarq{display:none !important;}}
+.ftgrp{position:absolute;z-index:25;box-sizing:border-box;border:1px dashed #217346;pointer-events:none;}  /* กรอบชุดที่เลือก (ของจอชั่วคราว) */
+.ftgh{position:absolute;top:calc(50% - 5px);width:10px;height:10px;background:#fff;border:1.5px solid #217346;border-radius:2px;pointer-events:auto;cursor:ew-resize;}
+.ftgh[data-d="w"]{left:-6px;}
+.ftgh[data-d="e"]{right:-6px;}
+body:not(.editmode) .ftgrp{display:none !important;}
+@media print{.ftgrp{display:none !important;}}
 @media print{.ftext{outline:none !important;}.ftext .fth,.ftext .ftdel{display:none !important;}}
 /* ===== IMAGE PLACEMENT (added) ===== */
 .sec-b{position:relative;}
@@ -2057,7 +2063,7 @@ function buildEditorHtml(){
      file is itself a working editor. Only strips transient runtime state. */
   var clone=document.documentElement.cloneNode(true);
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
-  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -2086,7 +2092,7 @@ function buildMenuHtml(){
   var clone=document.documentElement.cloneNode(true);
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
   ['#edbar','#edstatus','#editorUI','#editorScript','#actlog','#draftBar','#aboutModal','#pasteModal','#edgeDdPop','#zoomDdPop','#uiDdPop','#calModal','#presentBar'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
-  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#secIconInput,#pageBgInput,#edpanel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,#imgbar').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#secIconInput,#pageBgInput,#edpanel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -2218,7 +2224,7 @@ function _serializePages(){
   var wrap=document.createElement('div');
   for(var i=0;i<pages.length;i++){ wrap.appendChild(pages[i].cloneNode(true)); }
   /* strip transient editor artifacts — snapshot เก็บเฉพาะเนื้อหาสะอาด */
-  wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq').forEach(function(el){el.remove();});
+  wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ */
   wrap.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -2728,7 +2734,7 @@ var I18N={
   'pnl.applyAllOk':'นำไปใช้','pnl.resetOk':'คืนค่า','pnl.resetMsg':'คืนค่าเริ่มต้นของ<b>{label}</b>ที่เลือกใช่ไหม? การปรับแต่งจะถูกล้าง',
   'pnl.delPageLabel':'ลบหน้า','pnl.addPageLabel':'เพิ่ม','pnl.addPageSuf':'หน้า','pnl.addPageOk':'เพิ่ม','pnl.addPageHint':'ตอนนี้ {total} หน้า · ใส่จำนวนหน้าที่จะเพิ่ม (1–20)','pnl.addPagePreview':'รวมเป็น {sum} หน้า','pnl.addPageMax':'เพิ่มได้ครั้งละไม่เกิน 20 หน้า','pnl.addPageWarn':'หน้าเยอะ ({sum}) อาจทำให้แก้ไข/พิมพ์ช้าลง','pnl.addPageNotEntered':'ใส่จำนวนหน้าที่จะเพิ่ม','btn.addBlank':'หน้าเปล่า','ttl.addBlank':'เพิ่มหน้าเปล่า 1 หน้า','ttl.addBlankMore':'เพิ่มหน้าเปล่าหลายหน้า','pnl.addBlankLabel':'เพิ่มหน้าเปล่า','fl.addBlank':'➕ เพิ่มหน้าเปล่า · หน้า {n}','fl.addBlanks':'➕ เพิ่มหน้าเปล่า {added} หน้า · รวม {total} หน้า','fl.addPageNoMenu':'ไม่มีหน้าเมนูให้คัดส่วนหัว · เลือกแบบหน้า เปล่า แทน','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กด Ctrl+Z เพื่อย้อนได้ (ก่อนปิดหรือรีเฟรชหน้า)',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
-  'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม','typ.ftext':'กล่องข้อความ','btn.ftextAdd':'กล่องข้อความ','ttl.ftextAdd':'เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์','grp.insert':'แทรก','ttl.ftextDel':'ลบกล่องข้อความ','ft.default':'ข้อความ','fl.ftextAdd':'➕ เพิ่มกล่องข้อความ · พิมพ์ได้เลย','fl.ftextDel':'🗑 ลบกล่องข้อความแล้ว','fl.ftextEmpty':'กล่องข้อความว่าง · ลบให้อัตโนมัติ','st.ftextSel':'กล่องข้อความ {i} / {n} ในหน้านี้ (Tab สลับกล่อง) · X {x}mm · Y {y}mm · กว้าง {w}mm · ลากย้าย (ดูดเข้าแนว · Alt ค้าง = ไม่ดูด) · ดับเบิลคลิกเพื่อพิมพ์ · Delete ลบ','st.ftextEdit':'กำลังพิมพ์ในกล่องข้อความ · Esc เลิกพิมพ์','st.ftextMulti':'เลือก {n} กล่อง · ลากย้ายพร้อมกัน · ลูกศรขยับ · Delete ลบทั้งหมด · Shift+คลิก เพิ่ม/เอาออก','fl.ftextDelN':'🗑 ลบกล่องข้อความ {n} กล่องแล้ว'},
+  'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม','typ.ftext':'กล่องข้อความ','btn.ftextAdd':'กล่องข้อความ','ttl.ftextAdd':'เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์','grp.insert':'แทรก','ttl.ftextDel':'ลบกล่องข้อความ','ft.default':'ข้อความ','fl.ftextAdd':'➕ เพิ่มกล่องข้อความ · พิมพ์ได้เลย','fl.ftextDel':'🗑 ลบกล่องข้อความแล้ว','fl.ftextEmpty':'กล่องข้อความว่าง · ลบให้อัตโนมัติ','st.ftextSel':'กล่องข้อความ {i} / {n} ในหน้านี้ (Tab สลับกล่อง) · X {x}mm · Y {y}mm · กว้าง {w}mm · ลากย้าย (ดูดเข้าแนว · Alt ค้าง = ไม่ดูด) · ดับเบิลคลิกเพื่อพิมพ์ · Delete ลบ','st.ftextEdit':'กำลังพิมพ์ในกล่องข้อความ · Esc เลิกพิมพ์','st.ftextMulti':'เลือก {n} กล่อง · ลากย้ายพร้อมกัน · ลากจุดซ้าย/ขวาของกรอบ ยืดความกว้าง · ลูกศรขยับ · Delete ลบทั้งหมด · Shift+คลิก เพิ่ม/เอาออก','fl.ftextDelN':'🗑 ลบกล่องข้อความ {n} กล่องแล้ว','st.ftextMultiW':'ยืดความกว้าง {n} กล่อง · กว้าง {w} มม. · กล่องที่ต่อกันยังชิดกัน · Alt ค้าง = ไม่ดูดแนว','ttl.ftgrpW':'ลากเพื่อยืด/หดความกว้างทุกกล่องที่เลือก (ตัวอักษรคงขนาด)'},
  en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.template':'Template','tab.screen':'Screen','lay.2col':'2 columns','lay.1col':'1 column','lay.3col':'3 columns','grp.layout':'Layout','btn.noteHide':'Hide note','btn.noteShow':'Show note','btn.plabelHide':'Hide page number','btn.plabelShow':'Show page number','grp.show':'Show/Hide','ttl.noteHide':'Hide note box (more menu space · affects print)','ttl.plabelHide':'Hide page number (more menu space · affects print)','fl.layoutSet':'Layout changed','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','grp.rule':'Header divider','th.pick':'Theme','th.edgeW':'Width','th.edgeS':'Style','th.edgeR':'Corner','th.bsGradient':'Gradient','btn.lineEdge':'Lines & borders','grp.lineEdge':'Lines & borders','ttl.lineEdge':'Adjust divider & box borders (width·style · affects print)','th.grpNoteEdge':'Note box border','th.grpGrpEdge':'Group box border','th.bsSolid':'Solid','th.bsDashed':'Dashed','th.bsDotted':'Dotted','th.bsNone':'None','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','th.blueOcean':'Blue Ocean','th.vividRed':'Vivid Red','th.vividBlue':'Vivid Blue','th.vividGreen':'Vivid Green','th.navyDark':'Dark Navy','th.wineDark':'Dark Wine','th.sage':'Sage','th.dustyBlue':'Dusty Blue','th.dustyRose':'Dusty Rose','th.monoDark':'Dark Mono','th.monoGray':'Mid Gray','th.vividOrange':'Vivid Orange','th.vividYellow':'Vivid Yellow','th.vividPurple':'Vivid Purple','th.forestDark':'Dark Forest','th.coffeeDark':'Dark Coffee','th.purpleDark':'Dark Purple','th.dustyOrange':'Dusty Orange','th.dustyYellow':'Dusty Yellow','th.dustyPurple':'Dusty Purple','th.vividPink':'Vivid Pink','th.pinkWhite':'Pink-White','th.pinkDark':'Dark Pink','th.dustyRed':'Dusty Red','th.orangeDark':'Dark Orange','th.dustyBrown':'Dusty Brown','th.redWhite':'Red-White','th.blush':'Blush Cream','th.sakura':'Sakura','th.peach':'Peach','th.orangeWhite':'Orange-White','th.latte':'Latte','th.kraft':'Kraft Paper','th.vividBrown':'True Brown','th.lemon':'Lemon','th.honey':'Honey','th.denimCream':'Denim Cream','th.lavender':'Lavender','th.lilacCream':'Lilac Cream','ink.lo':'Low ink','ink.mid':'Medium ink','ink.hi':'High ink','tht.vivid':'Vivid','tht.pastel':'Pastel','tht.dark':'Dark','tht.muted':'Muted','flt.type':'Type','flt.all':'All','fl.themeSet':'Theme changed','fl.themeInkHi':'Theme changed · this theme uses a lot of ink when printed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','th.zPageBg':'Paper','th.paperReset':'Default cream','fl.paperSet':'Paper color changed','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.grpColorImg':'Color & image','bg.grpDim':'Fade','bg.grpContent':'Content','bg.menuShort':'Menu','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
   'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
   'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
@@ -2745,7 +2751,7 @@ var I18N={
   'pnl.applyAllOk':'Apply','pnl.resetOk':'Reset','pnl.resetMsg':'Reset the selected <b>{label}</b> to default? Your customizations will be cleared',
   'pnl.delPageLabel':'Delete pages','pnl.addPageLabel':'Add','pnl.addPageSuf':'pages','pnl.addPageOk':'Add','pnl.addPageHint':'{total} pages now · Enter how many to add (1–20)','pnl.addPagePreview':'{sum} pages total','pnl.addPageMax':'Up to 20 pages at a time','pnl.addPageWarn':'Many pages ({sum}) may slow editing/printing','pnl.addPageNotEntered':'Enter how many pages to add','btn.addBlank':'Blank Page','ttl.addBlank':'Add 1 blank page','ttl.addBlankMore':'Add several blank pages','pnl.addBlankLabel':'Add blank','fl.addBlank':'➕ Added blank page {n}','fl.addBlanks':'➕ Added {added} blank pages · {total} total','fl.addPageNoMenu':'No menu page to copy the header from · choose Blank instead','pnl.delPageHint':'{total} pages total · Enter page numbers, e.g. 1,3,5-7','pnl.willDelete':'Will delete <b>{n} page(s)</b> · {remain} remaining','pnl.cannotDeleteAll':'Cannot delete all — at least 1 page must remain','pnl.notEntered':'No pages entered to delete','pnl.confirmDelOk':'Confirm Delete','pnl.confirmDelMsg':'Confirm deleting pages <b>{pages}</b> ({n} total) · {remain} remaining — press Ctrl+Z to undo (before closing or reloading)',
   'err.onlyNumbers':'Only digits, commas and hyphens, e.g. 1,3,5-7','err.badRange':'Invalid range: {p}','err.badPage':'Invalid page number: {p}','err.notExist':'Pages do not exist: {bad} ({total} pages total)',
-  'typ.ln':'Dotted line','typ.noteh':'Note — heading','typ.notesub':'Note — description','typ.noteast':'Note — asterisk','typ.note':'Note','typ.nm':'Item name','typ.pr':'Price','typ.sechead':'Group name','typ.contacthdr':'Contact — heading','typ.contactph':'Contact — phone','typ.secnote':'Group note','typ.ftext':'Text box','btn.ftextAdd':'Text Box','ttl.ftextAdd':'Add a floating text box · drag to move · double-click to type','grp.insert':'Insert','ttl.ftextDel':'Delete text box','ft.default':'Text','fl.ftextAdd':'➕ Added text box · start typing','fl.ftextDel':'🗑 Text box deleted','fl.ftextEmpty':'Empty text box · removed automatically','st.ftextSel':'Text box {i} / {n} on this page (Tab to switch) · X {x}mm · Y {y}mm · Width {w}mm · drag to move (snaps to guides · hold Alt to turn off) · double-click to type · Delete to remove','st.ftextEdit':'Typing in text box · Esc to stop','st.ftextMulti':'{n} boxes selected · drag to move together · arrows to nudge · Delete removes all · Shift+click to add/remove','fl.ftextDelN':'🗑 Deleted {n} text boxes'}
+  'typ.ln':'Dotted line','typ.noteh':'Note — heading','typ.notesub':'Note — description','typ.noteast':'Note — asterisk','typ.note':'Note','typ.nm':'Item name','typ.pr':'Price','typ.sechead':'Group name','typ.contacthdr':'Contact — heading','typ.contactph':'Contact — phone','typ.secnote':'Group note','typ.ftext':'Text box','btn.ftextAdd':'Text Box','ttl.ftextAdd':'Add a floating text box · drag to move · double-click to type','grp.insert':'Insert','ttl.ftextDel':'Delete text box','ft.default':'Text','fl.ftextAdd':'➕ Added text box · start typing','fl.ftextDel':'🗑 Text box deleted','fl.ftextEmpty':'Empty text box · removed automatically','st.ftextSel':'Text box {i} / {n} on this page (Tab to switch) · X {x}mm · Y {y}mm · Width {w}mm · drag to move (snaps to guides · hold Alt to turn off) · double-click to type · Delete to remove','st.ftextEdit':'Typing in text box · Esc to stop','st.ftextMulti':'{n} boxes selected · drag to move together · drag left/right handle of the frame to resize width · arrows to nudge · Delete removes all · Shift+click to add/remove','fl.ftextDelN':'🗑 Deleted {n} text boxes','st.ftextMultiW':'Resizing {n} boxes · width {w} mm · stacked boxes stay joined · hold Alt to disable snapping','ttl.ftgrpW':'Drag to resize the width of all selected boxes (text size unchanged)'}
 };
 var _lang='th';
 function t(k,p){ var s=(I18N[_lang]||I18N.th)[k] || (I18N.th[k]||k); if(p){ for(var _pk in p){ s=s.split('{'+_pk+'}').join(p[_pk]); } } return s; }
@@ -3104,7 +3110,17 @@ function _ftIdx(box){ var pg=box.closest('.page'), L=pg?Array.prototype.slice.ca
 function _ftCycle(box,dir){ var q=_ftIdx(box); if(q.n<2) return; var nx=q.L[(q.i-1+dir+q.n)%q.n]; _ftSelect(nx); nx.scrollIntoView({block:'nearest'}); }  /* Tab / Shift+Tab วนเลือกกล่องในหน้า (แบบ PowerPoint) */
 function _ftStatus(box){ if(!box||!box.isConnected) return; if(_ftSet.length>1 && _ftEdit!==box){ setStatus('info',tk('st.ftextMulti',{n:_ftSet.length})); return; } var _q=_ftIdx(box); setStatus('info', tk(_ftEdit===box?'st.ftextEdit':'st.ftextSel',{i:_q.i, n:_q.n, x:_ftNum(box.style.left).toFixed(1), y:_ftNum(box.style.top).toFixed(1), w:_ftNum(box.style.width).toFixed(1)})); }
 function _ftSelect(box){ if(_ftSel===box && _ftSet.length<=1) return; _ftDeselect(); _ftSel=box; _ftSet=[box]; box.classList.add('sel'); _ftHandles(box,true); _ftStatus(box); }
-function _ftSyncHandles(){ _ftSet.forEach(function(b){ _ftHandles(b,_ftSet.length===1); }); }  /* จุดจับ/× เฉพาะตอนเลือกกล่องเดียว · หลายกล่อง = กรอบเขียวอย่างเดียว */
+function _ftSyncHandles(){ _ftSet.forEach(function(b){ _ftHandles(b,_ftSet.length===1); }); _ftGrpFrame(); }
+function _ftGrpFrame(){  /* เลือกหลายกล่อง = กรอบรอบนอก + จุดจับซ้าย/ขวา (ยืดความกว้างทั้งชุด) · ไม่มีจุดจับบน/ล่าง/มุม เพราะความสูงมาจากข้อความ (ผู้ใช้ 27 ต.ค. 2026) */
+  document.querySelectorAll('.ftgrp').forEach(function(g){ g.remove(); });
+  if(_ftSet.length<2 || _ftEdit) return;
+  var pg=_ftSet[0].closest('.page'); if(!pg) return;
+  var px=pg.getBoundingClientRect().width/210||1, G=_ftBBox(_ftSet,px), f=document.createElement('div');
+  f.className='ftgrp'; f.setAttribute('contenteditable','false');
+  f.style.left=G.l.toFixed(2)+'mm'; f.style.top=G.t.toFixed(2)+'mm'; f.style.width=G.w.toFixed(2)+'mm'; f.style.height=G.h.toFixed(2)+'mm';
+  ['w','e'].forEach(function(d){ var h=document.createElement('div'); h.className='ftgh'; h.setAttribute('data-d',d); h.setAttribute('data-i18n-title','ttl.ftgrpW'); h.title=t('ttl.ftgrpW'); f.appendChild(h); });
+  pg.appendChild(f);
+}  /* จุดจับ/× เฉพาะตอนเลือกกล่องเดียว · หลายกล่อง = กรอบเขียวอย่างเดียว */
 function _ftToggle(box){  /* Shift+คลิก: เพิ่ม/เอาออกจากชุดที่เลือก · ต่างหน้า = เริ่มชุดใหม่ */
   _ftStopEdit(); if(!box.isConnected) return;
   var i=_ftSet.indexOf(box);
@@ -3121,7 +3137,7 @@ function _ftStopEdit(){  /* คืน true ถ้ากล่องว่าง�
     markDirty(); flashStatus('info',tk('fl.ftextEmpty')); return true; }
   return false;
 }
-function _ftDeselect(){ _ftStopEdit(); _ftSet.forEach(function(b){ b.classList.remove('sel'); _ftHandles(b,false); }); _ftSet=[]; if(_ftSel){ _ftSel.classList.remove('sel'); _ftHandles(_ftSel,false); _ftSel=null; } }
+function _ftDeselect(){ _ftStopEdit(); document.querySelectorAll('.ftgrp').forEach(function(g){ g.remove(); }); _ftSet.forEach(function(b){ b.classList.remove('sel'); _ftHandles(b,false); }); _ftSet=[]; if(_ftSel){ _ftSel.classList.remove('sel'); _ftHandles(_ftSel,false); _ftSel=null; } }
 function _ftStartEdit(box,cx,cy){
   _ftSelect(box); if(_ftEdit===box||!box.isConnected) return; _ftStopEdit();
   var x=box.querySelector('.ftxt'); if(!x) return; _ftEdit=box; box.classList.add('fedit'); x.setAttribute('contenteditable','true'); x.focus();
@@ -3138,7 +3154,7 @@ function _ftDelete(box){
 }
 function _ftDeleteSel(){  /* Delete ตอนเลือกหลายกล่อง = ลบทั้งชุด (จุด Undo เดียว) */
   var L=_ftSet.slice(); if(L.length<2){ _ftDelete(_ftSel); return; }
-  _ftStopEdit(); L.forEach(function(b){ b.remove(); }); _ftSet=[]; _ftSel=null;
+  _ftStopEdit(); L.forEach(function(b){ b.remove(); }); _ftSet=[]; _ftSel=null; _ftGrpFrame();
   if(_typoEl && !document.contains(_typoEl) && typeof typoClear==='function') typoClear();
   markDirty(); flashStatus('info',tk('fl.ftextDelN',{n:L.length}));
 }
@@ -3177,6 +3193,14 @@ document.addEventListener('mousedown',function(e){
   if(!document.body.classList.contains('editmode') || e.button!==0) return;
   var tg=e.target; if(!tg||!tg.closest) return;
   var box=tg.closest('.ftext');
+  if(tg.classList.contains('ftgh') && _ftSet.length>1){  /* จับขอบซ้าย/ขวาของกรอบชุด = ยืด/หดความกว้างทุกกล่อง */
+    e.preventDefault(); e.stopPropagation(); _ftStopEdit();
+    var pg0=_ftSet[0].closest('.page'), px0=pg0.getBoundingClientRect().width/210||1;
+    var its=_ftSet.map(function(b){ var r=b.getBoundingClientRect(); return {b:b, l:_ftNum(b.style.left), t:_ftNum(b.style.top), w:_ftNum(b.style.width)||r.width/px0, h:r.height/px0, p:null}; }).sort(function(a,c){ return a.t-c.t; });
+    its.forEach(function(s,j){ for(var i=0;i<j;i++){ var q=its[i]; if(Math.abs(s.t-(q.t+q.h))<=0.5 && s.l<q.l+q.w && q.l<s.l+s.w) s.p=q; } });  /* ต่อกัน = ขอบบนชนขอบล่างกล่องบน (คลาด ≤0.5mm) + ซ้อนแนวนอน */
+    _ftDrag={grs:true, d:tg.getAttribute('data-d'), x:e.clientX, y:e.clientY, pxmm:px0, pg:pg0, items:its, minW:Math.min.apply(null,its.map(function(s){ return s.w; })), gb:_ftBBox(_ftSet,px0), T:_ftTargets(_ftSet,px0), moved:false};
+    return;
+  }
   if(!box){
     if(tg.closest('#edbar,#edpanel,#edstatus,#actlog,#uiDdPop,#zoomDdPop,#edgeDdPop,#calModal,#aboutModal,.cp-pop')) return;  /* เครื่องมือ = ไม่เลิกเลือก (แถบตัวอักษรใช้กล่องที่เลือก) */
     if(!e.shiftKey && (_ftSel||_ftEdit)) _ftDeselect();
@@ -3233,11 +3257,19 @@ document.addEventListener('mousemove',function(e){
     M.box={l:x1,t:y1,r:x2,b:y2}; M.el.style.left=x1.toFixed(2)+'mm'; M.el.style.top=y1.toFixed(2)+'mm'; M.el.style.width=(x2-x1).toFixed(2)+'mm'; M.el.style.height=(y2-y1).toFixed(2)+'mm'; return; }
   var D=_ftDrag; if(!D) return;
   if(!D.moved && Math.abs(e.clientX-D.x)+Math.abs(e.clientY-D.y)<3) return; D.moved=true;
+  if(D.grs){  /* ยืด/หดความกว้างทั้งชุด · ตัวอักษรคงขนาด · ยึดมุมซ้ายบน: กล่องที่ต่อกันจัดชิดใหม่ทันที (ผู้ใช้ 27 ต.ค. 2026) */
+    var gx=(e.clientX-D.x)/D.pxmm, G=D.gb, sg=null, g0;
+    if(!e.altKey){ sg=_ftBest([D.d==='e'?G.l+G.w+gx:G.l+gx],D.T.X); if(sg) gx+=sg.d; }  /* ดูดแนวด้วยขอบรอบนอกของชุด · Alt = ไม่ดูด */
+    g0=gx; if(D.d==='e') gx=Math.max(gx,10-D.minW); else gx=Math.min(gx,D.minW-10); if(gx!==g0) sg=null;  /* กล่องแคบสุดไม่ต่ำกว่า 10mm */
+    D.items.forEach(function(s){ if(D.d==='e') s.b.style.width=(s.w+gx).toFixed(1)+'mm'; else { s.b.style.left=(s.l+gx).toFixed(1)+'mm'; s.b.style.width=(s.w-gx).toFixed(1)+'mm'; } });
+    D.items.forEach(function(s){ if(s.p) s.b.style.top=(_ftNum(s.p.b.style.top)+s.p.b.getBoundingClientRect().height/D.pxmm).toFixed(1)+'mm'; });  /* เรียงบน→ล่าง: กล่องบนอยู่ที่เดิม กล่องล่างชิดขอบล่างกล่องบนเสมอ */
+    _ftGuides(D.pg, sg?sg.at:null, null); _ftGrpFrame();
+    setStatus('info',tk('st.ftextMultiW',{n:D.items.length, w:(G.w+(D.d==='e'?gx:-gx)).toFixed(1)})); return; }
   var dx=(e.clientX-D.x)/D.pxmm, dy=(e.clientY-D.y)/D.pxmm, b=D.box, d=D.d, l=D.l, tp=D.t, w=D.w, h=D.h;
   if(!d && D.grp.length>1){  /* ลากทั้งชุด: ดูดเข้าแนวด้วยกรอบรอบนอก · ทุกกล่องขยับเท่ากัน */
     var G=D.gb, gs=e.altKey?{l:G.l+dx,t:G.t+dy,gx:null,gy:null}:_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h), ox=gs.l-G.l, oy=gs.t-G.t;
     D.grp.forEach(function(s){ s.b.style.left=(s.l+ox).toFixed(1)+'mm'; s.b.style.top=(s.t+oy).toFixed(1)+'mm'; });
-    _ftGuides(b.closest('.page'),gs.gx,gs.gy); _ftStatus(b); return; }
+    _ftGuides(b.closest('.page'),gs.gx,gs.gy); _ftGrpFrame(); _ftStatus(b); return; }
   if(!d){ l+=dx; tp+=dy; }
   else {
     if(d.indexOf('e')>=0) w=Math.max(10,D.w+dx);
@@ -3250,7 +3282,7 @@ document.addEventListener('mousemove',function(e){
   if(d){ b.style.width=w.toFixed(1)+'mm'; if(d.indexOf('n')>=0||d.indexOf('s')>=0) b.style.minHeight=h.toFixed(1)+'mm'; }
   b.style.left=l.toFixed(1)+'mm'; b.style.top=tp.toFixed(1)+'mm'; _ftGuides(b.closest('.page'),sn.gx,sn.gy); _ftStatus(b);
 });
-document.addEventListener('mouseup',function(){ if(_ftMarq){ _ftMarqEnd(); return; } var D=_ftDrag; if(!D) return; _ftDrag=null; _ftGuideClear(); if(D.moved){ markDirty(); if(typeof checkOverflow==='function') checkOverflow({quiet:true}); } });
+document.addEventListener('mouseup',function(){ if(_ftMarq){ _ftMarqEnd(); return; } var D=_ftDrag; if(!D) return; _ftDrag=null; _ftGuideClear(); if(_ftSet.length>1){ _ftGrpFrame(); _ftStatus(_ftSel); } if(D.moved){ markDirty(); if(typeof checkOverflow==='function') checkOverflow({quiet:true}); } });
 document.addEventListener('dblclick',function(e){
   if(!document.body.classList.contains('editmode')) return;
   var tg=e.target; if(!tg||!tg.closest) return; var box=tg.closest('.ftext');
@@ -3267,7 +3299,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
     e.preventDefault(); var kx=(e.key==='ArrowLeft')?-st:(e.key==='ArrowRight'?st:0), ky=(e.key==='ArrowUp')?-st:(e.key==='ArrowDown'?st:0);
     (_ftSet.length?_ftSet:[b]).forEach(function(x){ x.style.left=(_ftNum(x.style.left)+kx).toFixed(1)+'mm'; x.style.top=(_ftNum(x.style.top)+ky).toFixed(1)+'mm'; });  /* ลูกศรขยับทั้งชุด */
-    _ftStatus(b); markDirty();
+    if(_ftSet.length>1) _ftGrpFrame(); _ftStatus(b); markDirty();
   }
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); _ftDeleteSel(); }
   else if(e.key==='Enter'){ e.preventDefault(); _ftStartEdit(b); }

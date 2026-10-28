@@ -2956,8 +2956,8 @@ def main():
     # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
     if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "if(!ref){ var _all=pg.querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1]; }" not in txt:
         errors.append('lint #132: กล่องใหม่ต้องวางต่อใต้กล่องที่เลือก หรือกล่องล่าสุดในหน้า (ไม่ทับที่เดิม)')
-    if 'if(!_ch.length && top+rh>297-8){ left=Math.min(210-w,left+5);' not in txt:
-        errors.append('lint #132: ล้นขอบล่าง ต้องเยื้อง 5mm จากกล่องเดิม')
+    if 'left=Math.min(210-w,left+5)' in txt:
+        errors.append('lint #132: ห้ามเยื้องกล่องใหม่ 5mm (ทำให้ซ้อนเป็นขั้นบันได) — ต่อลงไป + เตือนแทน (ผู้ใช้ 28 ต.ค. 2026)')
     if "if(e.key==='Tab'){ e.preventDefault(); _ftCycle(_ftSel,e.shiftKey?-1:1); return; }" not in txt or 'function _ftCycle(' not in txt:
         errors.append('lint #132: Tab / Shift+Tab ต้องวนเลือกกล่องในหน้า')
     if txt.count("'st.ftextSel':'")<2 or '{i} / {n}' not in txt:
@@ -2968,7 +2968,7 @@ def main():
     # ---- 133) หน้าใหม่ไม่ซ่อนขอบบนใต้ริบบอน + ปุ่มลบหน้านี้ของหน้าเปล่าอยู่ล่างหน้า (ผู้ใช้ 27 ต.ค. 2026) ----
     if 'function _scrollToPageTop(' not in txt or 'if(firstNew) _scrollToPageTop(firstNew);' not in txt or "firstNew.scrollIntoView(" in txt:
         errors.append('lint #133: เพิ่มหน้าแล้วต้องเลื่อนให้ขอบบนกระดาษอยู่ใต้ริบบอน (ห้าม scrollIntoView start — แถบ sticky บังขอบบน)')
-    if '.page.pgblank > .ed-delpage{position:absolute;left:50%;bottom:10mm;' not in _css:
+    if '.page.pgblank > .ed-delpage{position:absolute;left:50%;top:var(--blankdel,277mm);' not in _css:
         errors.append('lint #133: ปุ่ม ลบหน้านี้ ของหน้าเปล่าต้องอยู่ล่างหน้า (เหมือนหน้าเมนู)')
 
     # ---- 134) เลือกหลายกล่องข้อความ: Shift+คลิก + ลากกรอบเลือก · ลาก/ลูกศร/Delete ทั้งชุด · ดูดแนวด้วยกรอบรอบนอก (ผู้ใช้ 27 ต.ค. 2026) ----
@@ -3083,6 +3083,19 @@ def main():
         errors.append('lint #141: ต้องวัดความสูงกล่องใหม่หลัง appendChild')
     if "if(_over) flashStatus('warning',tk('fl.ftextPushOver'));" not in _fa141 or txt.count("'fl.ftextPushOver':'")<2:
         errors.append('lint #141: ดันเลยขอบพิมพ์ล่างต้องเตือน (TH+EN)')
+
+    # ---- 142) หน้าเปล่าแบบหน้าเมนู: ยืดตามกล่องข้อความในโหมดแก้ไข · ปุ่มลบหน้าใต้กล่องล่างสุด · ไม่ติดไฟล์/undo (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _blankFit(pg){' not in txt or 'function _blankFitAll(){' not in txt or "var dt=Math.max(297-10-dh, bot+6), H=Math.max(297, dt+dh+10);" not in txt:
+        errors.append('lint #142: ต้องมี _blankFit (ปุ่มลบหน้าใต้กล่องล่างสุด + หน้ายืด)')
+    if 'body.editmode:not(.measuring) .page.pgblank{min-height:var(--blankh,297mm) !important;}' not in _css:
+        errors.append('lint #142: หน้าเปล่าต้องยืดตาม --blankh เฉพาะโหมดแก้ไข (ไม่กระทบการวัดล้น/พิมพ์)')
+    for _c142,_m142 in (("_restorePages(_lastSnap); _blankFitAll(); _dirty=true;",'undo/redo'),("if(D.moved) _blankFitAll();",'ลาก/ยืดกล่อง'),("_blankFitAll(); markDirty(); if(_over)",'เพิ่มกล่อง'),("if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด",'เข้า/ออกโหมด')):
+        if _c142 not in txt: errors.append('lint #142: ต้องจัดหน้าเปล่าใหม่หลัง '+_m142)
+    if txt.count("p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });")!=3:
+        errors.append('lint #142: ต้องล้าง --blankh/--blankdel ตอนบันทึกไฟล์ (2 จุด) + snapshot undo')
+    _fa142=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
+    if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>289+0.05) _over=true;" not in _fa142:
+        errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องเตือน (แทนการเยื้อง 5mm)')
 
     # ---- report ----
     print("=" * 54)

@@ -3183,6 +3183,12 @@ def main():
         _i152=txt.find(_f152); _s152=txt[_i152:txt.find('\n',_i152)] if _i152>=0 else ''
         if '_olPvUi();' not in _s152: errors.append('lint #152: '+_f152+' ต้องเรียก _olPvUi()')
 
+    # ---- 153) จอแคบ/ซูมเกินหน้าต่าง: ไม่หด ไม่ตกแถว ใช้แถบเลื่อนแนวนอน · แถบบนคลุมเต็มความกว้างที่เลื่อนได้ (ผู้ใช้ 28 ต.ค. 2026) ----
+    if '#edtabs{display:flex;align-items:center;gap:2px;padding:0 8px;background:#f3f2f1;border-bottom:1px solid #e1dfdd;flex-wrap:nowrap;' not in _css:
+        errors.append('lint #153: #edtabs ต้อง flex-wrap:nowrap (แถบแท็บไม่ตกเป็น 2 แถว)')
+    if '@media screen{body:not(.gridview){width:max-content;min-width:max(960px,100%);}}' not in _css:
+        errors.append('lint #153: body ต้องกว้างเท่าเนื้อหา (max-content) บนจอ ยกเว้น gridview — แถบบนคลุมเต็มตอนเลื่อนขวา')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

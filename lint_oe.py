@@ -2947,7 +2947,7 @@ def main():
 
     # ---- 131) ลำดับแท็บ: หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด) ----
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
-    if _ord131!=['page','home','image','template','screen','view']:
+    if _ord131!=['page','home','image','template','screen','view','fmt']:  # fmt = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
         errors.append('lint #131: ลำดับแท็บต้องเป็น หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ตอนนี้ '+','.join(_ord131)+')')
     if not re.search(r'<button class="edtab active" data-tab="page"', txt) or not re.search(r'<div class="rpane active" data-pane="page">', txt) or 'function _tabStartup(' not in txt:
         errors.append('lint #131: แท็บเริ่มต้นต้องเป็น หน้า (markup + _tabStartup ตอนเปิดไฟล์)')
@@ -3022,6 +3022,21 @@ def main():
         errors.append('lint #136: กรอบชุดต้องไม่พิมพ์ + ตัดออกตอนบันทึก/snapshot')
     for _k136 in ('st.ftextMultiW','ttl.ftgrpW'):
         if txt.count("'"+_k136+"':'")<2: errors.append('lint #136: i18n '+_k136+' ไม่ครบ TH+EN')
+
+    # ---- 137) แท็บตามบริบท รูปแบบข้อความ: ฟอนต์+จัดรูปแบบ อยู่ในแท็บนี้ · โผล่เฉพาะตอนแก้ข้อความ · เข้าโหมด=เลือกให้เอง (ผู้ใช้ 27 ต.ค. 2026 · Office contextual tab) ----
+    _pf137=txt.find('<div class="rpane" data-pane="fmt">'); _pi137=txt.find('<div class="rpane" data-pane="image">'); _ph137=txt.find('<div class="rpane" data-pane="home">'); _tb137=txt.find('<div id="typobar">')
+    if not (0<=_ph137<_pf137<_tb137<_pi137):
+        errors.append('lint #137: #typobar (ฟอนต์+จัดรูปแบบ) ต้องอยู่ใน rpane fmt ไม่ใช่แท็บข้อความ')
+    if '<button class="edtab ctx" data-tab="fmt" onclick="switchTab(\'fmt\')"' not in txt or 'data-i18n="tab.fmt"' not in txt or 'data-i18n="tab.fmtCtx"' not in txt:
+        errors.append('lint #137: ไม่พบปุ่มแท็บ รูปแบบข้อความ (edtab ctx)')
+    if 'body:not(.editmode) #edtabs .edtab[data-tab="fmt"]{display:none;}' not in _css or '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in _css or '#edtabs .edtab.ctx.active{background:#fff;}' not in _css:
+        errors.append('lint #137: แท็บตามบริบทต้องซ่อนตอนไม่ได้แก้ข้อความ + typobar display:contents ใน pane fmt + สถานะ active')
+    if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home') toggleEdit();" not in txt:
+        errors.append('lint #137: สลับ ข้อความ ↔ รูปแบบข้อความ ต้องไม่ออกจากโหมดแก้ข้อความ')
+    if "if(on) switchTab('fmt'); else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
+        errors.append('lint #137: เข้าโหมด=เลือกแท็บรูปแบบข้อความ · ออกโหมดตอนอยู่แท็บนั้น=กลับแท็บข้อความ')
+    for _k137 in ('tab.fmt','tab.fmtCtx','ttl.tabFmt'):
+        if txt.count("'"+_k137+"':'")<2: errors.append('lint #137: i18n '+_k137+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

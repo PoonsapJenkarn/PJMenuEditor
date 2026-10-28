@@ -4760,7 +4760,8 @@ function _typoScopeTargets(sel, scope, groupIdx){
     }catch(e){}
     var txt = selectionText();
     _selHoldTouch();  /* selection เปลี่ยนจริง (แม้ไม่มีไฮไลท์) → ปลดการกันทับ */
-    if(txt) _statusHint(tk('fl.selInfo',{txt:_cut30(txt), n:txt.length}));  /* สถานะ ไม่ใช่ผล: ไม่จดบันทึก · ไม่ทับผลที่เพิ่งแจ้ง */
+    if(txt) _statusHint(tk('fl.selInfo',{txt:_cut30(txt), n:txt.length}));
+    else if(!_selHold && typeof _ftEdit!=='undefined' && _ftEdit && _ftEdit.isConnected && typeof _ftStatus==='function') _ftStatus(_ftEdit);  /* พิมพ์ทับไฮไลท์ในกล่องข้อความ (เช่นคำเริ่มต้น) = ไฮไลท์หมด → แถบล่างกลับเป็นสถานะกำลังพิมพ์ ไม่ค้าง 'เลือกอยู่' · ผลที่เพิ่งแจ้ง (_selHold) ไม่ถูกทับ (ผู้ใช้ 28 ต.ค. 2026) */  /* สถานะ ไม่ใช่ผล: ไม่จดบันทึก · ไม่ทับผลที่เพิ่งแจ้ง */
   }
 
   // ----- Color dropdown palette (focus-safe: popup lives inside #tbar) -----

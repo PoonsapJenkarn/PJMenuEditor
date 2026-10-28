@@ -3209,6 +3209,10 @@ def main():
     for _k154 in ('btn.ftGroup','btn.ftUngroup','grp.arrange','ttl.ftGroup','ttl.ftGroupNeed','ttl.ftGroupSame','ttl.ftUngroup','ttl.ftUngroupNeed','fl.ftGrouped','fl.ftGroupNeed','fl.ftGroupSame','fl.ftUngrouped','fl.ftUngroupNeed','st.ftextGroup'):
         if txt.count("'"+_k154+"':'")<2: errors.append('lint #154: i18n '+_k154+' ไม่ครบ TH+EN')
 
+    # ---- 155) พิมพ์ทับไฮไลท์ในกล่องข้อความ: แถบล่างกลับเป็นสถานะกำลังพิมพ์ ไม่ค้าง "เลือกอยู่" · ไม่ทับผลที่เพิ่งแจ้ง (ผู้ใช้ 28 ต.ค. 2026) ----
+    if "else if(!_selHold && typeof _ftEdit!=='undefined' && _ftEdit && _ftEdit.isConnected && typeof _ftStatus==='function') _ftStatus(_ftEdit);" not in txt:
+        errors.append('lint #155: syncButtons ต้องคืนสถานะกำลังพิมพ์ของกล่องข้อความเมื่อไฮไลท์หมด (เว้น _selHold)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

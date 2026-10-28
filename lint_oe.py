@@ -2974,8 +2974,8 @@ def main():
     # ---- 134) เลือกหลายกล่องข้อความ: Shift+คลิก + ลากกรอบเลือก · ลาก/ลูกศร/Delete ทั้งชุด · ดูดแนวด้วยกรอบรอบนอก (ผู้ใช้ 27 ต.ค. 2026) ----
     for _f134 in ('function _ftToggle(','function _ftSyncHandles(','function _ftBBox(','function _ftDeleteSel(','function _ftMarqEnd(','var _ftSet=[], _ftMarq=null;'):
         if _f134 not in txt: errors.append('lint #134: ไม่พบ '+_f134)
-    if "if(e.shiftKey && !hd){ _ftToggle(box);" not in txt:
-        errors.append('lint #134: Shift+คลิก ต้องเพิ่ม/เอาออกจากชุดที่เลือก')
+    if "if((e.ctrlKey||e.metaKey) && !hd){ _ftToggle(box); _ftAnchor=box;" not in txt:
+        errors.append('lint #134: Ctrl+คลิก ต้องเพิ่ม/เอาออกจากชุดที่เลือก (ผู้ใช้ 28 ต.ค. 2026 เปลี่ยนจาก Shift)')
     if "else if(!(_ftSet.length>1 && _ftSet.indexOf(box)>=0 && !hd)) _ftSelect(box);" not in txt:
         errors.append('lint #134: คลิกกล่องในชุดที่เลือกอยู่ต้องลากทั้งชุด (ไม่แตกชุด)')
     if "if(!d && D.grp.length>1){" not in txt or "_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h)" not in txt:
@@ -3096,6 +3096,92 @@ def main():
     _fa142=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
     if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>289+0.05) _over=true;" not in _fa142:
         errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องเตือน (แทนการเยื้อง 5mm)')
+
+    # ---- 143) พิมพ์ไม่มีหน้าขาวต่อท้าย: ขึ้นหน้าใหม่ก่อนหน้าที่ 2+ (ไม่ใช่หลังทุกหน้า) + print body padding 0 (ผู้ใช้ 28 ต.ค. 2026) ----
+    _pg143=re.search(r'\n\.page\{[^}]*\}', _css)
+    if (_pg143 and 'page-break-after:always' in _pg143.group(0)) or '.page:last-child{page-break-after:auto;}' in _css:
+        errors.append('lint #143: ห้าม page-break-after ทุกหน้า + :last-child (หน้าสุดท้ายไม่ใช่ลูกสุดท้ายของ body → หน้าขาวต่อท้ายตอนพิมพ์)')
+    if '.page ~ .page{break-before:page;page-break-before:always;}' not in _css or '@media print{html>body{padding:0 !important;}}' not in _css:
+        errors.append('lint #143: ต้องขึ้นหน้าใหม่ด้วย .page ~ .page break-before + print body padding:0')
+    # ---- 144) เตือนทุกครั้งที่กล่องข้อความเลยขอบพิมพ์ 289mm (เพิ่ม/ลาก/ยืด/ลูกศร/พิมพ์) ไม่เตือนซ้ำ (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _ftOverCheck(pg,silent,moved){' not in txt or 'if(ov && (!b._ftOv || (moved && moved.indexOf(b)>=0))) nw=true; b._ftOv=ov;' not in txt:
+        errors.append('lint #144: ต้องมี _ftOverCheck เตือนตอนเพิ่งเลยขอบพิมพ์ (ธงกันเตือนซ้ำ)')
+    for _c144,_m144 in (("_ftOverCheck(D.pg||(_ob&&_ob.closest('.page')),false,(D.items||D.grp||[]).map(function(s){ return s.b; }));",'ลาก/ยืด (เตือนทุกครั้งถ้ายังเลย)'),("markDirty(); _ftOverCheck(b.closest('.page'));",'ลูกศร'),("if(bx) _ftOverCheck(bx.closest('.page'));",'พิมพ์'),("_ftOverCheck(pg,true); _blankFitAll();",'เพิ่มกล่อง (เงียบ)')):
+        if _c144 not in txt: errors.append('lint #144: ต้องตรวจขอบพิมพ์หลัง '+_m144)
+    if txt.count("'fl.ftextOverPrint':'")<2: errors.append('lint #144: i18n fl.ftextOverPrint ไม่ครบ TH+EN')
+    # ---- 145) ออกโหมดบนหน้าสุดท้ายไม่เด้ง: #scrollKeep เติมที่ว่างชั่วคราว หดตามการเลื่อน · ไม่ติดไฟล์/ไม่พิมพ์ (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _scrollKeepTo(y){' not in txt or "_scrollKeepTo(_veSe99.scrollTop + (_veTp99.getBoundingClientRect().top - _veTop99));" not in txt:
+        errors.append('lint #145: toggleEdit ต้องชดเชยผ่าน _scrollKeepTo (กัน clamp ที่หน้าสุดท้าย)')
+    if "if(nh<=0.5) k.remove(); else if(nh<h-0.5)" not in txt or txt.count("var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove();")!=2 or '@media print{#scrollKeep{display:none !important;}}' not in _css:
+        errors.append('lint #145: #scrollKeep ต้องหดตามการเลื่อน + ตัดออกตอนบันทึก 2 จุด + ไม่พิมพ์')
+
+    # ---- 146) พิมพ์: ตัดกล่องข้อความที่เลยขอบกระดาษชั่วคราว (กันหน้าขาวเกิน) · อยู่ใน printTitleScript ใช้ได้ในไฟล์ Save Menu ด้วย (ผู้ใช้ 28 ต.ค. 2026) ----
+    _ps146=txt.find('<script id="printTitleScript">'); _pe146=txt.find('</script>',_ps146)
+    _seg146=txt[_ps146:_pe146] if _ps146>=0 else ''
+    if 'function _ftPrintClip(on){' not in _seg146 or "window.addEventListener('beforeprint',function(){ _ftPrintClip(true); });" not in _seg146 or "window.addEventListener('afterprint',function(){ _ftPrintClip(false); });" not in _seg146:
+        errors.append('lint #146: _ftPrintClip ต้องอยู่ใน printTitleScript (ตัดตอน beforeprint · คืนค่าตอน afterprint)')
+    if "b.style.minHeight='0'; b.style.maxHeight=lim.toFixed(2)+'mm'; b.style.overflow='hidden';" not in _seg146 or 'b._pc=null;' not in _seg146:
+        errors.append('lint #146: ต้องตัดด้วย max-height (min-height 0 กันชนะ max) และคืนค่าเดิมทุกตัว')
+    if "'#printTitleScript'" in txt:
+        errors.append('lint #146: ห้ามตัด printTitleScript ออกจากไฟล์ Save Menu (การตัดกล่องตอนพิมพ์อยู่ในนั้น)')
+
+    # ---- 147) บันทึกไฟล์: ปิดหน้าต่าง = ยกเลิก · เขียนไม่สำเร็จหลังกด Save = บอก error จริง + ดาวน์โหลดแทน (ห้ามแจ้ง "ยกเลิก" ทั้งที่ผู้ใช้กด Save · ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _saveErrTxt(e){' not in txt or txt.count("'fl.saveWriteErr':'")<2:
+        errors.append('lint #147: ต้องมี _saveErrTxt + i18n fl.saveWriteErr TH/EN')
+    for _f147 in ('async function downloadMenu(){','async function saveEditorFile(){'):
+        _m147=re.search(re.escape(_f147)+r'[\s\S]*?\n\}', txt); _b147=_m147.group(0) if _m147 else ''
+        if 'catch(err){ _wErr=err; }' not in _b147 or "tk('fl.saveWriteErr'," not in _b147 or _b147.count('AbortError')!=1:
+            errors.append('lint #147: '+_f147+' ต้องแยก catch หน้าต่างเลือกที่เก็บ (AbortError=ยกเลิก) ออกจาก catch การเขียน (error จริง + ดาวน์โหลดแทน)')
+    if "err:_wErr?_saveErrTxt(_wErr):''" not in txt:
+        errors.append('lint #147: _saveAs ต้องแยกยกเลิกจริงออกจากเขียนไม่สำเร็จ')
+
+    # ---- 148) คลิกกล่องข้อความลอย: ตัวเลือก element ทั่วไป (click) ต้องข้าม .ftext — ไม่ทับคำเตือน/สถานะของกล่อง · ไม่ชี้กล่องที่เพิ่งเอาออกจากชุด (ผู้ใช้ 28 ต.ค. 2026) ----
+    _ck148=txt.find("/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */")
+    _cs148=txt[_ck148:_ck148+900] if _ck148>=0 else ''
+    if "if(ev.target.closest('.ftext')) return;" not in _cs148 or _cs148.find("if(ev.target.closest('.ftext')) return;")>_cs148.find('var found=_typoFind(ev.target);'):
+        errors.append('lint #148: click handler เลือก element ต้อง return ก่อน _typoFind เมื่อคลิกใน .ftext (กันทับคำเตือนเลยขอบพิมพ์)')
+
+    # ---- 149) เลือกหลายกล่อง: Ctrl+คลิก เพิ่ม/เอาออก · Shift+คลิก เลือกช่วง (ตามตำแหน่งที่เห็น) · สี/ฟอนต์/ขนาด ใช้กับทั้งชุด (ผู้ใช้ 28 ต.ค. 2026) ----
+    for _f149 in ('function _ftMultiTargets(){','function _ftRange(box){','function _typoSizeSetEl(el,v){','var _ftAnchor=null;'):
+        if _f149 not in txt: errors.append('lint #149: ไม่พบ '+_f149)
+    if "else if(e.shiftKey && !hd){ _ftRange(box); e.preventDefault(); }" not in txt or "add:(e.shiftKey||e.ctrlKey||e.metaKey)" not in txt:
+        errors.append('lint #149: Shift+คลิก = เลือกช่วง · ลากกรอบ + Ctrl/Shift = เพิ่ม')
+    for _fn149,_lb149 in (('function applyColorRange(','สี'),('function typoFontApply(','ฟอนต์'),('function _typoSizeApply(','ขนาด (พิมพ์)'),('function typoSizeStep(','ขนาด (+/−)')):
+        _i149=txt.find(_fn149); _seg149=txt[_i149:_i149+900] if _i149>=0 else ''
+        if 'var _mt=_ftMultiTargets(); if(_mt){' not in _seg149:
+            errors.append('lint #149: '+_lb149+' ต้องใช้กับทุกกล่องที่เลือก (_ftMultiTargets)')
+    if 'var _mtp=_ftMultiTargets(); if(_mtp) _mtp.forEach(function(x){ x.style.color=hex; });' not in txt or "if(_tcpOrig.mt) _tcpOrig.mt.forEach(function(r){" not in txt:
+        errors.append('lint #149: ชี้ดูสีต้องแสดงทุกกล่อง + ยกเลิกต้องคืนสีเดิมทุกกล่อง')
+    for _k149 in ('fl.colorMulti','fl.fontMulti','fl.sizeMulti','fl.sizeMultiStep'):
+        if txt.count("'"+_k149+"':'")<2: errors.append('lint #149: i18n '+_k149+' ไม่ครบ TH+EN')
+
+    # ---- 150) ลากกรอบเลือกหลายกล่องแล้วแถบรูปแบบต้องใช้ได้ (click ปิดท้ายห้าม typoClear) · ยกเลิกถาดสีคืนสีทุกกล่องแม้แถบไม่ชี้กล่อง (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'var _ftMarqClick=false;' not in txt or "_ftMarqClick=true; setTimeout(function(){ _ftMarqClick=false; },0);" not in txt:
+        errors.append('lint #150: ลากกรอบเลือกต้องตั้งธง _ftMarqClick กัน click ปิดท้าย')
+    _ck150=txt.find("/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */"); _cs150=txt[_ck150:_ck150+1200] if _ck150>=0 else ''
+    if "if(_ftMarqClick){ _ftMarqClick=false; return; }" not in _cs150 or _cs150.find("if(_ftMarqClick)")>_cs150.find('var found=_typoFind(ev.target);'):
+        errors.append('lint #150: click handler เลือก element ต้องข้าม click ปิดท้ายการลากกรอบ ก่อน typoClear')
+    if "if(!el && !_mts.length){ _tcpOrig=null; return; }" not in txt or "function _tcpRestore(){ if(!_tcpOrig) return; if(_tcpOrig.mt)" not in txt:
+        errors.append('lint #150: _tcpSnap/_tcpRestore ต้องเก็บ/คืนสีหลายกล่องแม้ _typoEl ว่าง')
+
+    # ---- 151) หลายกล่อง: เปลี่ยนขนาด/ฟอนต์/B-I-U-S แล้วกล่องที่ต่อกันจัดชิดใหม่ (ไม่ทับกัน) · B/I/U/S + เส้นขอบตัวอักษร ใช้ทั้งชุดไม่ต้องไฮไลท์ (ผู้ใช้ 28 ต.ค. 2026) ----
+    for _f151 in ('function _ftRestack(L,fn){','function _ftAfterMulti(L){','function _ftStyleMulti(cmd,k,L){'):
+        if _f151 not in txt: errors.append('lint #151: ไม่พบ '+_f151)
+    for _c151,_m151 in (("_ftRestack(_mt,function(){ _mt.forEach(function(x){ var c=_typoCurSize(x)",'ขนาด +/−'),("_ftRestack(_mt,function(){ _mt.forEach(function(x){ _typoSizeSetEl(x,v); }); });",'ขนาด (พิมพ์)'),("_ftRestack(_mt,function(){ _mt.forEach(function(x){ x.style.fontFamily=f; }); });",'ฟอนต์')):
+        if _c151 not in txt: errors.append('lint #151: '+_m151+' หลายกล่องต้องจัดกล่องที่ต่อกันใหม่ (_ftRestack)')
+    if 'var _mt=_ftMultiTargets(); if(_mt){ _ftStyleMulti(cmd,k,_mt); return; }' not in txt:
+        errors.append('lint #151: B/I/U/S หลายกล่องต้องใช้ทั้งชุด (ไม่ต้องไฮไลท์)')
+    if txt.count('var _mo=_ftMultiTargets(); if(_mo){')!=2 or "mt:(_ftMultiTargets()||[]).map(function(x){ return {el:x, shadow:x.style.textShadow||''" not in txt or 'if(_olPv.mt && _olPv.mt.length){' not in txt or 'if(pv.mt && pv.mt.length){' not in txt:
+        errors.append('lint #151: เส้นขอบตัวอักษรหลายกล่อง (ปุ่ม A · สีขอบ · ชี้ดู · ตกลง · ยกเลิก) ต้องใช้ทั้งชุด')
+    for _k151 in ('fl.styleMultiOn','fl.styleMultiOff','fl.olMulti','fl.olOffMulti','fl.olColorMulti','fl.olAutoMulti'):
+        if txt.count("'"+_k151+"':'")<2: errors.append('lint #151: i18n '+_k151+' ไม่ครบ TH+EN')
+
+    # ---- 152) ถาดเส้นขอบตัวอักษร: ชี้ดูสี/อัตโนมัติ/ความหนา แล้วช่อง HEX + ไฮไลท์ในถาดต้องตามค่าที่กำลังดู (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _olPvUi(){' not in txt or "hx.value=String(cu||pv.color).toUpperCase();" not in txt:
+        errors.append('lint #152: ต้องมี _olPvUi อัปเดตช่อง HEX ตามสีที่กำลังดู')
+    for _f152 in ('function _olPvColor(','function _olPvAuto(','function _olPvWidth('):
+        _i152=txt.find(_f152); _s152=txt[_i152:txt.find('\n',_i152)] if _i152>=0 else ''
+        if '_olPvUi();' not in _s152: errors.append('lint #152: '+_f152+' ต้องเรียก _olPvUi()')
 
     # ---- report ----
     print("=" * 54)

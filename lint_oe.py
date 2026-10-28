@@ -2956,7 +2956,7 @@ def main():
     # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
     if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "if(!ref){ var _all=pg.querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1]; }" not in txt:
         errors.append('lint #132: กล่องใหม่ต้องวางต่อใต้กล่องที่เลือก หรือกล่องล่าสุดในหน้า (ไม่ทับที่เดิม)')
-    if 'if(top+rh>297-8){ left=Math.min(210-w,left+5);' not in txt:
+    if 'if(!_ch.length && top+rh>297-8){ left=Math.min(210-w,left+5);' not in txt:
         errors.append('lint #132: ล้นขอบล่าง ต้องเยื้อง 5mm จากกล่องเดิม')
     if "if(e.key==='Tab'){ e.preventDefault(); _ftCycle(_ftSel,e.shiftKey?-1:1); return; }" not in txt or 'function _ftCycle(' not in txt:
         errors.append('lint #132: Tab / Shift+Tab ต้องวนเลือกกล่องในหน้า')
@@ -3072,6 +3072,17 @@ def main():
         errors.append('lint #140: เริ่มพิมพ์กล่องข้อความต้องสลับไปแท็บรูปแบบข้อความก่อน focus')
     if "'fl.ftextAdd':'➕ เพิ่มกล่องข้อความแล้ว · ดับเบิลคลิกเพื่อพิมพ์'" not in txt:
         errors.append('lint #140: ข้อความแจ้งตอนเพิ่มกล่องต้องบอกว่าดับเบิลคลิกเพื่อพิมพ์ (ไม่ใช่ พิมพ์ได้เลย)')
+
+    # ---- 141) เลือกกล่องกลางแถวแล้วเพิ่ม = แทรกตรงนั้น ดันกล่องที่ต่อกันข้างล่างลง (ไม่ทับ) · เลยขอบพิมพ์ = เตือน (ผู้ใช้ 28 ต.ค. 2026) ----
+    if 'function _ftChainBelow(ref,px){' not in txt or 'Math.abs(s.t-(c.t+c.h))<=0.5 && s.l<c.l+c.w && c.l<s.l+s.w' not in txt:
+        errors.append('lint #141: ต้องมี _ftChainBelow หากล่องที่ต่อกันลงไป (คลาด ≤0.5mm + ซ้อนแนวนอน)')
+    _fa141=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa141=_fa141.group(0) if _fa141 else ''
+    if '_ch=_ftChainBelow(ref,pxmm);' not in _fa141 or "b.style.top=(_ftNum(b.style.top)+_nh).toFixed(1)+'mm';" not in _fa141:
+        errors.append('lint #141: ftextAdd ต้องแทรกใต้กล่องที่เลือก แล้วดันกล่องที่ต่อกันข้างล่างลงเท่าความสูงกล่องใหม่')
+    if _fa141.find('pg.appendChild(box);')>_fa141.find('var _nh=box.getBoundingClientRect()'):
+        errors.append('lint #141: ต้องวัดความสูงกล่องใหม่หลัง appendChild')
+    if "if(_over) flashStatus('warning',tk('fl.ftextPushOver'));" not in _fa141 or txt.count("'fl.ftextPushOver':'")<2:
+        errors.append('lint #141: ดันเลยขอบพิมพ์ล่างต้องเตือน (TH+EN)')
 
     # ---- report ----
     print("=" * 54)

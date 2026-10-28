@@ -3033,10 +3033,45 @@ def main():
         errors.append('lint #137: แท็บตามบริบทต้องซ่อนตอนไม่ได้แก้ข้อความ + typobar display:contents ใน pane fmt + สถานะ active')
     if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home') toggleEdit();" not in txt:
         errors.append('lint #137: สลับ ข้อความ ↔ รูปแบบข้อความ ต้องไม่ออกจากโหมดแก้ข้อความ')
-    if "if(on) switchTab('fmt'); else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
+    if "if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
         errors.append('lint #137: เข้าโหมด=เลือกแท็บรูปแบบข้อความ · ออกโหมดตอนอยู่แท็บนั้น=กลับแท็บข้อความ')
     for _k137 in ('tab.fmt','tab.fmtCtx','ttl.tabFmt'):
         if txt.count("'"+_k137+"':'")<2: errors.append('lint #137: i18n '+_k137+' ไม่ครบ TH+EN')
+
+    # ---- 138) แท็บรูปแบบข้อความ มีปุ่ม กล่องข้อความ (แทรก) + ปิดแก้ข้อความ (ขวาสุด) ไม่ต้องกลับแท็บข้อความ (ผู้ใช้ 28 ต.ค. 2026) ----
+    _pf138=txt.find('<div class="rpane" data-pane="fmt">'); _pi138=txt.find('<div class="rpane" data-pane="image">')
+    _seg138=txt[_pf138:_pi138] if 0<=_pf138<_pi138 else ''
+    _a138=_seg138.find('id="btnFtextAddFmt" onclick="ftextAdd()"'); _c138=_seg138.find('id="btnEditClose" onclick="toggleEdit()"'); _f138=_seg138.find('data-i18n="grp.format"')
+    if not (0<=_f138<_a138<_c138):
+        errors.append('lint #138: แท็บรูปแบบข้อความต้องมี [กล่องข้อความ] แล้ว [ปิดแก้ข้อความ] ขวาสุด ต่อจากกลุ่มจัดรูปแบบ')
+    if _seg138.find('<div id="typobar">')<0 or _seg138.find('id="btnFtextAddFmt"')<_seg138.find('data-i18n="grp.format"'):
+        errors.append('lint #138: ปุ่มใหม่ต้องอยู่นอก #typobar (ไม่ถูกปิดตอนยังไม่เลือกข้อความ)')
+    if "if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
+        errors.append('lint #138: ปิดแก้ข้อความจากแท็บนี้ต้องกลับแท็บข้อความ')
+    for _k138 in ('btn.editClose','ttl.editClose','grp.close'):
+        if txt.count("'"+_k138+"':'")<2: errors.append('lint #138: i18n '+_k138+' ไม่ครบ TH+EN')
+
+    # ---- 139) ออกโหมดแก้ข้อความไม่เด้ง + ไฮไลท์ในกล่องข้อความไม่ค้าง + แถบรูปแบบชี้กล่องที่เลือก (ผู้ใช้ 28 ต.ค. 2026) ----
+    if "if(on && _veIdx99>=0" in txt or "  if(_veIdx99>=0 && _veTop99!=null){" not in txt:
+        errors.append('lint #139: toggleEdit ต้องชดเชยตำแหน่งหน้าทั้งตอนเข้าและออกโหมด (ห้าม on && เฉพาะเข้า)')
+    if "if(_ws && _ws.rangeCount && b.contains(_ws.anchorNode)) _ws.removeAllRanges();" not in txt:
+        errors.append('lint #139: เลิกพิมพ์กล่องข้อความต้องล้างไฮไลท์ในกล่องนั้น')
+    if 'function _ftTypo(' not in txt or "_ftHandles(box,true); _ftTypo(box); _ftStatus(box); }" not in txt or "_ftSyncHandles(); _ftTypo(_ftSel); _ftStatus(_ftSel);" not in txt:
+        errors.append('lint #139: เลือกกล่อง (คลิก/Shift/ลากกรอบ) ต้องให้แถบรูปแบบชี้กล่องที่เลือก')
+    if "function _ftDeselect(){ _ftStopEdit(); if(_typoEl && _typoEl.closest && _typoEl.closest('.ftext')" not in txt:
+        errors.append('lint #139: เลิกเลือกกล่องต้องปล่อยแถบรูปแบบ')
+
+    # ---- 140) เพิ่มกล่องข้อความ = อยู่แท็บเดิม เลือกกล่อง (ไม่พิมพ์) · ดับเบิลคลิก/Enter = พิมพ์ + ไปแท็บรูปแบบข้อความ (ผู้ใช้ 28 ต.ค. 2026) ----
+    _fa140=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa140=_fa140.group(0) if _fa140 else ''
+    if 'toggleEdit(true);' not in _fa140 or '_ftSelect(box);' not in _fa140 or '_ftStartEdit(' in _fa140:
+        errors.append('lint #140: ftextAdd ต้องเข้าโหมดโดยไม่สลับแท็บ + แค่เลือกกล่อง (ห้ามเริ่มพิมพ์เอง)')
+    if 'function toggleEdit(keepTab){' not in txt:
+        errors.append('lint #140: toggleEdit ต้องรับ keepTab')
+    _se140=re.search(r'function _ftStartEdit\([^)]*\)\{[\s\S]*?\n\}', txt); _se140=_se140.group(0) if _se140 else ''
+    if "switchTab('fmt');" not in _se140 or _se140.find("switchTab('fmt');")>_se140.find('x.focus();'):
+        errors.append('lint #140: เริ่มพิมพ์กล่องข้อความต้องสลับไปแท็บรูปแบบข้อความก่อน focus')
+    if "'fl.ftextAdd':'➕ เพิ่มกล่องข้อความแล้ว · ดับเบิลคลิกเพื่อพิมพ์'" not in txt:
+        errors.append('lint #140: ข้อความแจ้งตอนเพิ่มกล่องต้องบอกว่าดับเบิลคลิกเพื่อพิมพ์ (ไม่ใช่ พิมพ์ได้เลย)')
 
     # ---- report ----
     print("=" * 54)

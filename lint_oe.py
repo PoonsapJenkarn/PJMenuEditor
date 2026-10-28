@@ -2976,7 +2976,7 @@ def main():
         if _f134 not in txt: errors.append('lint #134: ไม่พบ '+_f134)
     if "if((e.ctrlKey||e.metaKey) && !hd){ _ftToggle(box); _ftAnchor=box;" not in txt:
         errors.append('lint #134: Ctrl+คลิก ต้องเพิ่ม/เอาออกจากชุดที่เลือก (ผู้ใช้ 28 ต.ค. 2026 เปลี่ยนจาก Shift)')
-    if "else if(!(_ftSet.length>1 && _ftSet.indexOf(box)>=0 && !hd)) _ftSelect(box);" not in txt:
+    if "else if(!(_ftSet.length>1 && _ftSet.indexOf(box)>=0 && !hd)){ if(hd) _ftSelect(box); else _ftSelectG(box); }" not in txt:
         errors.append('lint #134: คลิกกล่องในชุดที่เลือกอยู่ต้องลากทั้งชุด (ไม่แตกชุด)')
     if "if(!d && D.grp.length>1){" not in txt or "_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h)" not in txt:
         errors.append('lint #134: ลากทั้งชุดต้องขยับทุกกล่องเท่ากัน + ดูดแนวด้วยกรอบรอบนอก')
@@ -3188,6 +3188,26 @@ def main():
         errors.append('lint #153: #edtabs ต้อง flex-wrap:nowrap (แถบแท็บไม่ตกเป็น 2 แถว)')
     if '@media screen{body:not(.gridview){width:max-content;min-width:max(960px,100%);}}' not in _css:
         errors.append('lint #153: body ต้องกว้างเท่าเนื้อหา (max-content) บนจอ ยกเว้น gridview — แถบบนคลุมเต็มตอนเลื่อนขวา')
+
+    # ---- 154) จัดกลุ่มกล่องข้อความ Ctrl+G / Ctrl+Shift+G + ปุ่มในแท็บรูปแบบข้อความ · คลิก=ทั้งกลุ่ม · ดับเบิลคลิก=พิมพ์ในกล่อง · ไม่มีกลุ่มซ้อน (ผู้ใช้ 28 ต.ค. 2026) ----
+    for _f154 in ('function _ftGroupOf(b){','function _ftSelectG(box){','function _ftGroupClean(pg){','function _ftGroupSync(){','function ftGroup(){','function ftUngroup(){','function _ftGroupExpand(L){','function _ftIsOneGroup(L){'):
+        if _f154 not in txt: errors.append('lint #154: ไม่พบ '+_f154)
+    _pf154=txt.find('<div class="rpane" data-pane="fmt">'); _pi154=txt.find('<div class="rpane" data-pane="image">'); _sg154=txt[_pf154:_pi154] if 0<=_pf154<_pi154 else ''
+    _a154=_sg154.find('id="btnFtextAddFmt"'); _g154=_sg154.find('id="btnFtGroup" onclick="ftGroup()" disabled'); _u154=_sg154.find('id="btnFtUngroup" onclick="ftUngroup()" disabled'); _c154=_sg154.find('id="btnEditClose"')
+    if not (0<=_a154<_g154<_u154<_c154):
+        errors.append('lint #154: ปุ่ม จัดกลุ่ม/ยกเลิกกลุ่ม ต้องอยู่ระหว่างกลุ่มแทรกกับปิด ในแท็บรูปแบบข้อความ (เริ่มต้น disabled + tooltip เหตุผล)')
+    for _c154,_m154 in (("if((e.ctrlKey||e.metaKey) && !e.altKey && (e.code==='KeyG' || e.key==='g' || e.key==='G')){",'ปุ่มลัด Ctrl+G'),
+                        ("var _h0=hits; hits=_h0.filter(function(b){ return _ftGroupOf(b).every(",'ลากกรอบ = กลุ่มต้องอยู่ในกรอบครบ'),
+                        ("_ftSet=_ftGroupExpand(L.slice(",'Shift+คลิกช่วง = ได้ทั้งกลุ่ม'),
+                        ("var i=_ftSet.indexOf(box), _gm=_ftGroupOf(box);",'Ctrl+คลิก = ทั้งกลุ่ม'),
+                        ("if(_rg.length>1) ref=_rg.reduce(",'กล่องใหม่ต่อใต้กลุ่ม'),
+                        ("box.remove(); _ftGroupClean(_dpg);",'ลบกล่อง = ล้างกลุ่มที่เหลือกล่องเดียว'),
+                        ("_ftGroupClean(_dpg2); _ftGroupSync();",'ลบหลายกล่อง = ล้างกลุ่ม'),
+                        ("if(_ftGroupOf(b0).length>1) _ftSelectG(b0);",'Esc หลังพิมพ์ = เลือกทั้งกลุ่ม'),
+                        ("_ftMarq=null; } if(typeof _ftGroupSync==='function') _ftGroupSync();",'undo = ปุ่มจัดกลุ่มตามสถานะใหม่')):
+        if _c154 not in txt: errors.append('lint #154: ขาด '+_m154)
+    for _k154 in ('btn.ftGroup','btn.ftUngroup','grp.arrange','ttl.ftGroup','ttl.ftGroupNeed','ttl.ftGroupSame','ttl.ftUngroup','ttl.ftUngroupNeed','fl.ftGrouped','fl.ftGroupNeed','fl.ftGroupSame','fl.ftUngrouped','fl.ftUngroupNeed','st.ftextGroup'):
+        if txt.count("'"+_k154+"':'")<2: errors.append('lint #154: i18n '+_k154+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

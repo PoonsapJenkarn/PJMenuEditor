@@ -3329,6 +3329,21 @@ def main():
         if not _fn162 or _n162 not in _fn162.group(0): errors.append('lint #162: _exitNow ขาด '+_n162)
     if 'if(_dirty && !_exiting){ e.preventDefault();' not in txt:
         errors.append('lint #162: beforeunload ต้องข้ามเมื่อยืนยันปิดแล้ว (_exiting)')
+    # 162b) ปิดไม่ได้ = ปุ่ม disabled ตั้งแต่เปิดไฟล์ (กฎ script-closable: opener หรือประวัติหน้า 1) · tooltip บอก Ctrl+W/Alt+F4 · ลองแล้วปิดไม่ได้ = disabled ทันที (ผู้ใช้ 29 ต.ค. 2026)
+    if 'function _exitCanClose(){ try{ return !!window.opener || history.length<=1; }' not in txt:
+        errors.append('lint #162: ไม่พบ _exitCanClose (opener / history.length<=1)')
+    _fs162=re.search(r"\nfunction _exitSync\(blocked\)\{[\s\S]*?\n\}", txt)
+    for _n162 in ('b.disabled=!ok;',"'ttl.exitOff'",'b.title=t(k);'):
+        if not _fs162 or _n162 not in _fs162.group(0): errors.append('lint #162: _exitSync ขาด '+_n162)
+    if "document.addEventListener('DOMContentLoaded',function(){ _exitSync(); }); else _exitSync();" not in txt:
+        errors.append('lint #162: _exitSync ต้องรันตอนเปิดไฟล์')
+    if not _fn162 or '_exitSync(true);' not in _fn162.group(0):
+        errors.append('lint #162: ลองปิดแล้วไม่ได้ ต้อง disabled ปุ่มทันที (_exitSync(true))')
+    if '#edbar .b-lg:disabled{' not in txt:
+        errors.append('lint #162: ไม่มี CSS ปุ่ม disabled (จาง) ของ ribbon')
+    if txt.count("'ttl.exitOff':'")<2: errors.append('lint #162: i18n ttl.exitOff ไม่ครบ TH+EN')
+    for _ln162 in re.findall(r"'(?:ttl\.exitOff|st\.exitBlocked)':'[^']*'", txt):
+        if 'Ctrl+W' not in _ln162: errors.append('lint #162: ข้อความปิดไม่ได้ต้องบอก Ctrl+W (Alt+F4 ในแท็บ = ปิดทั้งหน้าต่าง) '+_ln162[:40])
     if '#edbar #btnExit.on{background:#217346;' not in txt:
         errors.append('lint #162: ปุ่ม ปิด ไม่เขียวตอน panel เปิด (กฎข้อ 11)')
     for _k162 in ('btn.exit','ttl.exit','grp.app','pnl.exitOk','pnl.exitMsg','st.exitBlocked'):

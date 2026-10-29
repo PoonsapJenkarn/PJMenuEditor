@@ -1,5 +1,15 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 17:20 — เปิดไฟล์แล้วเริ่มที่แท็บ ไฟล์ · รอผู้ใช้ทดสอบ
+- ✅ COMMITTED 13f61b5 (pushed c6cfba2..13f61b5) — ย้ายแท็บไฟล์ไปแท็บแรก + ปุ่ม ปิด disabled (#131 #162) · HEAD = 13f61b5
+- แก้: markup edtab/rpane active ย้ายจาก page → view · _tabStartup var n='view' (ไฟล์ที่ save ไว้ตอนอยู่แท็บอื่น เปิดมาก็กลับแท็บไฟล์)
+- lint #131 เปลี่ยนเป็น 'แท็บเริ่มต้นต้องเป็น ไฟล์' · lint #157 เปลี่ยนตัวหาขอบ pane view เป็น 'data-pane="view">' (เดิมผูกกับ class="rpane" ไม่ active → จะพังเมื่อ view เป็น active) · PASS ไม่มี warning · html 8,465,267 bytes
+- commit เมื่อทดสอบผ่าน:
+  git add -A
+  git commit -m "feat: เปิดไฟล์แล้วเริ่มที่แท็บ ไฟล์ + lint #131 #157"
+  git push
+- ยังค้าง: #161 จอป้าย (รอสั่ง) · ข้อ 9 agent (รอ "ยืนยัน")
+
 ## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 17:20 — ปุ่ม ปิด disabled เมื่อปิดไม่ได้ (#162b) · รอผู้ใช้ทดสอบ
 - ผลทดสอบผู้ใช้: แท็บ Browser กดปิดแล้วขึ้น st.exitBlocked แต่ปุ่มยังกดได้ → ต้อง disabled
 - เกณฑ์ = กฎเบราว์เซอร์จริง ไม่เดาโหมดจากขนาดหน้าต่าง: _exitCanClose() = window.opener || history.length<=1 · _exitSync() ตอนเปิดไฟล์ → disabled + tooltip ttl.exitOff (Ctrl+W/Alt+F4) · ลองปิดแล้วไม่ได้ = _exitSync(true) disabled ทันที

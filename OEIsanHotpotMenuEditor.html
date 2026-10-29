@@ -1349,8 +1349,8 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
 <div id="edbar">
   <div id="edtabs">
     <span class="edbrand" onclick="openAbout()" title="PJ Menu Editor"><svg width="30" height="30" viewBox="0 0 32 32" aria-label="POONSAP"><path fill="#d50000" d="M2 5 H30 L27 27 H5 Z"/><text x="16.3" y="24" font-family="'Montserrat','Prompt',Arial,sans-serif" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">P</text></svg></span>
-    <button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button>  <!-- แท็บ ไฟล์ = ซ้ายสุด (ผู้ใช้ 29 ต.ค. 2026) -->
-    <button class="edtab active" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button>  <!-- แท็บ หน้า = แท็บเริ่มต้นตอนเปิดไฟล์ (ผู้ใช้ 27 ต.ค. 2026) -->
+    <button class="edtab active" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button>  <!-- แท็บ ไฟล์ = ซ้ายสุด + แท็บเริ่มต้นตอนเปิดไฟล์ (ผู้ใช้ 29 ต.ค. 2026) -->
+    <button class="edtab" data-tab="page" data-i18n="tab.page" onclick="switchTab('page')">หน้า</button>
     <button class="edtab" data-tab="home" data-i18n="tab.text" onclick="switchTab('home')">ข้อความ</button>
     <button class="edtab" data-tab="image" data-i18n="tab.image" onclick="switchTab('image')">รูป</button>
     <button class="edtab" data-tab="template" data-i18n="tab.template" onclick="switchTab('template')">เท็มเพลต</button>
@@ -1480,7 +1480,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
       <div class="rgroup"><div class="rgb"><button class="b-lg" id="btnFlineAddLn" onclick="flineAdd()" title="เพิ่มเส้นลอย · ลากย้าย · ลากปลายเส้นเพื่อยืด/หมุน" data-i18n-title="ttl.flineAdd"><svg viewBox="0 0 24 24"><path d="M4 18L20 6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span data-i18n="btn.flineAdd">เส้น</span></button></div><div class="rgl" data-i18n="grp.insert">แทรก</div></div>
       <div class="rgroup"><div class="rgb"><button class="b-lg" id="btnFlDel" onclick="_flDelete()" title="ลบเส้นนี้ (Delete)" data-i18n-title="ttl.flDel"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-i18n="btn.flDel">ลบเส้น</span></button></div><div class="rgl" data-i18n="grp.flDelete">ลบ</div></div>
     </div>
-    <div class="rpane" data-pane="view">
+    <div class="rpane active" data-pane="view">
       <div class="rgroup"><div class="rgb">
         <button class="btn-save b-lg" id="btnSave" onclick="saveEditorFile()"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7"/><rect x="8" y="13" width="8" height="5"/></svg><span>Save Editor</span></button>
         <button class="btn-dl b-lg" id="btnDl" onclick="downloadMenu()"><svg viewBox="0 0 24 24"><path d="M12 4v10M8 11l4 4 4-4"/><path d="M5 19h14"/></svg><span>Save Menu</span></button>
@@ -1492,7 +1492,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
         <button class="b-lg" id="btnExit" onclick="exitApp()" title="ปิดโปรแกรม" data-i18n-title="ttl.exit"><svg viewBox="0 0 24 24"><path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></svg><span data-i18n="btn.exit">ปิด</span></button>
       </div><div class="rgl" data-i18n="grp.app">โปรแกรม</div></div>
     </div>
-    <div class="rpane active" data-pane="page">
+    <div class="rpane" data-pane="page">
       <div class="rgroup"><div class="rgb">
         <span class="addpage-split"><button class="btn-addpage b-lg" id="btnAddPage" onclick="addPage()" title="เพิ่ม 1 หน้า" data-i18n-title="ttl.addPage"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 8v6M9 11h6"/></svg><span data-i18n="btn.addPage">เพิ่มหน้า</span></button><button type="button" class="addpage-caret" id="btnAddPageMore" onclick="openAddPagesPanel()" title="เพิ่มหลายหน้า" data-i18n-title="ttl.addPageMore"><span class="cp-caret">▾</span></button></span><span class="addpage-split"><button class="btn-addpage b-lg" id="btnAddBlank" onclick="addBlankPage()" title="เพิ่มหน้าเปล่า 1 หน้า" data-i18n-title="ttl.addBlank"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg><span data-i18n="btn.addBlank">หน้าเปล่า</span></button><button type="button" class="addpage-caret" id="btnAddBlankMore" onclick="openAddPagesPanel('blank')" title="เพิ่มหน้าเปล่าหลายหน้า" data-i18n-title="ttl.addBlankMore"><span class="cp-caret">▾</span></button></span>
         <button class="b-lg" id="btnDelPage" onclick="deletePagesByRange()"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-i18n="btn.delPage">ลบหน้า</span></button>
@@ -6268,7 +6268,7 @@ function deletePagesByRange(){
     }
   });
 }
-function _tabStartup(){ var n='page'; document.querySelectorAll('#edtabs .edtab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===n); }); document.querySelectorAll('#edribbon .rpane').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-pane')===n); }); }  /* เปิดไฟล์ = แท็บ หน้า เสมอ (ไฟล์ที่บันทึกจำแท็บที่เปิดค้างไว้) · สลับ class อย่างเดียว ไม่แตะโหมด/panel (ผู้ใช้ 27 ต.ค. 2026) */
+function _tabStartup(){ var n='view'; document.querySelectorAll('#edtabs .edtab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===n); }); document.querySelectorAll('#edribbon .rpane').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-pane')===n); }); }  /* เปิดไฟล์ = แท็บ ไฟล์ เสมอ (ไฟล์ที่บันทึกจำแท็บที่เปิดค้างไว้) · สลับ class อย่างเดียว ไม่แตะโหมด/panel (ผู้ใช้ 27 ต.ค. 2026 · 29 ต.ค. 2026 เปลี่ยนจาก หน้า เป็น ไฟล์) */
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',_tabStartup); else _tabStartup();
 function switchTab(name){
   /* panel ผูกกับแท็บที่เปิดมัน: สลับแท็บ=ปิด panel ที่เปิดอยู่เสมอ (.on หาย+ออกจากโหมด) — ครอบคลุมพื้นหลัง/ปรับราคา/panel ใหม่ทุกตัว (ผู้ใช้ 20 ต.ค. 2026) */

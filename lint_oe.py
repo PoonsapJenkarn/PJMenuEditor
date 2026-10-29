@@ -2949,8 +2949,8 @@ def main():
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
     if _ord131!=['view','page','home','image','template','screen','fmt','fln']:  # view = แท็บ ไฟล์ · fmt/fln = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
         errors.append('lint #131: ลำดับแท็บต้องเป็น ไฟล์ · หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ (ตอนนี้ '+','.join(_ord131)+')')
-    if not re.search(r'<button class="edtab active" data-tab="page"', txt) or not re.search(r'<div class="rpane active" data-pane="page">', txt) or 'function _tabStartup(' not in txt:
-        errors.append('lint #131: แท็บเริ่มต้นต้องเป็น หน้า (markup + _tabStartup ตอนเปิดไฟล์)')
+    if not re.search(r'<button class="edtab active" data-tab="view"', txt) or not re.search(r'<div class="rpane active" data-pane="view">', txt) or "function _tabStartup(){ var n='view';" not in txt:
+        errors.append('lint #131: แท็บเริ่มต้นต้องเป็น ไฟล์ (markup + _tabStartup ตอนเปิดไฟล์ · ผู้ใช้ 29 ต.ค. 2026)')
     if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:
         errors.append('lint #131: ต้องมีแท็บ/ริบบอน active อย่างละ 1 เท่านั้น')
     # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
@@ -3242,7 +3242,7 @@ def main():
     # ---- 157) ช่องมุม/ความยาวของเส้นลอย: พิมพ์ได้ · −/+ กดค้าง · ล้อเมาส์ · หมุนรอบกลางเส้น · ความยาวยึดจุดเริ่ม · ค่าเดิมไม่มีจุด Undo (ผู้ใช้ 29 ต.ค. 2026) ----
     for _f157 in ('function _flSetAng(v){','function _flSetLen(v){','function _flAngStep(s){','function _flLenStep(s){','function _flFieldsSync(force){','function _flNum(s){','function _flDeg(a){'):
         if _f157 not in txt: errors.append('lint #157: ไม่พบ '+_f157)
-    _pf157=txt.find('<div class="rpane" data-pane="fln" id="flPane">'); _pe157=txt.find('<div class="rpane" data-pane="view">',_pf157); _sg157=txt[_pf157:_pe157] if 0<=_pf157<_pe157 else ''
+    _pf157=txt.find('<div class="rpane" data-pane="fln" id="flPane">'); _pe157=txt.find('data-pane="view">',_pf157); _sg157=txt[_pf157:_pe157] if 0<=_pf157<_pe157 else ''
     for _i157 in ('id="flAng"','id="flLen"','id="flAngUp" onclick="_flAngStep(1)"','id="flAngDown" onclick="_flAngStep(-1)"','id="flLenUp" onclick="_flLenStep(1)"','id="flLenDown" onclick="_flLenStep(-1)"','data-i18n="grp.flGeom"'):
         if _i157 not in _sg157: errors.append('lint #157: แท็บรูปแบบเส้นต้องมี '+_i157)
     _mh157=re.search(r'var _HOLD_BTNS=\{([\s\S]*?)\n\};', txt); _mw157=re.search(r'var _WHEEL_FIELDS=\{([\s\S]*?)\n\};', txt)

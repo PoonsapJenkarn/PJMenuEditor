@@ -2261,8 +2261,8 @@ def main():
         if '_veIdx99' not in _teb99 or '_priceVisiblePage' not in _teb99 or 'scrollTop' not in _teb99:
             errors.append('lint #99: toggleEdit ไม่ตรึงหน้าที่ดูอยู่ (จะเด้งหน้าตอนเข้าโหมดแก้)')
 
-    # ---- 100) cursor/caret: หนาขึ้น (caret-shape:block) + เห็นทุกธีม (currentColor) · note โหมดแก้ cursor ชิดซ้าย (ผู้ใช้ 23 ต.ค. 2026) ----
-    if 'caret-shape:block' not in _css: errors.append('lint #100: ไม่พบ caret-shape:block (cursor หนาทั้งแอป)')
+    # ---- 100) cursor/caret: เส้นบางปกติ (ห้าม caret-shape · ผู้ใช้ 29 ต.ค. 2026) + เห็นทุกธีม (currentColor) · note โหมดแก้ cursor ชิดซ้าย (ผู้ใช้ 23 ต.ค. 2026) ----
+    if 'caret-shape' in _css: errors.append('lint #100: ห้ามใช้ caret-shape — cursor ต้องเป็นเส้นบางปกติ (ช่องเล็กแล้วก้อนดำเต็มช่อง ดูไม่ออกว่าพร้อมพิมพ์ · ผู้ใช้ 29 ต.ค. 2026)')
     _mcar=re.search(r'\[contenteditable="true"\][^{]*\{([^}]*)\}', _css)
     if not _mcar or 'caret-color:currentColor' not in _mcar.group(1): errors.append('lint #100: caret-color ต้องเป็น currentColor (กันหายในธีมเข้ม)')
     _msn=re.search(r'body\.editmode \.secnote\[contenteditable\]\{([^}]*)\}', _css)

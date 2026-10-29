@@ -525,8 +525,8 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
 @media screen{body.editmode .ed-notedel{display:inline-flex;align-items:center;justify-content:center;float:right;margin:6px 0 0 6px;border:none;background:#e0332a;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:1;cursor:pointer;padding:0;}}
 @media screen{body.editmode .ed-notedel:hover{background:#b8231b;}}
 @media screen{body.editmode .sec-b > .ed-add{clear:both;}}
-/* cursor (caret) ทั้งแอป (ผู้ใช้ 23 ต.ค. 2026): หนาขึ้นด้วย caret-shape:block (เบราว์เซอร์ไม่มีความหนาโดยตรง) · สี currentColor = เข้มตามตัวอักษร (พื้นสว่าง=เข้ม · ธีมเข้ม=สว่างไม่หาย) · caret-shape ไม่รองรับ=เส้นปกติ */
-[contenteditable="true"],#edbar input,#edpanel input,#typobar input,#edtabs input,#calModal input{caret-color:currentColor;caret-shape:block;}
+/* cursor (caret) ทั้งแอป: เส้นบางปกติของเบราว์เซอร์ (ผู้ใช้ 29 ต.ค. 2026 เลิก caret-shape:block ที่ใส่ 23 ต.ค.) · สี currentColor = เข้มตามตัวอักษร (พื้นสว่าง=เข้ม · ธีมเข้ม=สว่าง ไม่หาย) */
+[contenteditable="true"],#edbar input,#edpanel input,#typobar input,#edtabs input,#calModal input{caret-color:currentColor;}  /* cursor = เส้นบางปกติของเบราว์เซอร์ (เลิก caret-shape:block · ช่องเล็กแล้วก้อนดำเต็มช่อง ดูไม่ออกว่าพร้อมพิมพ์ · ผู้ใช้ 29 ต.ค. 2026) · สี currentColor คงไว้ = เห็นทุกธีม */
 .kai{font-family:'Noto Sans Thai',sans-serif;font-weight:700;}
 @media print{body{background:#fff;min-width:0 !important;width:auto !important;}.page{margin:0;box-shadow:none;}}
 @media (max-width:720px){.page{width:auto;min-height:0;padding:20px;}.grid{flex-direction:column;}}

@@ -1990,12 +1990,10 @@ def main():
         errors.append('ขาด function openAbout/closeAbout (ดู UI_STANDARD.md ข้อ 11)')
     if 'function aboutTab' not in txt:
         errors.append('ขาด function aboutTab (สลับแท็บ About) (ดู UI_STANDARD.md ข้อ 11)')
-    if txt.count('class="about-tab') < 5 or 'data-tab="about"' not in txt or 'data-tab="tech"' not in txt or 'data-tab="lic"' not in txt or 'data-tab="full"' not in txt:
-        errors.append('About ไม่ครบ 4 แท็บ (about/tech/lic/full) (ดู UI_STANDARD.md ข้อ 11)')
-    if 'data-pane="full"' not in txt or 'data-i18n="about.fullBody"' not in txt:
-        errors.append('About ขาดแท็บเต็มจอ (full pane + about.fullBody — วิธี App Window/Kiosk/F11) (ดู UI_STANDARD.md ข้อ 11)')
-    if '--kiosk' not in txt:
-        errors.append('แท็บเต็มจอต้องมีคำสั่ง kiosk (--kiosk) ให้ผู้ใช้คัดลอกไปตั้ง shortcut (ดู UI_STANDARD.md ข้อ 11)')
+    if txt.count('class="about-tab') < 4 or 'data-tab="about"' not in txt or 'data-tab="tech"' not in txt or 'data-tab="lic"' not in txt:
+        errors.append('About ไม่ครบ 3 แท็บ (about/tech/lic · แท็บเต็มจอย้ายไปแท็บ หน้าจอ 29 ต.ค. 2026 lint #163) (ดู UI_STANDARD.md ข้อ 11)')
+    if 'data-tab="full"' in txt or 'data-pane="full"' in txt:
+        errors.append('About ต้องไม่มีแท็บเต็มจอแล้ว — ย้ายไปปุ่ม วิธีเต็มจอ ในแท็บ หน้าจอ (lint #163)')
     if 'data-pane="tech"' not in txt or 'data-i18n="about.techBody"' not in txt:
         errors.append('About ไม่มีแท็บข้อมูลเทคนิค (about.techBody) (ดู UI_STANDARD.md ข้อ 11)')
     if 'data-pane="lic"' not in txt or 'data-i18n="about.licBody"' not in txt:
@@ -2026,7 +2024,7 @@ def main():
         _th70=txt.find('th:{',_i70); _en70=txt.find('en:{',_i70)
         _thb70=txt[_th70:_en70] if (_th70>=0 and _en70>_th70) else ''
         _enb70=txt[_en70:_en70+30000] if _en70>=0 else ''
-        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.oflView','about.licBody','about.licNote','about.tabFull','about.fullHead','about.fullBody','about.fullNote'):
+        for _k70 in ('about.title','about.desc','about.by','about.byName','about.licenseLbl','about.close','about.tabAbout','about.tabTech','about.techHead','about.techBody','about.techNote','about.tabLic','about.licHead','about.oflView','about.licBody','about.licNote'):
             if ("'"+_k70+"'") not in _thb70: errors.append('i18n '+_k70+' ขาดใน th (ดู UI_STANDARD.md ข้อ 11)')
             if ("'"+_k70+"'") not in _enb70: errors.append('i18n '+_k70+' ขาดใน en (ดู UI_STANDARD.md ข้อ 11)')
 
@@ -3257,14 +3255,16 @@ def main():
     for _k157 in ('grp.flGeom','fl.angLbl','fl.lenLbl','fl.mmUnit','ttl.flAng','ttl.flAngDown','ttl.flAngUp','ttl.flLen','ttl.flLenDown','ttl.flLenUp','fl.flAngSet','fl.flLenSet','fl.flNumBad','fl.flLenRange','fl.flNumOnly','fl.flNumOnlyTh'):
         if txt.count("'"+_k157+"':'")<2: errors.append('lint #157: i18n '+_k157+' ไม่ครบ TH+EN')
 
-    # ---- 158) แท็บเต็มจอ: ข้อ 1 = shortcut --app (ไม่ใช้เมนู Chrome ที่เปลี่ยนชื่อ/ถูกปิดได้) · ข้อ 2 = ขั้นตอนสร้าง shortcut + คำสั่ง kiosk อยู่ใต้ข้อ 2 · ข้อ 3 F11 ไม่มีกล่องคำสั่ง (ผู้ใช้ 29 ต.ค. 2026) ----
-    _fp158=txt.find('<div class="about-pane" data-pane="full">'); _fs158=txt[_fp158:_fp158+5000] if _fp158>=0 else ''
-    _o158=[_fs158.find(x) for x in ('data-i18n="about.fullBody"','--app=&quot;file:///' if '--app=&quot;file:///' in _fs158 else '--app="file:///','data-i18n="about.full2"','--kiosk','data-i18n="about.full3"','data-i18n="about.fullNote"')]
+    # ---- 158) วิธีเต็มจอ: ข้อ 1 = shortcut --app (ไม่ใช้เมนู Chrome ที่เปลี่ยนชื่อ/ถูกปิดได้) · ข้อ 2 = ขั้นตอนสร้าง shortcut + คำสั่ง kiosk อยู่ใต้ข้อ 2 · ข้อ 3 F11 ไม่มีกล่องคำสั่ง (ผู้ใช้ 29 ต.ค. 2026 · 29 ต.ค. ย้ายจาก About ไป panel แท็บ หน้าจอ #163) ----
+    _fr158=re.search(r"\nfunction _fgRender\(\)\{[\s\S]*?\n\}", txt); _fs158=_fr158.group(0) if _fr158 else ''
+    _o158=[_fs158.find(x) for x in ("'fg.m1Title'","' --app=\"'","'fg.m2Title'","' --kiosk \"'","'fg.m3Title'","'fg.note'")]
     if min(_o158)<0 or _o158!=sorted(_o158):
-        errors.append('lint #158: ลำดับแท็บเต็มจอต้องเป็น ข้อ 1 → คำสั่ง --app → ข้อ 2 → คำสั่ง --kiosk → ข้อ 3 (F11 ไม่มีกล่องคำสั่ง) → หมายเหตุ')
+        errors.append('lint #158: ลำดับวิธีเต็มจอต้องเป็น ข้อ 1 → คำสั่ง --app → ข้อ 2 → คำสั่ง --kiosk → ข้อ 3 (F11 ไม่มีกล่องคำสั่ง) → หมายเหตุ')
+    elif _fs158.count('fg-cmd')!=2 or _fs158.find('fg-cmd',_o158[4])>=0:
+        errors.append('lint #158: กล่องคำสั่งต้องมี 2 กล่อง (ข้อ 1 · ข้อ 2) · ข้อ 3 F11 ไม่มีกล่องคำสั่ง')
     if 'Cast, save' in txt:
         errors.append('lint #158: ห้ามอ้างเมนู Chrome (Cast, save and share) — ชื่อเมนูเปลี่ยนตามรุ่น และ Create shortcut ถูกปิดได้')
-    for _k158 in ('about.full2','about.full3'):
+    for _k158 in ('fg.head','fg.m1Title','fg.m1Desc','fg.m1Steps','fg.m2Title','fg.m2Desc','fg.m2Steps','fg.m3Title','fg.m3Desc','fg.note'):
         if txt.count("'"+_k158+"':'")<2: errors.append('lint #158: i18n '+_k158+' ไม่ครบ TH+EN')
     if txt.count('New → Shortcut')<2: errors.append('lint #158: ต้องบอกขั้นตอนสร้าง shortcut (คลิกขวา Desktop → New → Shortcut) ทั้ง TH/EN')
 
@@ -3350,6 +3350,38 @@ def main():
         if txt.count("'"+_k162+"':'")<2: errors.append('lint #162: i18n '+_k162+' ไม่ครบ TH+EN')
     if "'#edbar'," not in txt[txt.find('function buildMenuHtml('):txt.find('function buildMenuHtml(')+600]:
         errors.append('lint #162: Save Menu ต้องตัด #edbar (ปุ่ม ปิด ไม่ติดไปในไฟล์เมนู)')
+
+    # ---- 163) ปุ่ม วิธีเต็มจอ แท็บ หน้าจอ กลุ่ม คำแนะนำ (ย้ายจาก About แท็บ เต็มจอ ที่ตัดตกขอบขวา) · panel info ไม่มี icon · ปุ่มเขียว กดซ้ำปิด · คำสั่งตัดบรรทัดไม่ล้นขอบ · path จากไฟล์ที่เปิดอยู่จริง (ผู้ใช้ 29 ต.ค. 2026) ----
+    if txt.count('id="btnFullGuide"')!=1 or 'id="btnFullGuide" onclick="openFullGuide()"' not in txt:
+        errors.append('lint #163: ต้องมีปุ่ม #btnFullGuide 1 ปุ่ม ผูก openFullGuide()')
+    else:
+        _ps163=txt.find('data-pane="screen"'); _pb163=txt.find('id="btnFullGuide"'); _pe163=txt.find('<div id="edpanel"')
+        if not (0<=_ps163<_pb163<_pe163) or txt.find('data-i18n="grp.viewmode"',_ps163)>_pb163 or txt.find('data-i18n="grp.help"',_pb163)<0 or txt.find('data-i18n="grp.help"',_pb163)>_pe163:
+            errors.append('lint #163: ปุ่ม วิธีเต็มจอ ต้องอยู่แท็บ หน้าจอ ต่อจากกลุ่ม มุมมอง ในกลุ่ม คำแนะนำ')
+        _bt163=txt[_pb163:txt.find('</button>',_pb163)]
+        if '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>' in _bt163:
+            errors.append('lint #163: ปุ่ม วิธีเต็มจอ ห้ามใช้ icon info (กฎข้อ 12)')
+    _fo163=re.search(r"\nfunction openFullGuide\(\)\{[\s\S]*?\n\}", txt)
+    if not _fo163 or "classList.contains('on')){ closePanel(); return; }" not in _fo163.group(0):
+        errors.append('lint #163: กดปุ่ม วิธีเต็มจอ ซ้ำต้องปิด panel')
+    _fr163=re.search(r"\nfunction _fgRender\(\)\{[\s\S]*?\n\}", txt); _f163=_fr163.group(0) if _fr163 else ''
+    for _n163 in ("tone:'info'","activeBtn:'btnFullGuide'","toggleBtn:'btnFullGuide'",'onRelang:','_fgPaths()','epEsc(_FG_CHROME'):
+        if _n163 not in _f163: errors.append('lint #163: _fgRender ขาด '+_n163)
+    if 'hideIcon' in _f163: errors.append('lint #163: ไม่ต้องใส่ hideIcon — โทน info ไม่มี icon เป็นค่าเริ่มต้น (กฎข้อ 12)')
+    _fp163=re.search(r"\nfunction _fgPaths\(\)\{[\s\S]*?\n\}", txt)
+    if not _fp163 or 'location.pathname' not in _fp163.group(0) or 'location.href' not in _fp163.group(0):
+        errors.append('lint #163: คำสั่งต้องใช้ตำแหน่งไฟล์ที่เปิดอยู่ (location) ไม่ฝัง path ตายตัว')
+    if 'file:///C:/OE/OEIsanHotpotMenuEditor.html' in txt or '--kiosk "C:\\OE\\' in txt:
+        errors.append('lint #163: พบ path ตายตัวของคำสั่งเต็มจอ')
+    _cm163=re.search(r"#edpanel \.fg-cmd\{[^}]*\}", txt)
+    if not _cm163 or 'white-space:pre-wrap' not in _cm163.group(0) or 'overflow-wrap:anywhere' not in _cm163.group(0):
+        errors.append('lint #163: กล่องคำสั่งต้องตัดบรรทัดได้ (pre-wrap + overflow-wrap:anywhere) ไม่ล้นขอบ')
+    if '#edbar #btnFullGuide.on' not in txt:
+        errors.append('lint #163: ปุ่ม วิธีเต็มจอ ไม่เขียวตอน panel เปิด (กฎข้อ 11)')
+    for _k163 in ('btn.fullGuide','ttl.fullGuide','grp.help'):
+        if txt.count("'"+_k163+"':'")<2: errors.append('lint #163: i18n '+_k163+' ไม่ครบ TH+EN')
+    for _k163 in ('about.tabFull','about.fullHead','about.fullBody','about.full2','about.full3','about.fullNote'):
+        if ("'"+_k163+"'") in txt: errors.append('lint #163: i18n เก่า '+_k163+' ยังค้าง (ขยะ)')
 
     # ---- report ----
     print("=" * 54)

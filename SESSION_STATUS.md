@@ -1,5 +1,18 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 19:30 — ย้ายวิธีเต็มจอจาก About ไปปุ่ม 'วิธีเต็มจอ' แท็บ หน้าจอ (#163) · รอผู้ใช้ทดสอบ
+- ปัญหา: About แท็บ เต็มจอ กล่องคำสั่งตัดตกขอบขวา (pre ไม่มีจุดตัดบรรทัด) · ผู้ใช้เสนอย้ายไปแท็บ หน้าจอ (mock: Info / คำแนะนำ)
+- ใหม่: กลุ่ม 'คำแนะนำ'/'Help' ต่อจากกลุ่ม มุมมอง · ปุ่ม #btnFullGuide 'วิธีเต็มจอ'/'Full Screen Help' (ไอคอนหนังสือ ไม่ใช้ icon info ตามกฎ 12) · เปิด panel ใต้ริบบอน โทน info ไม่มี icon · 3 วิธีเรียงคอลัมน์ (grid auto-fit 260px) · ปุ่มเขียวระหว่างเปิด กดซ้ำ/Esc/คลิกนอก/ปุ่ม ปิด = ปิด · สลับภาษาแล้ว render ใหม่
+- กล่องคำสั่ง .fg-cmd pre-wrap + overflow-wrap:anywhere = ตัดบรรทัด ไม่ล้น
+- คำสั่งสร้างจากตำแหน่งไฟล์ที่เปิดอยู่จริง (_fgPaths: location → file URL สำหรับ --app · path Windows สำหรับ --kiosk · รองรับช่องว่าง/ไทย/UNC — ทดสอบตรรกะใน node แล้ว) แทน path ตายตัว C:\OE\...
+- ข้อความ Kiosk/หน้าต่างแอป เพิ่ม 'ปิดด้วยปุ่ม ปิด ในแท็บ ไฟล์'
+- ลบ About แท็บ เต็มจอ + pane + i18n about.tabFull/fullHead/fullBody/full2/full3/fullNote (TH+EN) · i18n ใหม่ btn.fullGuide/ttl.fullGuide/grp.help/fg.* 13 key
+- lint #70 (About 3 แท็บ + ห้ามมีแท็บ full) · #158 เขียนใหม่ตรวจ _fgRender · #163 ใหม่ · PASS ไม่มี warning · html 8,467,008 bytes
+- commit (รวมงาน เปิดไฟล์เริ่มแท็บ ไฟล์) เมื่อทดสอบผ่าน:
+  git add -A
+  git commit -m "feat: เปิดไฟล์เริ่มที่แท็บ ไฟล์ · ย้ายวิธีเต็มจอจาก About ไปปุ่ม วิธีเต็มจอ แท็บ หน้าจอ (คำสั่งไม่ตกขอบ · path ตามไฟล์ที่เปิด) + lint #70 #131 #157 #158 #163"
+  git push
+
 ## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 17:20 — เปิดไฟล์แล้วเริ่มที่แท็บ ไฟล์ · รอผู้ใช้ทดสอบ
 - ✅ COMMITTED 13f61b5 (pushed c6cfba2..13f61b5) — ย้ายแท็บไฟล์ไปแท็บแรก + ปุ่ม ปิด disabled (#131 #162) · HEAD = 13f61b5
 - แก้: markup edtab/rpane active ย้ายจาก page → view · _tabStartup var n='view' (ไฟล์ที่ save ไว้ตอนอยู่แท็บอื่น เปิดมาก็กลับแท็บไฟล์)

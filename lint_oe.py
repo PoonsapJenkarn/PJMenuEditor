@@ -3257,6 +3257,64 @@ def main():
     for _k157 in ('grp.flGeom','fl.angLbl','fl.lenLbl','fl.mmUnit','ttl.flAng','ttl.flAngDown','ttl.flAngUp','ttl.flLen','ttl.flLenDown','ttl.flLenUp','fl.flAngSet','fl.flLenSet','fl.flNumBad','fl.flLenRange','fl.flNumOnly','fl.flNumOnlyTh'):
         if txt.count("'"+_k157+"':'")<2: errors.append('lint #157: i18n '+_k157+' ไม่ครบ TH+EN')
 
+    # ---- 158) แท็บเต็มจอ: ข้อ 1 = shortcut --app (ไม่ใช้เมนู Chrome ที่เปลี่ยนชื่อ/ถูกปิดได้) · ข้อ 2 = ขั้นตอนสร้าง shortcut + คำสั่ง kiosk อยู่ใต้ข้อ 2 · ข้อ 3 F11 ไม่มีกล่องคำสั่ง (ผู้ใช้ 29 ต.ค. 2026) ----
+    _fp158=txt.find('<div class="about-pane" data-pane="full">'); _fs158=txt[_fp158:_fp158+5000] if _fp158>=0 else ''
+    _o158=[_fs158.find(x) for x in ('data-i18n="about.fullBody"','--app=&quot;file:///' if '--app=&quot;file:///' in _fs158 else '--app="file:///','data-i18n="about.full2"','--kiosk','data-i18n="about.full3"','data-i18n="about.fullNote"')]
+    if min(_o158)<0 or _o158!=sorted(_o158):
+        errors.append('lint #158: ลำดับแท็บเต็มจอต้องเป็น ข้อ 1 → คำสั่ง --app → ข้อ 2 → คำสั่ง --kiosk → ข้อ 3 (F11 ไม่มีกล่องคำสั่ง) → หมายเหตุ')
+    if 'Cast, save' in txt:
+        errors.append('lint #158: ห้ามอ้างเมนู Chrome (Cast, save and share) — ชื่อเมนูเปลี่ยนตามรุ่น และ Create shortcut ถูกปิดได้')
+    for _k158 in ('about.full2','about.full3'):
+        if txt.count("'"+_k158+"':'")<2: errors.append('lint #158: i18n '+_k158+' ไม่ครบ TH+EN')
+    if txt.count('New → Shortcut')<2: errors.append('lint #158: ต้องบอกขั้นตอนสร้าง shortcut (คลิกขวา Desktop → New → Shortcut) ทั้ง TH/EN')
+
+    # ---- 159) สีแท้ครบ 15 สี: แดง ชมพู ส้ม เหลือง เขียว น้ำเงิน ฟ้า ม่วง เทา ขาว ดำ(bw) น้ำตาล ทอง เงิน ครีม · ทอง/เงิน หัวกลุ่มไล่สีแวววาว ทำตาม --secalpha ไม่ทับจอป้าย (ผู้ใช้ 29 ต.ค. 2026) ----
+    _v159={'แดง':'vivid-red','ชมพู':'vivid-pink','ส้ม':'vivid-orange','เหลือง':'vivid-yellow','เขียว':'vivid-green','น้ำเงิน':'vivid-blue','ฟ้า':'vivid-sky','ม่วง':'vivid-purple','เทา':'vivid-gray','ขาว':'vivid-white','ดำ':'bw','น้ำตาล':'vivid-brown','ทอง':'vivid-gold','เงิน':'vivid-silver','ครีม':'vivid-cream'}
+    _mt159=re.search(r"var _THEMES=\[([^\]]*)\]", txt); _my159=re.search(r"var _THEME_TYPE=\{([^}]*)\}", txt)
+    _ty159=dict(re.findall(r"'([a-z-]+)':'([a-z]+)'", _my159.group(1))) if _my159 else {}
+    for _c159,_id159 in _v159.items():
+        if not _mt159 or ("'"+_id159+"'") not in _mt159.group(1) or (':root[data-theme="'+_id159+'"]{') not in txt or _ty159.get(_id159)!='vivid':
+            errors.append('lint #159: สีแท้ '+_c159+' ('+_id159+') ต้องมีธีม + CSS + ประเภท vivid')
+    for _id159 in ('vivid-gold','vivid-silver'):
+        _mg159=re.search(r':root\[data-theme="'+_id159+r'"\] body:not\(\.boardmode\) \.sec-h\{background:linear-gradient\(([^\n]*)\) !important;\}', txt)
+        if not _mg159 or _mg159.group(1).count('var(--secalpha,1)')<3:
+            errors.append('lint #159: '+_id159+' หัวกลุ่มต้องไล่สี (linear-gradient ≥3 จุด ใช้ var(--secalpha,1)) และไม่ทับโหมดจอป้าย (body:not(.boardmode))')
+    _pb159=txt.find('\n.sec-h{color:var(--accent)'); _pg159=txt.find('body:not(.boardmode) .sec-h{background:linear-gradient(')
+    if _pb159<0 or _pg159<_pb159:
+        errors.append('lint #159: กฎไล่สีหัวกลุ่ม ทอง/เงิน ต้องอยู่หลัง .sec-h หลัก (lint #93/#112 อ่าน .sec-h{ ตัวแรก)')
+    # 159b) ชื่อธีมสีแท้ไม่มีคำ สด/แท้ (TH) · Vivid/True (EN) — ประเภทบอกอยู่แล้ว · ชื่อธีมห้ามซ้ำกัน (ผู้ใช้ 29 ต.ค. 2026)
+    for _k159b in ('th.vividRed','th.vividPink','th.vividOrange','th.vividYellow','th.vividGreen','th.vividBlue','th.vividSky','th.vividPurple','th.vividGray','th.vividWhite','th.vividBrown','th.vividGold','th.vividSilver','th.vividCream'):
+        for _v159b in re.findall("'"+re.escape(_k159b)+"':'([^']*)'", txt):
+            if re.search(r'(สด|แท้)$|^(Vivid|True) ', _v159b):
+                errors.append('lint #159: ชื่อธีมสีแท้ '+_k159b+' ต้องไม่มี สด/แท้/Vivid/True ('+_v159b+')')
+    _mk159=re.search(r"var _THEME_KEYS=\{([^}]*)\}", txt)
+    if _mk159:
+        _tk159=set(re.findall(r":'(th\.[A-Za-z]+)'", _mk159.group(1)))
+        for _ln159 in [l for l in txt.split('\n') if "'th.vividRed':'" in l]:
+            _nm159=[v for k,v in re.findall(r"'(th\.[A-Za-z]+)':'([^']*)'", _ln159) if k in _tk159]
+            _dup159=sorted(set(x for x in _nm159 if _nm159.count(x)>1))
+            if _dup159: errors.append('lint #159: ชื่อธีมซ้ำกัน '+', '.join(_dup159))
+
+    if ':root[data-theme="vivid-gray"] .sec-h .sechead *' not in txt:
+        errors.append('lint #159: เทาแท้ หัวกลุ่มต้องตัวขาว')
+    for _k159 in ('th.vividSky','th.vividGold','th.vividSilver','th.vividGray','th.vividWhite','th.vividCream'):
+        if txt.count("'"+_k159+"':'")<2: errors.append('lint #159: i18n '+_k159+' ไม่ครบ TH+EN')
+
+    # ---- 160) dropdown ธีม เรียงตามตัวอักษรของชื่อธีม (TH ลำดับพจนานุกรม localeCompare 'th' · EN 'en') · กำหนดเองอยู่บนสุด · ธีมแรกของประเภท = ตัวแรกในรายการ · สร้างรายการใหม่ตอนเปิด (สลับภาษาแล้วยังเรียงถูก) (ผู้ใช้ 29 ต.ค. 2026) ----
+    _ms160=re.search(r"function _themeSortedIds\(\)\{[^\n]*", txt)
+    if not _ms160 or ".localeCompare(" not in _ms160.group(0) or "'th'" not in _ms160.group(0) or "'en'" not in _ms160.group(0):
+        errors.append('lint #160: ไม่พบ _themeSortedIds เรียงตามตัวอักษร (localeCompare th/en)')
+    _ml160=re.search(r"function _themeDdListHtml\(\)\{(.*?)\n\}", txt, re.S)
+    if not _ml160 or '_themeSortedIds().forEach' not in _ml160.group(1) or '_THEME_ORDER.forEach' in _ml160.group(1):
+        errors.append('lint #160: รายการธีมต้องใช้ _themeSortedIds() ไม่ใช่ _THEME_ORDER')
+    if not _ml160 or _ml160.group(1).find("html+=opt('custom')")<0 or _ml160.group(1).find("html+=opt('custom')")>_ml160.group(1).find('_themeSortedIds().forEach'):
+        errors.append('lint #160: กำหนดเองต้องอยู่บนสุดของรายการธีม')
+    if 'function _themeFltFirst(){ var ids=_themeSortedIds();' not in txt:
+        errors.append('lint #160: ธีมแรกของประเภทต้องเป็นตัวแรกในรายการที่เรียงแล้ว')
+    _mo160=re.search(r"function _themeDdOpen\(\)\{(.*?)\n\}", txt, re.S)
+    if not _mo160 or 'pop.innerHTML=_themeDdListHtml();' not in _mo160.group(1):
+        errors.append('lint #160: เปิด dropdown ธีมต้องสร้างรายการใหม่ (ลำดับตามภาษาปัจจุบัน)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

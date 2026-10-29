@@ -1,5 +1,61 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 13:35 — ปุ่ม ปิด (Exit) แท็บไฟล์ (#162) · รอผู้ใช้ทดสอบ
+- กลุ่มใหม่ 'โปรแกรม'/'App' ต่อจากกลุ่มพิมพ์ · #btnExit 'ปิด'/'Exit' (ไอคอนประตู+ลูกศรออก) · title ttl.exit
+- exitApp(): ไม่มีงานค้าง → ปิดทันที · มีงานยังไม่ Save Editor → panel confirm tone warn (ปุ่มเขียวระหว่างเปิด · กดซ้ำ=ปิด panel) · ตกลง 'ปิดโดยไม่บันทึก'
+- _exitNow(): flush snapshot ค้าง (ร่างกู้คืนล่าสุด) → _exiting=true (beforeunload ไม่ถามซ้ำ) → window.close() → 400ms ยังไม่ปิด → _exiting=false + แถบล่าง warning st.exitBlocked (Alt+F4)
+- i18n TH/EN 6 key · CSS #btnExit.on เขียว · Save Menu ตัด #edbar อยู่แล้ว (ปุ่มไม่ติดไฟล์เมนู)
+- lint #162 (PASS ไม่มี warning · ไฟล์เดิมโดน #162 18 ข้อ = check ทำงานจริง) · html 8,463,075 bytes (8,307,124 chars)
+- ยังไม่แก้: #161 จอป้าย (รอสั่ง) · ข้อ 9 agent (รอ "ยืนยัน")
+- commit เมื่อทดสอบผ่าน:
+  git add -A
+  git commit -m "feat: ปุ่ม ปิด (Exit) แท็บไฟล์ — ถามก่อนถ้ายังไม่ Save Editor · ปิดไม่ได้แจ้ง Alt+F4 + lint #162"
+  git push
+
+## 29 ต.ค. 2026 13:25 — เรื่อง agent: สัญญาณจบเทิร์นกลายเป็น '>' ทุก session ใหม่
+- สาเหตุ (ยืนยันแล้ว): instructions ที่เก็บไว้ (version 8) เขียนถูก = "<< End of Turn >>" แต่ตอนส่งเข้า session ข้อความในวงเล็บมุมถูกตัดทิ้ง (เหมือนเป็นแท็ก HTML) เหลือแค่ '>' → agent ทำตามที่เห็น
+- แผน: เขียนข้อ 9 ใหม่โดยไม่ใช้เครื่องหมาย < > ดิบใน instructions (บรรยายเป็นคำ + ใช้ตัวหนา End of Turn เป็นค่าหลัก) · รอผู้ใช้ยืนยัน diff
+- งาน OE ค้างเดิม: Exit (#162) + จอป้าย (#161) รอคำสั่ง "ต่อ"
+
+## 29 ต.ค. 2026 13:15 — งานใหม่: ปุ่ม ปิด (Exit) แท็บไฟล์ · รอบ 1/2 ตรวจเสร็จ ✅ (ยังไม่แก้ไฟล์)
+- ผลทดสอบจากรูปผู้ใช้: --app (หน้าต่างแอป) ✅ · --kiosk (เต็มจอ) ✅ → #158 ยืนยันในเครื่องจริงแล้ว
+- ผู้ใช้ขอ: ปุ่ม ปิด (Exit) ในแท็บไฟล์ ต่อจากกลุ่ม พิมพ์ เพราะ kiosk ไม่มีทางออก/ย่อ
+- ข้อเท็จจริง (MDN Window.close): ปิดด้วยสคริปต์ได้เฉพาะหน้าต่างที่สคริปต์เปิด หรือ history length = 1 · ย่อหน้าต่าง (minimize) จากหน้าเว็บทำไม่ได้ ไม่มี API
+- จุดในโค้ด: กลุ่ม grp.print @1577231 (btnPrint) · beforeunload @7850311 (เช็ค _dirty) · markDirty @7838670 · openPanel({mode:'confirm',tone:'danger',...}) ใช้ใน del-group @7808139 · i18n grp.print TH @7879059 EN @7916481 · ไม่มี pushState/location.hash (history ไม่โต)
+- **แผนรอบ 2:** rgroup ใหม่หลังกลุ่มพิมพ์ ปุ่ม #btnExit 'ปิด'/'Exit' กลุ่ม 'โปรแกรม'/'App' · exitApp(): _dirty → confirm danger · ตกลง → _exiting=true (ข้าม beforeunload ไม่ถามซ้ำ) → window.close() → 300ms ยังไม่ปิด → _exiting=false + setStatus warning 'ปิดจากปุ่มไม่ได้ · กด Alt+F4' · ตรวจว่า Save Menu ตัด ribbon ออก · i18n TH/EN · lint #162 (#161 จองไว้ให้งานจอป้าย)
+- NEXT: รอผู้ใช้พิมพ์ ต่อ
+
+## 29 ต.ค. 2026 13:05 — session ใหม่ รอบ 1/2 (ตรวจอย่างเดียว ไม่แก้ไฟล์) ✅
+- ยืนยันจาก .git: refs/heads/main = refs/remotes/origin/main = 888db33 (บรรทัด "HEAD บน remote = 35d97a0" ด้านล่างล้าสมัยแล้ว)
+- **บั๊กจอป้าย ยืนยันจากโค้ดแล้ว (ยังไม่ทดสอบในเบราว์เซอร์):** ธีม `:root[data-theme="X"] .sec-h .sechead` = specificity (0,4,0) > `body.boardmode .sec-h .sechead` (0,3,1) · `.sec-h` (0,3,0) > (0,2,1) · ทั้งคู่ !important → ธีมชนะ
+  - ธีมที่โดน (color:#ffffff): bw, mono-dark, vivid-red, vivid-blue, vivid-green (4 ตัวหลัง + text-shadow:none ทับเงาขอบของจอป้ายด้วย), vivid-orange, vivid-purple, vivid-pink, vivid-brown, vivid-gray
+  - ธีมที่โดน (color:var(--txt-name)): navy-dark, wine-dark, coffee-dark, forest-dark, purple-dark, pink-dark, orange-dark, custom · dark-gold = #d4af37
+  - ผล: ตัวหัวกลุ่มสีขาว + เงาขอบขาวของจอป้าย บนพื้น #ECEDEF → แทบมองไม่เห็น
+  - toggleBoardMode แค่สลับ class ไม่เปลี่ยน data-theme (ยืนยัน @8030172)
+- **NEXT รอบ 2 (รอผู้ใช้สั่ง):** แก้ (#161) ยก selector จอป้ายเป็น `:root body.boardmode .sec-h`, `:root body.boardmode .sec-h .sechead(,*)` → (0,3,1)/(0,4,1) ชนะทุกธีม + lint #161 ล็อก
+- ยังรอผู้ใช้ตอบ: (ก) เรียงตัวอักษรทุกประเภทหรือเฉพาะสีแท้ (ข) ชื่อ EN ตัด Vivid/True + Cream-Brown
+
+## >>> HANDOFF ไป session ใหม่ (29 ต.ค. 2026 12:55) — อ่านส่วนนี้ก่อน <<<
+- ✅ อัปเดต 12:57: ทั้ง 5 ข้อด้านล่าง COMMITTED + PUSHED แล้ว — b8f1a2f (cursor #100) + **888db33** (สีแท้ 15 สี/ชื่อ/เรียงตัวอักษร/แท็บเต็มจอ #158 #159 #160) · working tree clean · **HEAD = 888db33** · ไม่มีงานค้าง commit
+- HEAD บน remote = 35d97a0 · lint ถึง #160 · html 8,304,728 bytes
+- **ยังไม่ commit (เขียนลงดิสก์แล้ว lint PASS ทุกตัว · ผู้ใช้ยังไม่ยืนยันผลทดสอบ):**
+  1. cursor กลับเป็นเส้นบาง (เลิก caret-shape:block) — lint #100
+  2. About → แท็บเต็มจอ: ข้อ 1 shortcut --app · ข้อ 2 ขั้นตอนสร้าง shortcut + คำสั่ง --kiosk ใต้ข้อ 2 · ข้อ 3 F11 ไม่มีกล่องคำสั่ง — lint #158 (--app/--kiosk ยังไม่ได้ลองจริงในเครื่อง)
+  3. สีแท้ครบ 15 สี: เพิ่ม vivid-sky/gold/silver/gray/white/cream (ดำ = bw เดิม) · ทอง/เงินหัวกลุ่มไล่สี 5 จุด ใช้ --secalpha ไม่ทับจอป้าย — lint #159
+  4. ชื่อธีมสีแท้ตัด สด/แท้ (TH) Vivid/True (EN) · ธีม cream EN เป็น Cream-Brown (ชื่อชน) — lint #159b
+  5. dropdown ธีมเรียงตามตัวอักษร (_themeSortedIds localeCompare th/en) ทุกประเภท · กำหนดเองบนสุด — lint #160
+- **คำสั่ง commit เมื่อผู้ใช้ทดสอบผ่าน:**
+  git add -A
+  git commit -m "feat: สีแท้ครบ 15 สี (+ฟ้า ทอง เงิน เทา ขาว ครีม) ชื่อไม่มี สด/แท้ · ทอง/เงิน หัวกลุ่มไล่สี · dropdown ธีมเรียงตามตัวอักษร · fix: cursor เส้นบาง · แท็บเต็มจอ shortcut + lint #100 #158 #159 #160"
+  git push
+- **ต้องถามผู้ใช้/ยังค้าง:**
+  - เรียงตัวอักษรใช้ทุกประเภท (รวม ทั้งหมด) — ถ้าผู้ใช้ต้องการเฉพาะสีแท้ ต้องแก้ _themeDdListHtml
+  - ชื่อ EN ตัด Vivid/True + Cream-Brown = agent ทำเพิ่มเอง รอผู้ใช้ยืนยัน
+  - บั๊กที่คาดว่ามี (ยังไม่ยืนยันในเบราว์เซอร์): ธีมสีแท้ที่หัวกลุ่มตัวขาว (แดง/น้ำเงิน/เขียว/ส้ม/ม่วง/ชมพู/น้ำตาล/เทา + bw/mono-dark) override specificity สูงกว่า body.boardmode → โหมดจอป้ายอาจได้ตัวขาวบนพื้นเทา #ECEDEF
+  - งานต่อ: เส้นลอย multi-select/จัดกลุ่มร่วมกล่องข้อความ · หน้าเมนูยืดตามกล่องข้อความ · local override ขอบ/สีรายชิ้น
+- **วิธีทำงาน (ใช้ต่อ):** อ่านไฟล์ 8MB ด้วย ripgrep (`-U` ถ้ามี \n) หรือ python on device อ่านทีละบรรทัด · แก้ด้วย run_python_on_device_with_write: sub1() count==1 → problems[] → lint in-memory (class _Exit + FakeSys.exit + g['open']=fake_open + g['sys']=fs + g['main']()) → assert rc==0 ก่อนเขียน · กฎ lint ใหม่แทรกก่อน `    # ---- report ----` · agent รัน git ไม่ได้ ผู้ใช้รันเอง · ตอบภาษาไทย จบเทิร์นด้วย << End of Turn >> สีเขียว + STATUS
+- **lint gotchas:** #93/#112 อ่าน `.sec-h{` ตัวแรก → กฎ .sec-h ใหม่ต้องอยู่หลัง .sec-h หลัก · #111 อ่าน `@media print{body{` ตัวแรก → ใช้ html>body · i18n ห้ามขึ้นต้น ⚠ · input text ใหม่ต้องเข้า _FILTERED16 · ชื่อธีมห้ามซ้ำ (#159b)
+
 ## เสร็จ (ยังไม่ commit) 29 ต.ค. 11:15 — dropdown ธีม เรียงตามตัวอักษรของชื่อธีม (_themeSortedIds: localeCompare 'th' / 'en') ทุกประเภท · กำหนดเองบนสุด · ธีมแรกของประเภท = ตัวแรกในรายการ · สร้างรายการใหม่ตอนเปิด (สลับภาษาแล้วยังเรียงถูก) · _THEME_ORDER/_THEME_GROUPS คงไว้ (lint #116) · lint #160 · html 8,304,728 bytes · รอทดสอบ
 
 ## เสร็จ (ยังไม่ commit) 29 ต.ค. 11:00 — ชื่อธีมสีแท้ 14 ตัว ตัดคำ สด/แท้ ออก (TH) + Vivid/True (EN) · ธีม cream เดิม EN 'Cream' -> 'Cream-Brown' (ชื่อชนกับ ครีม ของสีแท้ · ตรงชื่อไทย ครีม-น้ำตาล) · lint #159b (ห้าม สด/แท้/Vivid/True + ชื่อธีมห้ามซ้ำ) · html 8,304,146 bytes · รอทดสอบ

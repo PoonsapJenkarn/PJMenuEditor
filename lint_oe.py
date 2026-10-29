@@ -3315,6 +3315,27 @@ def main():
     if not _mo160 or 'pop.innerHTML=_themeDdListHtml();' not in _mo160.group(1):
         errors.append('lint #160: เปิด dropdown ธีมต้องสร้างรายการใหม่ (ลำดับตามภาษาปัจจุบัน)')
 
+    # ---- 162) ปุ่ม ปิด (Exit) แท็บไฟล์ ต่อจากกลุ่มพิมพ์ · ยังไม่ Save Editor = ถามก่อน · ยืนยันแล้วไม่ถามซ้ำ · ปิดไม่ได้ = แจ้ง Alt+F4 ตรงๆ (ผู้ใช้ 29 ต.ค. 2026) ----
+    if txt.count('id="btnExit"')!=1 or 'id="btnExit" onclick="exitApp()"' not in txt:
+        errors.append('lint #162: ต้องมีปุ่ม #btnExit 1 ปุ่ม ผูก exitApp()')
+    else:
+        _pe162=txt.find('id="btnExit"'); _pp162=txt.find('data-i18n="grp.print"'); _pn162=txt.find('<div class="rpane', _pp162)
+        if not (0<=_pp162<_pe162<_pn162): errors.append('lint #162: ปุ่ม ปิด ต้องอยู่แท็บไฟล์ ต่อจากกลุ่ม พิมพ์')
+    _fx162=re.search(r"\nfunction exitApp\(\)\{[\s\S]*?\n\}", txt)
+    for _n162 in ("activeBtn:'btnExit'","if(!_dirty){ _exitNow(); return; }","msgKey:'pnl.exitMsg'"):
+        if not _fx162 or _n162 not in _fx162.group(0): errors.append('lint #162: exitApp ขาด '+_n162)
+    _fn162=re.search(r"\nfunction _exitNow\(\)\{[\s\S]*?\n\}", txt)
+    for _n162 in ('_exiting=true;','window.close()','window.closed','_exiting=false;',"tk('st.exitBlocked')","_takeSnapshot()"):
+        if not _fn162 or _n162 not in _fn162.group(0): errors.append('lint #162: _exitNow ขาด '+_n162)
+    if 'if(_dirty && !_exiting){ e.preventDefault();' not in txt:
+        errors.append('lint #162: beforeunload ต้องข้ามเมื่อยืนยันปิดแล้ว (_exiting)')
+    if '#edbar #btnExit.on{background:#217346;' not in txt:
+        errors.append('lint #162: ปุ่ม ปิด ไม่เขียวตอน panel เปิด (กฎข้อ 11)')
+    for _k162 in ('btn.exit','ttl.exit','grp.app','pnl.exitOk','pnl.exitMsg','st.exitBlocked'):
+        if txt.count("'"+_k162+"':'")<2: errors.append('lint #162: i18n '+_k162+' ไม่ครบ TH+EN')
+    if "'#edbar'," not in txt[txt.find('function buildMenuHtml('):txt.find('function buildMenuHtml(')+600]:
+        errors.append('lint #162: Save Menu ต้องตัด #edbar (ปุ่ม ปิด ไม่ติดไปในไฟล์เมนู)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

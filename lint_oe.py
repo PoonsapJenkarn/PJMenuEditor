@@ -3376,11 +3376,16 @@ def main():
         errors.append('lint #163: คำสั่งเป็นแม่แบบ + ตัวอย่าง (ผู้ใช้ 29 ต.ค. 2026) — ห้ามกลับไปสร้างจากตำแหน่งไฟล์/เดาพาธเบราว์เซอร์ (_fgPaths/_FG_CHROME)')
     if 'file:///C:/OE/OEIsanHotpotMenuEditor.html' in txt or '--kiosk "C:\\OE\\' in txt:
         errors.append('lint #163: พบ path ตายตัวของคำสั่งเต็มจอ')
+    _fw163=re.search(r"#edpanel \.fg-wrap\{[^}]*\}", txt)
+    if not _fw163 or 'contain:inline-size' not in _fw163.group(0):
+        errors.append('lint #163: .fg-wrap ต้องมี contain:inline-size — ไม่งั้น body width:max-content (#153) ถูกข้อความยาวดันให้กว้างเกินจอ (หมายเหตุตกขอบ · ปุ่มขวาหาย)')
     _cm163=re.search(r"#edpanel \.fg-cmd\{[^}]*\}", txt)
     if not _cm163 or 'white-space:pre-wrap' not in _cm163.group(0) or 'overflow-wrap:anywhere' not in _cm163.group(0):
         errors.append('lint #163: กล่องคำสั่งต้องตัดบรรทัดได้ (pre-wrap + overflow-wrap:anywhere) ไม่ล้นขอบ')
     if '#edbar #btnFullGuide.on' not in txt:
         errors.append('lint #163: ปุ่ม วิธีเต็มจอ ไม่เขียวตอน panel เปิด (กฎข้อ 11)')
+    if "'btn.fullGuide':'วิธีเปิดเต็มจอ'" not in txt or 'data-i18n="btn.fullGuide">วิธีเปิดเต็มจอ<' not in txt:
+        errors.append('lint #163: ชื่อปุ่มต้องเป็น วิธีเปิดเต็มจอ (มี วิธี = คำแนะนำ ไม่ใช่กดแล้วเต็มจอ · ตรงหัวข้อแผง · ผู้ใช้ 29 ต.ค. 2026)')
     for _k163 in ('btn.fullGuide','ttl.fullGuide','grp.help'):
         if txt.count("'"+_k163+"':'")<2: errors.append('lint #163: i18n '+_k163+' ไม่ครบ TH+EN')
     for _k163 in ('about.tabFull','about.fullHead','about.fullBody','about.full2','about.full3','about.fullNote'):

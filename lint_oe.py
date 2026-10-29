@@ -2945,10 +2945,10 @@ def main():
     for _k130 in ('typ.ftext','btn.ftextAdd','ttl.ftextAdd','grp.insert','ttl.ftextDel','ft.default','fl.ftextAdd','fl.ftextDel','fl.ftextEmpty','st.ftextSel','st.ftextEdit'):
         if txt.count("'"+_k130+"':'")<2: errors.append('lint #130: i18n '+_k130+' ไม่ครบ TH+EN')
 
-    # ---- 131) ลำดับแท็บ: หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด) ----
+    # ---- 131) ลำดับแท็บ: ไฟล์ · หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด · 29 ต.ค. 2026 ย้าย ไฟล์ ไปแท็บแรก · แท็บเริ่มต้นยังเป็น หน้า) ----
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
-    if _ord131!=['page','home','image','template','screen','view','fmt','fln']:  # fmt = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
-        errors.append('lint #131: ลำดับแท็บต้องเป็น หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ตอนนี้ '+','.join(_ord131)+')')
+    if _ord131!=['view','page','home','image','template','screen','fmt','fln']:  # view = แท็บ ไฟล์ · fmt/fln = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
+        errors.append('lint #131: ลำดับแท็บต้องเป็น ไฟล์ · หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ (ตอนนี้ '+','.join(_ord131)+')')
     if not re.search(r'<button class="edtab active" data-tab="page"', txt) or not re.search(r'<div class="rpane active" data-pane="page">', txt) or 'function _tabStartup(' not in txt:
         errors.append('lint #131: แท็บเริ่มต้นต้องเป็น หน้า (markup + _tabStartup ตอนเปิดไฟล์)')
     if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:

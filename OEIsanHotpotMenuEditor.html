@@ -562,6 +562,34 @@ body:not(.editmode) .ftext .fth,body:not(.editmode) .ftext .ftdel{display:none !
 .ftgh[data-d="se"]{top:auto;bottom:-6px;right:-6px;cursor:nwse-resize;}
 body:not(.editmode) .ftgrp{display:none !important;}
 @media print{.ftgrp{display:none !important;}}
+/* ===== เส้นลอย (ขั้น C · ผู้ใช้ 28 ต.ค. 2026) · ตัวเส้น = border-top ของ div หมุนรอบจุดเริ่ม (transform-origin 0 50% = กลางเส้น) · style inline แสดง/พิมพ์ได้โดยไม่ต้องมีสคริปต์ ===== */
+.fline{position:absolute;z-index:21;height:0;box-sizing:content-box;transform-origin:0 50%;pointer-events:none;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@media screen{body.editmode .fline{pointer-events:auto;cursor:move;}
+body.editmode .fline::after{content:'';position:absolute;left:-1mm;right:-1mm;top:-3mm;height:5mm;}}  /* พื้นที่คลิกรอบเส้น ~5mm · เส้นบาง 0.5px ก็คลิกโดน */
+.flhl{position:absolute;z-index:20;height:0;box-sizing:content-box;transform-origin:0 50%;pointer-events:none;}
+.flh{position:absolute;z-index:27;width:11px;height:11px;margin:-6px 0 0 -6px;box-sizing:border-box;background:#fff;border:1.5px solid #217346;border-radius:50%;cursor:crosshair;}
+.fldel{position:absolute;z-index:27;width:22px;height:22px;margin:-11px 0 0 -11px;box-sizing:border-box;border-radius:50%;background:#d13438;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);font:700 13px/18px sans-serif;text-align:center;cursor:pointer;}
+body:not(.editmode) .flh,body:not(.editmode) .fldel,body:not(.editmode) .flhl{display:none !important;}
+@media print{.flh,.fldel,.flhl{display:none !important;}}
+body:not(.flsel) #edtabs .edtab[data-tab="fln"],body:not(.editmode) #edtabs .edtab[data-tab="fln"]{display:none;}  /* แท็บตามบริบท: โผล่เมื่อเลือกเส้น */
+#edribbon .flsws{flex-wrap:wrap;max-width:140px;gap:3px;align-content:center;align-items:center;}
+#edribbon .flsw{width:22px;height:22px;border:1px solid #c8c6c4;border-radius:4px;padding:0;cursor:pointer;}
+#edribbon .flsw-theme{width:auto;padding:0 6px;font-family:'Prompt',sans-serif;font-size:12px;color:#fff;background:var(--line-dot);}
+#edribbon .flsw.on{outline:2px solid #217346;outline-offset:1px;}
+#edribbon .flopts{flex-wrap:wrap;max-width:240px;gap:3px;align-content:center;align-items:center;}
+#edribbon .flopt{font-family:'Prompt',sans-serif;font-size:15px;padding:2px 8px;border:1px solid #d2d0ce;border-radius:4px;background:#fff;color:#323130;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+#edribbon .flopt:hover:not(.on){background:#eef7f1;border-color:#217346;}
+#edribbon .flopt.on{background:#217346;border-color:#217346;color:#fff;}  /* ข้อ 11: สถานะที่ใช้อยู่ = เขียว */
+#edribbon .flpv{display:inline-block;width:22px;border-top:3px solid currentColor;}
+#edribbon .flunit{font-size:13px;color:#605e5c;}
+#edribbon .flgeo{flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;}
+#edribbon .flfld{display:inline-flex;align-items:center;gap:6px;font-family:'Prompt',sans-serif;font-size:15px;color:#323130;}
+#edribbon .fllbl{min-width:34px;}
+#edribbon .flbox{display:inline-flex;align-items:center;border:1px solid #ccc;border-radius:6px;overflow:hidden;height:28px;}
+#edribbon .flbox .szbtn{border:none;background:#fff;width:24px;height:28px;cursor:pointer;font-size:15px;font-weight:600;color:#217346;padding:0;}
+#edribbon .flbox .szbtn:hover{background:#eef7f1;}
+#edribbon .flbox .szbtn:active{background:#dce9e0;}
+#edribbon .flbox input{width:54px;border:none;border-left:1px solid #eee;border-right:1px solid #eee;border-radius:0;text-align:center;padding:0;height:28px;font-family:inherit;font-size:16px;}
 @media print{.ftext{outline:none !important;}.ftext .fth,.ftext .ftdel{display:none !important;}}
 /* ===== IMAGE PLACEMENT (added) ===== */
 .sec-b{position:relative;}
@@ -1287,7 +1315,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
     <button class="edtab" data-tab="home" data-i18n="tab.text" onclick="switchTab('home')">ข้อความ</button>
     <button class="edtab" data-tab="image" data-i18n="tab.image" onclick="switchTab('image')">รูป</button>
     <button class="edtab" data-tab="template" data-i18n="tab.template" onclick="switchTab('template')">เท็มเพลต</button>
-    <button class="edtab" data-tab="screen" data-i18n="tab.screen" onclick="switchTab('screen')">หน้าจอ</button><button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button><button class="edtab ctx" data-tab="fmt" onclick="switchTab('fmt')" data-i18n-title="ttl.tabFmt" title="เครื่องมือรูปแบบข้อความ · โผล่เฉพาะตอนแก้ข้อความ"><span class="ctxl" data-i18n="tab.fmtCtx">เครื่องมือข้อความ</span><span data-i18n="tab.fmt">รูปแบบข้อความ</span></button>
+    <button class="edtab" data-tab="screen" data-i18n="tab.screen" onclick="switchTab('screen')">หน้าจอ</button><button class="edtab" data-tab="view" data-i18n="tab.file" onclick="switchTab('view')">ไฟล์</button><button class="edtab ctx" data-tab="fmt" onclick="switchTab('fmt')" data-i18n-title="ttl.tabFmt" title="เครื่องมือรูปแบบข้อความ · โผล่เฉพาะตอนแก้ข้อความ"><span class="ctxl" data-i18n="tab.fmtCtx">เครื่องมือข้อความ</span><span data-i18n="tab.fmt">รูปแบบข้อความ</span></button><button class="edtab ctx" data-tab="fln" onclick="switchTab('fln')" data-i18n-title="ttl.tabFln" title="เครื่องมือรูปแบบเส้น · โผล่เมื่อเลือกเส้น"><span class="ctxl" data-i18n="tab.flnCtx">เครื่องมือเส้น</span><span data-i18n="tab.fln">รูปแบบเส้น</span></button>
     <span class="hint" id="edhint"></span>
     <span class="qab"><button id="btnUndo" onclick="undo()" data-i18n-title="ttl.undo" title="ย้อนกลับ (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg><span class="qab-badge" id="undoBadge"></span></button><button id="btnRedo" onclick="redo()" data-i18n-title="ttl.redo" title="ทำซ้ำ (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg><span class="qab-badge" id="redoBadge"></span></button></span>
     <span class="zoomctl"><button class="zbtn" id="zoomOut" onclick="zoomOut()" data-i18n-title="ttl.zoomOut" title="ย่อหน้า">−</button><span class="a4split"><input id="zoomLvl" type="text" inputmode="numeric" value="100%" onfocus="this.select()" oninput="_zoomFilter(this)" onchange="_zoomType()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" data-i18n-title="ttl.zoomType" title="พิมพ์ % แล้วกด Enter · 100 = ขนาดเดิม"><button type="button" class="a4caret" id="zoomDd" aria-haspopup="listbox" aria-expanded="false" onclick="_zoomDdToggle(event)" data-i18n-title="ttl.zoomDd" title="เลือกขนาดซูม"><span class="cp-caret">▾</span></button></span><button class="zbtn" id="zoomIn" onclick="zoomIn()" data-i18n-title="ttl.zoomIn" title="ขยายหน้า">+</button><button class="zbtn zfitic" id="zoomFit" onclick="zoomFitPage()" data-i18n-title="ttl.zoomFit" title="เห็นทั้งหน้าในจอ"><svg viewBox="0 0 24 24"><path d="M4 9V4H9"/><path d="M20 9V4H15"/><path d="M4 15V20H9"/><path d="M20 15V20H15"/></svg></button><span class="a4split"><button class="zbtn zfit" id="zoomA4" onclick="zoomA4()" data-i18n-title="ttl.zoomA4" title="กว้างขนาด A4"><span data-i18n="zoom.a4">A4</span></button><button type="button" class="a4caret" id="btnCal" onclick="openCal()" data-i18n-title="btn.cal" title="ปรับเทียบจอ"><span class="cp-caret">▾</span></button></span></span>
@@ -1305,6 +1333,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
       </div><div class="rgl" data-i18n="grp.mode">โหมด</div></div>
       <div class="rgroup"><div class="rgb">
         <button class="b-lg" id="btnFtextAdd" onclick="ftextAdd()" title="เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์" data-i18n-title="ttl.ftextAdd"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M8 9.5h8M12 9.5v6"/></svg><span data-i18n="btn.ftextAdd">กล่องข้อความ</span></button>
+        <button class="b-lg" id="btnFlineAdd" onclick="flineAdd()" title="เพิ่มเส้นลอย · ลากย้าย · ลากปลายเส้นเพื่อยืด/หมุน" data-i18n-title="ttl.flineAdd"><svg viewBox="0 0 24 24"><path d="M4 18L20 6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span data-i18n="btn.flineAdd">เส้น</span></button>
       </div><div class="rgl" data-i18n="grp.insert">แทรก</div></div>
     </div>
     <div class="rpane" data-pane="fmt">  <!-- แท็บตามบริบท รูปแบบข้อความ: โผล่เฉพาะตอนแก้ข้อความ · ฟอนต์+จัดรูปแบบย้ายจากแท็บข้อความ (ผู้ใช้ 27 ต.ค. 2026 · แบบ Office contextual tab) -->
@@ -1365,6 +1394,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
       </div>
       <div class="rgroup"><div class="rgb">  <!-- แท็บรูปแบบข้อความ: เพิ่มกล่องข้อความต่อได้โดยไม่ต้องกลับแท็บข้อความ (ผู้ใช้ 28 ต.ค. 2026) -->
         <button class="b-lg" id="btnFtextAddFmt" onclick="ftextAdd()" title="เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์" data-i18n-title="ttl.ftextAdd"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M8 9.5h8M12 9.5v6"/></svg><span data-i18n="btn.ftextAdd">กล่องข้อความ</span></button>
+        <button class="b-lg" id="btnFlineAddFmt" onclick="flineAdd()" title="เพิ่มเส้นลอย · ลากย้าย · ลากปลายเส้นเพื่อยืด/หมุน" data-i18n-title="ttl.flineAdd"><svg viewBox="0 0 24 24"><path d="M4 18L20 6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span data-i18n="btn.flineAdd">เส้น</span></button>
       </div><div class="rgl" data-i18n="grp.insert">แทรก</div></div>
       <div class="rgroup"><div class="rgb">  <!-- จัดกลุ่มกล่องข้อความ: เลือก 2 กล่องขึ้นไป · Ctrl+G / Ctrl+Shift+G (ผู้ใช้ 28 ต.ค. 2026) -->
         <button class="b-lg" id="btnFtGroup" onclick="ftGroup()" disabled title="เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน (Ctrl+คลิก · Shift+คลิก · ลากกรอบ)" data-i18n-title="ttl.ftGroupNeed"><svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="1.5" stroke-dasharray="2.5 2"/><rect x="6" y="6" width="7" height="6" rx="1"/><rect x="11" y="12" width="7" height="6" rx="1"/></svg><span data-i18n="btn.ftGroup">จัดกลุ่ม</span></button>
@@ -1401,6 +1431,15 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
       <div class="rgroup"><div class="rgb">
         <button class="b-lg imghide" id="btnImgHide" onclick="toggleImgHide()" title="ซ่อนรูปอาหารบนจอ (พิมพ์/บันทึกยังมีรูป)" data-i18n-title="ttl.imgHide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 8.5 4.5 9.5 6a17 17 0 0 1-2.9 3.4M6.3 7.6A17 17 0 0 0 2.5 12c1 1.5 4.5 6 9.5 6a9.6 9.6 0 0 0 4.4-1.1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><span data-i18n="btn.imgHide">ซ่อนรูป</span></button>
       </div><div class="rgl" data-i18n="grp.imgview">มุมมอง</div></div>
+    </div>
+    <div class="rpane" data-pane="fln" id="flPane">  <!-- แท็บตามบริบท รูปแบบเส้น: โผล่เมื่อเลือกเส้นลอย (ผู้ใช้ 28 ต.ค. 2026) -->
+      <div class="rgroup"><div class="rgb flsws"><button type="button" class="flsw flsw-theme" data-flc="theme" data-i18n-title="ttl.flTheme" title="สีเส้นตามธีม · เปลี่ยนธีมแล้วเส้นเปลี่ยนสีตาม"><span data-i18n="fl.theme">ตามธีม</span></button><button type="button" class="flsw" data-flc="#1F1F1F" title="#1F1F1F" style="background:#1F1F1F"></button><button type="button" class="flsw" data-flc="#8A8886" title="#8A8886" style="background:#8A8886"></button><button type="button" class="flsw" data-flc="#C0392B" title="#C0392B" style="background:#C0392B"></button><button type="button" class="flsw" data-flc="#217346" title="#217346" style="background:#217346"></button><button type="button" class="flsw" data-flc="#C9A227" title="#C9A227" style="background:#C9A227"></button><button type="button" class="flsw" data-flc="#1592D9" title="#1592D9" style="background:#1592D9"></button><button type="button" class="flsw" data-flc="#FFFFFF" title="#FFFFFF" style="background:#FFFFFF"></button></div><div class="rgl" data-i18n="grp.flColor">สีเส้น</div></div>
+      <div class="rgroup"><div class="rgb flopts"><button type="button" class="flopt" data-flw="0.5">0.5</button><button type="button" class="flopt" data-flw="1">1</button><button type="button" class="flopt" data-flw="1.5">1.5</button><button type="button" class="flopt" data-flw="2">2</button><button type="button" class="flopt" data-flw="3">3</button><button type="button" class="flopt" data-flw="4">4</button><button type="button" class="flopt" data-flw="5">5</button><span class="flunit">px</span></div><div class="rgl" data-i18n="grp.flWidth">ความหนา</div></div>
+      <div class="rgroup"><div class="rgb flopts"><button type="button" class="flopt" data-fls="solid"><span class="flpv" style="border-top-style:solid"></span><span data-i18n="fls.solid">ทึบ</span></button><button type="button" class="flopt" data-fls="dashed"><span class="flpv" style="border-top-style:dashed"></span><span data-i18n="fls.dashed">ขีด</span></button><button type="button" class="flopt" data-fls="dotted"><span class="flpv" style="border-top-style:dotted"></span><span data-i18n="fls.dotted">จุด</span></button><button type="button" class="flopt" data-fls="double" data-i18n-title="ttl.flsDouble" title="เส้นคู่ · หนา 3px ขึ้นไปจึงเห็นเป็น 2 เส้น"><span class="flpv" style="border-top-style:double"></span><span data-i18n="fls.double">คู่</span></button></div><div class="rgl" data-i18n="grp.flStyle">แบบเส้น</div></div>
+      <div class="rgroup"><div class="rgb flopts"><button type="button" class="flopt" data-flo="h"><span data-i18n="btn.flH">แนวนอน</span></button><button type="button" class="flopt" data-flo="v"><span data-i18n="btn.flV">แนวตั้ง</span></button></div><div class="rgl" data-i18n="grp.flOrient">แนว</div></div>
+      <div class="rgroup"><div class="rgb flgeo"><span class="flfld"><span class="fllbl" data-i18n="fl.angLbl">มุม</span><span class="flbox"><button type="button" class="szbtn" id="flAngDown" onclick="_flAngStep(-1)" title="หมุนทวนเข็ม 1°" data-i18n-title="ttl.flAngDown">−</button><input type="text" id="flAng" inputmode="decimal" autocomplete="off" title="มุมเส้น (องศา · 0 = แนวนอน · 90 = แนวตั้ง) · พิมพ์แล้วกด Enter · หมุนรอบกลางเส้น · คลิกช่องแล้วหมุนล้อเมาส์ = ทีละ 1°" data-i18n-title="ttl.flAng"><button type="button" class="szbtn" id="flAngUp" onclick="_flAngStep(1)" title="หมุนตามเข็ม 1°" data-i18n-title="ttl.flAngUp">+</button></span><span class="flunit">°</span></span><span class="flfld"><span class="fllbl" data-i18n="fl.lenLbl">ยาว</span><span class="flbox"><button type="button" class="szbtn" id="flLenDown" onclick="_flLenStep(-1)" title="สั้นลง 1 มม." data-i18n-title="ttl.flLenDown">−</button><input type="text" id="flLen" inputmode="decimal" autocomplete="off" title="ความยาวเส้น 3–400 มม. · พิมพ์แล้วกด Enter · ยึดปลายจุดเริ่ม · คลิกช่องแล้วหมุนล้อเมาส์ = ทีละ 1 มม." data-i18n-title="ttl.flLen"><button type="button" class="szbtn" id="flLenUp" onclick="_flLenStep(1)" title="ยาวขึ้น 1 มม." data-i18n-title="ttl.flLenUp">+</button></span><span class="flunit" data-i18n="fl.mmUnit">มม.</span></span></div><div class="rgl" data-i18n="grp.flGeom">มุม · ความยาว</div></div>
+      <div class="rgroup"><div class="rgb"><button class="b-lg" id="btnFlineAddLn" onclick="flineAdd()" title="เพิ่มเส้นลอย · ลากย้าย · ลากปลายเส้นเพื่อยืด/หมุน" data-i18n-title="ttl.flineAdd"><svg viewBox="0 0 24 24"><path d="M4 18L20 6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span data-i18n="btn.flineAdd">เส้น</span></button></div><div class="rgl" data-i18n="grp.insert">แทรก</div></div>
+      <div class="rgroup"><div class="rgb"><button class="b-lg" id="btnFlDel" onclick="_flDelete()" title="ลบเส้นนี้ (Delete)" data-i18n-title="ttl.flDel"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span data-i18n="btn.flDel">ลบเส้น</span></button></div><div class="rgl" data-i18n="grp.flDelete">ลบ</div></div>
     </div>
     <div class="rpane" data-pane="view">
       <div class="rgroup"><div class="rgb">
@@ -1475,6 +1514,17 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
           b._pc={mh:b.style.maxHeight, mn:b.style.minHeight, ov:b.style.overflow, d:b.style.display};
           if(lim<=0.5){ b.style.display='none'; } else { b.style.minHeight='0'; b.style.maxHeight=lim.toFixed(2)+'mm'; b.style.overflow='hidden'; }
         } else if(b._pc){ b.style.maxHeight=b._pc.mh; b.style.minHeight=b._pc.mn; b.style.overflow=b._pc.ov; b.style.display=b._pc.d; b._pc=null; }
+      }
+      var fl=ps[i].querySelectorAll('.fline');  /* เส้นลอยที่เลยขอบกระดาษล่าง: ตัดให้จบที่ 297mm ชั่วคราว · ทั้งเส้นอยู่นอก = ซ่อน (กันหน้าขาวเกินแบบกล่องข้อความ · ผู้ใช้ 28 ต.ค. 2026) */
+      for(var k=0;k<fl.length;k++){ var q=fl[k];
+        if(on){ var x1=parseFloat(q.getAttribute('data-x1'))||0, y1=parseFloat(q.getAttribute('data-y1'))||0, x2=parseFloat(q.getAttribute('data-x2'))||0, y2=parseFloat(q.getAttribute('data-y2'))||0;
+          if(Math.max(y1,y2)<=297+0.05) continue;
+          q._pc={d:q.style.display, l:q.style.left, t:q.style.top, w:q.style.width};
+          if(Math.min(y1,y2)>=297-0.05){ q.style.display='none'; continue; }
+          var cx=x1+(x2-x1)*((297-y1)/(y2-y1));
+          if(y1>297){ q.style.left=cx.toFixed(2)+'mm'; q.style.top='297mm'; q.style.width=Math.hypot(x2-cx,y2-297).toFixed(2)+'mm'; }
+          else q.style.width=Math.hypot(cx-x1,297-y1).toFixed(2)+'mm';
+        } else if(q._pc){ q.style.display=q._pc.d; q.style.left=q._pc.l; q.style.top=q._pc.t; q.style.width=q._pc.w; q._pc=null; }
       }
     }
   }
@@ -2017,6 +2067,7 @@ function toggleEdit(keepTab){  /* keepTab = เข้าโหมดโดยไ
   });
   decorate(on);
   if(!on && typeof _ftDeselect==='function') _ftDeselect();
+  if(!on && typeof _flDeselect==='function') _flDeselect();  /* ออกจากโหมด = เลิกเลือกเส้น */
   if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด = จัดหน้าเปล่า · ออกโหมด = ล้างค่า */
   if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }  /* เข้าโหมด = เลือกแท็บรูปแบบข้อความให้เอง · ออกโหมดตอนอยู่แท็บนั้น = กลับแท็บข้อความ (แท็บถูกซ่อนแล้ว) · Office contextual tab (ผู้ใช้ 27 ต.ค. 2026) */  /* ออกจากโหมดแก้ข้อความ = เลิกเลือก/เลิกพิมพ์กล่องข้อความ */
   var btn=document.getElementById('btnEdit');
@@ -2118,9 +2169,9 @@ function buildEditorHtml(){
      file is itself a working editor. Only strips transient runtime state. */
   var clone=document.documentElement.cloneNode(true);
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
-  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl').forEach(function(el){el.remove();});
   clone.querySelectorAll('.page.pgblank').forEach(function(p){ p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
-  var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove();  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
+  var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove(); var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -2149,9 +2200,9 @@ function buildMenuHtml(){
   var clone=document.documentElement.cloneNode(true);
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
   ['#edbar','#edstatus','#editorUI','#editorScript','#actlog','#draftBar','#aboutModal','#pasteModal','#edgeDdPop','#zoomDdPop','#uiDdPop','#calModal','#presentBar'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
-  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#secIconInput,#pageBgInput,#edpanel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,#imgbar').forEach(function(el){el.remove();});
+  clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#secIconInput,#pageBgInput,#edpanel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl,#imgbar').forEach(function(el){el.remove();});
   clone.querySelectorAll('.page.pgblank').forEach(function(p){ p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
-  var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove();  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
+  var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove(); var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
   clone.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -2298,7 +2349,7 @@ function _serializePages(){
   var wrap=document.createElement('div');
   for(var i=0;i<pages.length;i++){ wrap.appendChild(pages[i].cloneNode(true)); }
   /* strip transient editor artifacts — snapshot เก็บเฉพาะเนื้อหาสะอาด */
-  wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});
+  wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl').forEach(function(el){el.remove();});
   wrap.querySelectorAll('.page.pgblank').forEach(function(p){ p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ */
@@ -2341,7 +2392,7 @@ function _restorePages(html){
   if(typeof renumber==='function') renumber();
   if(typeof decorate==='function') decorate(document.body.classList.contains('editmode'));
   _reapplyEditable();
-  if(typeof _ftSel!=='undefined'){ _ftSel=null; _ftEdit=null; _ftDrag=null; _ftSet=[]; _ftMarq=null; } if(typeof _ftGroupSync==='function') _ftGroupSync();  /* กล่องข้อความเดิมถูกแทนด้วย snapshot · ปุ่มจัดกลุ่มตามสถานะใหม่ */
+  if(typeof _ftSel!=='undefined'){ _ftSel=null; _ftEdit=null; _ftDrag=null; _ftSet=[]; _ftMarq=null; } if(typeof _ftGroupSync==='function') _ftGroupSync(); if(typeof _flAfterRestore==='function') _flAfterRestore();  /* กล่องข้อความเดิมถูกแทนด้วย snapshot · ปุ่มจัดกลุ่มตามสถานะใหม่ */
   if(typeof _imgBind==='function') document.querySelectorAll('.fimg').forEach(_imgBind);
   var _sha=document.getElementById('btnShdAll'); if(_sha && _sha.classList.contains('on') && typeof closePanel==='function') closePanel();  /* panel ใช้เงากับทุกรูป: รูปต้นแบบถูกแทนแล้ว = ปิด */
   if(_typoEl && !document.contains(_typoEl) && typeof typoClear==='function') typoClear();  /* ช่องที่เลือกถูกแทนด้วย snapshot — แถบรูปแบบต้องจาง ไม่แก้ช่องที่หลุดจากหน้า (lint ข้อ 40) */
@@ -2809,7 +2860,7 @@ var I18N={
   'pnl.applyAllOk':'นำไปใช้','pnl.resetOk':'คืนค่า','pnl.resetMsg':'คืนค่าเริ่มต้นของ<b>{label}</b>ที่เลือกใช่ไหม? การปรับแต่งจะถูกล้าง',
   'pnl.delPageLabel':'ลบหน้า','pnl.addPageLabel':'เพิ่ม','pnl.addPageSuf':'หน้า','pnl.addPageOk':'เพิ่ม','pnl.addPageHint':'ตอนนี้ {total} หน้า · ใส่จำนวนหน้าที่จะเพิ่ม (1–20)','pnl.addPagePreview':'รวมเป็น {sum} หน้า','pnl.addPageMax':'เพิ่มได้ครั้งละไม่เกิน 20 หน้า','pnl.addPageWarn':'หน้าเยอะ ({sum}) อาจทำให้แก้ไข/พิมพ์ช้าลง','pnl.addPageNotEntered':'ใส่จำนวนหน้าที่จะเพิ่ม','btn.addBlank':'หน้าเปล่า','ttl.addBlank':'เพิ่มหน้าเปล่า 1 หน้า','ttl.addBlankMore':'เพิ่มหน้าเปล่าหลายหน้า','pnl.addBlankLabel':'เพิ่มหน้าเปล่า','fl.addBlank':'➕ เพิ่มหน้าเปล่า · หน้า {n}','fl.addBlanks':'➕ เพิ่มหน้าเปล่า {added} หน้า · รวม {total} หน้า','fl.addPageNoMenu':'ไม่มีหน้าเมนูให้คัดส่วนหัว · เลือกแบบหน้า เปล่า แทน','pnl.delPageHint':'มีทั้งหมด {total} หน้า · ใส่เลขหน้า เช่น 1,3,5-7','pnl.willDelete':'จะลบ <b>{n} หน้า</b> · เหลือ {remain} หน้า','pnl.cannotDeleteAll':'ลบทั้งหมดไม่ได้ — ต้องเหลืออย่างน้อย 1 หน้า','pnl.notEntered':'ยังไม่ได้กรอกหน้าที่จะลบ','pnl.confirmDelOk':'ยืนยันลบ','pnl.confirmDelMsg':'ยืนยันลบหน้า <b>{pages}</b> (รวม {n} หน้า) เหลือ {remain} หน้า — กด Ctrl+Z เพื่อย้อนได้ (ก่อนปิดหรือรีเฟรชหน้า)',
   'err.onlyNumbers':'ใช้ได้แค่ตัวเลข จุลภาค ขีด เช่น 1,3,5-7','err.badRange':'ช่วงไม่ถูกต้อง: {p}','err.badPage':'เลขหน้าไม่ถูกต้อง: {p}','err.notExist':'หน้าไม่มีอยู่จริง: {bad} (มี {total} หน้า)',
-  'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม','typ.ftext':'กล่องข้อความ','btn.ftextAdd':'กล่องข้อความ','ttl.ftextAdd':'เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์','grp.insert':'แทรก','btn.editClose':'ปิดแก้ข้อความ','ttl.editClose':'ปิดโหมดแก้ข้อความ แล้วกลับไปแท็บข้อความ','grp.close':'ปิด','ttl.ftextDel':'ลบกล่องข้อความ','ft.default':'ข้อความ','fl.ftextAdd':'➕ เพิ่มกล่องข้อความแล้ว · ดับเบิลคลิกเพื่อพิมพ์','fl.ftextOverPrint':'กล่องข้อความเลยขอบพิมพ์ด้านล่าง (289 มม.) · ส่วนที่เลยอาจพิมพ์ไม่ติด หรือถูกตัด','fl.ftextPushOver':'แทรกกล่องแล้ว แต่กล่องล่างสุดเลยขอบพิมพ์ด้านล่าง (289 มม.) · ย้ายหรือลบกล่อง หรือกด Ctrl+Z เพื่อย้อน','fl.ftextDel':'🗑 ลบกล่องข้อความแล้ว','fl.ftextEmpty':'กล่องข้อความว่าง · ลบให้อัตโนมัติ','st.ftextSel':'กล่องข้อความ {i} / {n} ในหน้านี้ (Tab สลับกล่อง) · X {x}mm · Y {y}mm · กว้าง {w}mm · ลากย้าย (ดูดเข้าแนว · Alt ค้าง = ไม่ดูด) · ดับเบิลคลิกเพื่อพิมพ์ · Delete ลบ','st.ftextEdit':'กำลังพิมพ์ในกล่องข้อความ · Esc เลิกพิมพ์','st.ftextMulti':'เลือก {n} กล่อง · ลากย้ายพร้อมกัน · ลากจุดที่กรอบ ยืด/หด · ลูกศรขยับ · Delete ลบทั้งหมด · Ctrl+คลิก เพิ่ม/เอาออก · Shift+คลิก เลือกช่วง · เปลี่ยนสี/ฟอนต์/ขนาด ได้ทั้งชุด','fl.ftextDelN':'🗑 ลบกล่องข้อความ {n} กล่องแล้ว','btn.ftGroup':'จัดกลุ่ม','btn.ftUngroup':'ยกเลิกกลุ่ม','grp.arrange':'จัดเรียง','ttl.ftGroup':'รวมกล่องข้อความที่เลือกเป็นกลุ่มเดียว (Ctrl+G) · คลิกกล่องไหนก็ได้ = เลือกทั้งกลุ่ม','ttl.ftGroupNeed':'เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน (Ctrl+คลิก · Shift+คลิก · ลากกรอบ)','ttl.ftGroupSame':'กล่องที่เลือกเป็นกลุ่มเดียวกันอยู่แล้ว','ttl.ftUngroup':'แยกกลุ่มที่เลือกเป็นกล่องเดี่ยว (Ctrl+Shift+G)','ttl.ftUngroupNeed':'เลือกกลุ่มกล่องข้อความก่อน','fl.ftGrouped':'จัดกลุ่ม {n} กล่องแล้ว · คลิกกล่องไหนก็ได้ = เลือกทั้งกลุ่ม · ดับเบิลคลิก = พิมพ์ในกล่องนั้น','fl.ftGroupNeed':'เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน แล้วกด Ctrl+G','fl.ftGroupSame':'{n} กล่องนี้เป็นกลุ่มเดียวกันอยู่แล้ว','fl.ftUngrouped':'ยกเลิกกลุ่มแล้ว · {n} กล่องเป็นกล่องเดี่ยว','fl.ftUngroupNeed':'กล่องที่เลือกไม่ได้อยู่ในกลุ่ม','st.ftextGroup':'กลุ่มกล่องข้อความ {n} กล่อง · ลากย้ายทั้งกลุ่ม · ลากจุดที่กรอบ ยืด/หด · ดับเบิลคลิกเพื่อพิมพ์ในกล่อง · Ctrl+Shift+G ยกเลิกกลุ่ม','fl.colorMulti':'เปลี่ยนสีตัวอักษร {n} กล่องเป็น {c}','fl.fontMulti':'เปลี่ยนฟอนต์ {n} กล่องเป็น {f}','fl.sizeMulti':'ตั้งขนาดตัวอักษร {n} กล่องเป็น {px}px','fl.sizeMultiStep':'ปรับขนาดตัวอักษร {n} กล่อง (แต่ละกล่องเพิ่ม/ลดจากขนาดเดิมของตัวเอง)','fl.styleMultiOn':'ใส่ {st} ทั้ง {n} กล่อง','fl.styleMultiOff':'เอา {st} ออกทั้ง {n} กล่อง','fl.olMulti':'ใส่เส้นขอบตัวอักษร {n} กล่อง · หนา {w}px','fl.olOffMulti':'เอาเส้นขอบตัวอักษรออก {n} กล่อง','fl.olColorMulti':'เปลี่ยนสีเส้นขอบ {n} กล่องเป็น {c}','fl.olAutoMulti':'สีเส้นขอบ {n} กล่องเป็นอัตโนมัติ (ตามสีตัวอักษรของแต่ละกล่อง)','st.ftextMultiW':'ปรับขนาด {n} กล่อง · กว้าง {w} × สูง {h} มม. · กล่องที่ต่อกันยังชิดกัน · Alt ค้าง = ไม่ดูดแนว','ttl.ftgrpW':'ลากเพื่อยืด/หดทุกกล่องที่เลือก (ตัวอักษรคงขนาด)'},
+  'typ.ln':'เส้นจุด','typ.noteh':'หมายเหตุ-หัวข้อ','typ.notesub':'หมายเหตุ-คำอธิบาย','typ.noteast':'หมายเหตุ-ดอกจัน','typ.note':'หมายเหตุ','typ.nm':'ชื่อเมนู','typ.pr':'ราคา','typ.sechead':'ชื่อกลุ่มเมนู','typ.contacthdr':'ติดต่อ-หัวข้อ','typ.contactph':'ติดต่อ-เบอร์โทร','typ.secnote':'หมายเหตุกลุ่ม','typ.ftext':'กล่องข้อความ','btn.ftextAdd':'กล่องข้อความ','ttl.ftextAdd':'เพิ่มกล่องข้อความลอย · ลากย้าย · ดับเบิลคลิกเพื่อพิมพ์','grp.insert':'แทรก','btn.editClose':'ปิดแก้ข้อความ','ttl.editClose':'ปิดโหมดแก้ข้อความ แล้วกลับไปแท็บข้อความ','grp.close':'ปิด','ttl.ftextDel':'ลบกล่องข้อความ','ft.default':'ข้อความ','fl.ftextAdd':'➕ เพิ่มกล่องข้อความแล้ว · ดับเบิลคลิกเพื่อพิมพ์','fl.ftextOverPrint':'กล่องข้อความเลยขอบพิมพ์ด้านล่าง (289 มม.) · ส่วนที่เลยอาจพิมพ์ไม่ติด หรือถูกตัด','fl.ftextPushOver':'แทรกกล่องแล้ว แต่กล่องล่างสุดเลยขอบพิมพ์ด้านล่าง (289 มม.) · ย้ายหรือลบกล่อง หรือกด Ctrl+Z เพื่อย้อน','fl.ftextDel':'🗑 ลบกล่องข้อความแล้ว','fl.ftextEmpty':'กล่องข้อความว่าง · ลบให้อัตโนมัติ','st.ftextSel':'กล่องข้อความ {i} / {n} ในหน้านี้ (Tab สลับกล่อง) · X {x}mm · Y {y}mm · กว้าง {w}mm · ลากย้าย (ดูดเข้าแนว · Alt ค้าง = ไม่ดูด) · ดับเบิลคลิกเพื่อพิมพ์ · Delete ลบ','st.ftextEdit':'กำลังพิมพ์ในกล่องข้อความ · Esc เลิกพิมพ์','st.ftextMulti':'เลือก {n} กล่อง · ลากย้ายพร้อมกัน · ลากจุดที่กรอบ ยืด/หด · ลูกศรขยับ · Delete ลบทั้งหมด · Ctrl+คลิก เพิ่ม/เอาออก · Shift+คลิก เลือกช่วง · เปลี่ยนสี/ฟอนต์/ขนาด ได้ทั้งชุด','grp.flGeom':'มุม · ความยาว','fl.angLbl':'มุม','fl.lenLbl':'ยาว','fl.mmUnit':'มม.','ttl.flAng':'มุมเส้น (องศา · 0 = แนวนอน · 90 = แนวตั้ง) · พิมพ์แล้วกด Enter · หมุนรอบกลางเส้น · คลิกช่องแล้วหมุนล้อเมาส์ = ทีละ 1°','ttl.flAngDown':'หมุนทวนเข็ม 1°','ttl.flAngUp':'หมุนตามเข็ม 1°','ttl.flLen':'ความยาวเส้น 3–400 มม. · พิมพ์แล้วกด Enter · ยึดปลายจุดเริ่ม · คลิกช่องแล้วหมุนล้อเมาส์ = ทีละ 1 มม.','ttl.flLenDown':'สั้นลง 1 มม.','ttl.flLenUp':'ยาวขึ้น 1 มม.','fl.flAngSet':'มุมเส้น {deg}°','fl.flLenSet':'ความยาวเส้น {len} มม.','fl.flNumBad':'พิมพ์ได้เฉพาะตัวเลข ({a}–{b})','fl.flLenRange':'ความยาวเส้นได้ {a}–{b} มม.','fl.flNumOnly':'ช่องนี้พิมพ์ได้เฉพาะตัวเลข 0–9 และจุด','fl.flNumOnlyTh':'แป้นพิมพ์เป็นภาษาไทยอยู่ · ช่องนี้พิมพ์ได้เฉพาะตัวเลข 0–9 และจุด','tab.fln':'รูปแบบเส้น','tab.flnCtx':'เครื่องมือเส้น','ttl.tabFln':'เครื่องมือรูปแบบเส้น · โผล่เมื่อเลือกเส้น','btn.flineAdd':'เส้น','ttl.flineAdd':'เพิ่มเส้นลอย · ลากย้าย · ลากปลายเส้นเพื่อยืด/หมุน','btn.flDel':'ลบเส้น','ttl.flDel':'ลบเส้นนี้ (Delete)','grp.flColor':'สีเส้น','grp.flWidth':'ความหนา','grp.flStyle':'แบบเส้น','grp.flOrient':'แนว','grp.flDelete':'ลบ','fl.theme':'ตามธีม','ttl.flTheme':'สีเส้นตามธีม · เปลี่ยนธีมแล้วเส้นเปลี่ยนสีตาม','fls.solid':'ทึบ','fls.dashed':'ขีด','fls.dotted':'จุด','fls.double':'คู่','ttl.flsDouble':'เส้นคู่ · หนา 3px ขึ้นไปจึงเห็นเป็น 2 เส้น','btn.flH':'แนวนอน','btn.flV':'แนวตั้ง','st.flSel':'เส้น {i} / {n} ในหน้านี้ · ยาว {len} มม. · มุม {deg}° · หนา {w}px · ลากเส้น = ย้าย (ดูดเข้าแนว) · ลากปลายเส้น = ยืด/หมุน (ใกล้แนวนอน/ตั้งไม่เกิน 1.5 มม. ดูดตรงเอง · Shift ค้าง = ล็อก 45° · Alt ค้าง = ไม่ดูด) · ลูกศร = ขยับ · Delete = ลบ','fl.flineAdd':'➕ เพิ่มเส้นแล้ว · ลากปลายเส้นเพื่อยืด/หมุน','fl.flineDel':'🗑 ลบเส้นแล้ว','fl.flColor':'เปลี่ยนสีเส้นเป็น {c}','fl.flWidth':'ความหนาเส้น {w}px','fl.flStyle':'แบบเส้น: {s}','fl.flOrient':'จัดเส้นเป็น{o}','fl.ftextDelN':'🗑 ลบกล่องข้อความ {n} กล่องแล้ว','btn.ftGroup':'จัดกลุ่ม','btn.ftUngroup':'ยกเลิกกลุ่ม','grp.arrange':'จัดเรียง','ttl.ftGroup':'รวมกล่องข้อความที่เลือกเป็นกลุ่มเดียว (Ctrl+G) · คลิกกล่องไหนก็ได้ = เลือกทั้งกลุ่ม','ttl.ftGroupNeed':'เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน (Ctrl+คลิก · Shift+คลิก · ลากกรอบ)','ttl.ftGroupSame':'กล่องที่เลือกเป็นกลุ่มเดียวกันอยู่แล้ว','ttl.ftUngroup':'แยกกลุ่มที่เลือกเป็นกล่องเดี่ยว (Ctrl+Shift+G)','ttl.ftUngroupNeed':'เลือกกลุ่มกล่องข้อความก่อน','fl.ftGrouped':'จัดกลุ่ม {n} กล่องแล้ว · คลิกกล่องไหนก็ได้ = เลือกทั้งกลุ่ม · ดับเบิลคลิก = พิมพ์ในกล่องนั้น','fl.ftGroupNeed':'เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน แล้วกด Ctrl+G','fl.ftGroupSame':'{n} กล่องนี้เป็นกลุ่มเดียวกันอยู่แล้ว','fl.ftUngrouped':'ยกเลิกกลุ่มแล้ว · {n} กล่องเป็นกล่องเดี่ยว','fl.ftUngroupNeed':'กล่องที่เลือกไม่ได้อยู่ในกลุ่ม','st.ftextGroup':'กลุ่มกล่องข้อความ {n} กล่อง · ลากย้ายทั้งกลุ่ม · ลากจุดที่กรอบ ยืด/หด · ดับเบิลคลิกเพื่อพิมพ์ในกล่อง · Ctrl+Shift+G ยกเลิกกลุ่ม','fl.colorMulti':'เปลี่ยนสีตัวอักษร {n} กล่องเป็น {c}','fl.fontMulti':'เปลี่ยนฟอนต์ {n} กล่องเป็น {f}','fl.sizeMulti':'ตั้งขนาดตัวอักษร {n} กล่องเป็น {px}px','fl.sizeMultiStep':'ปรับขนาดตัวอักษร {n} กล่อง (แต่ละกล่องเพิ่ม/ลดจากขนาดเดิมของตัวเอง)','fl.styleMultiOn':'ใส่ {st} ทั้ง {n} กล่อง','fl.styleMultiOff':'เอา {st} ออกทั้ง {n} กล่อง','fl.olMulti':'ใส่เส้นขอบตัวอักษร {n} กล่อง · หนา {w}px','fl.olOffMulti':'เอาเส้นขอบตัวอักษรออก {n} กล่อง','fl.olColorMulti':'เปลี่ยนสีเส้นขอบ {n} กล่องเป็น {c}','fl.olAutoMulti':'สีเส้นขอบ {n} กล่องเป็นอัตโนมัติ (ตามสีตัวอักษรของแต่ละกล่อง)','st.ftextMultiW':'ปรับขนาด {n} กล่อง · กว้าง {w} × สูง {h} มม. · กล่องที่ต่อกันยังชิดกัน · Alt ค้าง = ไม่ดูดแนว','ttl.ftgrpW':'ลากเพื่อยืด/หดทุกกล่องที่เลือก (ตัวอักษรคงขนาด)'},
  en:{'btn.addGFont':'＋ Google Font','ttl.addGFont':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.title':'Add fonts from Google over the internet (Thai–English-capable fonts only)','gfont.inlbl':'Search the list above (type a name, then Search)','gfont.add':'Add selected font','btn.gfontSearch':'Search','gfont.browselbl':'All available fonts','gfont.browsehint':'click to select','fl.gfontNoMatch':'No font matches "{q}"','gfont.oflPre':'All fonts are OFL (','gfont.oflName':'SIL Open Font License','gfont.oflPost':' — free to embed, share, use commercially) · the font is saved inside the file, so it looks the same on any computer','fl.gfontLoading':'Loading font "{name}" from Google…','fl.gfontAdded':'✓ Added font "{name}" — select text to apply','fl.gfontNotFound':'Font "{name}" not found on Google — check the name','fl.gfontOffline':'Could not load font "{name}" — internet required to add a Google font','fl.gfontDup':'Font "{name}" already exists','fl.fontDup':'Font "{name}" already exists','fl.gfontAddErr':'Could not add font "{name}"','btn.addFont':'＋ Font','font.userGroup':'Added fonts','font.baseGroup':'Built-in fonts','ttl.addFont':'Choose a font file (.ttf/.otf/.woff/.woff2) from your computer · download free fonts at fonts.google.com','fl.fontAdded':'✓ Added font "{name}" — select text, then choose this font to apply','fl.fontBadType':'"{name}" is not a font file (.ttf/.otf/.woff/.woff2)','fl.fontAddErr':'Could not add font "{name}"','tab.text':'Text','tab.image':'Image','tab.page':'Page','tab.file':'File','tab.fmt':'Text Format','tab.fmtCtx':'Text Tools','ttl.tabFmt':'Text formatting tools · shown only while editing text','tab.template':'Template','tab.screen':'Screen','lay.2col':'2 columns','lay.1col':'1 column','lay.3col':'3 columns','grp.layout':'Layout','btn.noteHide':'Hide note','btn.noteShow':'Show note','btn.plabelHide':'Hide page number','btn.plabelShow':'Show page number','grp.show':'Show/Hide','ttl.noteHide':'Hide note box (more menu space · affects print)','ttl.plabelHide':'Hide page number (more menu space · affects print)','fl.layoutSet':'Layout changed','grp.viewmode':'View','btn.pageBg':'Background','grp.bg':'Background','btn.theme':'Theme','grp.theme':'Theme','grp.rule':'Header divider','th.pick':'Theme','th.edgeW':'Width','th.edgeS':'Style','th.edgeR':'Corner','th.bsGradient':'Gradient','btn.lineEdge':'Lines & borders','grp.lineEdge':'Lines & borders','ttl.lineEdge':'Adjust divider & box borders (width·style · affects print)','th.grpNoteEdge':'Note box border','th.grpGrpEdge':'Group box border','th.bsSolid':'Solid','th.bsDashed':'Dashed','th.bsDotted':'Dotted','th.bsNone':'None','th.cream':'Cream','th.whiteGreen':'White-Green','th.darkGold':'Dark-Gold','th.paperBrick':'Paper-Brick','th.whiteGray':'White-Gray','th.bw':'Black-White','th.pineCream':'Pine-Cream','th.navyWhite':'Navy-White','th.maroonCream':'Maroon-Cream','th.terracotta':'Terracotta','th.plum':'Plum','th.teal':'Teal','th.mustard':'Mustard','th.blueOcean':'Blue Ocean','th.vividRed':'Vivid Red','th.vividBlue':'Vivid Blue','th.vividGreen':'Vivid Green','th.navyDark':'Dark Navy','th.wineDark':'Dark Wine','th.sage':'Sage','th.dustyBlue':'Dusty Blue','th.dustyRose':'Dusty Rose','th.monoDark':'Dark Mono','th.monoGray':'Mid Gray','th.vividOrange':'Vivid Orange','th.vividYellow':'Vivid Yellow','th.vividPurple':'Vivid Purple','th.forestDark':'Dark Forest','th.coffeeDark':'Dark Coffee','th.purpleDark':'Dark Purple','th.dustyOrange':'Dusty Orange','th.dustyYellow':'Dusty Yellow','th.dustyPurple':'Dusty Purple','th.vividPink':'Vivid Pink','th.pinkWhite':'Pink-White','th.pinkDark':'Dark Pink','th.dustyRed':'Dusty Red','th.orangeDark':'Dark Orange','th.dustyBrown':'Dusty Brown','th.redWhite':'Red-White','th.blush':'Blush Cream','th.sakura':'Sakura','th.peach':'Peach','th.orangeWhite':'Orange-White','th.latte':'Latte','th.kraft':'Kraft Paper','th.vividBrown':'True Brown','th.lemon':'Lemon','th.honey':'Honey','th.denimCream':'Denim Cream','th.lavender':'Lavender','th.lilacCream':'Lilac Cream','ink.lo':'Low ink','ink.mid':'Medium ink','ink.hi':'High ink','tht.vivid':'Vivid','tht.pastel':'Pastel','tht.dark':'Dark','tht.muted':'Muted','flt.type':'Type','flt.all':'All','fl.themeSet':'Theme changed','fl.themeInkHi':'Theme changed · this theme uses a lot of ink when printed','ttl.theme':'Choose menu color theme','th.custom':'Custom','th.resetCustom':'Reset','th.grpSet':'Settings','th.grpNote':'Note box','th.grpGroup':'Menu group','th.grpText':'Text','th.zNoteBg':'Note bg','th.zNoteBd':'Note border','th.zHeadBg':'Header bg','th.zBodyBg':'Body bg','th.zGrpBd':'Group border','th.zName':'Name','th.zPrice':'Price','th.zNote':'Note','th.zDot':'Dotted line','th.zPageBg':'Paper','th.paperReset':'Default cream','fl.paperSet':'Paper color changed','bg.scope':'Scope','bg.thisPage':'This page','bg.allPages':'All pages','bg.color':'Color','bg.image':'Image','bg.pick':'Choose image','bg.dim':'Image fade','bg.colorDim':'Color fade','bg.menuDim':'Menu panel fade','bg.grpColorImg':'Color & image','bg.grpDim':'Fade','bg.grpContent':'Content','bg.menuShort':'Menu','bg.hideContent':'Hide content','bg.showContent':'Show content','bg.contentHidden':'Content hidden (screen only)','bg.contentShown':'Content shown','bg.reset':'Reset','bg.pageSel':'Selected page','bg.posSet':'Image repositioned','bg.zoomSet':'Image resized','bg.odd':'Odd pages','bg.even':'Even pages','bg.range':'Range','bg.rangeHint':'e.g. 1,3,5-7','bg.rangeTip':'Pages, e.g. 1,3,5-7','bg.applied':'Applied to selected pages','bg.noPages':'No pages in the range',
   'grp.mode':'Mode','grp.font':'Font','grp.format':'Format','grp.imgtools':'Image','grp.pagetools':'Page','grp.file':'File','grp.print':'Print',
   'btn.editText':'Edit Text','btn.editImage':'Edit Image','btn.applyAll':'Apply to All','btn.reset':'Reset',
@@ -2826,7 +2877,7 @@ var I18N={
   'pnl.applyAllOk':'Apply','pnl.resetOk':'Reset','pnl.resetMsg':'Reset the selected <b>{label}</b> to default? Your customizations will be cleared',
   'pnl.delPageLabel':'Delete pages','pnl.addPageLabel':'Add','pnl.addPageSuf':'pages','pnl.addPageOk':'Add','pnl.addPageHint':'{total} pages now · Enter how many to add (1–20)','pnl.addPagePreview':'{sum} pages total','pnl.addPageMax':'Up to 20 pages at a time','pnl.addPageWarn':'Many pages ({sum}) may slow editing/printing','pnl.addPageNotEntered':'Enter how many pages to add','btn.addBlank':'Blank Page','ttl.addBlank':'Add 1 blank page','ttl.addBlankMore':'Add several blank pages','pnl.addBlankLabel':'Add blank','fl.addBlank':'➕ Added blank page {n}','fl.addBlanks':'➕ Added {added} blank pages · {total} total','fl.addPageNoMenu':'No menu page to copy the header from · choose Blank instead','pnl.delPageHint':'{total} pages total · Enter page numbers, e.g. 1,3,5-7','pnl.willDelete':'Will delete <b>{n} page(s)</b> · {remain} remaining','pnl.cannotDeleteAll':'Cannot delete all — at least 1 page must remain','pnl.notEntered':'No pages entered to delete','pnl.confirmDelOk':'Confirm Delete','pnl.confirmDelMsg':'Confirm deleting pages <b>{pages}</b> ({n} total) · {remain} remaining — press Ctrl+Z to undo (before closing or reloading)',
   'err.onlyNumbers':'Only digits, commas and hyphens, e.g. 1,3,5-7','err.badRange':'Invalid range: {p}','err.badPage':'Invalid page number: {p}','err.notExist':'Pages do not exist: {bad} ({total} pages total)',
-  'typ.ln':'Dotted line','typ.noteh':'Note — heading','typ.notesub':'Note — description','typ.noteast':'Note — asterisk','typ.note':'Note','typ.nm':'Item name','typ.pr':'Price','typ.sechead':'Group name','typ.contacthdr':'Contact — heading','typ.contactph':'Contact — phone','typ.secnote':'Group note','typ.ftext':'Text box','btn.ftextAdd':'Text Box','ttl.ftextAdd':'Add a floating text box · drag to move · double-click to type','grp.insert':'Insert','btn.editClose':'Close Editing','ttl.editClose':'Close text editing and return to the Text tab','grp.close':'Close','ttl.ftextDel':'Delete text box','ft.default':'Text','fl.ftextAdd':'➕ Added text box · double-click to type','fl.ftextOverPrint':'Text box is past the bottom print margin (289 mm) · the part beyond may not print or may be cut off','fl.ftextPushOver':'Box inserted, but the bottom box is past the bottom print margin (289 mm) · move or delete boxes, or press Ctrl+Z to undo','fl.ftextDel':'🗑 Text box deleted','fl.ftextEmpty':'Empty text box · removed automatically','st.ftextSel':'Text box {i} / {n} on this page (Tab to switch) · X {x}mm · Y {y}mm · Width {w}mm · drag to move (snaps to guides · hold Alt to turn off) · double-click to type · Delete to remove','st.ftextEdit':'Typing in text box · Esc to stop','st.ftextMulti':'{n} boxes selected · drag to move together · drag frame handles to resize · arrows to nudge · Delete removes all · Ctrl+click to add/remove · Shift+click to select a range · color/font/size apply to all','fl.ftextDelN':'🗑 Deleted {n} text boxes','btn.ftGroup':'Group','btn.ftUngroup':'Ungroup','grp.arrange':'Arrange','ttl.ftGroup':'Group the selected text boxes (Ctrl+G) · click any box = select the whole group','ttl.ftGroupNeed':'Select 2 or more text boxes first (Ctrl+click · Shift+click · drag a frame)','ttl.ftGroupSame':'The selected boxes are already one group','ttl.ftUngroup':'Split the selected group into single boxes (Ctrl+Shift+G)','ttl.ftUngroupNeed':'Select a text box group first','fl.ftGrouped':'Grouped {n} boxes · click any box = select the whole group · double-click = type in that box','fl.ftGroupNeed':'Select 2 or more text boxes first, then press Ctrl+G','fl.ftGroupSame':'These {n} boxes are already one group','fl.ftUngrouped':'Ungrouped · {n} boxes are single boxes again','fl.ftUngroupNeed':'The selected boxes are not in a group','st.ftextGroup':'Text box group of {n} · drag to move the whole group · drag frame handles to resize · double-click to type in a box · Ctrl+Shift+G to ungroup','fl.colorMulti':'Text color of {n} boxes set to {c}','fl.fontMulti':'Font of {n} boxes set to {f}','fl.sizeMulti':'Text size of {n} boxes set to {px}px','fl.sizeMultiStep':'Text size of {n} boxes adjusted (each from its own size)','fl.styleMultiOn':'{st} on for {n} boxes','fl.styleMultiOff':'{st} off for {n} boxes','fl.olMulti':'Text outline added to {n} boxes · {w}px','fl.olOffMulti':'Text outline removed from {n} boxes','fl.olColorMulti':'Outline color of {n} boxes set to {c}','fl.olAutoMulti':'Outline color of {n} boxes set to automatic (follows each box text color)','st.ftextMultiW':'Resizing {n} boxes · {w} × {h} mm · stacked boxes stay joined · hold Alt to disable snapping','ttl.ftgrpW':'Drag to resize all selected boxes (text size unchanged)'}
+  'typ.ln':'Dotted line','typ.noteh':'Note — heading','typ.notesub':'Note — description','typ.noteast':'Note — asterisk','typ.note':'Note','typ.nm':'Item name','typ.pr':'Price','typ.sechead':'Group name','typ.contacthdr':'Contact — heading','typ.contactph':'Contact — phone','typ.secnote':'Group note','typ.ftext':'Text box','btn.ftextAdd':'Text Box','ttl.ftextAdd':'Add a floating text box · drag to move · double-click to type','grp.insert':'Insert','btn.editClose':'Close Editing','ttl.editClose':'Close text editing and return to the Text tab','grp.close':'Close','ttl.ftextDel':'Delete text box','ft.default':'Text','fl.ftextAdd':'➕ Added text box · double-click to type','fl.ftextOverPrint':'Text box is past the bottom print margin (289 mm) · the part beyond may not print or may be cut off','fl.ftextPushOver':'Box inserted, but the bottom box is past the bottom print margin (289 mm) · move or delete boxes, or press Ctrl+Z to undo','fl.ftextDel':'🗑 Text box deleted','fl.ftextEmpty':'Empty text box · removed automatically','st.ftextSel':'Text box {i} / {n} on this page (Tab to switch) · X {x}mm · Y {y}mm · Width {w}mm · drag to move (snaps to guides · hold Alt to turn off) · double-click to type · Delete to remove','st.ftextEdit':'Typing in text box · Esc to stop','st.ftextMulti':'{n} boxes selected · drag to move together · drag frame handles to resize · arrows to nudge · Delete removes all · Ctrl+click to add/remove · Shift+click to select a range · color/font/size apply to all','grp.flGeom':'Angle · Length','fl.angLbl':'Angle','fl.lenLbl':'Length','fl.mmUnit':'mm','ttl.flAng':'Line angle (degrees · 0 = horizontal · 90 = vertical) · type and press Enter · rotates around the middle · click the field and scroll = 1° steps','ttl.flAngDown':'Rotate 1° counterclockwise','ttl.flAngUp':'Rotate 1° clockwise','ttl.flLen':'Line length 3–400 mm · type and press Enter · keeps the start point · click the field and scroll = 1 mm steps','ttl.flLenDown':'1 mm shorter','ttl.flLenUp':'1 mm longer','fl.flAngSet':'Line angle {deg}°','fl.flLenSet':'Line length {len} mm','fl.flNumBad':'Numbers only ({a}–{b})','fl.flLenRange':'Line length must be {a}–{b} mm','fl.flNumOnly':'This field accepts numbers 0–9 and a dot only','fl.flNumOnlyTh':'The keyboard is in Thai · this field accepts numbers 0–9 and a dot only','tab.fln':'Line Format','tab.flnCtx':'Line Tools','ttl.tabFln':'Line formatting tools · shown when a line is selected','btn.flineAdd':'Line','ttl.flineAdd':'Add a floating line · drag to move · drag an end to stretch/rotate','btn.flDel':'Delete Line','ttl.flDel':'Delete this line (Delete)','grp.flColor':'Line Color','grp.flWidth':'Weight','grp.flStyle':'Style','grp.flOrient':'Direction','grp.flDelete':'Delete','fl.theme':'Theme','ttl.flTheme':'Line color follows the theme · changes when the theme changes','fls.solid':'Solid','fls.dashed':'Dashed','fls.dotted':'Dotted','fls.double':'Double','ttl.flsDouble':'Double line · needs 3px or more to show as 2 lines','btn.flH':'Horizontal','btn.flV':'Vertical','st.flSel':'Line {i} / {n} on this page · length {len} mm · angle {deg}° · {w}px · drag the line = move (snaps to guides) · drag an end = stretch/rotate (within 1.5 mm of horizontal/vertical snaps straight · hold Shift = lock 45° · hold Alt = no snapping) · arrows = nudge · Delete = remove','fl.flineAdd':'➕ Added a line · drag an end to stretch/rotate','fl.flineDel':'🗑 Deleted the line','fl.flColor':'Line color set to {c}','fl.flWidth':'Line weight {w}px','fl.flStyle':'Line style: {s}','fl.flOrient':'Line set to {o}','fl.ftextDelN':'🗑 Deleted {n} text boxes','btn.ftGroup':'Group','btn.ftUngroup':'Ungroup','grp.arrange':'Arrange','ttl.ftGroup':'Group the selected text boxes (Ctrl+G) · click any box = select the whole group','ttl.ftGroupNeed':'Select 2 or more text boxes first (Ctrl+click · Shift+click · drag a frame)','ttl.ftGroupSame':'The selected boxes are already one group','ttl.ftUngroup':'Split the selected group into single boxes (Ctrl+Shift+G)','ttl.ftUngroupNeed':'Select a text box group first','fl.ftGrouped':'Grouped {n} boxes · click any box = select the whole group · double-click = type in that box','fl.ftGroupNeed':'Select 2 or more text boxes first, then press Ctrl+G','fl.ftGroupSame':'These {n} boxes are already one group','fl.ftUngrouped':'Ungrouped · {n} boxes are single boxes again','fl.ftUngroupNeed':'The selected boxes are not in a group','st.ftextGroup':'Text box group of {n} · drag to move the whole group · drag frame handles to resize · double-click to type in a box · Ctrl+Shift+G to ungroup','fl.colorMulti':'Text color of {n} boxes set to {c}','fl.fontMulti':'Font of {n} boxes set to {f}','fl.sizeMulti':'Text size of {n} boxes set to {px}px','fl.sizeMultiStep':'Text size of {n} boxes adjusted (each from its own size)','fl.styleMultiOn':'{st} on for {n} boxes','fl.styleMultiOff':'{st} off for {n} boxes','fl.olMulti':'Text outline added to {n} boxes · {w}px','fl.olOffMulti':'Text outline removed from {n} boxes','fl.olColorMulti':'Outline color of {n} boxes set to {c}','fl.olAutoMulti':'Outline color of {n} boxes set to automatic (follows each box text color)','st.ftextMultiW':'Resizing {n} boxes · {w} × {h} mm · stacked boxes stay joined · hold Alt to disable snapping','ttl.ftgrpW':'Drag to resize all selected boxes (text size unchanged)'}
 };
 var _lang='th';
 function t(k,p){ var s=(I18N[_lang]||I18N.th)[k] || (I18N.th[k]||k); if(p){ for(var _pk in p){ s=s.split('{'+_pk+'}').join(p[_pk]); } } return s; }
@@ -3321,6 +3372,7 @@ function _blankFit(pg){  /* หน้าเปล่าในโหมดแก�
   if(!document.body.classList.contains('editmode')){ pg.style.removeProperty('--blankh'); pg.style.removeProperty('--blankdel'); return; }
   var px=pg.getBoundingClientRect().width/210||1, bot=0, dp=pg.querySelector(':scope > .ed-delpage'), dh=(dp && dp.getBoundingClientRect().height/px)||10;
   pg.querySelectorAll('.ftext').forEach(function(b){ var v=_ftNum(b.style.top)+b.getBoundingClientRect().height/px; if(v>bot) bot=v; });
+  pg.querySelectorAll('.fline').forEach(function(q){ var v=Math.max(parseFloat(q.getAttribute('data-y1'))||0,parseFloat(q.getAttribute('data-y2'))||0); if(v>bot) bot=v; });  /* เส้นลอยเลยขอบล่าง = หน้าเปล่ายืดตาม */
   var dt=Math.max(297-10-dh, bot+6), H=Math.max(297, dt+dh+10);  /* ไม่มีกล่องใกล้ขอบล่าง = ตำแหน่งเดิม (เหนือขอบล่าง 10mm) */
   pg.style.setProperty('--blankdel', dt.toFixed(1)+'mm');
   if(H>297.05) pg.style.setProperty('--blankh', H.toFixed(1)+'mm'); else pg.style.removeProperty('--blankh');
@@ -3341,8 +3393,167 @@ function _ftChainBelow(ref,px){  /* กล่องที่ต่อกัน�
   while(q.length){ var c=q.shift(); L.forEach(function(s){ if(out.indexOf(s)<0 && Math.abs(s.t-(c.t+c.h))<=0.5 && s.l<c.l+c.w && c.l<s.l+s.w){ out.push(s); q.push(s); } }); }
   return out.map(function(s){ return s.b; });
 }
+/* ===== เส้นลอย (ขั้น C · ผู้ใช้ 28 ต.ค. 2026): .fline ใน .page · data-x1/y1/x2/y2 (มม.) · data-w (px) · data-st · data-c ('theme' = var(--line-dot))
+   ลากปลายเส้น แบบ 3: ทุกมุม · ปลายห่างแนวนอน/ตั้ง ≤1.5mm ดูดตรงเอง · ช่องมุม/ความยาว = ปรับละเอียด · Shift ค้าง = ล็อก 45° · Alt ค้าง = ไม่ดูด · ลากตัวเส้น = ย้าย ดูดเข้าแนว 1.5mm (หน้า + กล่องข้อความ + เส้นอื่น)
+   เลือกเส้น = แท็บตามบริบท 'รูปแบบเส้น' · จุดจับ/×/แสง (.flh .fldel .flhl) อยู่ระดับหน้า ตัดออกตอนบันทึก/undo ไม่พิมพ์ ===== */
+var _flSel=null, _flDrag=null, _flPrevTab='home';
+function _flGet(l){ var g=function(k,d){ var v=parseFloat(l.getAttribute('data-'+k)); return isNaN(v)?d:v; }; return {x1:g('x1',70),y1:g('y1',150),x2:g('x2',140),y2:g('y2',150),w:g('w',1),st:l.getAttribute('data-st')||'solid',c:l.getAttribute('data-c')||'theme'}; }
+function _flPut(l,d){ ['x1','y1','x2','y2'].forEach(function(k){ l.setAttribute('data-'+k,String(Math.round(d[k]*100)/100));  /* 0.01 มม. = มุมที่ตั้งจากช่องไม่เพี้ยน */ }); }
+function _flGeom(d){ return {L:Math.hypot(d.x2-d.x1,d.y2-d.y1), a:Math.atan2(d.y2-d.y1,d.x2-d.x1)*180/Math.PI}; }
+function _flRender(l){ var d=_flGet(l), g=_flGeom(d);
+  l.style.left=d.x1.toFixed(2)+'mm'; l.style.top=d.y1.toFixed(2)+'mm'; l.style.width=g.L.toFixed(2)+'mm'; l.style.transform='rotate('+g.a.toFixed(3)+'deg)';
+  l.style.borderTop=d.w+'px '+d.st+' '+(d.c==='theme'?'var(--line-dot)':d.c); l.style.marginTop=(-d.w/2)+'px'; }
+function _flPx(pg){ return pg.getBoundingClientRect().width/210||1; }
+function _flIdx(l){ var pg=l.closest('.page'), L=pg?Array.prototype.slice.call(pg.querySelectorAll('.fline')):[l]; return {i:L.indexOf(l)+1, n:L.length}; }
+function _flStatus(){ var l=_flSel; if(!l||!l.isConnected) return; var d=_flGet(l), g=_flGeom(d), q=_flIdx(l), dg=_flDeg(g.a); setStatus('info',tk('st.flSel',{i:q.i,n:q.n,len:g.L.toFixed(1),deg:dg,w:d.w})); }
+function _flOverlayClear(){ document.querySelectorAll('.flh,.fldel,.flhl').forEach(function(x){ x.remove(); }); }
+function _flOverlay(){
+  _flOverlayClear(); var l=_flSel; if(!l||!l.isConnected) return; var pg=l.closest('.page'); if(!pg) return;
+  var d=_flGet(l), g=_flGeom(d), L=g.L||1, ux=(d.x2-d.x1)/L, uy=(d.y2-d.y1)/L, hw=d.w+9;
+  var hl=document.createElement('div'); hl.className='flhl';
+  hl.style.cssText='left:'+d.x1.toFixed(2)+'mm;top:'+d.y1.toFixed(2)+'mm;width:'+g.L.toFixed(2)+'mm;transform:rotate('+g.a.toFixed(3)+'deg);border-top:'+hw+'px solid rgba(33,115,70,.22);margin-top:'+(-hw/2)+'px;';
+  pg.appendChild(hl);
+  [[1,d.x1,d.y1],[2,d.x2,d.y2]].forEach(function(p){ var h=document.createElement('div'); h.className='flh'; h.setAttribute('data-e',String(p[0])); h.setAttribute('contenteditable','false'); h.style.left=p[1].toFixed(2)+'mm'; h.style.top=p[2].toFixed(2)+'mm'; pg.appendChild(h); });
+  var x=document.createElement('div'); x.className='fldel'; x.textContent='\u00d7'; x.setAttribute('contenteditable','false'); x.setAttribute('data-i18n-title','ttl.flDel'); x.title=t('ttl.flDel');
+  x.style.left=(d.x2+ux*6).toFixed(2)+'mm'; x.style.top=(d.y2+uy*6).toFixed(2)+'mm'; pg.appendChild(x);
+}
+function _flSync(){  /* ปุ่มในแท็บรูปแบบเส้น = ค่าของเส้นที่เลือก (.on เขียว) */
+  var p=document.getElementById('flPane'); if(!p||!_flSel) return; var d=_flGet(_flSel), C=String(d.c).toUpperCase();
+  p.querySelectorAll('[data-flc]').forEach(function(b){ b.classList.toggle('on', String(b.getAttribute('data-flc')).toUpperCase()===C); });
+  p.querySelectorAll('[data-flw]').forEach(function(b){ b.classList.toggle('on', parseFloat(b.getAttribute('data-flw'))===d.w); });
+  p.querySelectorAll('[data-fls]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fls')===d.st); });
+  p.querySelectorAll('[data-flo]').forEach(function(b){ var o=b.getAttribute('data-flo'); b.classList.toggle('on', o==='h'?Math.abs(d.y1-d.y2)<0.05:Math.abs(d.x1-d.x2)<0.05); });
+  _flFieldsSync(false);  /* ช่องมุม/ความยาว ตามเส้น (ไม่ทับตอนกำลังพิมพ์) */
+}
+function _flSelect(l){
+  if(typeof _ftDeselect==='function' && (_ftSel||_ftEdit)) _ftDeselect();
+  if(typeof typoClear==='function' && _typoEl) typoClear();
+  _flSel=l; document.body.classList.add('flsel');
+  var at=document.querySelector('#edtabs .edtab.active'), an=at?at.getAttribute('data-tab'):'home';
+  if(an!=='fln'){ _flPrevTab=an; switchTab('fln'); }  /* ข้อความ/รูปแบบข้อความ ↔ รูปแบบเส้น ไม่ออกจากโหมด (switchTab) */
+  _flOverlay(); _flSync(); _flStatus();
+}
+function _flDeselect(){
+  if(!_flSel && !document.body.classList.contains('flsel')) return;
+  _flOverlayClear(); _flSel=null; _flDrag=null; document.body.classList.remove('flsel');
+  var at=document.querySelector('#edtabs .edtab.active');
+  if(at && at.getAttribute('data-tab')==='fln') switchTab((_flPrevTab==='fmt'||_flPrevTab==='home')?_flPrevTab:'home');  /* แท็บถูกซ่อน = กลับแท็บก่อนหน้า */
+}
+function _flAfterRestore(){ _flSel=null; _flDrag=null; _flOverlayClear(); if(document.body.classList.contains('flsel')){ document.body.classList.remove('flsel'); var at=document.querySelector('#edtabs .edtab.active'); if(at && at.getAttribute('data-tab')==='fln') switchTab(_flPrevTab==='fmt'?'fmt':'home'); } }  /* undo/redo แทนหน้าทั้งหมด = เส้นเดิมไม่อยู่แล้ว */
+function _flDelete(){ var l=_flSel; if(!l) return; _flDeselect(); l.remove(); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); flashStatus('info',tk('fl.flineDel')); }
+function _flTargets(l,px){ var T=_ftTargets([l],px), pg=l.closest('.page'); if(pg) pg.querySelectorAll('.fline').forEach(function(o){ if(o===l) return; var d=_flGet(o); T.X.push(d.x1,d.x2,(d.x1+d.x2)/2); T.Y.push(d.y1,d.y2,(d.y1+d.y2)/2); }); return T; }  /* แนวดูด = หน้า + กล่องข้อความ + เส้นอื่น */
+/* ===== ช่องมุม/ความยาวของเส้นลอย (ผู้ใช้ 29 ต.ค. 2026): ปรับละเอียด · มุม 0–179° (0 = แนวนอน · บวก = ตามเข็ม) หมุนรอบกลางเส้น ความยาวเท่าเดิม · ความยาว 3–400 มม. ยึดปลายจุดเริ่ม
+   พิมพ์แล้ว Enter / ออกจากช่อง = ใช้ · Esc = คืนค่า · −/+ ทีละ 1 (กดค้างได้ _HOLD_BTNS) · คลิกช่องแล้วหมุนล้อ = ทีละ 1 (_WHEEL_FIELDS) · ค่าเดิม = ไม่มีจุด Undo ===== */
+function _flDeg(a){ var v=Math.round((((a%180)+180)%180)*10)/10; return v>=180?v-180:v; }
+function _flClean(v,neg){  /* ช่องมุม/ความยาว: 0-9 + จุด 1 จุด (+ ลบ ตัวแรก เฉพาะมุม) ไม่เกิน 6 ตัว · เลขไทยแปลงเป็น 0-9 · ตัวอื่นไม่ขึ้น */
+  var out='', dropped=false, thai=false, dot=false; v=(typeof _prNorm==='function')?_prNorm(v):String(v||'');
+  for(var i=0;i<v.length;i++){ var ch=v.charAt(i);
+    if((ch>='0'&&ch<='9') || (ch==='.'&&!dot) || (neg && ch==='-' && out==='')){ if(out.length<6){ out+=ch; if(ch==='.') dot=true; } else dropped=true; continue; }
+    dropped=true; if(/[\u0E00-\u0E7F]/.test(ch)) thai=true; }
+  return {out:out, dropped:dropped, thai:thai};
+}
+function _flNum(s){ s=String(s==null?'':s).replace(/[๐-๙]/g,function(c){ return String('๐๑๒๓๔๕๖๗๘๙'.indexOf(c)); }).replace(/[°\s]|มม\.?|mm/gi,''); return /^-?\d+(\.\d+)?$/.test(s)?parseFloat(s):NaN; }
+function _flFieldsSync(force){ if(!_flSel) return; var g=_flGeom(_flGet(_flSel)), fa=document.getElementById('flAng'), fn=document.getElementById('flLen');
+  if(fa && (force || document.activeElement!==fa)) fa.value=String(_flDeg(g.a));
+  if(fn && (force || document.activeElement!==fn)) fn.value=(Math.round(g.L*10)/10).toFixed(1); }
+function _flAfterGeo(msg){ _flRender(_flSel); _flOverlay(); _flSync(); _flStatus(); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); if(msg) flashStatus('info',msg); }
+function _flSetAng(v){ if(!_flSel||!_flSel.isConnected||!isFinite(v)) return false; var d=_flGet(_flSel), g=_flGeom(d); v=Math.round((((v%180)+180)%180)*10)/10; if(v>=180) v-=180;
+  if(Math.abs(v-_flDeg(g.a))<0.05) return false;  /* มุมเดิม = ไม่เปลี่ยน */
+  var mx=(d.x1+d.x2)/2, my=(d.y1+d.y2)/2, H=g.L/2, r=v*Math.PI/180;
+  _flPut(_flSel,{x1:mx-H*Math.cos(r),y1:my-H*Math.sin(r),x2:mx+H*Math.cos(r),y2:my+H*Math.sin(r)}); _flAfterGeo(tk('fl.flAngSet',{deg:v})); return true; }
+function _flSetLen(v){ if(!_flSel||!_flSel.isConnected||!isFinite(v)) return false; var q=Math.round(v*10)/10, c=Math.max(3,Math.min(400,q)), cl=(c!==q), d=_flGet(_flSel), g=_flGeom(d);
+  if(Math.abs(c-g.L)<0.05){ if(cl) flashStatus('warning',tk('fl.flLenRange',{a:3,b:400})); return false; }
+  var r=g.a*Math.PI/180; _flPut(_flSel,{x1:d.x1,y1:d.y1,x2:d.x1+c*Math.cos(r),y2:d.y1+c*Math.sin(r)});
+  _flAfterGeo(cl?null:tk('fl.flLenSet',{len:c.toFixed(1)})); if(cl) flashStatus('warning',tk('fl.flLenRange',{a:3,b:400})); return true; }
+function _flAngStep(s){ if(!_flSel) return; _flSetAng(Math.round(_flDeg(_flGeom(_flGet(_flSel)).a))+s); }
+function _flLenStep(s){ if(!_flSel) return; _flSetLen(Math.round(_flGeom(_flGet(_flSel)).L)+s); }
+(function(){
+  [['flAng',_flSetAng,'0','179'],['flLen',_flSetLen,'3','400']].forEach(function(c){
+    var el=document.getElementById(c[0]); if(!el) return;
+    function _flc(){ if(!_flSel||!_flSel.isConnected) return true; var v=_flNum(el.value); if(isNaN(v)){ flashStatus('warning',tk('fl.flNumBad',{a:c[2],b:c[3]})); _flFieldsSync(true); return false; } c[1](v); _flFieldsSync(true); return true; }
+    el.addEventListener('input',function(){ var v=el.value, r=_flClean(v,c[0]==='flAng'); if(r.out!==v){ var ps=(typeof el.selectionStart==='number')?el.selectionStart:v.length, kp=_flClean(v.slice(0,ps),c[0]==='flAng').out.length; el.value=r.out; try{ el.setSelectionRange(kp,kp); }catch(_){ } } if(r.dropped) flashStatus('warning',tk(r.thai?'fl.flNumOnlyTh':'fl.flNumOnly')); });  /* รับเฉพาะตัวเลข (UI_STANDARD ข้อ 6) */
+    el.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); if(_flc()) el.select(); } else if(e.key==='Tab'){ if(!_flc()) e.preventDefault(); } else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); _flFieldsSync(true); el.select(); } });
+    el.addEventListener('blur',function(){ _flFieldsSync(true); });  /* ไม่กด Enter = ไม่เปลี่ยน · ช่องแสดงค่าจริงเสมอ (มาตรฐานเดียวกับช่องขนาดตัวอักษร) */
+    el.addEventListener('focus',function(){ el.select(); });
+  });
+})();
+function flineAdd(){
+  var ref=(_flSel&&_flSel.isConnected)?_flSel:null, fref=(!ref && typeof _ftSel!=='undefined' && _ftSel && _ftSel.isConnected)?_ftSel:null;
+  if(!document.body.classList.contains('editmode')) toggleEdit(true);  /* อยู่แท็บเดิม แล้วไปแท็บรูปแบบเส้นตอนเลือก */
+  var pages=document.querySelectorAll('.page'), pg=ref?ref.closest('.page'):(fref?fref.closest('.page'):null), best=1e9, midY=window.innerHeight/2;
+  if(!pg){ pg=pages[0]; pages.forEach(function(p){ var rc=p.getBoundingClientRect(), c=Math.abs((rc.top+rc.bottom)/2-midY); if(rc.bottom>0 && rc.top<window.innerHeight && c<best){ best=c; pg=p; } }); }
+  if(!pg) return;
+  var px=_flPx(pg), d={x1:70,y1:150,x2:140,y2:150};
+  if(ref){ var o=_flGet(ref); if(Math.abs(o.x1-o.x2)<0.05){ d.x1=d.x2=Math.min(198,o.x1+8); d.y1=Math.min(o.y1,o.y2); d.y2=Math.max(o.y1,o.y2); } else { d.x1=Math.min(o.x1,o.x2); d.x2=Math.max(o.x1,o.x2); d.y1=d.y2=Math.min(285,Math.max(o.y1,o.y2)+8); } }  /* ต่อใต้เส้นที่เลือก (แนวตั้ง = ข้างขวา) */
+  else if(fref){ var bl=_ftNum(fref.style.left), bw=_ftNum(fref.style.width)||70, bb=_ftNum(fref.style.top)+fref.getBoundingClientRect().height/px; d.x1=bl; d.x2=bl+bw; d.y1=d.y2=Math.min(285,bb+2); }  /* ใต้กล่องข้อความที่เลือก = เส้นใต้หัวข้อ */
+  else { var rc=pg.getBoundingClientRect(), y=(Math.min(Math.max(midY,rc.top),rc.bottom)-rc.top)/px; d.y1=d.y2=Math.max(20,Math.min(277,y)); }
+  var l=document.createElement('div'); l.className='fline'; l.setAttribute('data-w','1'); l.setAttribute('data-st','solid'); l.setAttribute('data-c','theme'); _flPut(l,d); pg.appendChild(l); _flRender(l);
+  _flSelect(l); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); flashStatus('info',tk('fl.flineAdd'));
+}
+document.addEventListener('mousedown',function _flMd(e){
+  if(!document.body.classList.contains('editmode') || e.button!==0) return;
+  var tg=e.target; if(!tg||!tg.closest) return;
+  if(_flSel && tg.closest('.fldel')){ e.preventDefault(); _flDelete(); return; }
+  var hd=tg.closest('.flh'), ln=tg.closest('.fline');
+  if(hd && _flSel){ e.preventDefault(); var pg=_flSel.closest('.page'); _flDrag={k:'end', h:+hd.getAttribute('data-e'), o:_flGet(_flSel), pg:pg, x:e.clientX, y:e.clientY, moved:false, T:_flTargets(_flSel,_flPx(pg))}; return; }
+  if(ln){ e.preventDefault(); if(_flSel!==ln) _flSelect(ln); var pg2=ln.closest('.page'); _flDrag={k:'move', o:_flGet(ln), pg:pg2, x:e.clientX, y:e.clientY, moved:false, T:_flTargets(ln,_flPx(pg2))}; return; }
+  if(tg.closest('#edbar,#edpanel,#edstatus,#actlog,#uiDdPop,#zoomDdPop,#edgeDdPop,#calModal,#aboutModal,.cp-pop')) return;  /* เครื่องมือ = ไม่เลิกเลือก */
+  if(_flSel) _flDeselect();
+},true);
+document.addEventListener('mousemove',function _flMm(e){
+  var D=_flDrag; if(!D||!_flSel) return;
+  if(!D.moved && Math.abs(e.clientX-D.x)+Math.abs(e.clientY-D.y)<3) return; D.moved=true;
+  var r=D.pg.getBoundingClientRect(), px=r.width/210||1, o=D.o, T=D.T, gx=null, gy=null, n={x1:o.x1,y1:o.y1,x2:o.x2,y2:o.y2}, b;
+  if(D.k==='move'){
+    var dx=(e.clientX-D.x)/px, dy=(e.clientY-D.y)/px; n.x1+=dx; n.x2+=dx; n.y1+=dy; n.y2+=dy;
+    if(!e.altKey){ b=_ftBest([n.x1,(n.x1+n.x2)/2,n.x2],T.X); if(b){ n.x1+=b.d; n.x2+=b.d; gx=b.at; } b=_ftBest([n.y1,(n.y1+n.y2)/2,n.y2],T.Y); if(b){ n.y1+=b.d; n.y2+=b.d; gy=b.at; } }
+  } else {
+    var F=D.h===1?{x:o.x2,y:o.y2}:{x:o.x1,y:o.y1}, P={x:(e.clientX-r.left)/px, y:(e.clientY-r.top)/px};
+    var a=Math.atan2(P.y-F.y,P.x-F.x), L=Math.hypot(P.x-F.x,P.y-F.y), sa=null;
+    if(e.shiftKey) sa=Math.round(a/(Math.PI/4))*(Math.PI/4);  /* Shift = ล็อกมุมทีละ 45° */
+    else if(!e.altKey){ var _ax=Math.abs(P.x-F.x), _ay=Math.abs(P.y-F.y); if(_ay<=_FT_SNAP && _ax>_ay) P.y=F.y; else if(_ax<=_FT_SNAP && _ay>_ax) P.x=F.x; }  /* ปลายเส้นห่างแนวนอน/ตั้งไม่เกิน 1.5 มม. = ดูดตรง (ตามระยะ ไม่ใช่องศา · เส้นยาวกระโดดน้อย · เดิม ±5° ทำให้ตั้ง 1°–4° ไม่ได้ · ผู้ใช้ 29 ต.ค. 2026) */
+    if(sa!==null){ P.x=F.x+L*Math.cos(sa); P.y=F.y+L*Math.sin(sa); }
+    if(!e.altKey){ var hz=Math.abs(P.y-F.y)<0.05, vt=Math.abs(P.x-F.x)<0.05;
+      if(!(e.shiftKey && !hz && !vt)){
+        if(!vt){ b=_ftBest([P.x],T.X); if(b){ P.x+=b.d; gx=b.at; if(hz) P.y=F.y; } }
+        if(!hz){ b=_ftBest([P.y],T.Y); if(b){ P.y+=b.d; gy=b.at; if(vt) P.x=F.x; } }
+      } }
+    if(Math.hypot(P.x-F.x,P.y-F.y)<3) return;  /* เส้นสั้นสุด 3 มม. */
+    if(D.h===1){ n.x1=P.x; n.y1=P.y; } else { n.x2=P.x; n.y2=P.y; }
+  }
+  _flPut(_flSel,n); _flRender(_flSel); _flOverlay(); _ftGuides(D.pg,gx,gy); _flSync(); _flStatus();
+});
+document.addEventListener('mouseup',function _flMu(){ var D=_flDrag; if(!D) return; _flDrag=null; _ftGuideClear(); if(D.moved){ markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); if(typeof checkOverflow==='function') checkOverflow({quiet:true}); _flOverlay(); _flStatus(); } });
+document.addEventListener('keydown',function _flKd(e){
+  if(!_flSel || !document.body.classList.contains('editmode')) return;
+  var ae=document.activeElement; if(ae && ae.closest && ae.closest('input,select,textarea,[contenteditable="true"]')) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  var k=e.key, s=e.shiftKey?5:1;
+  if(k==='ArrowLeft'||k==='ArrowRight'||k==='ArrowUp'||k==='ArrowDown'){
+    e.preventDefault(); var d=_flGet(_flSel), dx=k==='ArrowLeft'?-s:(k==='ArrowRight'?s:0), dy=k==='ArrowUp'?-s:(k==='ArrowDown'?s:0);
+    _flPut(_flSel,{x1:d.x1+dx,y1:d.y1+dy,x2:d.x2+dx,y2:d.y2+dy}); _flRender(_flSel); _flOverlay(); _flStatus(); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll();
+  }
+  else if(k==='Delete'||k==='Backspace'){ e.preventDefault(); _flDelete(); }
+  else if(k==='Escape'){ e.preventDefault(); e.stopPropagation(); _flDeselect(); setStatus('info',tk('st.editText')); }
+},true);
+(function(){
+  document.body.classList.remove('flsel');  /* ไฟล์เก่าที่บันทึกติด class = ไม่โผล่แท็บค้าง */
+  var p=document.getElementById('flPane'); if(!p) return;
+  p.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b||!_flSel||!_flSel.isConnected) return; var d=_flGet(_flSel), msg=null;
+    if(b.hasAttribute('data-flc')){ var c=b.getAttribute('data-flc'); if(String(c).toUpperCase()!==String(d.c).toUpperCase()){ _flSel.setAttribute('data-c',c); msg=tk('fl.flColor',{c:c==='theme'?t('fl.theme'):c}); } }
+    else if(b.hasAttribute('data-flw')){ var w=parseFloat(b.getAttribute('data-flw')); if(w!==d.w){ _flSel.setAttribute('data-w',String(w)); msg=tk('fl.flWidth',{w:w}); } }
+    else if(b.hasAttribute('data-fls')){ var s=b.getAttribute('data-fls'); if(s!==d.st){ _flSel.setAttribute('data-st',s); msg=tk('fl.flStyle',{s:t('fls.'+s)}); } }
+    else if(b.hasAttribute('data-flo')){ var o=b.getAttribute('data-flo'), mx=(d.x1+d.x2)/2, my=(d.y1+d.y2)/2, H=Math.hypot(d.x2-d.x1,d.y2-d.y1)/2;
+      var n=(o==='h')?{x1:mx-H,y1:my,x2:mx+H,y2:my}:{x1:mx,y1:my-H,x2:mx,y2:my+H};
+      if(Math.abs(n.x1-d.x1)+Math.abs(n.y1-d.y1)+Math.abs(n.x2-d.x2)+Math.abs(n.y2-d.y2)>0.05){ _flPut(_flSel,n); msg=tk('fl.flOrient',{o:t(o==='h'?'btn.flH':'btn.flV')}); } }
+    if(!msg) return;  /* ค่าเดิม = ไม่มีจุด Undo */
+    _flRender(_flSel); _flOverlay(); _flSync(); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); flashStatus('info',msg);
+  });
+})();
 function ftextAdd(){
   var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;  /* กล่องที่เลือกอยู่ = จุดอ้างอิง (จับก่อนเข้าโหมด/เลิกเลือก) */
+  if(typeof _flDeselect==='function') _flDeselect();  /* เพิ่มกล่องข้อความ = เลิกเลือกเส้น */
   if(!document.body.classList.contains('editmode')) toggleEdit(true);  /* อยู่แท็บเดิม ไม่เด้งไปแท็บรูปแบบข้อความ */
   var pages=document.querySelectorAll('.page'), pg=pages[0], best=1e9, midY=window.innerHeight/2;
   if(ref) pg=ref.closest('.page');
@@ -5915,6 +6126,7 @@ document.addEventListener('click',function(ev){
   if(!document.body.classList.contains('editmode')) return;
   if(ev.target.closest('#typobar')||ev.target.closest('#edbar')) return;
   if(_ftMarqClick){ _ftMarqClick=false; return; }  /* click ปิดท้ายการลากกรอบเลือก */
+  if(ev.target.closest('.fline,.flh,.fldel')) return;  /* เส้นลอยจัดการเลือก/แถบล่างเองตั้งแต่ mousedown */
   if(ev.target.closest('.ftext')) return;  /* กล่องข้อความลอยจัดการเลือก/แถบรูปแบบ/แถบล่างเองตั้งแต่ mousedown (_ftSelect · _ftToggle · _ftStartEdit)
      click มาหลัง mouseup เสมอ → เดิม typoSelect ทับคำเตือนเลยขอบพิมพ์ด้วย "กล่องข้อความ" · Shift+คลิกเอากล่องออกแล้วแถบรูปแบบกลับไปชี้กล่องนั้น · คลิกขอบกล่อง (นอก .ftxt) แล้ว typoClear (ผู้ใช้ 28 ต.ค. 2026) */
   var found=_typoFind(ev.target);
@@ -5995,7 +6207,7 @@ function switchTab(name){
   var panes=document.querySelectorAll('#edribbon .rpane');
   for(var j=0;j<panes.length;j++){ panes[j].classList.toggle('active', panes[j].getAttribute('data-pane')===name); }
   /* แยกแท็บออกจากโหมด: คลิกแท็บ=สลับเครื่องมือเท่านั้น ออกจากโหมดแก้ทุกครั้ง — ผู้ใช้กดปุ่ม 'แก้เมนู'/'แก้รูป' เพื่อเข้าโหมด */
-  if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home') toggleEdit();  /* ข้อความ ↔ รูปแบบข้อความ = แท็บคู่ของโหมดแก้ข้อความ ไม่ออกจากโหมด · แท็บอื่น = ออก แล้วแท็บรูปแบบข้อความหายตาม (ผู้ใช้ 27 ต.ค. 2026) */
+  if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home' && name!=='fln') toggleEdit();  /* ข้อความ ↔ รูปแบบข้อความ = แท็บคู่ของโหมดแก้ข้อความ ไม่ออกจากโหมด · แท็บอื่น = ออก แล้วแท็บรูปแบบข้อความหายตาม (ผู้ใช้ 27 ต.ค. 2026) */
   if(document.body.classList.contains('imgmode')) toggleImgMode();
   if(document.body.classList.contains('headermode')) editHeader();
   _priceModeExit();
@@ -6386,6 +6598,10 @@ function _zoomDdToggle(e){ _ddToggle(e,_zoomDdCfg); }
 var _HOLD_BTNS={
   typoSizeUp:{step:function(){ typoSizeStep(0.5); }, val:function(){ var i=document.getElementById('typoSize'); return i?i.value:''; }},
   typoSizeDown:{step:function(){ typoSizeStep(-0.5); }, val:function(){ var i=document.getElementById('typoSize'); return i?i.value:''; }},
+  flAngUp:{step:function(){ _flAngStep(1); }, val:function(){ var i=document.getElementById('flAng'); return i?i.value:''; }},
+  flAngDown:{step:function(){ _flAngStep(-1); }, val:function(){ var i=document.getElementById('flAng'); return i?i.value:''; }},
+  flLenUp:{step:function(){ _flLenStep(1); }, val:function(){ var i=document.getElementById('flLen'); return i?i.value:''; }},
+  flLenDown:{step:function(){ _flLenStep(-1); }, val:function(){ var i=document.getElementById('flLen'); return i?i.value:''; }},
   zoomIn:{step:function(){ zoomIn(); }, val:function(){ return _zoom; }},
   zoomOut:{step:function(){ zoomOut(); }, val:function(){ return _zoom; }},
   uiIn:{step:function(){ uiIn(); }, val:function(){ return _uiscale; }},
@@ -6413,6 +6629,8 @@ document.addEventListener('click',function(e){ if(_holdSwallow && e.target && e.
    สะสม deltaY ครบ 50 = 1 ขั้น (เมาส์ 1 คลิกล้อ ≈ 1 ขั้น · ทัชแพดไม่รัว) · ไม่ใช้กับช่องเงิน (ราคา) และช่องเงา (มีแถบเลื่อน + ทุกครั้งเป็นจุด Undo) ===== */
 var _WHEEL_FIELDS={
   typoSize:function(d){ var i=document.getElementById('typoSize'); if(i && i.disabled) return; typoSizeStep(d*0.5); },
+  flAng:function(d){ _flAngStep(d); },
+  flLen:function(d){ _flLenStep(d); },
   zoomLvl:function(d){ if(d>0) zoomIn(); else zoomOut(); },
   calInch:function(d){ var el=document.getElementById('calInch'); if(!el) return; var cur=parseFloat(_prNorm(el.value)), diag=Math.sqrt(screen.width*screen.width+screen.height*screen.height);
     if(!(cur>0) && diag>0 && _calWidth()>0) cur=diag/(_calWidth()/_CARD_MM)/25.4;  /* ช่องว่าง = เริ่มจากค่าแถบทาบบัตร */

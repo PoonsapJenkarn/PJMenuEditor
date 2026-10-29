@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch', 'flAng', 'flLen'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -2947,7 +2947,7 @@ def main():
 
     # ---- 131) ลำดับแท็บ: หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด) ----
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
-    if _ord131!=['page','home','image','template','screen','view','fmt']:  # fmt = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
+    if _ord131!=['page','home','image','template','screen','view','fmt','fln']:  # fmt = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
         errors.append('lint #131: ลำดับแท็บต้องเป็น หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ · ไฟล์ (ตอนนี้ '+','.join(_ord131)+')')
     if not re.search(r'<button class="edtab active" data-tab="page"', txt) or not re.search(r'<div class="rpane active" data-pane="page">', txt) or 'function _tabStartup(' not in txt:
         errors.append('lint #131: แท็บเริ่มต้นต้องเป็น หน้า (markup + _tabStartup ตอนเปิดไฟล์)')
@@ -3031,7 +3031,7 @@ def main():
         errors.append('lint #137: ไม่พบปุ่มแท็บ รูปแบบข้อความ (edtab ctx)')
     if 'body:not(.editmode) #edtabs .edtab[data-tab="fmt"]{display:none;}' not in _css or '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in _css or '#edtabs .edtab.ctx.active{background:#fff;}' not in _css:
         errors.append('lint #137: แท็บตามบริบทต้องซ่อนตอนไม่ได้แก้ข้อความ + typobar display:contents ใน pane fmt + สถานะ active')
-    if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home') toggleEdit();" not in txt:
+    if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home' && name!=='fln') toggleEdit();" not in txt:
         errors.append('lint #137: สลับ ข้อความ ↔ รูปแบบข้อความ ต้องไม่ออกจากโหมดแก้ข้อความ')
     if "if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
         errors.append('lint #137: เข้าโหมด=เลือกแท็บรูปแบบข้อความ · ออกโหมดตอนอยู่แท็บนั้น=กลับแท็บข้อความ')
@@ -3212,6 +3212,50 @@ def main():
     # ---- 155) พิมพ์ทับไฮไลท์ในกล่องข้อความ: แถบล่างกลับเป็นสถานะกำลังพิมพ์ ไม่ค้าง "เลือกอยู่" · ไม่ทับผลที่เพิ่งแจ้ง (ผู้ใช้ 28 ต.ค. 2026) ----
     if "else if(!_selHold && typeof _ftEdit!=='undefined' && _ftEdit && _ftEdit.isConnected && typeof _ftStatus==='function') _ftStatus(_ftEdit);" not in txt:
         errors.append('lint #155: syncButtons ต้องคืนสถานะกำลังพิมพ์ของกล่องข้อความเมื่อไฮไลท์หมด (เว้น _selHold)')
+
+    # ---- 156) เส้นลอย (ขั้น C): แบบ 3 (ทุกมุม · ≤5° ดูดตรง · Shift 45° · Alt ไม่ดูด) · แท็บตามบริบท รูปแบบเส้น · ไม่ติดไฟล์/undo/พิมพ์ส่วนเครื่องมือ (ผู้ใช้ 28 ต.ค. 2026) ----
+    for _f156 in ('function flineAdd(){','function _flRender(l){','function _flSelect(l){','function _flDeselect(){','function _flOverlay(){','function _flDelete(){','function _flAfterRestore(){','function _flTargets(l,px){','function _flSync(){'):
+        if _f156 not in txt: errors.append('lint #156: ไม่พบ '+_f156)
+    if 'if(_ay<=_FT_SNAP && _ax>_ay) P.y=F.y; else if(_ax<=_FT_SNAP && _ay>_ax) P.x=F.x;' not in txt or 'if(e.shiftKey) sa=Math.round(a/(Math.PI/4))*(Math.PI/4);' not in txt or '5*Math.PI/180' in txt:
+        errors.append('lint #156: ลากปลายเส้นต้องดูดตรงตามระยะ 1.5 มม. (ไม่ใช่ ±5°) · Shift ล็อก 45° (ผู้ใช้ 29 ต.ค. 2026)')
+    if '<button class="edtab ctx" data-tab="fln"' not in txt or '<div class="rpane" data-pane="fln" id="flPane">' not in txt or 'body:not(.flsel) #edtabs .edtab[data-tab="fln"]' not in _css:
+        errors.append('lint #156: ต้องมีแท็บตามบริบท รูปแบบเส้น (ซ่อนเมื่อไม่ได้เลือกเส้น)')
+    if "name!=='fmt' && name!=='home' && name!=='fln') toggleEdit();" not in txt:
+        errors.append('lint #156: สลับไปแท็บรูปแบบเส้นต้องไม่ออกจากโหมดแก้ข้อความ')
+    if txt.count('.ftmarq,.ftgrp,.flh,.fldel,.flhl')!=3 or '@media print{.flh,.fldel,.flhl{display:none !important;}}' not in _css or txt.count("var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');")!=2:
+        errors.append('lint #156: จุดจับ/×/แสงของเส้นต้องตัดออกตอนบันทึก 2 จุด + undo · ไม่พิมพ์ · flsel ไม่ติดไฟล์')
+    _ps156=txt.find('<script id="printTitleScript">'); _pe156=txt.find('</script>',_ps156)
+    if "querySelectorAll('.fline')" not in (txt[_ps156:_pe156] if _ps156>=0 else ''):
+        errors.append('lint #156: พิมพ์ต้องตัดเส้นที่เลยขอบกระดาษ (printTitleScript)')
+    _ck156=txt.find("/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */"); _cs156=txt[_ck156:_ck156+1400] if _ck156>=0 else ''
+    if "if(ev.target.closest('.fline,.flh,.fldel')) return;" not in _cs156 or _cs156.find("if(ev.target.closest('.fline,.flh,.fldel'))")>_cs156.find('var found=_typoFind(ev.target);'):
+        errors.append('lint #156: click เลือก element ต้องข้ามเส้นลอย (ไม่ทับสถานะเส้น)')
+    for _b156 in ('id="btnFlineAdd" onclick="flineAdd()"','id="btnFlineAddFmt" onclick="flineAdd()"','id="btnFlineAddLn" onclick="flineAdd()"','id="btnFlDel" onclick="_flDelete()"'):
+        if _b156 not in txt: errors.append('lint #156: ไม่พบปุ่ม '+_b156)
+    if '#edribbon .flopt.on{background:#217346;border-color:#217346;color:#fff;}' not in _css:
+        errors.append('lint #156: ปุ่มที่ใช้อยู่ในแท็บรูปแบบเส้นต้องเขียว (ข้อ 11)')
+    if "pg.querySelectorAll('.fline').forEach(function(q){ var v=Math.max(" not in txt:
+        errors.append('lint #156: หน้าเปล่าต้องยืดตามเส้นที่เลยขอบล่าง')
+    for _k156 in ('tab.fln','tab.flnCtx','ttl.tabFln','btn.flineAdd','ttl.flineAdd','btn.flDel','ttl.flDel','grp.flColor','grp.flWidth','grp.flStyle','grp.flOrient','grp.flDelete','fl.theme','ttl.flTheme','fls.solid','fls.dashed','fls.dotted','fls.double','ttl.flsDouble','btn.flH','btn.flV','st.flSel','fl.flineAdd','fl.flineDel','fl.flColor','fl.flWidth','fl.flStyle','fl.flOrient'):
+        if txt.count("'"+_k156+"':'")<2: errors.append('lint #156: i18n '+_k156+' ไม่ครบ TH+EN')
+
+    # ---- 157) ช่องมุม/ความยาวของเส้นลอย: พิมพ์ได้ · −/+ กดค้าง · ล้อเมาส์ · หมุนรอบกลางเส้น · ความยาวยึดจุดเริ่ม · ค่าเดิมไม่มีจุด Undo (ผู้ใช้ 29 ต.ค. 2026) ----
+    for _f157 in ('function _flSetAng(v){','function _flSetLen(v){','function _flAngStep(s){','function _flLenStep(s){','function _flFieldsSync(force){','function _flNum(s){','function _flDeg(a){'):
+        if _f157 not in txt: errors.append('lint #157: ไม่พบ '+_f157)
+    _pf157=txt.find('<div class="rpane" data-pane="fln" id="flPane">'); _pe157=txt.find('<div class="rpane" data-pane="view">',_pf157); _sg157=txt[_pf157:_pe157] if 0<=_pf157<_pe157 else ''
+    for _i157 in ('id="flAng"','id="flLen"','id="flAngUp" onclick="_flAngStep(1)"','id="flAngDown" onclick="_flAngStep(-1)"','id="flLenUp" onclick="_flLenStep(1)"','id="flLenDown" onclick="_flLenStep(-1)"','data-i18n="grp.flGeom"'):
+        if _i157 not in _sg157: errors.append('lint #157: แท็บรูปแบบเส้นต้องมี '+_i157)
+    _mh157=re.search(r'var _HOLD_BTNS=\{([\s\S]*?)\n\};', txt); _mw157=re.search(r'var _WHEEL_FIELDS=\{([\s\S]*?)\n\};', txt)
+    for _h157 in ('flAngUp','flAngDown','flLenUp','flLenDown'):
+        if not _mh157 or ('\n  '+_h157+':{') not in ('\n'+_mh157.group(1)): errors.append('lint #157: ปุ่ม '+_h157+' ต้องกดค้างได้')
+    for _w157 in ('flAng','flLen'):
+        if not _mw157 or ('\n  '+_w157+':function(d)') not in ('\n'+_mw157.group(1)): errors.append('lint #157: ช่อง '+_w157+' ต้องหมุนล้อปรับได้')
+    if 'function _flClean(v,neg){' not in txt or "el.addEventListener('blur',function(){ _flFieldsSync(true); });" not in txt:
+        errors.append('lint #157: ช่องมุม/ความยาวต้องกรองตัวอักษร + ไม่กด Enter = ไม่เปลี่ยน (เหมือนช่องขนาดตัวอักษร)')
+    if 'if(Math.abs(v-_flDeg(g.a))<0.05) return false;' not in txt or '_flFieldsSync(false);' not in txt or "String(Math.round(d[k]*100)/100)" not in txt:
+        errors.append('lint #157: มุมเดิม = ไม่มีจุด Undo · ช่องตามเส้น · พิกัดเก็บ 0.01 มม.')
+    for _k157 in ('grp.flGeom','fl.angLbl','fl.lenLbl','fl.mmUnit','ttl.flAng','ttl.flAngDown','ttl.flAngUp','ttl.flLen','ttl.flLenDown','ttl.flLenUp','fl.flAngSet','fl.flLenSet','fl.flNumBad','fl.flLenRange','fl.flNumOnly','fl.flNumOnlyTh'):
+        if txt.count("'"+_k157+"':'")<2: errors.append('lint #157: i18n '+_k157+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

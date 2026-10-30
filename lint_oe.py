@@ -3563,6 +3563,12 @@ def main():
     if not _fp167 or '_ftRestack(L,' not in _fp167.group(0): errors.append('lint #167: _typoFtByPage ต้องทำทีละหน้าผ่าน _ftRestack')
     if "var _FB_ATTR=['data-fbc','data-fbw','data-fbs','data-fgc'];" not in txt: errors.append('lint #167: _FB_ATTR ต้องมี 4 ค่า (คืนค่าใช้ [null,null,null,null])')
 
+    # ---- 165b) ปุ่ม ขอบ/พื้น ตอนยังไม่ได้ใส่ = ลายตารางหมากรุกทั้งสองปุ่ม (กฎเดียว) · ปุ่มริบบอนกับตัวเลือก ไม่มี ในถาดต้องเหมือนกัน (ผู้ใช้ 30 ต.ค. 2026 12:26 เลือกให้เหมือนกัน) ----
+    _ck165=re.search(r"#typobar #fbBdCur\.fb-cur-none,#typobar #fbBdPop \.fb-sw-none,#typobar #fbBgCur\.fb-cur-none,#typobar #fbBgPop \.fb-sw-none\{[^}]*\}", txt)
+    if not _ck165 or 'linear-gradient(45deg' not in _ck165.group(0) or 'background-size:8px 8px' not in _ck165.group(0) or '#C0392B' in _ck165.group(0):
+        errors.append('lint #165b: ขอบ + พื้น ที่ยังไม่ได้ใส่ ต้องเป็นลายตารางหมากรุกกฎเดียวกัน (ปุ่ม + ตัวเลือก ไม่มี ในถาด)')
+    if '#C0392B calc(50% - 1px)' in txt: errors.append('lint #165b: ห้ามมีเส้นแดงทแยงแบบเดิมเหลือ (ขยะ)')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

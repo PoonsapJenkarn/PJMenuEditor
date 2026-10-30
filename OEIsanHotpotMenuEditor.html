@@ -926,7 +926,8 @@ body:not(.editmode) #edtabs .edtab[data-tab="fmt"]{display:none;}  /* แท็�
 #typobar .fbfld{display:inline-flex;align-items:center;gap:6px;}
 #typobar .fblbl{font-size:14px;color:#323130;}
 #typobar .fbpick .fb-cur{box-sizing:border-box;}
-#typobar .fbpick .fb-cur.fb-cur-none,#typobar .fb-pop .fb-sw-none{background:linear-gradient(to top right,#fff calc(50% - 1px),#C0392B calc(50% - 1px),#C0392B calc(50% + 1px),#fff calc(50% + 1px)) !important;box-shadow:none !important;}
+/* ยังไม่ได้ใส่ (ผู้ใช้ 30 ต.ค. 2026 12:26 เลือก ลายตารางหมากรุกทั้งสองปุ่ม · lint #165b): ขอบ + พื้น = ลายตารางหมากรุกแบบเดียวกัน — ใช้ทั้งปุ่มบนริบบอนและตัวเลือก ไม่มีขอบ/ไม่มีพื้น ในถาด */
+#typobar #fbBdCur.fb-cur-none,#typobar #fbBdPop .fb-sw-none,#typobar #fbBgCur.fb-cur-none,#typobar #fbBgPop .fb-sw-none{background-color:#fff !important;background-image:linear-gradient(45deg,#cfcfcf 25%,transparent 25%,transparent 75%,#cfcfcf 75%),linear-gradient(45deg,#cfcfcf 25%,transparent 25%,transparent 75%,#cfcfcf 75%) !important;background-size:8px 8px !important;background-position:0 0,4px 4px !important;box-shadow:none !important;}
 #typobar .fbpick .cp-caretbtn.on{background:#217346;border-left-color:#217346;}
 #typobar .fbpick .cp-caretbtn.on .cp-caret{color:#fff;}
 #typobar .fb-pop .ol-auto{margin-bottom:5px;}

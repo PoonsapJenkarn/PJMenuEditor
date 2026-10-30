@@ -2008,10 +2008,13 @@ def main():
     # (b) ลิงก์ติดต่อ/GitHub ต้องคลิกได้จริง (mailto + github target=_blank)
     _am70=re.search(r'<div id="aboutModal"[\s\S]*?</div></div>', txt)
     _ams=_am70.group(0) if _am70 else ''
-    if 'href="mailto:jenkarn2631@gmail.com"' not in _ams:
+    if 'href="mailto:poonsapjenkarn@gmail.com"' not in _ams:
         errors.append('About ไม่มีลิงก์อีเมล mailto คลิกได้ (ดู UI_STANDARD.md ข้อ 11)')
-    if 'github.com/Justin-10/OE' not in _ams or 'target="_blank"' not in _ams:
+    if 'href="https://github.com/PoonsapJenkarn/PJMenuEditor"' not in _ams or 'target="_blank"' not in _ams:
         errors.append('About ไม่มีลิงก์ GitHub แบบเปิดแท็บใหม่ (target=_blank) (ดู UI_STANDARD.md ข้อ 11)')
+    # (b2) ย้าย repo + อีเมลใหม่ (ผู้ใช้ 30 ต.ค. 2026): github.com/PoonsapJenkarn/PJMenuEditor · poonsapjenkarn@gmail.com — ห้ามมี repo/อีเมลเก่าเหลือในไฟล์ (หัวไฟล์ + About)
+    for _old70 in ('Justin-10/OE','jenkarn2631@'):
+        if _old70 in txt: errors.append('lint #70: ยังมี repo/อีเมลเก่า '+_old70+' ในไฟล์ — ใช้ github.com/PoonsapJenkarn/PJMenuEditor · poonsapjenkarn@gmail.com')
     # (c) ปิด .open ตอนบันทึก editor + ตัดทิ้งใน buildMenuHtml
     if "_abm.classList.remove('open')" not in txt:
         errors.append('buildEditorHtml ไม่ได้ปิด About (.open) ตอนบันทึก (ดู UI_STANDARD.md ข้อ 11)')
@@ -3437,6 +3440,42 @@ def main():
     if "clone.querySelectorAll('.fb-pop.open,.fbpick .cp-caretbtn.on')" not in txt: errors.append('lint #165: Save Editor ต้องปิดถาดขอบ/พื้น')
     for _k165 in ('grp.ftBox','fb.bdLbl','fb.bgLbl','fb.bdNone','fb.bgNone','fb.theme','fb.wLbl','fb.stLbl','ttl.fbNeed','ttl.fbBd','ttl.fbBg','ttl.fbHex','fl.fbNeed','fl.fbBdSet','fl.fbBdOff','fl.fbBgSet','fl.fbBgOff'):
         if txt.count("'"+_k165+"':'")<2: errors.append('lint #165: i18n '+_k165+' ไม่ครบ TH+EN')
+
+    # ---- 166) ริบบอนเลื่อนซ้าย-ขวา: แถวเดียว · ปุ่ม ‹ › + ล้อเมาส์ · overflow-x:clip (ไม่ใช่ auto — ถาดที่เปิดลงล่างต้องไม่ถูกตัด) · #edbar ไม่ดันความกว้างหน้า (contain:inline-size) · ถาดล้นขวา = เลื่อนให้เห็น · ไม่ติดไฟล์ (ผู้ใช้ 30 ต.ค. 2026) ----
+    if '#edbar{position:sticky;top:0;z-index:9999;min-width:960px;contain:inline-size;' not in txt: errors.append('lint #166: #edbar ต้องมี contain:inline-size (ริบบอนไม่ดันหน้าให้กว้างเกินจอ)')
+    _rb166=re.search(r"#edribbon\{[^}]*\}", txt)
+    if not _rb166 or 'overflow-x:clip' not in _rb166.group(0) or re.search(r'overflow(-x|-y)?:(auto|scroll|hidden)', _rb166.group(0)): errors.append('lint #166: #edribbon ต้อง overflow-x:clip เท่านั้น (auto/hidden/scroll ทำให้ถาดถูกตัด)')
+    _rp166=re.search(r"#edribbon \.rpane\{display:none;[^}]*\}", txt)
+    for _n166 in ('flex-wrap:nowrap','width:max-content','margin-left:calc(-1*var(--ribx,0px))'):
+        if not _rp166 or _n166 not in _rp166.group(0): errors.append('lint #166: #edribbon .rpane ขาด '+_n166)
+    _a166=txt.find('<div id="edribbon">'); _e166=txt.find('<div id="edpanel"')
+    for _id166,_k166 in (('ribNavL','ttl.ribL'),('ribNavR','ttl.ribR')):
+        _p166=txt.find('id="'+_id166+'"')
+        if txt.count('id="'+_id166+'"')!=1 or not (_a166<_p166<_e166): errors.append('lint #166: ต้องมีปุ่ม #'+_id166+' 1 ปุ่ม ระหว่างริบบอนกับ edpanel')
+        elif 'data-i18n-title="'+_k166+'"' not in txt[_p166:txt.find('</button>',_p166)]: errors.append('lint #166: #'+_id166+' ต้องมี data-i18n-title '+_k166)
+        if txt.count("'"+_k166+"':'")<2: errors.append('lint #166: i18n '+_k166+' ไม่ครบ TH+EN')
+    if '#edbar .ribnav.show{display:flex;}' not in txt or not re.search(r"#edbar \.ribnav\{[^}]*display:none", txt): errors.append('lint #166: ปุ่ม ‹ › ต้องซ่อนเป็นค่าเริ่มต้น โผล่เฉพาะ .show (ห้ามปุ่มหลอก)')
+    _sy166=re.search(r"\nfunction _ribSync\(\)\{[\s\S]*?\n\}", txt); _s166=_sy166.group(0) if _sy166 else ''
+    for _n166 in ("e.L.classList.toggle('show', vis && _ribX>0);","e.R.classList.toggle('show', vis && _ribX<mx);",'if(rp!==_ribPane){ _ribPane=rp; _ribX=0; }','!_ribPopsOpen(rp).length'):
+        if _n166 not in _s166: errors.append('lint #166: _ribSync ขาด '+_n166)
+    _wh166=re.search(r"\nfunction _ribWheel\(ev\)\{[\s\S]*?\n\}", txt); _w166=_wh166.group(0) if _wh166 else ''
+    for _n166 in ('ev.defaultPrevented','ev.ctrlKey',"t.closest('input,select,textarea,'+_RIB_POPS)",'ev.preventDefault();'):
+        if _n166 not in _w166: errors.append('lint #166: _ribWheel ขาด '+_n166)
+    if "var _RIB_POPS='.cp-pop,.ol-pop,.cp-dlg,.shd-pop,.gfont-pop';" not in txt: errors.append('lint #166: _RIB_POPS ต้องครอบถาดทุกชนิดในริบบอน')
+    for _c166 in re.findall(r'<div class="([a-z-]+(?:pop|dlg))\b[^"]*" id="', txt[_a166:_e166]):
+        if '.'+_c166 not in "'.cp-pop,.ol-pop,.cp-dlg,.shd-pop,.gfont-pop'": errors.append('lint #166: ถาดชนิดใหม่ .'+_c166+' ในริบบอน ต้องเพิ่มใน _RIB_POPS')
+    _in166=re.search(r"\nfunction _ribInit\(\)\{[\s\S]*?\n\}", txt); _i166=_in166.group(0) if _in166 else ''
+    for _n166 in ('ResizeObserver','MutationObserver',"addEventListener('focusin',_ribFocus)","addEventListener('wheel',_ribWheel,{passive:false})"):
+        if _n166 not in _i166: errors.append('lint #166: _ribInit ขาด '+_n166)
+    if 'function _ribFitPop(' not in txt or 'if(Date.now()-_ribPtr<600) return;' not in txt: errors.append('lint #166: ขาด _ribFitPop / กันเลื่อนตอน focus จากเมาส์')
+    if "_rbc.style.removeProperty('--ribx')" not in txt: errors.append('lint #166: Save Editor ต้องล้างตำแหน่งเลื่อนริบบอน')
+    # 166b) ปุ่ม ‹ › มีเส้นคั่นชัด + ต่างจากเส้นคั่นกลุ่ม: พื้นทึบ (ไม่ใช่ไล่สีจาง) · เส้นเข้ม #8a8886 ด้านใน · เงาด้านใน (ผู้ใช้ 30 ต.ค. 2026)
+    for _id166,_sd166,_sh166 in (('ribNavL','border-right:1px solid #8a8886','box-shadow:3px 0'),('ribNavR','border-left:1px solid #8a8886','box-shadow:-3px 0')):
+        _r166=re.search(r"#edbar #"+_id166+r"\{[^}]*\}", txt)
+        if not _r166 or 'gradient' in _r166.group(0) or 'background:#edebe9' not in _r166.group(0) or _sd166 not in _r166.group(0) or _sh166 not in _r166.group(0):
+            errors.append('lint #166: #'+_id166+' ต้องพื้นทึบ #edebe9 + '+_sd166+' + เงาด้านใน (เส้นคั่นชัด ต่างจากเส้นคั่นกลุ่ม)')
+    if '#edbar #ribNavL:hover,#edbar #ribNavR:hover{color:#217346;background:#eef7f1;}' not in txt:
+        errors.append('lint #166: hover ปุ่ม ‹ › ต้องใช้ selector #id (ไม่งั้น #edbar #ribNavL ชนะ hover)')
 
     # ---- report ----
     print("=" * 54)

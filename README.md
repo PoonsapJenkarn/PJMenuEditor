@@ -22,14 +22,14 @@
 Ctrl+P (Chrome/Edge) → A4, Margins = None, Background graphics = ON
 
 ## Version control
-Git repo + remote บน GitHub (private): https://github.com/Justin-10/OE — commit ทุกครั้งที่แก้เสร็จเพื่อให้ย้อนกลับได้
+Git repo + remote บน GitHub: https://github.com/PoonsapJenkarn/PJMenuEditor — commit ทุกครั้งที่แก้เสร็จเพื่อให้ย้อนกลับได้
 
 ## ผู้สร้าง / Credit
 สร้างโดย **Poonsap Jenkarn** (2026)
 เครื่องมือแก้เมนูร้านอาหารอีสาน — ตั้งใจทำให้ร้านเล็กใช้ฟรี
 
-- GitHub: https://github.com/Justin-10/OE
-- ติดต่อ: jenkarn2631@gmail.com
+- GitHub: https://github.com/PoonsapJenkarn/PJMenuEditor
+- ติดต่อ: poonsapjenkarn@gmail.com
 
 ## สัญญาอนุญาต / License
 เผยแพร่ภายใต้ **MIT License** — ใช้ แก้ไข แจกจ่าย หรือใช้เชิงพาณิชย์ได้ฟรี โดยต้องคงประกาศลิขสิทธิ์และข้อความอนุญาตของผู้สร้างไว้ · ดูไฟล์ [LICENSE](LICENSE)

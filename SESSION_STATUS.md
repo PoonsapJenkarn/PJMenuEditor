@@ -1,5 +1,51 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## เสร็จ (ยังไม่ commit/push) 30 ต.ค. 2026 10:10 — ย้าย repo + อีเมลใหม่ · รอผู้ใช้ push
+- repo ใหม่: https://github.com/PoonsapJenkarn/PJMenuEditor · อีเมลใหม่: poonsapjenkarn@gmail.com
+- แก้: html หัวไฟล์ (Contact/Repository) + About (mailto + ลิงก์ GitHub) · README (Version control + Credit · ตัดคำ "(private)") · .git/config remote origin url → PJMenuEditor.git (เทียบเท่า git remote set-url)
+- lint #70: อีเมล/URL ใหม่ + (b2) ห้ามมี Justin-10/OE · jenkarn2631@ ในไฟล์ (ไฟล์เดิมจับได้) · PASS · html 8,501,825 bytes
+- ไม่แก้: SESSION_STATUS.md ส่วนประวัติที่อ้าง URL เก่า (บันทึกเหตุการณ์) · LICENSE (ชื่อเดิม ไม่มีอีเมล/URL)
+- commit/push (รวม #166 ริบบอนเลื่อน + เส้นคั่น):
+  git add -A
+  git commit -m "chore: ย้าย repo ไป PoonsapJenkarn/PJMenuEditor · อีเมลใหม่ใน About/README · feat: ริบบอนเลื่อนซ้าย-ขวา ปุ่ม ‹ › + ล้อเมาส์ + lint #70 #166"
+  git push -u origin main
+- คำแนะนำที่เสนอ (ยังไม่ทำ รอผู้ใช้เลือก): เปลี่ยนชื่อไฟล์ OEIsanHotpotMenuEditor.html → PJMenuEditor.html (กระทบ lint PATH · ชื่อไฟล์ Save Editor/Menu · .gitignore · draft key localStorage · shortcut · README) · .gitignore มี OEIsanHotPotMenuEditor_*.html (P ใหญ่) ไม่ตรงชื่อจริง · ตั้ง git user.email · archive repo เก่า · ตัดสินใจ public/private + SESSION_STATUS.md
+- ยังค้าง: #161 จอป้าย · ข้อ 9 agent
+
+## เสร็จ (ยังไม่ commit) 30 ต.ค. 2026 09:30 — ปุ่ม ‹ › เส้นคั่นชัด + ต่างจากเส้นคั่นกลุ่ม (#166b) · รอทดสอบ
+- จากรูปผู้ใช้: ปุ่ม ‹ › ไล่สีจาง กลืนกับริบบอน · › ทับคำ "ปิด" · (ปุ่ม TH/EN ขวาบนกลับมาแล้ว ✅)
+- แก้: พื้นทึบ #edebe9 (เข้มกว่าริบบอน #faf9f8) · เส้นด้านใน 1px #8a8886 (เข้มกว่าเส้นคั่นกลุ่ม #b3b0ad) · เงาด้านใน · ลูกศร #323130 · hover เขียว
+- lint #166b (ไฟล์เดิมจับ 3 ข้อ) · PASS · html 8,501,771 bytes
+- commit รวม #166: git add -A · git commit -m "feat: ริบบอนเลื่อนซ้าย-ขวา ปุ่ม ‹ › + ล้อเมาส์ (เส้นคั่นชัด · ถาดไม่ถูกตัด · กระดาษไม่เลื่อนตาม) + lint #166" · git push
+- ยังค้าง: ย้าย repo ไป PoonsapJenkarn/PJMenuEditor (รอผู้ใช้) → แก้ลิงก์ About + lint #70
+
+## 30 ต.ค. 2026 09:25 — ผู้ใช้กำลังย้าย repo ไป account ใหม่: PoonsapJenkarn/PJMenuEditor
+- ตรวจแล้ว: C:\OE มี LICENSE (MIT · Copyright 2026 Poonsap Jenkarn) · README.md · .gitignore · .gitattributes อยู่แล้ว · remote ปัจจุบัน origin = https://github.com/Justin-10/OE.git
+- แนะนำ: สร้าง repo ว่าง (No license · ไม่ติ๊ก README/.gitignore) → git remote set-url origin ... → git push -u origin main
+- ต้องแก้หลังย้าย (ยังไม่แก้ รอ URL จริง): ลิงก์ GitHub ใน About (github.com/Justin-10/OE) + lint #70 ที่ล็อก URL นี้
+- ยังไม่ commit: ริบบอนเลื่อนซ้าย-ขวา #166 (รอทดสอบ)
+
+## เสร็จ (ยังไม่ commit) 30 ต.ค. 2026 09:25 — ริบบอนเลื่อนซ้าย-ขวา แบบ ก (#166) รอบ 2/2 · รอผู้ใช้ทดสอบ
+- ผู้ใช้เลือก ก: ปุ่ม ‹ › + ล้อเมาส์
+- CSS: #edbar contain:inline-size (ริบบอนไม่ดัน body max-content #153 · กระดาษซูมยังดันได้เหมือนเดิม) · #edribbon overflow-x:clip · .rpane nowrap + width:max-content + min-width:100% + margin-left:-var(--ribx)
+- ปุ่ม #ribNavL/#ribNavR ใน #edbar หลัง #edribbon (absolute · top/height ตามริบบอนด้วย JS · ไม่แตะ containing block ของถาด) · ซ่อนเป็นค่าเริ่มต้น .show เมื่อมีส่วนล้นด้านนั้น · tabindex -1 · mousedown ไม่ดึง focus
+- JS _ribSync/_ribFitPop/_ribWheel/_ribFocus/_ribInit: ResizeObserver (ribbon/ทุก rpane/edtabs) + MutationObserver class/childList (ถาดเปิด-ปิด) · เปลี่ยนแท็บ = เริ่มซ้าย · ล้อเมาส์ข้าม input/select/ถาด/Ctrl/ช่องที่ preventDefault แล้ว · สุดทาง = ปล่อยหน้าเลื่อน · ถาดล้นขวา = เลื่อนให้เห็น (ยอมเลยปลายชั่วคราว) · Tab คีย์บอร์ด = เลื่อนให้เห็น (focus จากเมาส์ไม่เลื่อน)
+- Save Editor ล้าง --ribx + .show · i18n ttl.ribL/ttl.ribR · lint #166 (ไฟล์เดิมจับ 25 ข้อ) · PASS ไม่มี warning · html 8,501,233 bytes
+- ข้อจำกัด: แถวแท็บบนสุดยังไม่มีปุ่มเลื่อน (จอแคบมาก <~1250px ปุ่มขวาบนอาจล้น) · ตรวจ syntax JS อัตโนมัติไม่ได้
+- commit:
+  git add -A
+  git commit -m "feat: ริบบอนเลื่อนซ้าย-ขวา ปุ่ม ‹ › + ล้อเมาส์ (ถาดไม่ถูกตัด · กระดาษไม่เลื่อนตาม) + lint #166"
+  git push
+
+## 30 ต.ค. 2026 09:15 — ✅ COMMITTED b22ee1a (pushed e543ef6..b22ee1a) ขอบ+พื้นหลังกล่องข้อความ #165 · HEAD = b22ee1a
+- ผลทดสอบจากรูป: ขอบแดงขึ้นบนกล่อง ✅ · ตัวอย่างพิมพ์มีขอบ ✅ (แต่ติ๊ก Background graphics อยู่ → ยังไม่ยืนยันกรณีไม่ติ๊ก) · EN Border/Fill/Box ✅
+- งานใหม่: ribbon ล้นขอบขวา (ปิดแก้ข้อความ ถูกตัด · แถบบนขวา EN ถูกตัด) → ผู้ใช้ขอให้ ribbon เลื่อนซ้ายขวาได้ · รอบ 1/2 ตรวจเสร็จ (ยังไม่แตะไฟล์)
+- สภาพตอนนี้ (#153): body width:max-content → ribbon ดันหน้าให้กว้าง → เลื่อนได้ด้วยแถบเลื่อนล่างของทั้งหน้า (กระดาษเลื่อนตาม) · #edbar sticky top เท่านั้น · แถวแท็บบนกว้างตาม body → ปุ่มขวาบนหลุดจอด้วย
+- ข้อจำกัดเทคนิค: ใน ribbon มี popup absolute 7 ตัว (gfontPop · typoCpPop · typoCpDlg · typoOlPop · fbBdPop · fbBgPop · shdPop) → ถ้าใช้ overflow-x:auto (แถบเลื่อนจริง) popup ถูกตัด เพราะ overflow-y กลายเป็น auto ตาม
+- เสนอ: ก) ปุ่มลูกศร ‹ › ขอบ ribbon + ล้อเมาส์ · ใช้ overflow-x:clip (popup ด้านล่างไม่ถูกตัด) [แนะนำ] · ข) แถบเลื่อนจริงใต้ ribbon + ย้าย popup 7 ตัวเป็น position:fixed · ค) คงเดิม
+- รอบ 2: แก้ + lint #166 · ต้องอัปเดต lint #153 (body max-content) ด้วย
+- ยังค้าง: #161 จอป้าย (รวมพื้นกล่องข้อความในจอป้าย) · ข้อ 9 agent
+
 ## เสร็จ (ยังไม่ commit) 29 ต.ค. 2026 22:50 — ขอบ + พื้นหลัง กล่องข้อความ (#165) รอบ 2/2 · รอผู้ใช้ทดสอบ
 - ผู้ใช้เลือก: กลุ่ม 'กล่อง' ในแท็บรูปแบบข้อความ · สี = ตามธีม + 7 สีชุดเส้น + สีที่กำหนดเอง + HEX + กำหนดเอง
 - ใหม่ใน #typobar ต่อจาก จัดรูปแบบ: [ขอบ ■▾] [พื้น ■▾] (cp-trigger มาตรฐานเดิม) · จางเมื่อไม่ได้เลือกกล่อง (ttl.fbNeed)

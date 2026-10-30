@@ -1,5 +1,40 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## เสร็จ (ยังไม่ commit) 30 ต.ค. 2026 11:00 — #167 ใช้ทั้งประเภท/คืนค่า กล่องข้อความ รวมขอบ/พื้น · รอทดสอบ
+- ผลทดสอบ #161 จากรูปผู้ใช้: โมโนโครมหน้าเมนู + หน้าเปล่า ผ่าน ✅ (ยังไม่ commit · HEAD = origin = bf0d08a)
+- สังเกตจากรูป 2 (ไม่แก้ ผู้ใช้บอกไม่มีปัญหา): เส้นขอบตัวอักษรสีแดง (text-shadow) ของกล่องข้อความยังแดงในโมโนโครม — เหมือนชื่อเมนู .nm ที่มีเส้นขอบ (จอป้ายบังคับขอบขาวเฉพาะหัวกลุ่ม)
+- ตอบคำถามรูป 3: เส้นแดงทแยงบนปุ่ม ขอบ/พื้น = 'ไม่มี' (ยังไม่ได้ใส่)
+- บั๊ก (รูป 4/5): ใช้ทั้งประเภท ของกล่องข้อความ คัดลอกแค่ตัวอักษร → แก้: คัดลอก data-fbc/fbw/fbs/fgc จากกล่องต้นทาง (ไม่มี = เอาออก) · นับเปลี่ยนรวมขอบ/พื้น · คืนค่า กล่องข้อความ ล้างขอบ/พื้นด้วย · ทั้งคู่ทำทีละหน้าผ่าน _ftRestack (_typoFtByPage) + _fbSync + _blankFitAll
+- lint #167 (ไฟล์เดิมจับ 11) · PASS · html 8,505,290 bytes
+- พบไม่แก้ (รอผู้ใช้): ปุ่ม ตั้งค่าเริ่มต้น ตอนเลือกกล่องข้อความ เก็บ _defaultStyles.ftext แต่ ftextAdd ไม่ได้ใช้ → กดแล้วกล่องใหม่ไม่ได้รูปแบบ = ปุ่มหลอก (ผิดกฎข้อ 6)
+- commit (รวม #161):
+  git add -A
+  git commit -m "fix: โหมดจอป้ายชนะสีธีมทุกตัว + กล่องข้อความ/เส้นลอยโทนเดียว · ใช้ทั้งประเภท/คืนค่า กล่องข้อความรวมขอบ/พื้น + lint #161 #167"
+  git push
+
+## เสร็จ (ยังไม่ commit) 30 ต.ค. 2026 10:40 — #161 โหมดจอป้ายชนะสีธีมทุกตัว + กล่องข้อความ/เส้นลอยในจอป้าย · รอทดสอบ
+- ตรวจ specificity จริงทุกกฎ (968 กฎ): จอป้ายแพ้ธีม 110 จุด ใน 2 ส่วน — หัวกลุ่ม .sec-h/.sechead/.sechead * (สี + text-shadow) และ **กล่องโน้ต .crab .body / b / .sub** (ธีมเข้ม 8 ตัว + dark-gold) · ส่วนอื่น (.page .sec .nm .pr .ln .secnote …) ไม่แพ้
+- แก้: ทุก selector ในบล็อกจอป้าย (18 ตัว) ขึ้นต้น :root body.boardmode → ชนะธีม tail เดียวกัน
+- เพิ่ม (กล่องข้อความ/เส้นลอยที่ทำทีหลังจอป้าย): .ftext + .ftxt + ลูก = #171A1E · .ftext[data-fgc] พื้น #ECEDEF · .ftext[data-fbc] ขอบ rgba(23,26,30,.35) · .fline เส้น rgba(23,26,30,.35) (เท่าเส้นจุด .ln)
+- lint #161 ใหม่: (a) ทุกกฎจอป้ายขึ้นต้น :root body.boardmode (b) คำนวณ specificity จริง กฎ !important อื่นที่ tail+property ตรงกันต้องแพ้จอป้าย (ไฟล์เดิม: 18 + 110 + 4 จุด) (c) มีกฎ ftext/fline · PASS · html 8,503,037 bytes
+- พบแต่ไม่แก้ (รอผู้ใช้): tooltip ปุ่มโมโนโครม ttl.boardOn 'เฉพาะจอ · พิมพ์/บันทึกไม่เปลี่ยน' ไม่ตรงโค้ด — บล็อกเป็น @media screen, print (ตั้งใจ 18 ต.ค.) + buildMenuHtml คง boardmode (lint #74 WYSIWYG) → พิมพ์/Save Menu ตอนเปิดโมโนโครม = ได้แบบเทา · Save Editor เท่านั้นที่ไม่ติด
+- commit:
+  git add -A
+  git commit -m "fix: โหมดจอป้าย/โมโนโครม ชนะสีธีมทุกตัว (หัวกลุ่ม · กล่องโน้ต) + กล่องข้อความ/เส้นลอยเป็นโทนเดียว + lint #161"
+  git push
+
+## ✅ PUSHED 30 ต.ค. 2026 10:27 — ย้าย repo สำเร็จ · bf0d08a → https://github.com/PoonsapJenkarn/PJMenuEditor (main · [new branch] · ประวัติครบ 1166 objects · 39.89 MiB) · HEAD = bf0d08a · tracking origin/main
+- remote origin = https://PoonsapJenkarn@github.com/PoonsapJenkarn/PJMenuEditor.git · git user.email = poonsapjenkarn@gmail.com
+- ต่อไปใช้ git push ธรรมดา (ไม่ต้อง -u)
+- repo เก่า Justin-10/OE ยังอยู่ (ไม่ได้แตะ) · แนะนำ Archive
+- งานค้าง: (1) เปลี่ยนชื่อไฟล์ → PJMenuEditor.html (รอผู้ใช้ตัดสิน) (2) public/private + SESSION_STATUS.md ใน git (3) #161 จอป้าย + พื้นกล่องข้อความในจอป้าย (4) ข้อ 9 agent (5) ยังไม่ได้ผลทดสอบ #166 ริบบอนเลื่อน + ทดสอบพิมพ์แบบไม่ติ๊ก Background graphics (#165)
+
+## 30 ต.ค. 2026 10:25 — commit bf0d08a สำเร็จในเครื่อง (lint PASS) · push ไม่ผ่าน 403 "denied to Justin-10"
+- สาเหตุ: Windows จำ login GitHub ของบัญชีเก่า (Justin-10) ไว้ · git ใช้บัญชีนั้น push ไป repo ใหม่ → ไม่มีสิทธิ์
+- แก้ (ผู้ใช้รัน): git remote set-url origin https://PoonsapJenkarn@github.com/PoonsapJenkarn/PJMenuEditor.git → git push -u origin main → login บัญชีใหม่
+- สำรอง: Control Panel → Credential Manager → Windows Credentials → ลบ git:https://github.com → push ใหม่
+- ไม่ต้อง commit ซ้ำ · HEAD ในเครื่อง = bf0d08a · remote ใหม่ยังว่าง
+
 ## เสร็จ (ยังไม่ commit/push) 30 ต.ค. 2026 10:10 — ย้าย repo + อีเมลใหม่ · รอผู้ใช้ push
 - repo ใหม่: https://github.com/PoonsapJenkarn/PJMenuEditor · อีเมลใหม่: poonsapjenkarn@gmail.com
 - แก้: html หัวไฟล์ (Contact/Repository) + About (mailto + ลิงก์ GitHub) · README (Version control + Credit · ตัดคำ "(private)") · .git/config remote origin url → PJMenuEditor.git (เทียบเท่า git remote set-url)

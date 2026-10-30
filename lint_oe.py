@@ -3477,6 +3477,92 @@ def main():
     if '#edbar #ribNavL:hover,#edbar #ribNavR:hover{color:#217346;background:#eef7f1;}' not in txt:
         errors.append('lint #166: hover ปุ่ม ‹ › ต้องใช้ selector #id (ไม่งั้น #edbar #ribNavL ชนะ hover)')
 
+    # ---- 161) โหมดจอป้ายต้องชนะสีของธีมทุกตัว (บั๊ก 29 ต.ค. 2026: :root[data-theme] .sec-h .sechead (0,4,0) > body.boardmode .sec-h .sechead (0,3,1) → หัวกลุ่ม/กล่องโน้ตตัวขาวบนพื้นเทา) ----
+    #   (a) ทุกกฎในบล็อกจอป้ายขึ้นต้น :root body.boardmode  (b) ตรวจ specificity จริง: กฎ !important อื่นที่ selector ท้ายตรงกัน + property เดียวกัน ต้องเจาะจงน้อยกว่ากฎจอป้าย  (c) กล่องข้อความ/เส้นลอย อยู่ในโทนจอป้าย
+    _ba161=txt.find('/* โหมดจอป้าย (display board)'); _bb161=txt.find('\n}',_ba161)+2 if _ba161>=0 else -1
+    _bk161=txt[_ba161:_bb161] if _ba161>=0 else ''
+    if not _bk161: errors.append('lint #161: ไม่พบบล็อกโหมดจอป้าย')
+    else:
+        _bk161c=re.sub(r'/\*[\s\S]*?\*/','',_bk161)
+        for _sel161 in re.findall(r'\n\s*([^{}\n@]+)\{', _bk161c):
+            for _p161 in _sel161.split(','):
+                if not _p161.strip().startswith(':root body.boardmode '): errors.append('lint #161: กฎจอป้ายต้องขึ้นต้น :root body.boardmode — '+_p161.strip()[:60])
+        def _sp161(sel):
+            sel=re.sub(r':not\(([^)]*)\)',lambda m:' '+m.group(1)+' ',sel)
+            ids=len(re.findall(r'#[\w-]+',sel)); cls=len(re.findall(r'\.[\w-]+|\[[^\]]*\]|:[\w-]+',sel))
+            tmp=re.sub(r'#[\w-]+|\.[\w-]+|\[[^\]]*\]|:[\w-]+','',sel)
+            return (ids,cls,len([t for t in re.split(r'[\s>+~]+',tmp) if t and t!='*']))
+        def _tl161(sel):
+            p=[x for x in re.split(r'[\s>+~]+',sel.strip()) if x]; return (p[-1], p[-2] if len(p)>1 else '')
+        def _dc161(body):
+            d={}
+            for x in body.split(';'):
+                if ':' in x: k,v=x.split(':',1); d[k.strip().lower()]=v
+            return d
+        _PR161={'background':('background','background-color','background-image'),'background-color':('background','background-color'),'color':('color',),'border-color':('border-color','border'),'border-bottom-color':('border-bottom-color','border-bottom','border-color','border'),'border-top-color':('border-top-color','border-top','border-color','border'),'text-shadow':('text-shadow',)}
+        _all161=[]
+        _si161=0
+        while True:
+            _sa=txt.find('<style',_si161)
+            if _sa<0: break
+            _sa=txt.find('>',_sa)+1; _sb=txt.find('</style>',_sa); _css161=re.sub(r'/\*[\s\S]*?\*/',lambda m:' '*len(m.group(0)),txt[_sa:_sb]); _si161=_sb+8
+            _i=0; _n=len(_css161); _pm=[]
+            while _i<_n:
+                _j=_css161.find('{',_i)
+                if _j<0: break
+                _k=_css161.find('}',_i)
+                if 0<=_k<_j:
+                    if _pm: _pm.pop()
+                    _i=_k+1; continue
+                _pre=_css161[_i:_j].strip()
+                if _pre.startswith('@media') or _pre.startswith('@supports'): _pm.append(_pre); _i=_j+1; continue
+                _e=_css161.find('}',_j)
+                if _pre.startswith('@'):
+                    if _pre.startswith('@keyframes'):
+                        _d=1; _q=_j+1
+                        while _d and _q<_n:
+                            if _css161[_q]=='{': _d+=1
+                            elif _css161[_q]=='}': _d-=1
+                            _q+=1
+                        _i=_q; continue
+                    _i=_e+1; continue
+                _all161.append((_sa+_i,_pre,_css161[_j+1:_e],tuple(_pm))); _i=_e+1
+        _brd161=[r for r in _all161 if _ba161<=r[0]<=_bb161]
+        _bad161=set()
+        for _bp,_bs,_bbd,_bm in _brd161:
+            _bd=_dc161(_bbd)
+            for _b1 in [x.strip() for x in _bs.split(',')]:
+                _bt=_tl161(_b1); _bsp=_sp161(_b1)
+                for _pp in [p for p in _bd if p in _PR161 and '!important' in _bd[p]]:
+                    for _cp,_cs,_cb,_cm in _all161:
+                        if _cp==_bp or 'boardmode' in _cs: continue
+                        if any('print' in m and 'screen' not in m for m in _cm): continue
+                        _cd=_dc161(_cb)
+                        if not any(h in _cd and '!important' in _cd[h] for h in _PR161[_pp]): continue
+                        for _c1 in [x.strip() for x in _cs.split(',')]:
+                            _ct=_tl161(_c1)
+                            if _ct[0]!=_bt[0] or (_bt[0]=='*' and _ct[1]!=_bt[1]): continue
+                            _csp=_sp161(_c1)
+                            if _csp>_bsp or (_csp==_bsp and _cp>_bp): _bad161.add(_b1+' ('+_pp+') แพ้ '+_c1[:60])
+        for _x161 in sorted(_bad161)[:12]: errors.append('lint #161: จอป้ายแพ้กฎอื่น — '+_x161)
+        if len(_bad161)>12: errors.append('lint #161: จอป้ายแพ้กฎอื่นอีก {} จุด'.format(len(_bad161)-12))
+        for _n161 in (':root body.boardmode .ftext,:root body.boardmode .ftext .ftxt,:root body.boardmode .ftext .ftxt *{color:#171A1E !important;}',
+                      ':root body.boardmode .ftext[data-fgc]{background-color:#ECEDEF !important;}',
+                      ':root body.boardmode .ftext[data-fbc]{border-color:rgba(23,26,30,.35) !important;}',
+                      ':root body.boardmode .fline{border-top-color:rgba(23,26,30,.35) !important;}'):
+            if _n161 not in _bk161: errors.append('lint #161: จอป้ายขาด '+_n161[:70])
+
+    # ---- 167) ใช้ทั้งประเภท / คืนค่า ของกล่องข้อความ ต้องรวมขอบ/พื้นกล่อง (บั๊ก 30 ต.ค. 2026: ใช้ทั้งประเภทคัดลอกแค่ฟอนต์ · ขอบ/พื้นไม่ตาม · กดซ้ำแจ้ง 'ไม่มีช่องไหนเปลี่ยน') ----
+    _fa167=re.search(r"\nfunction typoApplyAllSame\(\)\{[\s\S]*?\n\}", txt); _a167=_fa167.group(0) if _fa167 else ''
+    for _n167 in ("_typoType.key==='ftext' && typeof _fbSnapBox==='function'", "_fbRestoreBox({b:_bx,a:_fbA})", "_fbSnapBox(_bx).a.join('|')!==_b0", "if(_fbSrc) _typoFtByPage(targets,_one);", "_fbSync()"):
+        if _n167 not in _a167: errors.append('lint #167: typoApplyAllSame ขาด '+_n167)
+    _fr167=re.search(r"\nfunction typoResetSel\(\)\{[\s\S]*?\n\}", txt); _r167=_fr167.group(0) if _fr167 else ''
+    for _n167 in ("_ty.key==='ftext' && typeof _fbRestoreBox==='function'", "_fbRestoreBox({b:_rb,a:[null,null,null,null]})", "_fbSnapBox(_rb).a.join('|')!==_r0", "if(_isFt) _typoFtByPage(targets,_one);", "_fbSync()"):
+        if _n167 not in _r167: errors.append('lint #167: typoResetSel ขาด '+_n167)
+    _fp167=re.search(r"\nfunction _typoFtByPage\(targets,fn\)\{[\s\S]*?\n\}", txt)
+    if not _fp167 or '_ftRestack(L,' not in _fp167.group(0): errors.append('lint #167: _typoFtByPage ต้องทำทีละหน้าผ่าน _ftRestack')
+    if "var _FB_ATTR=['data-fbc','data-fbw','data-fbs','data-fgc'];" not in txt: errors.append('lint #167: _FB_ATTR ต้องมี 4 ค่า (คืนค่าใช้ [null,null,null,null])')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

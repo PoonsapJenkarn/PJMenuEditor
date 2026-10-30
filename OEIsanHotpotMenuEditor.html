@@ -680,17 +680,23 @@ body:not(.imgmode) #imgbar .imgalways{pointer-events:auto;}
 #imgbar button{font-size:14px;padding:6px 9px;border-radius:6px;border:none;cursor:pointer;background:#217346;color:#fff;}
 #imgbar button:disabled{background:#555;color:#9aa0a8;cursor:not-allowed;opacity:.65;}
 @media print{.fimg .rz,.fimg .delbtn{display:none!important;} .fimg{pointer-events:none!important;} .fimg.sel{outline:none!important;}}
-/* โหมดจอป้าย (display board) — จอ + พิมพ์ (ผู้ใช้ 18 ต.ค. 2026 · พื้น #ECEDEF ตัวอักษร/ราคา #171A1E · print-color-adjust:exact บังคับพิมพ์พื้นเทาโดยไม่ต้องติ๊ก Background graphics) */
+/* โหมดจอป้าย (display board) — จอ + พิมพ์ (ผู้ใช้ 18 ต.ค. 2026 · พื้น #ECEDEF ตัวอักษร/ราคา #171A1E · print-color-adjust:exact บังคับพิมพ์พื้นเทาโดยไม่ต้องติ๊ก Background graphics)
+   :root นำหน้าทุกกฎ (ผู้ใช้ 30 ต.ค. 2026 · lint #161): กฎสีของธีม :root[data-theme] เจาะจงกว่า body.boardmode → หัวกลุ่ม/กล่องโน้ตตัวขาวบนพื้นเทา · :root body.boardmode ชนะทุกธีมที่ tail เดียวกัน
+   กล่องข้อความ/เส้นลอย (เพิ่มทีหลังจอป้าย) อยู่ในโทนเดียวกัน: ตัวอักษร #171A1E · พื้นกล่อง #ECEDEF · ขอบกล่อง/เส้น rgba(23,26,30,.35) แบบเดียวกับเส้นจุด */
 @media screen, print{
- body.boardmode .page{background:#ECEDEF !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
- body.boardmode .crab{background:#ECEDEF !important;border-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
- body.boardmode .sec{background:#ECEDEF !important;border-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
- body.boardmode .sec-h{background:#ECEDEF !important;color:#171A1E !important;border-bottom-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
- body.boardmode .sec-h .sechead,body.boardmode .sec-h .sechead *{color:#171A1E !important;}
- body.boardmode .sec-h .sechead{text-shadow:-2px 0px 0 #FFFFFF,2px 0px 0 #FFFFFF,0px -2px 0 #FFFFFF,0px 2px 0 #FFFFFF,-1.4px -1.4px 0 #FFFFFF,1.4px -1.4px 0 #FFFFFF,-1.4px 1.4px 0 #FFFFFF,1.4px 1.4px 0 #FFFFFF,-2px -1px 0 #FFFFFF,2px -1px 0 #FFFFFF,-2px 1px 0 #FFFFFF,2px 1px 0 #FFFFFF,-1px -2px 0 #FFFFFF,1px -2px 0 #FFFFFF,-1px 2px 0 #FFFFFF,1px 2px 0 #FFFFFF !important;}
- body.boardmode .nm,body.boardmode .pr,body.boardmode .crab .body,body.boardmode .crab b,body.boardmode .crab .sub,body.boardmode .pagelabel,body.boardmode .contact .lbl,body.boardmode .contact .ph{color:#171A1E !important;}
- body.boardmode .nm .note,body.boardmode .secnote{color:rgba(23,26,30,.60) !important;}
- body.boardmode .ln{border-bottom-color:rgba(23,26,30,.35) !important;}
+ :root body.boardmode .page{background:#ECEDEF !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+ :root body.boardmode .crab{background:#ECEDEF !important;border-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+ :root body.boardmode .sec{background:#ECEDEF !important;border-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+ :root body.boardmode .sec-h{background:#ECEDEF !important;color:#171A1E !important;border-bottom-color:rgba(23,26,30,.18) !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+ :root body.boardmode .sec-h .sechead,:root body.boardmode .sec-h .sechead *{color:#171A1E !important;}
+ :root body.boardmode .sec-h .sechead{text-shadow:-2px 0px 0 #FFFFFF,2px 0px 0 #FFFFFF,0px -2px 0 #FFFFFF,0px 2px 0 #FFFFFF,-1.4px -1.4px 0 #FFFFFF,1.4px -1.4px 0 #FFFFFF,-1.4px 1.4px 0 #FFFFFF,1.4px 1.4px 0 #FFFFFF,-2px -1px 0 #FFFFFF,2px -1px 0 #FFFFFF,-2px 1px 0 #FFFFFF,2px 1px 0 #FFFFFF,-1px -2px 0 #FFFFFF,1px -2px 0 #FFFFFF,-1px 2px 0 #FFFFFF,1px 2px 0 #FFFFFF !important;}
+ :root body.boardmode .nm,:root body.boardmode .pr,:root body.boardmode .crab .body,:root body.boardmode .crab b,:root body.boardmode .crab .sub,:root body.boardmode .pagelabel,:root body.boardmode .contact .lbl,:root body.boardmode .contact .ph{color:#171A1E !important;}
+ :root body.boardmode .nm .note,:root body.boardmode .secnote{color:rgba(23,26,30,.60) !important;}
+ :root body.boardmode .ln{border-bottom-color:rgba(23,26,30,.35) !important;}
+ :root body.boardmode .ftext,:root body.boardmode .ftext .ftxt,:root body.boardmode .ftext .ftxt *{color:#171A1E !important;}
+ :root body.boardmode .ftext[data-fgc]{background-color:#ECEDEF !important;}
+ :root body.boardmode .ftext[data-fbc]{border-color:rgba(23,26,30,.35) !important;}
+ :root body.boardmode .fline{border-top-color:rgba(23,26,30,.35) !important;}
 }
 </style>
 <style id="userFonts"></style>
@@ -4786,6 +4792,11 @@ function _typoGroupOptsHtml(curSec){
   }
   return html;
 }
+function _typoFtByPage(targets,fn){  /* ใช้ทั้งประเภท/คืนค่า กับกล่องข้อความ: ทำทีละหน้าผ่าน _ftRestack — ขนาดตัวอักษร/ความหนาขอบเปลี่ยนแล้ว กล่องที่ต่อใต้กันยังชิดพอดี (ผู้ใช้ 30 ต.ค. 2026 · lint #167) */
+  var pgs=[], lists=[];
+  targets.forEach(function(el){ var pg=el.closest('.page'), i=pgs.indexOf(pg); if(i<0){ pgs.push(pg); lists.push([el]); } else lists[i].push(el); });
+  lists.forEach(function(L){ if(typeof _ftRestack==='function') _ftRestack(L,function(){ L.forEach(fn); }); else L.forEach(fn); });
+}
 function typoApplyAllSame(){
   if(!_typoEl) return;
   var _tb=document.getElementById('typoApplyAll'); if(_tb && _tb.classList.contains('on')){ closePanel(); return; }  /* กดซ้ำ = ปิด panel */
@@ -4811,8 +4822,9 @@ function typoApplyAllSame(){
       var gidx=(v&&v.gidx)||0;
       var targets=_typoScopeTargets(_sel,scope,gidx);
       var n=0, hits=0;
-      targets.forEach(function(el){
-        var before=_typoVisualSig(el);
+      var _fbSrc=(_typoType.key==='ftext' && typeof _fbSnapBox==='function')?_src.closest('.ftext'):null, _fbA=_fbSrc?_fbSnapBox(_fbSrc).a:null;  /* กล่องข้อความ: คัดลอกขอบ/พื้นของกล่องต้นทางด้วย (เดิมคัดลอกแค่ตัวอักษร · ผู้ใช้ 30 ต.ค. 2026 · lint #167) */
+      var _one=function(el){
+        var before=_typoVisualSig(el), _bx=_fbSrc?el.closest('.ftext'):null, _b0=_bx?_fbSnapBox(_bx).a.join('|'):'';
         if(_typoType.line){
           if(el===_src) return;
           if(_src.style.borderBottomColor) el.style.borderBottomColor=_src.style.borderBottomColor;
@@ -4820,11 +4832,14 @@ function typoApplyAllSame(){
         } else {
           if(el===_src) return;  /* ช่องต้นทางคงเดิม */
           hits+=_typoApplyFormat(el,_fmt);  /* คัดลอกรูปแบบต้นทางแบบละเอียด รวมสีเฉพาะตัวอักษร */
+          if(_bx && _bx!==_fbSrc) _fbRestoreBox({b:_bx,a:_fbA});  /* ขอบ/พื้นกล่อง = เหมือนกล่องต้นทาง (ต้นทางไม่มี = เอาออก) */
         }
-        if(_typoVisualSig(el)!==before) n++;
-      });
-      if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
+        if(_typoVisualSig(el)!==before || (_bx && _fbSnapBox(_bx).a.join('|')!==_b0)) n++;
+      };
+      if(_fbSrc) _typoFtByPage(targets,_one); else targets.forEach(_one);
+      if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow(); if(_fbSrc && typeof _blankFitAll==='function') _blankFitAll();
       if(_typoEl && _typoType) typoSelect(_typoEl,_typoType);  /* toolbar ตามค่าใหม่ */
+      if(typeof _fbSync==='function') _fbSync();
       if(n>0) flashStatus('info',tk('fl.applyAll',{label:_lbl,n:n}));
       else {  /* แจ้งสาเหตุจริง ไม่ใช่บอกว่า 'มีรูปแบบเดียวกันอยู่แล้ว' ทุกกรณี */
         var _be=!_fmt || !Object.keys(_fmt.base).some(function(k){ return _fmt.base[k]; });
@@ -6401,9 +6416,9 @@ function typoResetSel(){
       var scope=v.scope;
       var gidx=(v&&v.gidx)||0;
       var targets=(scope==='one')?[_el]:_typoScopeTargets(_sel,scope,gidx);
-      var n=0;
-      targets.forEach(function(el){
-        var before=_typoVisualSig(el);
+      var n=0, _isFt=(_ty.key==='ftext' && typeof _fbRestoreBox==='function');
+      var _one=function(el){
+        var before=_typoVisualSig(el), _rb=_isFt?el.closest('.ftext'):null, _r0=_rb?_fbSnapBox(_rb).a.join('|'):'';
         if(_ty.line){
           el.style.removeProperty('border-bottom-color'); el.style.removeProperty('border-bottom-style'); el.style.removeProperty('border-bottom-width');
         } else {
@@ -6411,11 +6426,13 @@ function typoResetSel(){
           el.removeAttribute('data-ol-c');  /* สีขอบที่เลือกเอง */
           _secAccentReset(el);  /* ชื่อกลุ่ม: แถบสีหัวกลุ่มกลับเป็นสีเดิม (data-acc0) */
           _typoClearInner(el);  /* ล้างสี/ฟอนต์ที่ทาไว้บางตัวอักษรด้วย */
+          if(_rb) _fbRestoreBox({b:_rb,a:[null,null,null,null]});  /* กล่องข้อความ: ขอบ/พื้นกลับเป็นค่าเริ่มต้น (ไม่มี) (lint #167) */
         }
         if(!el.getAttribute('style')) el.removeAttribute('style');
-        if(_typoVisualSig(el)!==before) n++;
-      });
-      typoSelect(_el,_ty);
+        if(_typoVisualSig(el)!==before || (_rb && _fbSnapBox(_rb).a.join('|')!==_r0)) n++;
+      };
+      if(_isFt) _typoFtByPage(targets,_one); else targets.forEach(_one);
+      typoSelect(_el,_ty); if(typeof _fbSync==='function') _fbSync(); if(_isFt && typeof _blankFitAll==='function') _blankFitAll();
       if(typeof markDirty==='function') markDirty(); if(typeof checkOverflow==='function') checkOverflow();
       if(n>0) flashStatus('info',tk('fl.resetN',{label:_lbl,n:n}));
       else flashStatus('warning',tk('fl.resetNone',{label:_lbl}));

@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch', 'flAng', 'flLen'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch', 'flAng', 'flLen', 'fb-hex'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -3401,6 +3401,42 @@ def main():
         _b164=set(re.findall(r"#([A-Za-z0-9_]+)\.on", _bg164.group(1))); _s164=set(re.findall(r"#([A-Za-z0-9_]+)\.on svg", _sv164.group(1)))
         for _m164 in sorted(_b164-_s164):
             errors.append('lint #164: ปุ่ม #'+_m164+' พื้นเขียวตอน .on แต่ไอคอนไม่ขาว — เพิ่ม #edbar #'+_m164+'.on svg ในกฎ stroke:#fff')
+
+    # ---- 165) ขอบ + พื้นหลัง กล่องข้อความ: กลุ่ม กล่อง ในแท็บรูปแบบข้อความ (ใน #typobar ต่อจาก จัดรูปแบบ) · ไม่มี/ตามธีม/7 สีชุดเส้น/สีกำหนดเอง/HEX/+กำหนดเอง · ขอบมี หนา+แบบ · ตกลง=1 จุด Undo · ยกเลิก/Esc/คลิกนอก=คืน · หลายกล่อง · พิมพ์ออก · ไม่ค้างในไฟล์ (ผู้ใช้ 29 ต.ค. 2026) ----
+    _tb165=txt.find('id="typobar"'); _gf165=txt.find('data-i18n="grp.format"'); _gb165=txt.find('data-i18n="grp.ftBox"'); _ins165=txt.find('<!-- แท็บรูปแบบข้อความ: เพิ่มกล่องข้อความต่อได้')
+    if not (0<=_tb165<_gf165<_gb165<_ins165): errors.append('lint #165: กลุ่ม กล่อง ต้องอยู่ใน #typobar ต่อจาก จัดรูปแบบ ก่อนกลุ่ม แทรก')
+    for _id165 in ('fbBdPick','fbBdBtn','fbBdCaret','fbBdCur','fbBdPop','fbBdHex','fbBgPick','fbBgBtn','fbBgCaret','fbBgCur','fbBgPop','fbBgHex'):
+        if txt.count('id="'+_id165+'"')!=1: errors.append('lint #165: ต้องมี #'+_id165+' 1 ตัว')
+    _pb165=txt[txt.find('id="fbBdPop"'):txt.find('id="fbBgPick"')]; _pg165=txt[txt.find('id="fbBgPop"'):txt.find('data-i18n="grp.ftBox"')]
+    for _n165 in ('data-fbv="none"','data-fbv="theme"','fb-grid','fb-custom','fb-hex','fb-add','fb-ok','fb-cancel'):
+        if _n165 not in _pb165 or _n165 not in _pg165: errors.append('lint #165: ถาดขอบ/พื้น ต้องมี '+_n165+' ทั้ง 2 ถาด')
+    if _pb165.count('data-fbwv=')!=7 or _pb165.count('data-fbsv=')!=4: errors.append('lint #165: ถาดขอบต้องมีความหนา 7 ค่า + แบบเส้น 4 แบบ')
+    if 'data-fbwv=' in _pg165: errors.append('lint #165: ถาดพื้นต้องไม่มีความหนา/แบบเส้น')
+    if "var _FB_SW=['#1F1F1F','#8A8886','#C0392B','#217346','#C9A227','#1592D9','#FFFFFF'];" not in txt: errors.append('lint #165: 7 สีต้องชุดเดียวกับสีเส้น')
+    for _fl165 in re.findall(r'data-flc="(#[0-9A-F]{6})"', txt):
+        if "'"+_fl165+"'" not in txt[txt.find('var _FB_SW='):txt.find('var _FB_SW=')+120]: errors.append('lint #165: สีเส้น '+_fl165+' ไม่อยู่ในชุดสีกล่อง')
+    if "return c==='theme'?(k==='bd'?'var(--note-bd)':'var(--note-bg)'):c;" not in txt: errors.append('lint #165: ตามธีม ต้องใช้ var(--note-bd)/var(--note-bg) (เปลี่ยนธีมแล้วเปลี่ยนตาม)')
+    _fc165=re.search(r"\nfunction _fbCommit\(\)\{[\s\S]*?\n\}", txt); _c165=_fc165.group(0) if _fc165 else ''
+    for _n165 in ('_snapNow()','_fbChanged(pv)','_ftRestack(L,','checkOverflow()','_blankFitAll()',"flashStatus('info',tk("):
+        if _n165 not in _c165: errors.append('lint #165: _fbCommit ขาด '+_n165)
+    _fo165=re.search(r"\nfunction _fbOpen\(k\)\{[\s\S]*?\n\}", txt); _o165=_fo165.group(0) if _fo165 else ''
+    for _n165 in ("_fbCancel(); return; }","flashStatus('warning',tk('fl.fbNeed'))","orig:L.map(_fbSnapBox)","c.classList.add('on')"):
+        if _n165 not in _o165: errors.append('lint #165: _fbOpen ขาด '+_n165)
+    _fs165=re.search(r"\nfunction _fbSync\(\)\{[\s\S]*?\n\}", txt); _s165=_fs165.group(0) if _fs165 else ''
+    for _n165 in ('b.disabled=!ok;',"'ttl.fbNeed'",'b.title=t(k);'):
+        if _n165 not in _s165: errors.append('lint #165: _fbSync ขาด '+_n165)
+    if "if(typeof _fbSync==='function') _fbSync();" not in txt[txt.find('function _ftGroupSync('):txt.find('function _ftGroupSync(')+1500]: errors.append('lint #165: _ftGroupSync ต้องเรียก _fbSync (ปุ่มตามการเลือกกล่อง)')
+    if "e.key==='Escape' && _fbPv){ e.preventDefault(); e.stopImmediatePropagation(); _fbCancel(); } },true);" not in txt: errors.append('lint #165: Esc ต้องปิดถาด (capture) ไม่เลิกเลือกกล่อง')
+    if "if(pk && pk.contains(e.target)) return; _fbCancel(); },true);" not in txt: errors.append('lint #165: คลิกนอกถาดต้องคืนค่าเดิม')
+    if "(mode==='fbox')?'fbox':'text';" not in txt or "if(mode==='fbox'){ _cpDlgClose(); if(typeof _fbDlgDone==='function') _fbDlgDone(h); return; }" not in txt or "(_cpMode==='fbox'?(window._fbDlgHome||'fbBdPick')" not in txt:
+        errors.append('lint #165: หน้าต่างสีของแอปต้องมีโหมด fbox (+ กำหนดเอง ของขอบ/พื้นกล่อง)')
+    for _n165 in ('window._loadCustom=_loadCustom;','window._normHex=_normHex;','window._closePop=_closePop;'):
+        if _n165 not in txt: errors.append('lint #165: ขาด export '+_n165)
+    if '.ftext[data-fgc],.ftext[data-fbc]{-webkit-print-color-adjust:exact;print-color-adjust:exact;}' not in txt: errors.append('lint #165: ขอบ/พื้นกล่องต้องพิมพ์ออก (print-color-adjust:exact)')
+    if '#typobar .fbpick .cp-caretbtn.on{background:#217346;' not in txt: errors.append('lint #165: ▾ ตอนถาดเปิดต้องเขียว (กฎข้อ 11)')
+    if "clone.querySelectorAll('.fb-pop.open,.fbpick .cp-caretbtn.on')" not in txt: errors.append('lint #165: Save Editor ต้องปิดถาดขอบ/พื้น')
+    for _k165 in ('grp.ftBox','fb.bdLbl','fb.bgLbl','fb.bdNone','fb.bgNone','fb.theme','fb.wLbl','fb.stLbl','ttl.fbNeed','ttl.fbBd','ttl.fbBg','ttl.fbHex','fl.fbNeed','fl.fbBdSet','fl.fbBdOff','fl.fbBgSet','fl.fbBgOff'):
+        if txt.count("'"+_k165+"':'")<2: errors.append('lint #165: i18n '+_k165+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

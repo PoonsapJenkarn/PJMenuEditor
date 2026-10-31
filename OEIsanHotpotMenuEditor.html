@@ -3671,6 +3671,15 @@ function _flLenStep(s){ if(!_flSel) return; _flSetLen(Math.round(_flGeom(_flGet(
     el.addEventListener('focus',function(){ el.select(); });
   });
 })();
+/* เลื่อนหน้าให้เห็นชิ้นที่เพิ่งเพิ่ม (ผู้ใช้ 31 ต.ค. 2026 · lint #175): เพิ่มเส้น/กล่องข้อความจนเลยจอ = หน้าเลื่อนตาม · ขอบบน = ใต้แถบเครื่องมือ (sticky) · ขอบล่าง = เหนือแถบสถานะ (fixed) · อยู่ในจออยู่แล้ว = ไม่เลื่อน */
+function _revealEl(el){
+  if(!el || !el.getBoundingClientRect) return;
+  var r=el.getBoundingClientRect(), bar=document.getElementById('edbar'), st=document.getElementById('edstatus'), M=28;
+  var top=bar?bar.getBoundingClientRect().bottom:0, bot=st?st.getBoundingClientRect().top:window.innerHeight;
+  var se=document.scrollingElement||document.documentElement, d=0;
+  if(r.bottom+M>bot) d=r.bottom+M-bot; else if(r.top-M<top) d=r.top-M-top;
+  if(d) _scrollKeepTo(se.scrollTop+d);
+}
 function flineAdd(){
   var ref=(_flSel&&_flSel.isConnected)?_flSel:null, fref=(!ref && typeof _ftSel!=='undefined' && _ftSel && _ftSel.isConnected)?_ftSel:null;
   if(!document.body.classList.contains('editmode')) toggleEdit(true);  /* อยู่แท็บเดิม แล้วไปแท็บรูปแบบเส้นตอนเลือก */
@@ -3683,7 +3692,7 @@ function flineAdd(){
   else if(fref){ var bl=_ftNum(fref.style.left), bw=_ftNum(fref.style.width)||70, bb=_ftNum(fref.style.top)+fref.getBoundingClientRect().height/px; d.x1=bl; d.x2=bl+bw; var _fy=bb+2; if(_fy>285){ _fy=285; _edge=true; } d.y1=d.y2=_fy; }  /* ใต้กล่องข้อความที่เลือก = เส้นใต้หัวข้อ */
   else { var rc=pg.getBoundingClientRect(), y=(Math.min(Math.max(midY,rc.top),rc.bottom)-rc.top)/px; d.y1=d.y2=Math.max(20,Math.min(277,y)); }
   var l=document.createElement('div'); l.className='fline'; l.setAttribute('data-w','1'); l.setAttribute('data-st','solid'); l.setAttribute('data-c','theme'); _flPut(l,d); pg.appendChild(l); _flRender(l);
-  _flSelect(l,true); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); if(_edge) flashStatus('warning',tk('fl.flineEdge')); else flashStatus('info',tk('fl.flineAdd'));  /* เพิ่ม = เลือกเส้นใหม่ อยู่แท็บเดิม → กดเพิ่มต่อได้ (ต่อใต้เส้นที่เลือก) · คลิกเส้น = ไปแท็บรูปแบบเส้น */
+  _flSelect(l,true); markDirty(); if(typeof _blankFitAll==='function') _blankFitAll(); _revealEl(l); if(_edge) flashStatus('warning',tk('fl.flineEdge')); else flashStatus('info',tk('fl.flineAdd'));  /* เพิ่ม = เลือกเส้นใหม่ อยู่แท็บเดิม → กดเพิ่มต่อได้ (ต่อใต้เส้นที่เลือก) · คลิกเส้น = ไปแท็บรูปแบบเส้น */
 }
 document.addEventListener('mousedown',function _flMd(e){
   if(!document.body.classList.contains('editmode') || e.button!==0) return;
@@ -3803,7 +3812,7 @@ function ftextAdd(){
   if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>289+0.05) _over=true;  /* กล่องใหม่เลยขอบพิมพ์ล่าง = เตือน */
   if(_ch.length){ var _nh=box.getBoundingClientRect().height/pxmm; _ch.forEach(function(b){ b.style.top=(_ftNum(b.style.top)+_nh).toFixed(1)+'mm'; if(_ftNum(b.style.top)+b.getBoundingClientRect().height/pxmm>289+0.05) _over=true; }); }  /* ดันแถวล่างลงเท่าความสูงกล่องใหม่ = ยังต่อกันพอดี */
   _ftSelect(box);  /* เพิ่ม = เลือกกล่อง (ยังไม่พิมพ์) → กดเพิ่มต่อได้เรื่อยๆ · ดับเบิลคลิก/Enter = พิมพ์ + ไปแท็บรูปแบบข้อความ (ผู้ใช้ 28 ต.ค. 2026) */  /* คำเริ่มต้นถูกเลือก = พิมพ์ทับได้เลย */
-  _ftOverCheck(pg,true); _blankFitAll(); markDirty(); if(_over) flashStatus('warning',tk('fl.ftextPushOver'));  /* เพิ่มกล่องเตือนเองแล้ว = จดธงเงียบ ไม่เตือนซ้ำ */ else flashStatus('info',tk('fl.ftextAdd'));  /* ดันแล้วเลยขอบพิมพ์ล่าง = เตือน (ไม่ห้าม · Ctrl+Z ย้อนได้) */
+  _ftOverCheck(pg,true); _blankFitAll(); markDirty(); _revealEl(box); if(_over) flashStatus('warning',tk('fl.ftextPushOver'));  /* เพิ่มกล่องเตือนเองแล้ว = จดธงเงียบ ไม่เตือนซ้ำ */ else flashStatus('info',tk('fl.ftextAdd'));  /* ดันแล้วเลยขอบพิมพ์ล่าง = เตือน (ไม่ห้าม · Ctrl+Z ย้อนได้) */
 }
 document.addEventListener('mousedown',function(e){
   if(!document.body.classList.contains('editmode') || e.button!==0) return;

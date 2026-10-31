@@ -3086,7 +3086,7 @@ def main():
         errors.append('lint #142: ต้องมี _blankFit (ปุ่มลบหน้าใต้กล่องล่างสุด + หน้ายืด)')
     if 'body.editmode:not(.measuring) .page.pgblank{min-height:var(--blankh,297mm) !important;}' not in _css:
         errors.append('lint #142: หน้าเปล่าต้องยืดตาม --blankh เฉพาะโหมดแก้ไข (ไม่กระทบการวัดล้น/พิมพ์)')
-    for _c142,_m142 in (("_restorePages(_lastSnap); _blankFitAll(); _dirty=true;",'undo/redo'),("if(D.moved) _blankFitAll();",'ลาก/ยืดกล่อง'),("_blankFitAll(); markDirty(); if(_over)",'เพิ่มกล่อง'),("if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด",'เข้า/ออกโหมด')):
+    for _c142,_m142 in (("_restorePages(_lastSnap); _blankFitAll(); _dirty=true;",'undo/redo'),("if(D.moved) _blankFitAll();",'ลาก/ยืดกล่อง'),("_blankFitAll(); markDirty(); _revealEl(box); if(_over)",'เพิ่มกล่อง'),("if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด",'เข้า/ออกโหมด')):
         if _c142 not in txt: errors.append('lint #142: ต้องจัดหน้าเปล่าใหม่หลัง '+_m142)
     if txt.count("p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });")!=3:
         errors.append('lint #142: ต้องล้าง --blankh/--blankdel ตอนบันทึกไฟล์ (2 จุด) + snapshot undo')
@@ -3667,6 +3667,14 @@ def main():
     if "if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }" not in _f174: errors.append('lint #174: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากเส้นล่าสุดในหน้า')
     if "if(_edge) flashStatus('warning',tk('fl.flineEdge'));" not in _f174 or 'Math.min(285,' in _f174 or 'Math.min(198,' in _f174: errors.append('lint #174: ถึงขอบพิมพ์ต้องเตือน ไม่ clamp เงียบ')
     if txt.count("'fl.flineEdge':'")<2: errors.append('lint #174: i18n fl.flineEdge ไม่ครบ TH+EN')
+
+    # ---- 175) เพิ่มเส้น/กล่องข้อความ = หน้าเลื่อนให้เห็นชิ้นใหม่ (บั๊ก 31 ต.ค. 2026: เพิ่มเส้นจนถึงล่างหน้า แถบเลื่อนไม่ตาม เส้นใหม่หลบใต้แถบสถานะ) ----
+    _fr175=re.search(r"\nfunction _revealEl\(el\)\{[\s\S]*?\n\}", txt); _r175=_fr175.group(0) if _fr175 else ''
+    for _n175 in ("getElementById('edbar')","getElementById('edstatus')","_scrollKeepTo("):
+        if _n175 not in _r175: errors.append('lint #175: _revealEl ขาด '+_n175)
+    _fl175=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _ft175=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt)
+    if not _fl175 or '_revealEl(l);' not in _fl175.group(0): errors.append('lint #175: flineAdd ต้องเรียก _revealEl(l)')
+    if not _ft175 or '_revealEl(box);' not in _ft175.group(0): errors.append('lint #175: ftextAdd ต้องเรียก _revealEl(box)')
 
     # ---- report ----
     print("=" * 54)

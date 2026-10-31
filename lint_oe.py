@@ -3666,6 +3666,7 @@ def main():
     _fa174=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _f174=_fa174.group(0) if _fa174 else ''
     if "if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }" not in _f174: errors.append('lint #174: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากเส้นล่าสุดในหน้า')
     if "if(_edge) flashStatus('warning',tk('fl.flineEdge'));" not in _f174 or 'Math.min(285,' in _f174 or 'Math.min(198,' in _f174: errors.append('lint #174: ถึงขอบพิมพ์ต้องเตือน ไม่ clamp เงียบ')
+    if re.search(r"_(?:nx|ny|fy)=(?:198|285|289|202)\b", _f174) or 'if(_ny>289+0.05) _edge=true;' not in _f174 or 'if(_fy>289+0.05) _edge=true;' not in _f174: errors.append('lint #174b: เลยขอบพิมพ์ = ต่อไปได้ ไม่ล็อกที่ขอบ (ล็อก = เส้นทับกัน) · ขอบล่าง 289 มม. เท่ากล่องข้อความ (ผู้ใช้ 31 ต.ค. 2026)')
     if txt.count("'fl.flineEdge':'")<2: errors.append('lint #174: i18n fl.flineEdge ไม่ครบ TH+EN')
 
     # ---- 175) เพิ่มเส้น/กล่องข้อความ = หน้าเลื่อนให้เห็นชิ้นใหม่ (บั๊ก 31 ต.ค. 2026: เพิ่มเส้นจนถึงล่างหน้า แถบเลื่อนไม่ตาม เส้นใหม่หลบใต้แถบสถานะ) ----

@@ -3569,6 +3569,34 @@ def main():
         errors.append('lint #165b: ขอบ + พื้น ที่ยังไม่ได้ใส่ ต้องเป็นลายตารางหมากรุกกฎเดียวกัน (ปุ่ม + ตัวเลือก ไม่มี ในถาด)')
     if '#C0392B calc(50% - 1px)' in txt: errors.append('lint #165b: ห้ามมีเส้นแดงทแยงแบบเดิมเหลือ (ขยะ)')
 
+    # ---- 168) ตั้งค่าเริ่มต้น ของกล่องข้อความต้องมีผลจริง (บั๊ก 30 ต.ค. 2026: เก็บค่าแต่ ftextAdd ไม่ใช้ = ปุ่มหลอก ผิดกฎข้อ 6) · เก็บตัวอักษร + ขอบ/พื้นกล่อง ----
+    _sd168=re.search(r"\nfunction typoSetDefault\(\)\{[\s\S]*?\n\}", txt); _s168=_sd168.group(0) if _sd168 else ''
+    if "_typoType.key==='ftext'" not in _s168 or '_defaultStyles.ftext=_ftDefCapture(_typoEl);' not in _s168: errors.append('lint #168: typoSetDefault ต้องเก็บค่าเริ่มต้นกล่องข้อความด้วย _ftDefCapture')
+    _ca168=re.search(r"\nfunction _ftDefCapture\(x\)\{[\s\S]*?\n\}", txt)
+    if not _ca168 or '_FB_ATTR.forEach' not in _ca168.group(0) or 'fmt:_typoCaptureFormat(x)' not in _ca168.group(0): errors.append('lint #168: _ftDefCapture ต้องเก็บตัวอักษรด้วย _typoCaptureFormat (รวมสีที่ทาโดยไฮไลท์) และขอบ/พื้น (_FB_ATTR)')
+    if '_FT_DEF_PROPS' in txt: errors.append('lint #168: _FT_DEF_PROPS ไม่ใช้แล้ว (ขยะ)')
+    _fa168=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _f168=_fa168.group(0) if _fa168 else ''
+    _ap168=_f168.find('_ftDefApply(box,x);'); _pa168=_f168.find('pg.appendChild(box);'); _ov168=_f168.find('var _over=false;')
+    if not (0<=_pa168<_ap168<_ov168): errors.append('lint #168: ftextAdd ต้องเรียก _ftDefApply(box,x) หลัง pg.appendChild(box) และก่อนวัดความสูง (var _over)')
+    _da168=re.search(r"\nfunction _ftDefApply\(box,x\)\{[\s\S]*?\n\}", txt)
+    if not _da168 or '_typoApplyFormat(x,d.fmt)' not in _da168.group(0): errors.append('lint #168: _ftDefApply ต้องใช้ _typoApplyFormat (รวมสีที่ทาโดยไฮไลท์ทั้งคำ)')
+    if txt.count("'fl.setDefaultFt':'")<2: errors.append('lint #168: i18n fl.setDefaultFt ไม่ครบ TH+EN')
+
+    # ---- 169) ลำดับกลุ่มแท็บรูปแบบข้อความ: ฟอนต์ · กล่อง · แทรก · จัดเรียง · จัดรูปแบบ · ปิด (ผู้ใช้ 31 ต.ค. 2026) — order แทนย้าย DOM (จัดรูปแบบ อยู่ใน #typobar · แทรก/จัดเรียง/ปิด อยู่นอก) ----
+    _pf169=txt.find('<div class="rpane" data-pane="fmt"'); _pi169=txt.find('<div class="rpane" data-pane="image">'); _sg169=txt[_pf169:_pi169] if 0<=_pf169<_pi169 else ''
+    _tb169=_sg169.find('<div id="typobar">'); _fm169=_sg169.find('<div class="rgroup rg-ord-fmt">'); _gf169=_sg169.find('data-i18n="grp.format"'); _bx169=_sg169.find('data-i18n="grp.ftBox"'); _cl169=_sg169.find('<div class="rgroup rg-ord-close">'); _gc169=_sg169.find('data-i18n="grp.close"')
+    if not (0<=_tb169<_fm169<_gf169<_bx169<_cl169<_gc169): errors.append('lint #169: กลุ่ม จัดรูปแบบ (rg-ord-fmt) ต้องอยู่ใน #typobar · กลุ่ม ปิด (rg-ord-close) ต้องเป็นกลุ่มสุดท้าย')
+    if _sg169.count('rg-ord-fmt')!=1 or _sg169.count('rg-ord-close')!=1: errors.append('lint #169: rg-ord-fmt / rg-ord-close ต้องมีอย่างละ 1')
+    if '#edribbon .rpane[data-pane="fmt"] .rg-ord-fmt{order:1;}' not in txt or '#edribbon .rpane[data-pane="fmt"] .rg-ord-close{order:2;}' not in txt: errors.append('lint #169: ขาด CSS order (จัดรูปแบบ=1 · ปิด=2)')
+    if '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in txt: errors.append('lint #169: order ใช้ได้เพราะ #typobar display:contents — ห้ามเอาออก')
+
+    # ---- 170) ล้างรูปแบบจุดที่ไฮไลท์ ต้องล้างรูปแบบที่ตั้งไว้ทั้งช่องได้ด้วย (บั๊ก 31 ต.ค. 2026: กล่องข้อความจาก ตั้งค่าเริ่มต้น/ใช้ทั้งประเภท ได้สีทั้งช่อง → ล้างไม่ได้) ----
+    _cf170=txt.find('function clearFormatSel(){'); _ce170=txt.find('\n  function syncButtons(',_cf170); _c170=txt[_cf170:_ce170] if 0<=_cf170<_ce170 else ''
+    for _n170 in ("var _DM=['color','fontFamily','fontWeight','fontStyle','textDecorationLine']","_typoWrapRange(field,st+len,_ftx.length,_base)","_typoWrapRange(field,0,st,_base)","field.style.removeProperty(pp)","if(_all && field.style.textShadow)","range=_clrRangeAt(field,st,st+len)","return n+nB;","if(_hasB && (_all || !_struct))","TYPO_TYPES.some(function(tt){ return x.matches && x.matches(tt.sel); })"):
+        if _n170 not in _c170: errors.append('lint #170: clearFormatSel ขาด '+_n170[:50])
+    if "tk('fl.clearOlKeep')" not in txt or txt.count("'fl.clearOlKeep':'")<2: errors.append('lint #170: ต้องบอกเมื่อเส้นขอบตัวอักษรยังอยู่ (fl.clearOlKeep TH+EN)')
+    if 'ไม่มีรูปแบบเฉพาะจุดให้ล้าง' in txt or 'no partial formatting to clear' in txt: errors.append('lint #170: ข้อความเดิม (ให้ไปใช้ คืนค่า สำหรับรูปแบบทั้งช่อง) ไม่ตรงแล้ว')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

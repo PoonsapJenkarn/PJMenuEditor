@@ -2908,7 +2908,7 @@ def main():
         if txt.count("'"+_k129+"':'")<2: errors.append('lint #129: i18n '+_k129+' ไม่ครบ TH+EN')
 
     # ---- 130) กล่องข้อความลอย (ผู้ใช้ 27 ต.ค. 2026 ขั้น B · แบบ 1 คลิก=เลือก ดับเบิลคลิก=พิมพ์) ----
-    if 'id="btnFtextAdd" onclick="ftextAdd()"' not in txt or 'data-i18n="grp.insert"' not in txt:
+    if 'id="btnFtextAddFmt" onclick="ftextAdd()"' not in txt or 'data-i18n="grp.insert"' not in txt:  # ปุ่มอยู่แท็บ ข้อความ (#173)
         errors.append('lint #130: แท็บข้อความต้องมีปุ่ม กล่องข้อความ (กลุ่ม แทรก)')
     for _f130 in ('function ftextAdd(','function _ftSelect(','function _ftDeselect(','function _ftStartEdit(','function _ftStopEdit(','function _ftDelete(','function _ftHandles('):
         if _f130 not in txt: errors.append('lint #130: ไม่พบ '+_f130)
@@ -2948,8 +2948,8 @@ def main():
 
     # ---- 131) ลำดับแท็บ: ไฟล์ · หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ (ผู้ใช้ 27 ต.ค. 2026 ย้าย หน้า ไปซ้ายสุด · 29 ต.ค. 2026 ย้าย ไฟล์ ไปแท็บแรก · แท็บเริ่มต้นยังเป็น หน้า) ----
     _ord131=re.findall(r'<button class="edtab[^"]*" data-tab="([a-z]+)"', txt)
-    if _ord131!=['view','page','home','image','template','screen','fmt','fln']:  # view = แท็บ ไฟล์ · fmt/fln = แท็บตามบริบท ท้ายสุดเสมอ (lint #137)
-        errors.append('lint #131: ลำดับแท็บต้องเป็น ไฟล์ · หน้า · ข้อความ · รูป · เท็มเพลต · หน้าจอ (ตอนนี้ '+','.join(_ord131)+')')
+    if _ord131!=['view','page','home','fmt','image','template','screen','fln']:  # view = ไฟล์ · home = เมนู · fmt = ข้อความ (แสดงตลอด · 31 ต.ค. 2026 #173) · fln = เส้น (แท็บตามบริบท ท้ายสุด)
+        errors.append('lint #131: ลำดับแท็บต้องเป็น ไฟล์ · หน้า · เมนู · ข้อความ · รูป · เท็มเพลต · หน้าจอ · เส้น (ตอนนี้ '+','.join(_ord131)+')')
     if not re.search(r'<button class="edtab active" data-tab="view"', txt) or not re.search(r'<div class="rpane active" data-pane="view">', txt) or "function _tabStartup(){ var n='view';" not in txt:
         errors.append('lint #131: แท็บเริ่มต้นต้องเป็น ไฟล์ (markup + _tabStartup ตอนเปิดไฟล์ · ผู้ใช้ 29 ต.ค. 2026)')
     if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:
@@ -2977,9 +2977,9 @@ def main():
         if _f134 not in txt: errors.append('lint #134: ไม่พบ '+_f134)
     if "if((e.ctrlKey||e.metaKey) && !hd){ _ftToggle(box); _ftAnchor=box;" not in txt:
         errors.append('lint #134: Ctrl+คลิก ต้องเพิ่ม/เอาออกจากชุดที่เลือก (ผู้ใช้ 28 ต.ค. 2026 เปลี่ยนจาก Shift)')
-    if "else if(!(_ftSet.length>1 && _ftSet.indexOf(box)>=0 && !hd)){ if(hd) _ftSelect(box); else _ftSelectG(box); }" not in txt:
+    if "else if(!(_selCount()>1 && _ftSet.indexOf(box)>=0 && !hd)){ if(hd) _ftSelect(box); else _ftSelectG(box); }" not in txt:  # ชุด = กล่อง+เส้น (#171)
         errors.append('lint #134: คลิกกล่องในชุดที่เลือกอยู่ต้องลากทั้งชุด (ไม่แตกชุด)')
-    if "if(!d && D.grp.length>1){" not in txt or "_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h)" not in txt:
+    if "if(!d && (D.grp.length>1 || (D.lines && D.lines.length))){" not in txt or "_ftSnap(D,G.l+dx,G.t+dy,G.w,G.h)" not in txt:  # ชุด = กล่อง+เส้น (#171)
         errors.append('lint #134: ลากทั้งชุดต้องขยับทุกกล่องเท่ากัน + ดูดแนวด้วยกรอบรอบนอก')
     if "(_ftSet.length?_ftSet:[b]).forEach(function(x){ x.style.left=" not in txt or "e.preventDefault(); _ftDeleteSel(); }" not in txt:
         errors.append('lint #134: ลูกศร/Delete ต้องทำกับทั้งชุด')
@@ -3024,40 +3024,36 @@ def main():
     for _k136 in ('st.ftextMultiW','ttl.ftgrpW'):
         if txt.count("'"+_k136+"':'")<2: errors.append('lint #136: i18n '+_k136+' ไม่ครบ TH+EN')
 
-    # ---- 137) แท็บตามบริบท รูปแบบข้อความ: ฟอนต์+จัดรูปแบบ อยู่ในแท็บนี้ · โผล่เฉพาะตอนแก้ข้อความ · เข้าโหมด=เลือกให้เอง (ผู้ใช้ 27 ต.ค. 2026 · Office contextual tab) ----
+    # ---- 137) แท็บ ข้อความ (fmt · เดิม รูปแบบข้อความ แท็บตามบริบท): #typobar อยู่ใน pane fmt · แสดงตลอด (ผู้ใช้ 31 ต.ค. 2026 · #173) · สลับ ข้อความ ↔ เส้น ไม่ออกจากโหมด · แท็บอื่น (รวม เมนู) = ออก ----
     _pf137=txt.find('<div class="rpane" data-pane="fmt">'); _pi137=txt.find('<div class="rpane" data-pane="image">'); _ph137=txt.find('<div class="rpane" data-pane="home">'); _tb137=txt.find('<div id="typobar">')
     if not (0<=_ph137<_pf137<_tb137<_pi137):
-        errors.append('lint #137: #typobar (ฟอนต์+จัดรูปแบบ) ต้องอยู่ใน rpane fmt ไม่ใช่แท็บข้อความ')
-    if '<button class="edtab ctx" data-tab="fmt" onclick="switchTab(\'fmt\')"' not in txt or 'data-i18n="tab.fmt"' not in txt or 'data-i18n="tab.fmtCtx"' not in txt:
-        errors.append('lint #137: ไม่พบปุ่มแท็บ รูปแบบข้อความ (edtab ctx)')
-    if 'body:not(.editmode) #edtabs .edtab[data-tab="fmt"]{display:none;}' not in _css or '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in _css or '#edtabs .edtab.ctx.active{background:#fff;}' not in _css:
-        errors.append('lint #137: แท็บตามบริบทต้องซ่อนตอนไม่ได้แก้ข้อความ + typobar display:contents ใน pane fmt + สถานะ active')
-    if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='home' && name!=='fln') toggleEdit();" not in txt:
-        errors.append('lint #137: สลับ ข้อความ ↔ รูปแบบข้อความ ต้องไม่ออกจากโหมดแก้ข้อความ')
-    if "if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
-        errors.append('lint #137: เข้าโหมด=เลือกแท็บรูปแบบข้อความ · ออกโหมดตอนอยู่แท็บนั้น=กลับแท็บข้อความ')
-    for _k137 in ('tab.fmt','tab.fmtCtx','ttl.tabFmt'):
+        errors.append('lint #137: #typobar (ฟอนต์+จัดรูปแบบ) ต้องอยู่ใน rpane fmt (แท็บ ข้อความ)')
+    if '<button class="edtab" data-tab="fmt" data-i18n="tab.fmt" onclick="switchTab(\'fmt\')">' not in txt:
+        errors.append('lint #137: แท็บ ข้อความ (fmt) ต้องเป็นแท็บปกติ (ไม่ใช่ ctx)')
+    if 'edtab[data-tab="fmt"]{display:none' in _css:
+        errors.append('lint #137: แท็บ ข้อความ ต้องแสดงตลอด (ห้ามซ่อนตอนไม่ได้แก้ข้อความ)')
+    if '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in _css or '#edtabs .edtab.ctx.active{background:#fff;}' not in _css:
+        errors.append('lint #137: typobar display:contents ใน pane fmt + สถานะ active ของแท็บตามบริบท (เส้น)')
+    if "if(document.body.classList.contains('editmode') && name!=='fmt' && name!=='fln') toggleEdit();" not in txt:
+        errors.append('lint #137: สลับ ข้อความ ↔ เส้น ต้องไม่ออกจากโหมด · แท็บอื่น (รวม เมนู) = ออก')
+    if "if(on){ if(!keepTab){ var _at0=document.querySelector('#edtabs .edtab.active'); if(!_at0 || _at0.getAttribute('data-tab')!=='fmt') switchTab('fmt'); } } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fln') switchTab('fmt'); }" not in txt:
+        errors.append('lint #137: เข้าโหมด = แท็บ ข้อความ · ออกโหมด = อยู่แท็บ ข้อความ (ไม่เด้งไปแท็บอื่น)')
+    for _k137 in ('tab.fmt','tab.menu'):
         if txt.count("'"+_k137+"':'")<2: errors.append('lint #137: i18n '+_k137+' ไม่ครบ TH+EN')
-
-    # ---- 138) แท็บรูปแบบข้อความ มีปุ่ม กล่องข้อความ (แทรก) + ปิดแก้ข้อความ (ขวาสุด) ไม่ต้องกลับแท็บข้อความ (ผู้ใช้ 28 ต.ค. 2026) ----
+    # ---- 138) แท็บ ข้อความ: ปุ่ม แก้ข้อความ (กลุ่ม โหมด) ซ้ายสุดนอก #typobar · กลุ่ม แทรก (กล่องข้อความ+เส้น) นอก #typobar · ไม่มีปุ่ม ปิดแก้ข้อความ (กดแก้ข้อความซ้ำ = ปิด) (ผู้ใช้ 28 ต.ค. 2026 · 31 ต.ค. 2026 ปรับโครงแท็บ #173) ----
     _pf138=txt.find('<div class="rpane" data-pane="fmt">'); _pi138=txt.find('<div class="rpane" data-pane="image">')
     _seg138=txt[_pf138:_pi138] if 0<=_pf138<_pi138 else ''
-    _a138=_seg138.find('id="btnFtextAddFmt" onclick="ftextAdd()"'); _c138=_seg138.find('id="btnEditClose" onclick="toggleEdit()"'); _f138=_seg138.find('data-i18n="grp.format"')
-    if not (0<=_f138<_a138<_c138):
-        errors.append('lint #138: แท็บรูปแบบข้อความต้องมี [กล่องข้อความ] แล้ว [ปิดแก้ข้อความ] ขวาสุด ต่อจากกลุ่มจัดรูปแบบ')
-    if _seg138.find('<div id="typobar">')<0 or _seg138.find('id="btnFtextAddFmt"')<_seg138.find('data-i18n="grp.format"'):
-        errors.append('lint #138: ปุ่มใหม่ต้องอยู่นอก #typobar (ไม่ถูกปิดตอนยังไม่เลือกข้อความ)')
-    if "if(on){ if(!keepTab) switchTab('fmt'); } else { var _atab=document.querySelector('#edtabs .edtab.active'); if(_atab && _atab.getAttribute('data-tab')==='fmt') switchTab('home'); }" not in txt:
-        errors.append('lint #138: ปิดแก้ข้อความจากแท็บนี้ต้องกลับแท็บข้อความ')
-    for _k138 in ('btn.editClose','ttl.editClose','grp.close'):
-        if txt.count("'"+_k138+"':'")<2: errors.append('lint #138: i18n '+_k138+' ไม่ครบ TH+EN')
-
+    _e138=_seg138.find('id="btnEdit" onclick="toggleEdit()"'); _t138=_seg138.find('<div id="typobar">'); _f138=_seg138.find('data-i18n="grp.format"'); _a138=_seg138.find('id="btnFtextAddFmt" onclick="ftextAdd()"'); _l138=_seg138.find('id="btnFlineAddFmt" onclick="flineAdd()"')
+    if not (0<=_e138<_t138<_f138<_a138<_l138):
+        errors.append('lint #138: แท็บ ข้อความ ต้องมี [แก้ข้อความ] ซ้ายสุดนอก #typobar · [กล่องข้อความ][เส้น] นอก #typobar')
+    for _o138 in ('btnEditClose','rg-ord-close',"'btn.editClose'","'ttl.editClose'","'grp.close'"):
+        if _o138 in txt: errors.append('lint #138: ปุ่ม/ข้อความ ปิดแก้ข้อความ ยกเลิกแล้ว (ขยะ) — '+_o138)
     # ---- 139) ออกโหมดแก้ข้อความไม่เด้ง + ไฮไลท์ในกล่องข้อความไม่ค้าง + แถบรูปแบบชี้กล่องที่เลือก (ผู้ใช้ 28 ต.ค. 2026) ----
     if "if(on && _veIdx99>=0" in txt or "  if(_veIdx99>=0 && _veTop99!=null){" not in txt:
         errors.append('lint #139: toggleEdit ต้องชดเชยตำแหน่งหน้าทั้งตอนเข้าและออกโหมด (ห้าม on && เฉพาะเข้า)')
     if "if(_ws && _ws.rangeCount && b.contains(_ws.anchorNode)) _ws.removeAllRanges();" not in txt:
         errors.append('lint #139: เลิกพิมพ์กล่องข้อความต้องล้างไฮไลท์ในกล่องนั้น')
-    if 'function _ftTypo(' not in txt or "_ftHandles(box,true); _ftTypo(box); _ftStatus(box); }" not in txt or "_ftSyncHandles(); _ftTypo(_ftSel); _ftStatus(_ftSel);" not in txt:
+    if 'function _ftTypo(' not in txt or "_ftHandles(box,true); _ftTypo(box); _ftStatus(box); }" not in txt or "_ftSyncHandles(); _ftTypo(_ftSel); _flSelSync(); _ftStatus(_ftSel);" not in txt:
         errors.append('lint #139: เลือกกล่อง (คลิก/Shift/ลากกรอบ) ต้องให้แถบรูปแบบชี้กล่องที่เลือก')
     if "function _ftDeselect(){ _ftStopEdit(); if(_typoEl && _typoEl.closest && _typoEl.closest('.ftext')" not in txt:
         errors.append('lint #139: เลิกเลือกกล่องต้องปล่อยแถบรูปแบบ')
@@ -3194,11 +3190,11 @@ def main():
     for _f154 in ('function _ftGroupOf(b){','function _ftSelectG(box){','function _ftGroupClean(pg){','function _ftGroupSync(){','function ftGroup(){','function ftUngroup(){','function _ftGroupExpand(L){','function _ftIsOneGroup(L){'):
         if _f154 not in txt: errors.append('lint #154: ไม่พบ '+_f154)
     _pf154=txt.find('<div class="rpane" data-pane="fmt">'); _pi154=txt.find('<div class="rpane" data-pane="image">'); _sg154=txt[_pf154:_pi154] if 0<=_pf154<_pi154 else ''
-    _a154=_sg154.find('id="btnFtextAddFmt"'); _g154=_sg154.find('id="btnFtGroup" onclick="ftGroup()" disabled'); _u154=_sg154.find('id="btnFtUngroup" onclick="ftUngroup()" disabled'); _c154=_sg154.find('id="btnEditClose"')
+    _a154=_sg154.find('id="btnFtextAddFmt"'); _g154=_sg154.find('id="btnFtGroup" onclick="ftGroup()" disabled'); _u154=_sg154.find('id="btnFtUngroup" onclick="ftUngroup()" disabled'); _c154=len(_sg154)+1  # ไม่มีกลุ่ม ปิด แล้ว (#173)
     if not (0<=_a154<_g154<_u154<_c154):
         errors.append('lint #154: ปุ่ม จัดกลุ่ม/ยกเลิกกลุ่ม ต้องอยู่ระหว่างกลุ่มแทรกกับปิด ในแท็บรูปแบบข้อความ (เริ่มต้น disabled + tooltip เหตุผล)')
     for _c154,_m154 in (("if((e.ctrlKey||e.metaKey) && !e.altKey && (e.code==='KeyG' || e.key==='g' || e.key==='G')){",'ปุ่มลัด Ctrl+G'),
-                        ("var _h0=hits; hits=_h0.filter(function(b){ return _ftGroupOf(b).every(",'ลากกรอบ = กลุ่มต้องอยู่ในกรอบครบ'),
+                        ("var _h0=hits, _ga=M.pg.querySelectorAll('.ftext[data-ftg],.fline[data-ftg]'); hits=_h0.filter(",'ลากกรอบ = กลุ่มต้องอยู่ในกรอบครบ (กล่อง+เส้น)'),
                         ("_ftSet=_ftGroupExpand(L.slice(",'Shift+คลิกช่วง = ได้ทั้งกลุ่ม'),
                         ("var i=_ftSet.indexOf(box), _gm=_ftGroupOf(box);",'Ctrl+คลิก = ทั้งกลุ่ม'),
                         ("if(_rg.length>1) ref=_rg.reduce(",'กล่องใหม่ต่อใต้กลุ่ม'),
@@ -3215,13 +3211,13 @@ def main():
         errors.append('lint #155: syncButtons ต้องคืนสถานะกำลังพิมพ์ของกล่องข้อความเมื่อไฮไลท์หมด (เว้น _selHold)')
 
     # ---- 156) เส้นลอย (ขั้น C): แบบ 3 (ทุกมุม · ≤5° ดูดตรง · Shift 45° · Alt ไม่ดูด) · แท็บตามบริบท รูปแบบเส้น · ไม่ติดไฟล์/undo/พิมพ์ส่วนเครื่องมือ (ผู้ใช้ 28 ต.ค. 2026) ----
-    for _f156 in ('function flineAdd(){','function _flRender(l){','function _flSelect(l){','function _flDeselect(){','function _flOverlay(){','function _flDelete(){','function _flAfterRestore(){','function _flTargets(l,px){','function _flSync(){'):
+    for _f156 in ('function flineAdd(){','function _flRender(l){','function _flSelect(l,keepTab){','function _flDeselect(){','function _flOverlay(){','function _flDelete(){','function _flAfterRestore(){','function _flTargets(l,px){','function _flSync(){'):
         if _f156 not in txt: errors.append('lint #156: ไม่พบ '+_f156)
     if 'if(_ay<=_FT_SNAP && _ax>_ay) P.y=F.y; else if(_ax<=_FT_SNAP && _ay>_ax) P.x=F.x;' not in txt or 'if(e.shiftKey) sa=Math.round(a/(Math.PI/4))*(Math.PI/4);' not in txt or '5*Math.PI/180' in txt:
         errors.append('lint #156: ลากปลายเส้นต้องดูดตรงตามระยะ 1.5 มม. (ไม่ใช่ ±5°) · Shift ล็อก 45° (ผู้ใช้ 29 ต.ค. 2026)')
     if '<button class="edtab ctx" data-tab="fln"' not in txt or '<div class="rpane" data-pane="fln" id="flPane">' not in txt or 'body:not(.flsel) #edtabs .edtab[data-tab="fln"]' not in _css:
         errors.append('lint #156: ต้องมีแท็บตามบริบท รูปแบบเส้น (ซ่อนเมื่อไม่ได้เลือกเส้น)')
-    if "name!=='fmt' && name!=='home' && name!=='fln') toggleEdit();" not in txt:
+    if "name!=='fmt' && name!=='fln') toggleEdit();" not in txt:  # เมนู (home) = ออกโหมด (#173)
         errors.append('lint #156: สลับไปแท็บรูปแบบเส้นต้องไม่ออกจากโหมดแก้ข้อความ')
     if txt.count('.ftmarq,.ftgrp,.flh,.fldel,.flhl')!=3 or '@media print{.flh,.fldel,.flhl{display:none !important;}}' not in _css or txt.count("var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');")!=2:
         errors.append('lint #156: จุดจับ/×/แสงของเส้นต้องตัดออกตอนบันทึก 2 จุด + undo · ไม่พิมพ์ · flsel ไม่ติดไฟล์')
@@ -3231,7 +3227,7 @@ def main():
     _ck156=txt.find("/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */"); _cs156=txt[_ck156:_ck156+1400] if _ck156>=0 else ''
     if "if(ev.target.closest('.fline,.flh,.fldel')) return;" not in _cs156 or _cs156.find("if(ev.target.closest('.fline,.flh,.fldel'))")>_cs156.find('var found=_typoFind(ev.target);'):
         errors.append('lint #156: click เลือก element ต้องข้ามเส้นลอย (ไม่ทับสถานะเส้น)')
-    for _b156 in ('id="btnFlineAdd" onclick="flineAdd()"','id="btnFlineAddFmt" onclick="flineAdd()"','id="btnFlineAddLn" onclick="flineAdd()"','id="btnFlDel" onclick="_flDelete()"'):
+    for _b156 in ('id="btnFlineAddFmt" onclick="flineAdd()"','id="btnFlineAddLn" onclick="flineAdd()"','id="btnFlDel" onclick="_flDelete()"'):
         if _b156 not in txt: errors.append('lint #156: ไม่พบปุ่ม '+_b156)
     if '#edribbon .flopt.on{background:#217346;border-color:#217346;color:#fff;}' not in _css:
         errors.append('lint #156: ปุ่มที่ใช้อยู่ในแท็บรูปแบบเส้นต้องเขียว (ข้อ 11)')
@@ -3582,20 +3578,95 @@ def main():
     if not _da168 or '_typoApplyFormat(x,d.fmt)' not in _da168.group(0): errors.append('lint #168: _ftDefApply ต้องใช้ _typoApplyFormat (รวมสีที่ทาโดยไฮไลท์ทั้งคำ)')
     if txt.count("'fl.setDefaultFt':'")<2: errors.append('lint #168: i18n fl.setDefaultFt ไม่ครบ TH+EN')
 
-    # ---- 169) ลำดับกลุ่มแท็บรูปแบบข้อความ: ฟอนต์ · กล่อง · แทรก · จัดเรียง · จัดรูปแบบ · ปิด (ผู้ใช้ 31 ต.ค. 2026) — order แทนย้าย DOM (จัดรูปแบบ อยู่ใน #typobar · แทรก/จัดเรียง/ปิด อยู่นอก) ----
+    # ---- 169) ลำดับกลุ่มแท็บ ข้อความ: โหมด · ฟอนต์ · กล่อง · แทรก · จัดเรียง · จัดรูปแบบ (ผู้ใช้ 31 ต.ค. 2026) — order แทนย้าย DOM (จัดรูปแบบ อยู่ใน #typobar) · ไม่มีกลุ่ม ปิด แล้ว (#173) ----
     _pf169=txt.find('<div class="rpane" data-pane="fmt"'); _pi169=txt.find('<div class="rpane" data-pane="image">'); _sg169=txt[_pf169:_pi169] if 0<=_pf169<_pi169 else ''
-    _tb169=_sg169.find('<div id="typobar">'); _fm169=_sg169.find('<div class="rgroup rg-ord-fmt">'); _gf169=_sg169.find('data-i18n="grp.format"'); _bx169=_sg169.find('data-i18n="grp.ftBox"'); _cl169=_sg169.find('<div class="rgroup rg-ord-close">'); _gc169=_sg169.find('data-i18n="grp.close"')
-    if not (0<=_tb169<_fm169<_gf169<_bx169<_cl169<_gc169): errors.append('lint #169: กลุ่ม จัดรูปแบบ (rg-ord-fmt) ต้องอยู่ใน #typobar · กลุ่ม ปิด (rg-ord-close) ต้องเป็นกลุ่มสุดท้าย')
-    if _sg169.count('rg-ord-fmt')!=1 or _sg169.count('rg-ord-close')!=1: errors.append('lint #169: rg-ord-fmt / rg-ord-close ต้องมีอย่างละ 1')
-    if '#edribbon .rpane[data-pane="fmt"] .rg-ord-fmt{order:1;}' not in txt or '#edribbon .rpane[data-pane="fmt"] .rg-ord-close{order:2;}' not in txt: errors.append('lint #169: ขาด CSS order (จัดรูปแบบ=1 · ปิด=2)')
+    _tb169=_sg169.find('<div id="typobar">'); _fm169=_sg169.find('<div class="rgroup rg-ord-fmt rg-neededit">'); _gf169=_sg169.find('data-i18n="grp.format"'); _bx169=_sg169.find('data-i18n="grp.ftBox"')
+    if not (0<=_tb169<_fm169<_gf169<_bx169): errors.append('lint #169: กลุ่ม จัดรูปแบบ (rg-ord-fmt) ต้องอยู่ใน #typobar ก่อนกลุ่ม กล่อง')
+    if _sg169.count('rg-ord-fmt')!=1: errors.append('lint #169: rg-ord-fmt ต้องมี 1')
+    if '#edribbon .rpane[data-pane="fmt"] .rg-ord-fmt{order:1;}' not in txt: errors.append('lint #169: ขาด CSS order (จัดรูปแบบ=ท้ายสุด)')
     if '#edribbon .rpane[data-pane="fmt"] #typobar{display:contents;}' not in txt: errors.append('lint #169: order ใช้ได้เพราะ #typobar display:contents — ห้ามเอาออก')
-
     # ---- 170) ล้างรูปแบบจุดที่ไฮไลท์ ต้องล้างรูปแบบที่ตั้งไว้ทั้งช่องได้ด้วย (บั๊ก 31 ต.ค. 2026: กล่องข้อความจาก ตั้งค่าเริ่มต้น/ใช้ทั้งประเภท ได้สีทั้งช่อง → ล้างไม่ได้) ----
     _cf170=txt.find('function clearFormatSel(){'); _ce170=txt.find('\n  function syncButtons(',_cf170); _c170=txt[_cf170:_ce170] if 0<=_cf170<_ce170 else ''
     for _n170 in ("var _DM=['color','fontFamily','fontWeight','fontStyle','textDecorationLine']","_typoWrapRange(field,st+len,_ftx.length,_base)","_typoWrapRange(field,0,st,_base)","field.style.removeProperty(pp)","if(_all && field.style.textShadow)","range=_clrRangeAt(field,st,st+len)","return n+nB;","if(_hasB && (_all || !_struct))","TYPO_TYPES.some(function(tt){ return x.matches && x.matches(tt.sel); })"):
         if _n170 not in _c170: errors.append('lint #170: clearFormatSel ขาด '+_n170[:50])
     if "tk('fl.clearOlKeep')" not in txt or txt.count("'fl.clearOlKeep':'")<2: errors.append('lint #170: ต้องบอกเมื่อเส้นขอบตัวอักษรยังอยู่ (fl.clearOlKeep TH+EN)')
     if 'ไม่มีรูปแบบเฉพาะจุดให้ล้าง' in txt or 'no partial formatting to clear' in txt: errors.append('lint #170: ข้อความเดิม (ให้ไปใช้ คืนค่า สำหรับรูปแบบทั้งช่อง) ไม่ตรงแล้ว')
+
+    # ---- 171) เลือกหลายเส้น + เลือกปนกล่อง + จัดกลุ่มรวมกล่อง/เส้น (ผู้ใช้ 31 ต.ค. 2026 · รอบ 2/7) ----
+    for _f171 in ('function _flLines(','function _selBoxes(','function _selCount(','function _selPage(','function _grpLinesOf(','function _grpBoxesOf(','function _selIsOneGroup(','function _selBBox(','function _selStatus(','function _flSelSync(','function _flToggle(','function _selGroupAt(','function _selDragStart('):
+        if _f171 not in txt: errors.append('lint #171: ไม่พบ '+_f171)
+    if "var _flSel=null, _flDrag=null, _flSet=[];" not in txt: errors.append('lint #171: ต้องประกาศ _flSet คู่กับ _flSel')
+    for _c171,_m171 in (("if(e.ctrlKey||e.metaKey||e.shiftKey){ _flToggle(ln); if(_flSet.indexOf(ln)<0) return; }",'Ctrl/Shift+คลิกเส้น = เพิ่ม/เอาออก'),
+                        ("if(_selCount()>1){ _selDragStart(e,pg2,px2); return; }",'ลากเส้นในชุด = ลากทั้งชุด'),
+                        ("if((e.ctrlKey||e.metaKey||e.shiftKey) && (_bx || _bg)) return;",'Ctrl/Shift+คลิกกล่อง/ลากกรอบ ไม่เลิกเลือกเส้น'),
+                        ("if(tg.closest('.fline,.flh,.fldel')) return;",'ตัวจัดการกล่องไม่เลิกเลือกชุดเมื่อคลิกเส้น'),
+                        ("if(_ftGid(l) && _selGroupAt(l)) return;",'คลิกเส้นในกลุ่ม = ทั้งกลุ่ม'),
+                        ("function _ftSelectG(box){ if(_ftGid(box) && _selGroupAt(box)) return; _ftSelect(box); }",'คลิกกล่องในกลุ่ม = ทั้งกลุ่ม (รวมเส้น)'),
+                        ("Q='.ftext[data-ftg],.fline[data-ftg]'",'ล้างกลุ่มนับเส้นด้วย'),
+                        ("M.pg.querySelectorAll('.fline').forEach(function(l){ var d=_flGet(l); if(Math.min(d.x1,d.x2)>=M.box.l-0.5",'ลากกรอบเลือกเส้นที่ปลายทั้งสองอยู่ในกรอบ'),
+                        ("if(D.lines && D.lines.length){ D.lines.forEach(function(q){ _flPut(q.l,",'ลากชุดจากกล่อง = เส้นขยับตาม'),
+                        ("if(D.k==='set'){",'ลากหลายเส้น (ไม่มีกล่อง)'),
+                        ("_flLines().forEach(function(l){ var q=_flGet(l); _flPut(l,{x1:q.x1+kx,",'ลูกศร (ชุดมีกล่อง) = เส้นขยับตาม'),
+                        ("_flLines().forEach(function(l){ var d=_flGet(l); _flPut(l,{x1:d.x1+dx,",'ลูกศร (เส้นล้วน) = ทุกเส้น'),
+                        ("LL.forEach(function(l){ l.remove(); }); _flSet=[]; _flSelSync(null);",'Delete ชุด = ลบเส้นด้วย'),
+                        ("var A=_selBoxes().concat(_flLines());\n  if(A.length<2){ flashStatus('warning',tk('fl.ftGroupNeed'))",'จัดกลุ่ม = กล่อง+เส้น'),
+                        ("pg.querySelectorAll('.ftext[data-ftg],.fline[data-ftg]').forEach(function(x){ if(gs.indexOf(_ftGid(x))>=0) M.push(x); });",'ยกเลิกกลุ่ม = กล่อง+เส้น'),
+                        ("['btnFlGroup',gk,'ttl.ftGroup'],['btnFlUngroup',uk,'ttl.ftUngroup']",'ปุ่มจัดกลุ่มในแท็บรูปแบบเส้นตามสถานะ'),
+                        ("if(!LL.length) ['n','w','e','s','se'].forEach(",'กรอบชุดมีเส้น = ไม่มีจุดยืด'),
+                        ("_ftHandles(b,_ftSet.length===1 && !_flLines().length)",'กล่องเดียว+เส้น = ไม่มีจุดยืดกล่อง'),
+                        ("if(_ftSel===box && _ftSet.length<=1 && !_flLines().length) return;",'เลือกกล่องเดี่ยว (พิมพ์) = เลิกเลือกเส้น'),
+                        ("if(_flLines().length || _flSel){ _flSet=[]; _flSelSync(null); }",'เลิกเลือกกล่อง = เลิกเลือกเส้นด้วย'),
+                        ("var b=e.target.closest('button'), LS=_flLines(); if(!b||!_flSel||!LS.length) return;",'แท็บรูปแบบเส้น ใช้กับทุกเส้นที่เลือก'),
+                        ("el.disabled=multi; var k=multi?'ttl.flGeoMulti':M[id];",'มุม/ยาว จางเมื่อเลือกหลายเส้น'),
+                        ("var l=_flSel; if(!l || LS.length!==1 || LS[0]!==l || _selBoxes().length) return;",'จุดจับปลายเส้นเฉพาะเส้นเดียว'),
+                        ("function _flAfterRestore(){ _flSel=null; _flSet=[];",'Undo ล้างชุดเส้น')):
+        if _c171 not in txt: errors.append('lint #171: ขาด '+_m171)
+    _pf171=txt.find('<div class="rpane" data-pane="fln"'); _pd171=txt.find('id="btnFlDel"',_pf171); _pg171=txt.find('id="btnFlGroup" onclick="ftGroup()" disabled',_pf171); _pu171=txt.find('id="btnFlUngroup" onclick="ftUngroup()" disabled',_pf171)
+    if not (0<=_pf171<_pg171<_pu171<_pd171): errors.append('lint #171: แท็บรูปแบบเส้นต้องมีปุ่ม จัดกลุ่ม/ยกเลิกกลุ่ม (เริ่มต้น disabled) ก่อนกลุ่ม ลบ')
+    for _k171 in ('st.selMix','st.selGroup','st.flMulti','fl.flineDelN','fl.selDelN','fl.flMultiSet','ttl.flGeoMulti'):
+        if txt.count("'"+_k171+"':'")<2: errors.append('lint #171: i18n '+_k171+' ไม่ครบ TH+EN')
+    for _o171 in ('เลือกกล่องข้อความ 2 กล่องขึ้นไปก่อน','กล่องที่เลือกไม่ได้อยู่ในกลุ่ม'):
+        if _o171 in txt: errors.append('lint #171: ข้อความเดิม (กล่องอย่างเดียว) ยังค้าง — '+_o171)
+
+    # ---- 172) เพิ่มเส้น = เลือกเส้นใหม่แต่อยู่แท็บเดิม (เพิ่มต่อเนื่องได้ แบบกล่องข้อความ) · คลิกเส้น = ไปแท็บรูปแบบเส้น (บั๊ก 31 ต.ค. 2026: กดเพิ่มเส้นแล้วเด้งไปแท็บรูปแบบเส้นทันที) ----
+    _fa172=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt)
+    if not _fa172 or '_flSelect(l,true);' not in _fa172.group(0) or re.search(r'_flSelect\(l\)\s*;', _fa172.group(0)): errors.append('lint #172: flineAdd ต้องเลือกเส้นใหม่ด้วย _flSelect(l,true) (อยู่แท็บเดิม)')
+    if "if(an!=='fln' && !keepTab) switchTab('fln');" not in txt: errors.append('lint #172: _flSelSync ต้องไม่สลับแท็บเมื่อ keepTab')
+    if "else if(_flSet.indexOf(ln)<0 || _selCount()<2) _flSelect(ln);" not in txt: errors.append('lint #172: คลิกเส้นต้องไปแท็บรูปแบบเส้น (_flSelect(ln) ไม่มี keepTab)')
+
+    # ---- 173) โครงแท็บใหม่ (ผู้ใช้ 31 ต.ค. 2026): เมนู (home) = นำเข้า · ราคา · ข้อความ (fmt · แสดงตลอด) = โหมด · ฟอนต์ · กล่อง · แทรก · จัดเรียง · จัดรูปแบบ · เส้น (fln ctx) · ยังไม่ได้แก้ = ฟอนต์/กล่อง/จัดเรียง/จัดรูปแบบ จาง กดไม่ได้ + tooltip ----
+    _ph173=txt.find('<div class="rpane" data-pane="home">'); _pf173=txt.find('<div class="rpane" data-pane="fmt">'); _sh173=txt[_ph173:_pf173] if 0<=_ph173<_pf173 else ''
+    if 'id="btnPasteImport"' not in _sh173 or 'id="btnBulkPrice"' not in _sh173: errors.append('lint #173: แท็บ เมนู ต้องมี วางรายการ + ปรับราคา')
+    for _x173 in ('id="btnEdit"','data-i18n="grp.insert"','ftextAdd()','flineAdd()'):
+        if _x173 in _sh173: errors.append('lint #173: แท็บ เมนู ต้องไม่มี '+_x173+' (ย้ายไปแท็บ ข้อความ)')
+    _pi173=txt.find('<div class="rpane" data-pane="image">'); _sf173=txt[_pf173:_pi173] if 0<=_pf173<_pi173 else ''
+    if _sf173.count('rg-neededit')!=4: errors.append('lint #173: แท็บ ข้อความ ต้องมีกลุ่มที่ต้องกดแก้ข้อความก่อน 4 กลุ่ม (ฟอนต์ · กล่อง · จัดเรียง · จัดรูปแบบ) — พบ {}'.format(_sf173.count('rg-neededit')))
+    for _g173 in ('<div class="rgroup fontgrp rg-neededit">','<div class="rgroup rg-ord-fmt rg-neededit">','<div class="rgroup rg-neededit"><div class="rgb fbox">','<div class="rgroup rg-neededit"><div class="rgb">  <!-- จัดกลุ่มกล่องข้อความ'):
+        if _g173 not in _sf173: errors.append('lint #173: ขาด '+_g173[:50])
+    _ia173=_sf173.find('id="btnFtextAddFmt"'); _ga173=_sf173.rfind('<div class="rgroup',0,_ia173)
+    if _ga173<0 or 'rg-neededit' in _sf173[_ga173:_ia173]: errors.append('lint #173: กลุ่ม แทรก ต้องกดได้เสมอ (ไม่จาง)')
+    _ea173=_sf173.find('id="btnEdit"'); _eg173=_sf173.rfind('<div class="rgroup',0,_ea173)
+    if _eg173<0 or 'rg-neededit' in _sf173[_eg173:_ea173]: errors.append('lint #173: กลุ่ม โหมด (แก้ข้อความ) ต้องกดได้เสมอ')
+    if 'body:not(.editmode) #edribbon .rg-neededit{opacity:' not in _css or 'body:not(.editmode) #edribbon .rg-neededit > .rgb{pointer-events:none;}' not in _css: errors.append('lint #173: ขาด CSS กลุ่มจางตอนยังไม่ได้แก้ข้อความ')
+    _gs173=re.search(r"\nfunction _edGateSync\(\)\{[\s\S]*?\n\}", txt); _g173s=_gs173.group(0) if _gs173 else ''
+    for _n173 in ("b.setAttribute('inert','')","b.removeAttribute('inert')","g.setAttribute('data-i18n-title','ttl.needEdit')"):
+        if _n173 not in _g173s: errors.append('lint #173: _edGateSync ขาด '+_n173)
+    if "document.addEventListener('DOMContentLoaded',_edGateSync); else _edGateSync();" not in txt: errors.append('lint #173: _edGateSync ต้องรันตอนเปิดไฟล์')
+    _te173=re.search(r"\nfunction toggleEdit\(keepTab\)\{[\s\S]*?\n\}", txt)
+    if not _te173 or '_edGateSync();' not in _te173.group(0): errors.append('lint #173: toggleEdit ต้องเรียก _edGateSync')
+    if '_flPrevTab' in txt: errors.append('lint #173: _flPrevTab ไม่ใช้แล้ว (ออกจากแท็บเส้น = แท็บ ข้อความ เสมอ)')
+    if "if(an==='fln') switchTab('fmt'); }" not in txt: errors.append('lint #173: เลิกเลือกเส้น = กลับแท็บ ข้อความ')
+    for _k173,_v173 in (('tab.menu','เมนู'),('tab.fmt','ข้อความ'),('tab.fln','เส้น')):
+        if "'"+_k173+"':'"+_v173+"'" not in txt: errors.append('lint #173: ชื่อแท็บ '+_k173+' ต้องเป็น '+_v173)
+    if txt.count("'ttl.needEdit':'")<2: errors.append('lint #173: i18n ttl.needEdit ไม่ครบ TH+EN')
+    for _o173 in ("'tab.text'","'tab.fmtCtx'","'ttl.tabFmt'"):
+        if _o173 in txt: errors.append('lint #173: i18n เก่า '+_o173+' ยังค้าง (ขยะ)')
+
+    # ---- 174) เพิ่มเส้นตอนไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น ไม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026: เลิกเลือกแล้วกดเส้นอีก 3 ครั้ง = 3 เส้นใหม่ทับ 3 เส้นเดิม) · ถึงขอบพิมพ์ = เตือน ไม่ clamp เงียบ ----
+    _fa174=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _f174=_fa174.group(0) if _fa174 else ''
+    if "if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }" not in _f174: errors.append('lint #174: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากเส้นล่าสุดในหน้า')
+    if "if(_edge) flashStatus('warning',tk('fl.flineEdge'));" not in _f174 or 'Math.min(285,' in _f174 or 'Math.min(198,' in _f174: errors.append('lint #174: ถึงขอบพิมพ์ต้องเตือน ไม่ clamp เงียบ')
+    if txt.count("'fl.flineEdge':'")<2: errors.append('lint #174: i18n fl.flineEdge ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

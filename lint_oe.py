@@ -3091,8 +3091,8 @@ def main():
     if txt.count("p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });")!=3:
         errors.append('lint #142: ต้องล้าง --blankh/--blankdel ตอนบันทึกไฟล์ (2 จุด) + snapshot undo')
     _fa142=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
-    if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>289+0.05) _over=true;" not in _fa142:
-        errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องเตือน (แทนการเยื้อง 5mm)')
+    if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>_PT_B+0.05){ box.remove();" not in _fa142:
+        errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องไม่เพิ่ม + เตือน (แทนการเยื้อง 5mm · กดเพิ่มไม่เลยขอบพิมพ์ ผู้ใช้ 31 ต.ค. 2026 · ดู #176)')
 
     # ---- 143) พิมพ์ไม่มีหน้าขาวต่อท้าย: ขึ้นหน้าใหม่ก่อนหน้าที่ 2+ (ไม่ใช่หลังทุกหน้า) + print body padding 0 (ผู้ใช้ 28 ต.ค. 2026) ----
     _pg143=re.search(r'\n\.page\{[^}]*\}', _css)
@@ -3662,12 +3662,14 @@ def main():
     for _o173 in ("'tab.text'","'tab.fmtCtx'","'ttl.tabFmt'"):
         if _o173 in txt: errors.append('lint #173: i18n เก่า '+_o173+' ยังค้าง (ขยะ)')
 
-    # ---- 174) เพิ่มเส้นตอนไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น ไม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026: เลิกเลือกแล้วกดเส้นอีก 3 ครั้ง = 3 เส้นใหม่ทับ 3 เส้นเดิม) · ถึงขอบพิมพ์ = เตือน ไม่ clamp เงียบ ----
+    # ---- 174) เพิ่มเส้นตอนไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น ไม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026) · ตำแหน่งถัดไปเลยขอบพิมพ์ = ไม่เพิ่ม + เตือน ไม่ล็อกที่ขอบ (ผู้ใช้ 31 ต.ค. 2026) ----
     _fa174=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _f174=_fa174.group(0) if _fa174 else ''
     if "if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }" not in _f174: errors.append('lint #174: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากเส้นล่าสุดในหน้า')
-    if "if(_edge) flashStatus('warning',tk('fl.flineEdge'));" not in _f174 or 'Math.min(285,' in _f174 or 'Math.min(198,' in _f174: errors.append('lint #174: ถึงขอบพิมพ์ต้องเตือน ไม่ clamp เงียบ')
-    if re.search(r"_(?:nx|ny|fy)=(?:198|285|289|202)\b", _f174) or 'if(_ny>289+0.05) _edge=true;' not in _f174 or 'if(_fy>289+0.05) _edge=true;' not in _f174: errors.append('lint #174b: เลยขอบพิมพ์ = ต่อไปได้ ไม่ล็อกที่ขอบ (ล็อก = เส้นทับกัน) · ขอบล่าง 289 มม. เท่ากล่องข้อความ (ผู้ใช้ 31 ต.ค. 2026)')
-    if txt.count("'fl.flineEdge':'")<2: errors.append('lint #174: i18n fl.flineEdge ไม่ครบ TH+EN')
+    for _n174 in ('if(_nx>_PT_R+0.05) _edge=true;','if(_ny>_PT_B+0.05) _edge=true;','if(_fy>_PT_B+0.05) _edge=true;',"if(_edge){ flashStatus('warning',tk('fl.flineFull')); return; }"):
+        if _n174 not in _f174: errors.append('lint #174: flineAdd ตำแหน่งถัดไปเลยขอบพิมพ์ต้องไม่เพิ่ม + เตือน · ขาด '+_n174)
+    if re.search(r"_(?:nx|ny|fy)=(?:198|285|289|202)\b", _f174): errors.append('lint #174: ห้ามล็อกเส้นไว้ที่ขอบ (ล็อก = เส้นใหม่ทับกันที่ขอบ)')
+    if txt.count("'fl.flineFull':'")<2: errors.append('lint #174: i18n fl.flineFull ไม่ครบ TH+EN')
+    if "fl.flineEdge" in txt: errors.append('lint #174: fl.flineEdge ไม่ได้ใช้แล้ว ต้องลบ (ขยะ)')
 
     # ---- 175) เพิ่มเส้น/กล่องข้อความ = หน้าเลื่อนให้เห็นชิ้นใหม่ (บั๊ก 31 ต.ค. 2026: เพิ่มเส้นจนถึงล่างหน้า แถบเลื่อนไม่ตาม เส้นใหม่หลบใต้แถบสถานะ) ----
     _fr175=re.search(r"\nfunction _revealEl\(el\)\{[\s\S]*?\n\}", txt); _r175=_fr175.group(0) if _fr175 else ''
@@ -3676,6 +3678,21 @@ def main():
     _fl175=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _ft175=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt)
     if not _fl175 or '_revealEl(l);' not in _fl175.group(0): errors.append('lint #175: flineAdd ต้องเรียก _revealEl(l)')
     if not _ft175 or '_revealEl(box);' not in _ft175.group(0): errors.append('lint #175: ftextAdd ต้องเรียก _revealEl(box)')
+
+    # ---- 176) ขอบกระดาษ 3 มม. (ลูกกลิ้งเครื่องพิมพ์หนีบ · ผู้ใช้ 31 ต.ค. 2026): กดเพิ่ม = ไม่เลย 294/207 · ลาก/ลูกศร = อิสระทุกทิศ (ห้าม clamp) · ปล่อยแล้วเลยขอบล่าง = เตือนทั้งกล่องและเส้น · หน้าเมนู/หน้าเปล่ายืดลายเฉียงเฉพาะโหมดแก้ไข ----
+    if 'var _PT_B=294, _PT_R=207;' not in txt: errors.append('lint #176: ขอบกระดาษที่วางได้ต้องเป็น _PT_B=294 / _PT_R=207 (เว้น 3 มม.)')
+    for _j176 in ('_ptLim','D.clamped','fl.dragPrintStop'):
+        if _j176 in txt: errors.append('lint #176: ลาก/ลูกศรต้องอิสระทุกทิศ ห้ามมี '+_j176+' (ผู้ใช้ 31 ต.ค. 2026)')
+    _ft176=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _t176=_ft176.group(0) if _ft176 else ''
+    if "box.remove(); _blankFitAll(); flashStatus('warning',tk('fl.ftextFull')); return; }" not in _t176 or '_PT_B+0.05) _over=true;' not in _t176: errors.append('lint #176: ftextAdd กล่องใหม่เลยขอบกระดาษต้องไม่เพิ่ม + เตือน · ดันกล่องล่างใช้ _PT_B')
+    if 'height/px>_PT_B+0.05;' not in txt or 'function _flOverCheck(L){' not in txt: errors.append('lint #176: เตือนเลยขอบล่างต้องใช้ _PT_B ทั้งกล่อง (_ftOverCheck) และเส้น (_flOverCheck)')
+    if txt.count('_flOverCheck(')<5: errors.append('lint #176: ต้องเรียก _flOverCheck หลังลากเส้น/ลากชุดปนกล่อง/ลูกศรเส้น/ลูกศรกล่อง')
+    if re.search(r">289\+0\.05", txt): errors.append('lint #176: ห้ามใช้ 289 เป็นขอบเตือนแล้ว ใช้ _PT_B')
+    if 'body.editmode:not(.measuring) .page:not(.pgblank){min-height:var(--floath,297mm) !important;}' not in _css: errors.append('lint #176: หน้าเมนูต้องยืดตาม --floath เฉพาะโหมดแก้ไข')
+    if 'bot=_floatBottom(pg,px);' not in txt or "function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); }" not in txt: errors.append('lint #176: _blankFit ต้องจัดทุกหน้า (หน้าเมนู = --floath)')
+    if txt.count("p.style.removeProperty('--floath'); p.style.removeProperty('--blankh');")!=3: errors.append('lint #176: ต้องล้าง --floath ตอนบันทึก/undo (3 จุด)')
+    for _k176 in ('fl.ftextFull','fl.flineFull','fl.flineOverPrint'):
+        if txt.count("'"+_k176+"':'")<2: errors.append('lint #176: i18n '+_k176+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

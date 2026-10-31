@@ -3696,7 +3696,7 @@ function flineAdd(){
   var pages=document.querySelectorAll('.page'), pg=ref?ref.closest('.page'):(fref?fref.closest('.page'):null), best=1e9, midY=window.innerHeight/2;
   if(!pg){ pg=pages[0]; pages.forEach(function(p){ var rc=p.getBoundingClientRect(), c=Math.abs((rc.top+rc.bottom)/2-midY); if(rc.bottom>0 && rc.top<window.innerHeight && c<best){ best=c; pg=p; } }); }
   if(!pg) return;
-  if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }  /* ไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น (แบบกล่องข้อความ) · เดิมวางกลางจอทุกครั้ง → เส้นใหม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026 · lint #174) */
+  if(!ref && !fref){ var _al=pg.querySelectorAll('.ftext,.fline'); if(_al.length){ var _la=_al[_al.length-1]; if(_la.classList.contains('fline')) ref=_la; else fref=_la; } }  /* ไม่ได้เลือกอะไร = ต่อจากชิ้นที่เพิ่มล่าสุดในหน้า กล่องหรือเส้นก็ได้ (กล่อง = เส้นใต้กล่อง 2 มม. · เส้น = ต่อใต้ 8 มม.) · เดิมดูแค่เส้น → เพิ่มกล่องแล้วเพิ่มเส้น = ทับกัน (ผู้ใช้ 31 ต.ค. 2026 · lint #177 · เดิม #174) */
   var px=_flPx(pg), d={x1:70,y1:150,x2:140,y2:150}, _edge=false;
   if(ref){ var o=_flGet(ref); if(Math.abs(o.x1-o.x2)<0.05){ var _nx=o.x1+8; if(_nx>_PT_R+0.05) _edge=true; d.x1=d.x2=_nx; d.y1=Math.min(o.y1,o.y2); d.y2=Math.max(o.y1,o.y2); } else { var _ny=Math.max(o.y1,o.y2)+8; if(_ny>_PT_B+0.05) _edge=true; d.x1=Math.min(o.x1,o.x2); d.x2=Math.max(o.x1,o.x2); d.y1=d.y2=_ny; } }  /* ตำแหน่งถัดไปเลยขอบกระดาษ 3 มม. = ไม่เพิ่ม + เตือน (ไม่ล็อกที่ขอบ = ไม่ทับกัน · ผู้ใช้ 31 ต.ค. 2026 · lint #176) */  /* ต่อใต้เส้นที่เลือก (แนวตั้ง = ข้างขวา) */
   else if(fref){ var bl=_ftNum(fref.style.left), bw=_ftNum(fref.style.width)||70, bb=_ftNum(fref.style.top)+fref.getBoundingClientRect().height/px; d.x1=bl; d.x2=bl+bw; var _fy=bb+2; if(_fy>_PT_B+0.05) _edge=true; d.y1=d.y2=_fy; }  /* ใต้กล่องข้อความที่เลือก = เส้นใต้หัวข้อ */
@@ -3805,13 +3805,14 @@ function ftextAdd(){
   if(ref) pg=ref.closest('.page');
   else { pages.forEach(function(p){ var rc=p.getBoundingClientRect(), c=Math.abs((rc.top+rc.bottom)/2-midY); if(rc.bottom>0 && rc.top<window.innerHeight && c<best){ best=c; pg=p; } }); }  /* หน้าที่อยู่กลางจอ (แบบเพิ่มรูป) */
   if(!pg) return;
-  if(!ref){ var _all=pg.querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1]; }  /* กล่องที่เพิ่มล่าสุดในหน้านั้น */
+  var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline'); if(_all.length){ var _la=_all[_all.length-1]; if(_la.classList.contains('fline')) _lref=_la; else ref=_la; } }  /* ไม่ได้เลือก = ต่อจากชิ้นที่เพิ่มล่าสุดในหน้า กล่องหรือเส้นก็ได้ · เดิมดูแค่กล่อง → เพิ่มเส้นแล้วเพิ่มกล่อง = ทับกัน (ผู้ใช้ 31 ต.ค. 2026 · lint #177) */
   var rc=pg.getBoundingClientRect(), pxmm=rc.width/210||1, w=70, left=(210-w)/2, top, _ch=[];
   if(ref){ var _rg=_ftGroupOf(ref); if(_rg.length>1) ref=_rg.reduce(function(a,b){ return (_ftNum(b.style.top)+b.getBoundingClientRect().height/pxmm > _ftNum(a.style.top)+a.getBoundingClientRect().height/pxmm)?b:a; }); }  /* เลือกกลุ่มอยู่ = กล่องใหม่ต่อใต้กล่องล่างสุดของกลุ่ม · ไม่เข้ากลุ่ม */
   if(ref){  /* วางต่อใต้: ชิดซ้าย + กว้างเท่ากล่องอ้างอิง · เลยขอบพิมพ์ = ยังต่อลงไป + เตือน (เลิกเยื้อง 5mm ที่ทำให้กล่องซ้อนเป็นขั้นบันได · ผู้ใช้ 28 ต.ค. 2026) */
     var rh=ref.getBoundingClientRect().height/pxmm; left=_ftNum(ref.style.left); w=_ftNum(ref.style.width)||w; top=_ftNum(ref.style.top)+rh;
     _ch=_ftChainBelow(ref,pxmm);  /* กล่องที่ต่อใต้กล่องอ้างอิง (เลือกกล่องกลางแถว) = แทรกตรงนั้น แล้วดันแถวล่างลง แบบแทรกแถว Excel/Word (ผู้ใช้ 28 ต.ค. 2026) */
-  } else {
+  } else if(_lref){ var _lo=_flGet(_lref), _lw=Math.abs(_lo.x2-_lo.x1); left=Math.min(_lo.x1,_lo.x2); if(_lw>=10) w=_lw; top=Math.max(_lo.y1,_lo.y2)+2; }  /* ต่อใต้เส้นล่าสุด 2 มม. · ชิดซ้าย + กว้างเท่าเส้น (เส้นตั้ง/สั้นกว่า 10 มม. = กว้างตั้งต้น) */
+  else {
     top=(Math.min(Math.max(midY,rc.top),rc.bottom)-rc.top)/pxmm-6; top=Math.max(8,Math.min(297-8-14,top));
   }
   var box=document.createElement('div'); box.className='ftext';

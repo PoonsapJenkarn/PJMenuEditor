@@ -2955,7 +2955,7 @@ def main():
     if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:
         errors.append('lint #131: ต้องมีแท็บ/ริบบอน active อย่างละ 1 เท่านั้น')
     # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
-    if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "if(!ref){ var _all=pg.querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1]; }" not in txt:
+    if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline'); if(_all.length){ var _la=_all[_all.length-1]; if(_la.classList.contains('fline')) _lref=_la; else ref=_la; } }" not in txt:
         errors.append('lint #132: กล่องใหม่ต้องวางต่อใต้กล่องที่เลือก หรือกล่องล่าสุดในหน้า (ไม่ทับที่เดิม)')
     if 'left=Math.min(210-w,left+5)' in txt:
         errors.append('lint #132: ห้ามเยื้องกล่องใหม่ 5mm (ทำให้ซ้อนเป็นขั้นบันได) — ต่อลงไป + เตือนแทน (ผู้ใช้ 28 ต.ค. 2026)')
@@ -3664,7 +3664,7 @@ def main():
 
     # ---- 174) เพิ่มเส้นตอนไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น ไม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026) · ตำแหน่งถัดไปเลยขอบพิมพ์ = ไม่เพิ่ม + เตือน ไม่ล็อกที่ขอบ (ผู้ใช้ 31 ต.ค. 2026) ----
     _fa174=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _f174=_fa174.group(0) if _fa174 else ''
-    if "if(!ref && !fref){ var _al=pg.querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1]; }" not in _f174: errors.append('lint #174: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากเส้นล่าสุดในหน้า')
+    if "if(!ref && !fref){ var _al=pg.querySelectorAll('.ftext,.fline'); if(_al.length){ var _la=_al[_al.length-1]; if(_la.classList.contains('fline')) ref=_la; else fref=_la; } }" not in _f174: errors.append('lint #174/#177: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากชิ้นที่เพิ่มล่าสุดในหน้า (กล่องหรือเส้น)')
     for _n174 in ('if(_nx>_PT_R+0.05) _edge=true;','if(_ny>_PT_B+0.05) _edge=true;','if(_fy>_PT_B+0.05) _edge=true;',"if(_edge){ flashStatus('warning',tk('fl.flineFull')); return; }"):
         if _n174 not in _f174: errors.append('lint #174: flineAdd ตำแหน่งถัดไปเลยขอบพิมพ์ต้องไม่เพิ่ม + เตือน · ขาด '+_n174)
     if re.search(r"_(?:nx|ny|fy)=(?:198|285|289|202)\b", _f174): errors.append('lint #174: ห้ามล็อกเส้นไว้ที่ขอบ (ล็อก = เส้นใหม่ทับกันที่ขอบ)')
@@ -3693,6 +3693,11 @@ def main():
     if txt.count("p.style.removeProperty('--floath'); p.style.removeProperty('--blankh');")!=3: errors.append('lint #176: ต้องล้าง --floath ตอนบันทึก/undo (3 จุด)')
     for _k176 in ('fl.ftextFull','fl.flineFull','fl.flineOverPrint'):
         if txt.count("'"+_k176+"':'")<2: errors.append('lint #176: i18n '+_k176+' ไม่ครบ TH+EN')
+
+    # ---- 177) เพิ่มกล่อง/เส้นตอนไม่ได้เลือกอะไร = ต่อจากชิ้นที่เพิ่มล่าสุดในหน้า กล่องหรือเส้นก็ได้ (บั๊ก 31 ต.ค. 2026: เพิ่มกล่องแล้วเพิ่มเส้น = ทับกัน · ผู้ใช้เลือกแบบ ก) ----
+    _ft177=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _t177=_ft177.group(0) if _ft177 else ''
+    if "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline');" not in _t177 or "} else if(_lref){ var _lo=_flGet(_lref)" not in _t177: errors.append('lint #177: ftextAdd ไม่ได้เลือก ต้องต่อจากชิ้นล่าสุดในหน้า (เส้นล่าสุด = ต่อใต้เส้น)')
+    if "querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1];" in txt or "querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1];" in txt: errors.append('lint #177: ห้ามกลับไปดูแค่ชนิดเดียวกัน (กล่องดูแค่กล่อง / เส้นดูแค่เส้น = ทับกัน)')
 
     # ---- report ----
     print("=" * 54)

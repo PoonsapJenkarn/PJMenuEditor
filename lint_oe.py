@@ -3713,7 +3713,8 @@ def main():
     # ---- 181) ช่อง % ซูม = กรอบเดียวแบบช่องขนาดเครื่องมือ (#uiLvl) · ตัวเลข + ▾ อยู่ในกรอบเดียว ไม่มีเส้นคั่น (ผู้ใช้ 1 พ.ย. 2026) ----
     _z181='#edtabs .zoomctl .a4split:has(> #zoomLvl)'
     for _n181 in (_z181+'{height:30px;box-sizing:border-box;min-width:58px;gap:3px;padding:0 6px;align-items:center;border:1px solid #d2d0ce;border-radius:6px;',
-                  _z181+' > #zoomLvl{width:36px;min-width:36px;height:28px;padding:0;border:none;',
+                  _z181+' > #zoomLvl{width:42px;min-width:42px;height:28px;padding:0;border:none;',
+                  _z181+' > #zoomDd.a4caret .cp-caret{color:inherit;font-size:inherit;}',
                   _z181+' > #zoomDd.a4caret{width:auto;height:28px;padding:0;border:none;',
                   _z181+' > #zoomDd.a4caret:not(.on){background:transparent;}',
                   _z181+':hover{', _z181+':focus-within{', '#edtabs .zoomctl .a4split:has(> #zoomDd.on){background:#217346;'):

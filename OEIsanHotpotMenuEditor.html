@@ -1311,10 +1311,10 @@ body.presentmode #presentBar{display:flex;}
 #edtabs #zoomDd.on:hover,#edtabs #btnCal.on:hover{background:#1a5c38;border-color:#1a5c38;}
 /* ช่อง % ซูม (#zoomLvl + ▾ #zoomDd) = กรอบเดียวแบบช่องขนาดเครื่องมือ (#uiLvl) ทุกสถานะ: ปกติ · ชี้ · พิมพ์ (focus) · รายการเปิด (.on เขียวทั้งกรอบ ตามกฎข้อ 11 · ▾ คงพื้นเขียวของ .on เดิม = กลืนกับกรอบ) · ยังพิมพ์ % เองได้ (คง input · lint #124) · ไม่แตะปุ่ม A4/ปรับเทียบจอ (ผู้ใช้ 1 พ.ย. 2026 · lint #181) */
 #edtabs .zoomctl .a4split:has(> #zoomLvl){height:30px;box-sizing:border-box;min-width:58px;gap:3px;padding:0 6px;align-items:center;border:1px solid #d2d0ce;border-radius:6px;background:#fff;color:#3a3937;}
-#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomLvl{width:36px;min-width:36px;height:28px;padding:0;border:none;border-radius:0;background:transparent;color:inherit;font-size:13px;font-weight:600;text-align:right;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomLvl{width:42px;min-width:42px;height:28px;padding:0;border:none;border-radius:0;background:transparent;color:inherit;font-size:13px;font-weight:600;text-align:right;}
 #edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret{width:auto;height:28px;padding:0;border:none;border-radius:0;color:inherit;font-size:13px;}
 #edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret:not(.on){background:transparent;}
-#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret .cp-caret{color:inherit;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret .cp-caret{color:inherit;font-size:inherit;}  /* ▾ ขนาดเท่าช่องขนาดเครื่องมือ (#uiLvl ไม่ตั้งขนาด = 13px ตามปุ่ม) · เดิม 11px จาก #edtabs #zoomDd .cp-caret · ช่องตัวเลข 42px พอดี 200% (36px ตัดขอบ · ผู้ใช้ 1 พ.ย. 2026) */
 #edtabs .zoomctl .a4split:has(> #zoomLvl):hover{background:#eef7f1;border-color:#217346;color:#217346;}
 #edtabs .zoomctl .a4split:has(> #zoomLvl):focus-within{border-color:#217346;}
 #edtabs .zoomctl .a4split:has(> #zoomDd.on){background:#217346;border-color:#217346;color:#fff;}

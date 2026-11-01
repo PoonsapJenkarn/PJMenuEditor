@@ -3741,6 +3741,10 @@ def main():
     for _k183 in ('ttl.epDd','ttl.epDdPages','ttl.epDdCount','fl.pgDdDup'):
         if txt.count("'"+_k183+"':'")<2: errors.append('lint #183: i18n '+_k183+' ไม่ครบ TH+EN')
 
+    # ---- 184) ตัวบอกหน้า (หน้า X / N · ซูม%) ตรึงขวาสุดของแถบสถานะ ไม่เลื่อนตามข้อความ (ผู้ใช้ 1 พ.ย. 2026) ----
+    if '#edstatus .edstatus-pg{order:1;flex:none;}' not in _css or '#edstatus .edstatus-meta{margin-left:auto;' not in _css: errors.append('lint #184: ตัวบอกหน้าต้องตรึงขวาสุดของแถบสถานะ (order:1 + meta margin-left:auto)')
+    if not re.search(r'<span class="edstatus-msg" id="edstatusMsg">[^<]*</span><span class="edstatus-pg" id="edstatusPage"></span><span class="edstatus-meta" id="edstatusMeta"></span>', txt): errors.append('lint #184: ลำดับ span ในแถบสถานะเปลี่ยน — ตรวจตำแหน่งตัวบอกหน้าใหม่')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

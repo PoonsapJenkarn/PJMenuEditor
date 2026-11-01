@@ -1096,6 +1096,7 @@ body:not(.editmode) #edribbon .rg-neededit > .rgb{pointer-events:none;}
 #edstatus .edstatus-ic{font-size:15px;line-height:1;flex:none;}
 #edstatus .edstatus-msg{font-weight:600;line-height:1.3;min-width:0;overflow-wrap:anywhere;}  /* ชื่อไฟล์ยาวไม่มีเว้นวรรค = ตัดขึ้นบรรทัดใหม่ ไม่ล้นจอ (lint ข้อ 39) */
 #edstatus .edstatus-meta{margin-left:auto;opacity:.92;font-size:13px;white-space:nowrap;}
+#edstatus .edstatus-pg{order:1;flex:none;}  /* ตัวบอกหน้า (หน้า X / N · ซูม%) ตรึงขวาสุดของแถบเสมอ ไม่เลื่อนตามความยาวข้อความ · .edstatus-meta (margin-left:auto) ดันไปขวา แม้ว่าง · ป้ายล้นหน้าอยู่ซ้ายของตัวบอกหน้า (ผู้ใช้ 1 พ.ย. 2026 · lint #184) */
 .edstatus-pg{opacity:.85;font-size:12.5px;white-space:nowrap;padding-left:10px;font-variant-numeric:tabular-nums;}
 #edstatus .edstatus-meta.ovf{opacity:1;background:#8a5a00;color:#fff;border:1px solid rgba(255,255,255,.75);border-radius:10px;padding:1px 9px;font-weight:600;cursor:help;}
 #edstatus .edstatus-meta.ovfnote{opacity:.72;font-size:12.5px;font-style:italic;cursor:help;}

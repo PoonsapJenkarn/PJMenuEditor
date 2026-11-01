@@ -3700,6 +3700,25 @@ def main():
     for _j178 in ('--blankh','--blankdel','.page.pgblank > .ed-delpage'):
         if _j178 in txt: errors.append('lint #178: ขยะจากปุ่มลบหน้าแบบเดิม (ใต้กล่องล่างสุด) ต้องลบ: '+_j178)
 
+    # ---- 179) ซูมต่ำสุด 30% ทุกทาง = มุมมองตาราง (_ZGRID 45%) เปิดได้จริงทุกจอ (ผู้ใช้ 1 พ.ย. 2026 · เดิม _ZMIN=50 → เปิดได้เฉพาะปุ่มพอดีจอบนจอเล็ก = ฟีเจอร์ที่ไม่ทำงานจริง กฎ #6) ----
+    _m179=re.search(r"_ZMIN=(\d+), _ZMAX=(\d+), _ZSTEP=(\d+), _ZGRID=(\d+)", txt)
+    if not _m179 or int(_m179.group(1))!=30 or int(_m179.group(4))<int(_m179.group(1)): errors.append('lint #179: _ZMIN ต้อง = 30 และ _ZGRID ต้อง ≥ _ZMIN (ไม่งั้นมุมมองตารางเปิดไม่ได้)')
+    _p179=re.search(r"function _zoomPresets\(\)\{ return \[([0-9,]+)\]", txt)
+    if not _p179 or not any(int(v)<=(int(_m179.group(4)) if _m179 else 45) for v in _p179.group(1).split(',')): errors.append('lint #179: รายการซูม ▾ ต้องมีค่าที่เข้ามุมมองตารางได้ (≤ _ZGRID)')
+    if '_ZFIT_MIN' in txt: errors.append('lint #179: _ZFIT_MIN ยุบรวมกับ _ZMIN แล้ว ห้ามเหลือ (ขยะ)')
+
+    # ---- 180) มุมมองตาราง: ชิ้นที่ไม่ใช่หน้า (แถบเครื่องมือ #edbar ฯลฯ) ต้องเต็มแถว ไม่ถูกบีบไปอยู่ข้างหน้า (บั๊ก 1 พ.ย. 2026) ----
+    if 'body.gridview:not(.presentmode) > :not(.page){flex:0 0 100%;}' not in _css: errors.append('lint #180: มุมมองตาราง body เป็น flex · ชิ้นที่ไม่ใช่ .page ต้อง flex:0 0 100% (แถบเครื่องมืออยู่บนเต็มกว้าง)')
+
+    # ---- 181) ช่อง % ซูม = กรอบเดียวแบบช่องขนาดเครื่องมือ (#uiLvl) · ตัวเลข + ▾ อยู่ในกรอบเดียว ไม่มีเส้นคั่น (ผู้ใช้ 1 พ.ย. 2026) ----
+    _z181='#edtabs .zoomctl .a4split:has(> #zoomLvl)'
+    for _n181 in (_z181+'{height:30px;box-sizing:border-box;min-width:58px;gap:3px;padding:0 6px;align-items:center;border:1px solid #d2d0ce;border-radius:6px;',
+                  _z181+' > #zoomLvl{width:36px;min-width:36px;height:28px;padding:0;border:none;',
+                  _z181+' > #zoomDd.a4caret{width:auto;height:28px;padding:0;border:none;',
+                  _z181+' > #zoomDd.a4caret:not(.on){background:transparent;}',
+                  _z181+':hover{', _z181+':focus-within{', '#edtabs .zoomctl .a4split:has(> #zoomDd.on){background:#217346;'):
+        if _n181 not in _css: errors.append('lint #181: ช่อง % ซูมต้องเป็นกรอบเดียวแบบ #uiLvl · ขาด '+_n181[:80])
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

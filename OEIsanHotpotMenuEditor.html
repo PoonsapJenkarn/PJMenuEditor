@@ -1309,6 +1309,16 @@ body.presentmode #presentBar{display:flex;}
 #edtabs #zoomDd.on,#edtabs #btnCal.on{background:#217346;color:#fff;border-color:#217346;}
 #edtabs #zoomDd.on .cp-caret,#edtabs #btnCal.on .cp-caret{color:#fff;}
 #edtabs #zoomDd.on:hover,#edtabs #btnCal.on:hover{background:#1a5c38;border-color:#1a5c38;}
+/* ช่อง % ซูม (#zoomLvl + ▾ #zoomDd) = กรอบเดียวแบบช่องขนาดเครื่องมือ (#uiLvl) ทุกสถานะ: ปกติ · ชี้ · พิมพ์ (focus) · รายการเปิด (.on เขียวทั้งกรอบ ตามกฎข้อ 11 · ▾ คงพื้นเขียวของ .on เดิม = กลืนกับกรอบ) · ยังพิมพ์ % เองได้ (คง input · lint #124) · ไม่แตะปุ่ม A4/ปรับเทียบจอ (ผู้ใช้ 1 พ.ย. 2026 · lint #181) */
+#edtabs .zoomctl .a4split:has(> #zoomLvl){height:30px;box-sizing:border-box;min-width:58px;gap:3px;padding:0 6px;align-items:center;border:1px solid #d2d0ce;border-radius:6px;background:#fff;color:#3a3937;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomLvl{width:36px;min-width:36px;height:28px;padding:0;border:none;border-radius:0;background:transparent;color:inherit;font-size:13px;font-weight:600;text-align:right;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret{width:auto;height:28px;padding:0;border:none;border-radius:0;color:inherit;font-size:13px;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret:not(.on){background:transparent;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl) > #zoomDd.a4caret .cp-caret{color:inherit;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl):hover{background:#eef7f1;border-color:#217346;color:#217346;}
+#edtabs .zoomctl .a4split:has(> #zoomLvl):focus-within{border-color:#217346;}
+#edtabs .zoomctl .a4split:has(> #zoomDd.on){background:#217346;border-color:#217346;color:#fff;}
+#edtabs .zoomctl .a4split:has(> #zoomDd.on):hover{background:#1a5c38;border-color:#1a5c38;}
 /* เส้นคั่น 2 โซนแถบบน: [undo/redo · zoom A4] ‖ [ซ่อนริบบอน · ขนาด UI · ภาษา] (ผู้ใช้ 23 ต.ค. 2026) */
 #edtabs .edbar-sep{width:1px;height:20px;background:#d2d0ce;margin:0 14px;align-self:center;flex:none;}
 /* ===== v59: drag-to-reorder handle ===== */
@@ -1392,7 +1402,7 @@ body.presentmode #presentBar{display:flex;}
 @media print{#edpanel{display:none !important;}}
 @media screen{body:not(.presentmode){background:#e9e6e1;}body:not(.presentmode) .page{margin-top:20px;}}
 @media screen{body.gridview:not(.presentmode){display:flex !important;flex-wrap:wrap !important;justify-content:center !important;align-content:flex-start !important;align-items:flex-start !important;gap:20px !important;}
-body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;}}
+body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;} body.gridview:not(.presentmode) > :not(.page){flex:0 0 100%;}}  /* มุมมองตาราง: body เป็น flex → แถบเครื่องมือ (#edbar) และชิ้นอื่นที่ไม่ใช่หน้า กลายเป็นช่องหนึ่งในแถว ถูกบีบไปอยู่ข้างหน้า · บังคับเต็มแถว = แถบอยู่บนสุดเต็มกว้าง หน้าเรียงใต้แถบ (ชิ้น fixed/absolute/ซ่อน ไม่ได้รับผล) · บั๊กพบ 1 พ.ย. 2026 เมื่อซูมถึงตารางได้จริงครั้งแรก · lint #180 */
 </style>
 
 </head><body class="">
@@ -6979,20 +6989,19 @@ document.addEventListener('focusout', function(e){
   }
 });
 /* In-page zoom — ย่อ/ขยายเฉพาะหน้า A4 (ผู้ใช้ 16 ต.ค. 2026 · lint #69): ตั้ง --pagezoom บน body · CSS zoom เฉพาะจอ · ปุ่มอยู่แถบบนข้าง Undo/Redo · จำค่าข้าม reload (localStorage) · strip ออกตอนบันทึก (build*) */
-var ZOOM_KEY='oe_pagezoom', _ZMIN=50, _ZMAX=200, _ZSTEP=10, _ZGRID=45, _zoom=100;
+var ZOOM_KEY='oe_pagezoom', _ZMIN=30, _ZMAX=200, _ZSTEP=10, _ZGRID=45, _zoom=100;  /* ต่ำสุด 30% (เดิม 50) = ซูมถึงมุมมองตาราง (_ZGRID) ได้จริงทุกจอ · ผู้ใช้ 1 พ.ย. 2026 · lint #179 */
 function _zoomApply(){ document.body.style.setProperty('--pagezoom', (_zoom/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=_zoom+'%'; var o=document.getElementById('zoomOut'), i=document.getElementById('zoomIn'); if(o) o.disabled=(_zoom<=_ZMIN); if(i) i.disabled=(_zoom>=_ZMAX); document.body.classList.toggle('gridview', _zoom<=_ZGRID); if(typeof _zoomMetaUpdate==='function') _zoomMetaUpdate(); if(typeof _delPageFit==='function') _delPageFit(); }
 function _zoomCommit(z){ if(_dd) _ddClose(true); z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function zoomIn(){ _zoomCommit((Math.floor(_zoom/_ZSTEP)+1)*_ZSTEP); }
 function zoomOut(){ _zoomCommit((Math.ceil(_zoom/_ZSTEP)-1)*_ZSTEP); }
 function zoomReset(){ _zoomCommit(100); }
-/* ช่อง zoom รับเฉพาะตัวเลข 0-9 สูงสุด 3 หลัก (50-200) · กรองสดขณะพิมพ์ (oninput) — ตัวอักษร/สัญลักษณ์ไม่ขึ้น · เงียบ (ไม่เด้ง warning · clamp ตอน blur) · ผู้ใช้ 18 ต.ค. 2026 · lint ข้อ 10/69 */
+/* ช่อง zoom รับเฉพาะตัวเลข 0-9 สูงสุด 3 หลัก (30-200) · กรองสดขณะพิมพ์ (oninput) — ตัวอักษร/สัญลักษณ์ไม่ขึ้น · เงียบ (ไม่เด้ง warning · clamp ตอน blur) · ผู้ใช้ 18 ต.ค. 2026 · lint ข้อ 10/69 */
 function _zoomClean(v){ v=_prNorm(String(v==null?'':v)); var out='',n=0; for(var i=0;i<v.length;i++){ var c=v.charAt(i); if(c>='0'&&c<='9'&&n<3){ out+=c; n++; } } return out; }
 function _zoomFilter(el){ if(!el) return; var v=el.value, o=_zoomClean(v); if(o===v) return; var ps=(typeof el.selectionStart==='number')?el.selectionStart:v.length, kp=_zoomClean(v.slice(0,ps)).length; el.value=o; try{ el.setSelectionRange(kp,kp); }catch(_){ } }
 function _zoomType(){ var el=document.getElementById('zoomLvl'); if(!el) return; var v=parseInt(String(el.value).replace(/[^0-9]/g,''),10); if(isNaN(v)){ _zoomApply(); return; } _zoomCommit(v); }
 /* Fit / Fit Width (ผู้ใช้ 18 ต.ค. 2026): คำนวณ zoom จากขนาดจอจริง · Fit=เห็นทั้งหน้า (พอดีกว้าง+สูง) · FitW=ความกว้างเพจเต็มพื้นที่จอ (เลื่อนแนวตั้ง)
-   _ZFIT_MIN=30 ให้ย่อได้ต่ำกว่า _ZMIN ปกติ (จอเล็กต้องย่อมากกว่า 50% ถึงเห็นทั้งหน้า) · อ้าง InDesign Fit Page / Word Page Width */
-var _ZFIT_MIN=30;
-function _zoomFitCommit(z){ z=Math.round(z); z=Math.max(_ZFIT_MIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
+   ใช้ขอบล่าง _ZMIN เดียวกับซูมปกติ (30% · เดิมมีค่าต่ำสุดของ fit แยก ยุบรวม 1 พ.ย. 2026) · อ้าง InDesign Fit Page / Word Page Width */
+function _zoomFitCommit(z){ z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function _pageFitMetrics(){
   var pg=document.querySelector('.page'); if(!pg) return null;
   var curZ=(_zoom/100)||1; var rect=pg.getBoundingClientRect();
@@ -7065,7 +7074,7 @@ function _uiscalePreview(v){ document.body.style.setProperty('--uiscale',(v/100)
 function _uiDdCfg(){ return {btn:'uiLvl', pop:'uiDdPop', values:_uiScaleList(), cur:_uiscale, preview:_uiscalePreview, commit:_uiscaleCommit, revert:_uiscaleApply}; }
 function _uiDdToggle(e){ _ddToggle(e,_uiDdCfg); }
 /* ซูมหน้า A4: รายการค่าสำเร็จรูป (แบบ Word) ภายใน _ZMIN.._ZMAX · ชี้ดูไม่แตะ _zoom/localStorage · ตรึงจุดที่กำลังดูบนหน้าไว้ระหว่างชี้ (หน้าไม่วิ่งหนี) · ยกเลิก = คืนซูม + ตำแหน่งเลื่อนเดิมเป๊ะ */
-function _zoomPresets(){ return [50,75,100,125,150,175,200].filter(function(v){ return v>=_ZMIN && v<=_ZMAX; }); }
+function _zoomPresets(){ return [30,40,50,75,100,125,150,175,200].filter(function(v){ return v>=_ZMIN && v<=_ZMAX; }); }
 var _zoomDdAnchor=null;
 function _zoomDdAnchorSet(){ var sc=document.scrollingElement||document.documentElement, pgs=document.querySelectorAll('.page'), idx=(typeof _priceVisiblePage==='function')?_priceVisiblePage():0, pg=pgs[idx]||pgs[0], bar=document.getElementById('edbar'), y=bar?bar.getBoundingClientRect().bottom:0; if(!pg){ _zoomDdAnchor=null; return; } var r=pg.getBoundingClientRect(); _zoomDdAnchor={pg:pg, y:y, f:(y-r.top)/(r.height||1), top:sc.scrollTop, left:sc.scrollLeft}; }
 function _zoomPreview(v){ document.body.style.setProperty('--pagezoom',(v/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=v+'%'; document.body.classList.toggle('gridview', v<=_ZGRID); var a=_zoomDdAnchor; if(a && document.contains(a.pg)){ var sc=document.scrollingElement||document.documentElement, r=a.pg.getBoundingClientRect(); sc.scrollTop += (r.top + a.f*r.height) - a.y; } }

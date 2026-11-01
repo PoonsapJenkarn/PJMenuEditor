@@ -2928,7 +2928,7 @@ def main():
         errors.append('lint #130: พิมพ์ต้องไม่มีกรอบ/ปุ่มจับกล่องข้อความ')
     if "if(!on && typeof _ftDeselect==='function') _ftDeselect();" not in txt or "_ftSel=null; _ftEdit=null; _ftDrag=null;" not in txt:
         errors.append('lint #130: ออกจากโหมดแก้ข้อความ/undo ต้องล้างสถานะกล่องข้อความ')
-    if "np.querySelectorAll('.fimg,.ftext')" not in txt:
+    if "np.querySelectorAll('.fimg,.ftext," not in txt:  # ขยายเป็นทุกชิ้นลอยใน #182
         errors.append('lint #130: หน้าใหม่ต้องไม่คัดกล่องข้อความจากหน้าต้นแบบ')
     if "x.appendChild(document.createTextNode(t('ft.default')))" not in txt:
         errors.append('lint #130: คำเริ่มต้นในกล่อง = เนื้อหาผู้ใช้ ห้ามผูก data-i18n (สลับภาษาจะทับข้อความที่พิมพ์)')
@@ -3685,7 +3685,7 @@ def main():
     if re.search(r">289\+0\.05", txt): errors.append('lint #176: ห้ามใช้ 289 เป็นขอบเตือนแล้ว ใช้ _PT_B')
     if 'body.editmode:not(.measuring) .page{min-height:var(--floath,297mm) !important;}' not in _css: errors.append('lint #176: ทุกหน้าต้องยืดตาม --floath เฉพาะโหมดแก้ไข')
     if 'bot=_floatBottom(pg,px);' not in txt or "function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); _delPageFit(); }" not in txt: errors.append('lint #176: _blankFit ต้องจัดทุกหน้า (หน้าเมนู = --floath)')
-    if txt.count("p.style.removeProperty('--floath'); p.classList.remove('dpin'); });")!=3: errors.append('lint #176/#178: ต้องล้าง --floath + dpin ตอนบันทึก/undo (3 จุด)')
+    if txt.count("p.style.removeProperty('--floath'); p.classList.remove('dpin','pgddhl'); });")!=3: errors.append('lint #176/#178: ต้องล้าง --floath + dpin ตอนบันทึก/undo (3 จุด)')
     for _k176 in ('fl.ftextFull','fl.flineFull','fl.flineOverPrint'):
         if txt.count("'"+_k176+"':'")<2: errors.append('lint #176: i18n '+_k176+' ไม่ครบ TH+EN')
 
@@ -3720,6 +3720,26 @@ def main():
                   _z181+' > #zoomDd.a4caret:not(.on){background:transparent;}',
                   _z181+':hover{', _z181+':focus-within{', '#edtabs .zoomctl .a4split:has(> #zoomDd.on){background:#217346;'):
         if _n181 not in _css: errors.append('lint #181: ช่อง % ซูมต้องเป็นกรอบเดียวแบบ #uiLvl · ขาด '+_n181[:80])
+
+    # ---- 182) เพิ่มหน้า (เมนู/เปล่า) = หน้าใหม่ไม่ติดชิ้นลอยของหน้าต้นแบบ: รูป · กล่อง · เส้น · จุดจับ/เส้นนำ/กรอบเลือก · สถานะชั่วคราว (บั๊ก 31 ต.ค. 2026: เส้นติดไปหน้าใหม่) ----
+    _fa182=re.search(r"\nfunction _addPagesBatch\(n,type\)\{[\s\S]*?\n\}", txt); _a182=_fa182.group(0) if _fa182 else ''
+    if "np.querySelectorAll('.fimg,.ftext,.fline,.flh,.fldel,.flhl,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});" not in _a182: errors.append('lint #182: _addPagesBatch ต้องลบชิ้นลอยทุกชนิด (.fimg .ftext .fline + จุดจับ/เส้นนำ/กรอบ) ออกจากหน้าใหม่')
+    if "np.classList.remove('overflowed','pgcur','pgcontenthide','dpin'); np.style.removeProperty('--floath');" not in _a182: errors.append('lint #182: หน้าใหม่ต้องล้าง dpin / --floath ของหน้าต้นแบบ')
+    if _a182.find("np.querySelectorAll('.fimg,.ftext,.fline")>_a182.find('if(blank){') or _a182.find('if(blank){')<0: errors.append('lint #182: ต้องลบชิ้นลอยก่อนแยกทางหน้าเปล่า/หน้าเมนู (ใช้ทั้งสองแบบ)')
+
+    # ---- 183) ช่องลบหน้า + เพิ่มหลายหน้า = ช่องพิมพ์ + ▾ กรอบเดียวแบบช่องซูม (ผู้ใช้ 1 พ.ย. 2026) · ลบหน้า: ▾ = หน้าที่มีจริง เลือก = เติมต่อท้าย ชี้ = กรอบหน้า · เพิ่ม: ▾ = 1–20 เลือก = แทนที่ ----
+    if "'<span class=\"ep-combo\">'+_inpH+'<button type=\"button\" class=\"ep-combo-caret\" id=\"epDd\" aria-haspopup=\"listbox\"" not in txt: errors.append('lint #183: openPanel prompt ต้องรองรับ opts.dd (ช่องพิมพ์ + ▾ กรอบเดียว)')
+    _d183=re.search(r"\nfunction deletePagesByRange\(\)\{[\s\S]*?\n\}", txt); _d183=_d183.group(0) if _d183 else ''
+    if 'for(var i=1;i<=tot;i++) vals.push(i);' not in _d183 or "if(typeof v==='number') _pgDdAppend(inp,v,tot);" not in _d183 or "pg.classList.add('pgddhl');" not in _d183: errors.append('lint #183: ช่องลบหน้า ▾ ต้องเป็นหน้าที่มีจริง + เลือกเติมต่อท้าย + ชี้กรอบหน้า')
+    _a183=re.search(r"\nfunction openAddPagesPanel\(type\)\{[\s\S]*?\n\}", txt); _a183=_a183.group(0) if _a183 else ''
+    if 'for(var i=1;i<=20;i++) vals.push(i);' not in _a183 or "commit:function(v){ if(typeof v!=='number') return; inp.value=String(v);" not in _a183: errors.append('lint #183: ช่องเพิ่มหลายหน้า ▾ ต้องเป็น 1–20 + เลือกแทนที่')
+    if "e.target.closest('#'+_dd.o.pop))return;" not in txt or "if(typeof _dd!=='undefined' && _dd && _dd.o.pop==='epDdPop') _ddClose(true);" not in txt: errors.append('lint #183: คลิกในรายการ ▾ ต้องไม่ปิด panel + ปิด panel ต้องปิดรายการ')
+    for _c183 in ('#epDdPop{max-height:22em;overflow-y:auto;}','#epDdPop .ui-dd-opt{text-align:left;padding-left:calc(10px - .25em);}','@media print{#epDdPop{display:none !important;}}','#edpanel .ep-combo:has(> .ep-combo-caret.on){background:#217346;','#epDdPop,#edgeDdPop,#zoomDdPop,#uiDdPop{position:fixed;'):
+        if _c183 not in _css: errors.append('lint #183: CSS ขาด '+_c183[:60])
+    if "clone.querySelector('#epDdPop')" not in txt or "'#epDdPop','#edgeDdPop','#zoomDdPop'" not in txt: errors.append('lint #183: รายการ ▾ ของ panel ต้องถูก strip ตอนบันทึก (editor + menu)')
+    if "var anc=(btn.closest && btn.closest('.ep-combo,.a4split'))||btn, r=anc.getBoundingClientRect();" not in txt or "if(anc!==btn) pop.style.minWidth=r.width+'px';" not in txt: errors.append('lint #183: รายการ ▾ ของกรอบเดียว ต้องยึดกรอบทั้งกรอบ (ชิดซ้าย กว้างเท่ากรอบ) ไม่ใช่ปุ่ม ▾')
+    for _k183 in ('ttl.epDd','ttl.epDdPages','ttl.epDdCount','fl.pgDdDup'):
+        if txt.count("'"+_k183+"':'")<2: errors.append('lint #183: i18n '+_k183+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

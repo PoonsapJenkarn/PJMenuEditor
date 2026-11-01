@@ -1161,7 +1161,8 @@ body:not(.editmode) .ed-del,body:not(.editmode) .ed-dup,body:not(.editmode) .dh{
 .page.overflowed{outline:3px solid #e8a020;outline-offset:-3px;}
 @media screen{body.pgbgmode .page.pgcur{outline:3px solid #217346;outline-offset:-3px;}}
 .ed-delpage{display:block;margin:10px auto 0;border:1px solid #e0332a;background:rgba(224,51,42,.06);color:#e0332a;border-radius:6px;padding:4px 14px;font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}
-.page.pgblank > .ed-delpage{position:absolute;left:50%;top:var(--blankdel,277mm);bottom:auto;transform:translateX(-50%);margin:0;z-index:25;}  /* อยู่ใต้กล่องข้อความล่างสุดเสมอ (_blankFit) · ไม่ทับกล่อง (ผู้ใช้ 28 ต.ค. 2026) */  /* หน้าเปล่าไม่มีเนื้อหาดันปุ่มลง → ตรึงล่างหน้า ตำแหน่งเดียวกับหน้าเมนู (ผู้ใช้ 27 ต.ค. 2026) */.sec-h .sechead{outline:none;flex:1 1 auto;font-size:19px;}  /* ชื่อกลุ่มเมนู 19px (ผู้ใช้ 8 ต.ค. 2026 · เดิม 17px จาก .sec-h) */@media screen{body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}}@media print{.ed-delpage{display:none !important;}} @media screen{body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}}@media screen{body.editmode .sec-h .em:empty{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;min-height:1.2em;padding:0;color:#1592d9;}body.editmode .sec-h .em:empty::before{content:"＋";font-size:15px;line-height:1;}}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:12px;color:#888;margin-bottom:6px;}#emojiPicker .pk-none{display:block;width:100%;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;color:#605e5c;background:#f3f2f1;border:1px solid #d2d0ce;border-radius:6px;padding:6px 10px;margin-bottom:8px;cursor:pointer;text-align:center;}#emojiPicker .pk-none:hover{background:#e1dfdd;border-color:#b7bcc4;}#emojiPicker .pk-file{display:block;width:100%;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;color:#605e5c;background:#f3f2f1;border:1px solid #d2d0ce;border-radius:6px;padding:6px 10px;margin-bottom:8px;cursor:pointer;text-align:center;}#emojiPicker .pk-file:hover{background:#e1dfdd;border-color:#b7bcc4;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
+.page > .ed-delpage{position:absolute;left:100%;top:0;margin:0 0 0 10px;z-index:25;white-space:nowrap;}  /* ปุ่มลบหน้านี้ = พื้นที่เทาด้านขวานอกกระดาษ แนวขอบบนหน้า (แบบ Canva ปุ่มประจำหน้า) · ไม่กินที่ในหน้า ไม่ดันเนื้อหา ไม่ยืดหน้า ไม่บังงาน · ไม่แทรกช่องว่างระหว่างหน้า (ผู้ใช้ 1 พ.ย. 2026 · lint #178) */
+.page.dpin > .ed-delpage{left:auto;right:4mm;top:4mm;margin:0;}  /* ไม่มีพื้นที่ขวา (ซูมจนเต็มจอ / มุมมองตาราง) = มุมขวาบนในกระดาษ (_delPageFit) */.sec-h .sechead{outline:none;flex:1 1 auto;font-size:19px;}  /* ชื่อกลุ่มเมนู 19px (ผู้ใช้ 8 ต.ค. 2026 · เดิม 17px จาก .sec-h) */@media screen{body.editmode .sec-h .sechead[contenteditable]{outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:3px;padding:0 4px;cursor:text;}}@media print{.ed-delpage{display:none !important;}} @media screen{body.editmode .sec-h .em{cursor:pointer;outline:1.5px dashed #1592d9;background:rgba(21,146,217,.12);border-radius:4px;padding:0 2px;}}@media screen{body.editmode .sec-h .em:empty{display:inline-flex;align-items:center;justify-content:center;min-width:1.5em;min-height:1.2em;padding:0;color:#1592d9;}body.editmode .sec-h .em:empty::before{content:"＋";font-size:15px;line-height:1;}}#emojiPicker{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:10px;max-width:280px;}#emojiPicker.show{display:block;}#emojiPicker .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}#emojiPicker button{font-size:22px;border:none;background:none;cursor:pointer;border-radius:6px;padding:4px;}#emojiPicker button:hover{background:#eee;}#emojiPicker .pk-hint{font-family:'Prompt',sans-serif;font-size:12px;color:#888;margin-bottom:6px;}#emojiPicker .pk-none{display:block;width:100%;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;color:#605e5c;background:#f3f2f1;border:1px solid #d2d0ce;border-radius:6px;padding:6px 10px;margin-bottom:8px;cursor:pointer;text-align:center;}#emojiPicker .pk-none:hover{background:#e1dfdd;border-color:#b7bcc4;}#emojiPicker .pk-file{display:block;width:100%;font-family:'Prompt',sans-serif;font-size:13px;font-weight:500;color:#605e5c;background:#f3f2f1;border:1px solid #d2d0ce;border-radius:6px;padding:6px 10px;margin-bottom:8px;cursor:pointer;text-align:center;}#emojiPicker .pk-file:hover{background:#e1dfdd;border-color:#b7bcc4;}@media print{#emojiPicker{display:none !important;}} @media print{#edbar{display:none !important;} body{padding-top:0 !important;padding-bottom:0 !important;} }  /* !important: syncBarHeight ใส่ body.style.padding* แบบ inline ซึ่งชนะกฎปกติ → ตอนพิมพ์หน้า 1 เลื่อนลง + ได้ 4 แผ่นแทน 2 (lint ข้อ 14) */
 
 /* --- v5 additions: add/del group, editable header, logo edit --- */
 .ed-addgroup{display:none;margin:4px 0 9px;border:1.5px dashed #4a8579;background:rgba(74,133,121,.07);
@@ -1209,8 +1210,7 @@ body.measuring .grid{flex-direction:row !important;}
    เฉพาะจอ (@media screen) = พิมพ์ / Ctrl+P ระหว่างแก้ ยังเป็น A4 · :not(.measuring) = ตัวตรวจล้นหน้าวัดขนาดพิมพ์จริงเหมือนเดิม · ไม่มีเงื่อนไขความกว้าง (lint ข้อ 11) — หน้าต่าง ≤720px หน้าเมนูเป็น 1 คอลัมน์ การตัดบรรทัดบนจออาจไม่เท่าตอนพิมพ์
    ใต้ 297mm = ลายเฉียง (ไม่ใช่กระดาษ) = บอกขอบเขต A4 ด้วยรอยต่อขาว→ลายเฉียง · เอาเส้นประ + ป้ายขอบ (pseudo-element + ตัวแปร label + คีย์ภาษา) ออก 11 ต.ค. 2026 เพราะบังการแก้ element แถวล่าง · ลายเฉียงสื่อชัดพอ (pasteboard ของ InDesign/Word) */
 @media screen{
-body.editmode:not(.measuring) .page:not(.pgblank){min-height:var(--floath,297mm) !important;}  /* หน้าเมนูยืดตามกล่อง/เส้นลอยที่เลยกระดาษ = ลายเฉียง (ผู้ใช้ 31 ต.ค. 2026 · lint #176) */
-body.editmode:not(.measuring) .page.pgblank{min-height:var(--blankh,297mm) !important;}  /* หน้าเปล่ายืดตามกล่องข้อความ = ส่วนนอกกระดาษเป็นลายเส้นแบบหน้าเมนู (ผู้ใช้ 28 ต.ค. 2026) */
+body.editmode:not(.measuring) .page{min-height:var(--floath,297mm) !important;}  /* ทุกหน้า (เมนู + เปล่า) ยืดตามกล่อง/เส้นลอยที่ล้นขอบล่างกระดาษ = ลายเฉียง (ผู้ใช้ 31 ต.ค. 2026 · lint #176 · รวมหน้าเปล่า ผู้ใช้ 1 พ.ย. 2026 · lint #178) */
 body.editmode:not(.measuring) .page,body.headermode:not(.measuring) .page,body.pricemode:not(.measuring) .page,body.imgmode:not(.measuring) .page{height:auto;min-height:297mm;overflow:visible;background:linear-gradient(var(--page-bg),var(--page-bg)) 0 0/100% 297mm no-repeat,repeating-linear-gradient(135deg,#ebe5db 0 7px,#e0d9cd 7px 14px);}
 }
 /* In-page zoom (ผู้ใช้ 16 ต.ค. 2026 · lint #69): ย่อ/ขยายเฉพาะหน้า A4 ด้วย CSS zoom · toolbar/แถบล่างอยู่นอก .page จึงไม่โตตาม · เฉพาะจอ (@media screen) ไม่กระทบพิมพ์ · ยกเว้นตอนวัดล้นหน้า (body.measuring) zoom:1 เสมอ */
@@ -2000,6 +2000,7 @@ function decorate(on){
       }
     } else if(dp){ dp.remove(); }
   });
+  if(typeof _delPageFit==='function') _delPageFit();  /* ปุ่มลบหน้า: นอกกระดาษด้านขวา หรือมุมขวาบนถ้าไม่มีที่ */
 }
 /* ---- Single delegated click handler for ALL editor buttons (robust: survives save/reopen, no stale handlers) ---- */
 document.addEventListener('click', function(ev){
@@ -2273,7 +2274,7 @@ function buildEditorHtml(){
   var clone=document.documentElement.cloneNode(true);
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
   clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl').forEach(function(el){el.remove();});
-  clone.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
+  clone.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.classList.remove('dpin'); });  /* ค่ายืดหน้า + ตำแหน่งปุ่มลบหน้าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
   var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove(); var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
@@ -2306,7 +2307,7 @@ function buildMenuHtml(){
   if(!clone.getAttribute('style')) clone.removeAttribute('style');  /* ลบ style ว่างของ <html> (ของจอ) ก่อนบันทึก */
   ['#edbar','#edstatus','#editorUI','#editorScript','#actlog','#draftBar','#aboutModal','#pasteModal','#edgeDdPop','#zoomDdPop','#uiDdPop','#calModal','#presentBar'].forEach(function(sel){var el=clone.querySelector(sel); if(el) el.remove();});
   clone.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-addgroup,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,#logoInput,#badgeInput,#secIconInput,#pageBgInput,#edpanel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl,#imgbar').forEach(function(el){el.remove();});
-  clone.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
+  clone.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.classList.remove('dpin'); });  /* ค่ายืดหน้า + ตำแหน่งปุ่มลบหน้าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
   var _sk=clone.querySelector('#scrollKeep'); if(_sk) _sk.remove(); var _bfl=clone.querySelector('body'); if(_bfl) _bfl.classList.remove('flsel');  /* ที่ว่างกันหน้าเด้งเป็นของจอ ไม่ติดไฟล์ */
   clone.querySelectorAll('.fimg.sel,.pgbgimg.sel').forEach(function(el){el.classList.remove('sel');});
   clone.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ (lint ข้อ 39) */
@@ -2455,7 +2456,7 @@ function _serializePages(){
   for(var i=0;i<pages.length;i++){ wrap.appendChild(pages[i].cloneNode(true)); }
   /* strip transient editor artifacts — snapshot เก็บเฉพาะเนื้อหาสะอาด */
   wrap.querySelectorAll('.ed-del,.ed-dup,.ed-add,.ed-delpage,.ed-delgroup,.ed-dupgroup,.ed-badgeadd,.ed-badgedel,.ed-noteadd,.ed-notedel,.rz,.delbtn,.sizetag,.fth,.ftdel,.ftguide,.ftmarq,.ftgrp,.flh,.fldel,.flhl').forEach(function(el){el.remove();});
-  wrap.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });  /* ค่าจัดหน้าเปล่าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
+  wrap.querySelectorAll('.page').forEach(function(p){ p.style.removeProperty('--floath'); p.classList.remove('dpin'); });  /* ค่ายืดหน้า + ตำแหน่งปุ่มลบหน้าชั่วคราวของโหมดแก้ไข ไม่ติดไฟล์/undo */
   wrap.querySelectorAll('.fimg.sel').forEach(function(el){el.classList.remove('sel');});
   wrap.querySelectorAll('.fimg[title]').forEach(function(el){el.removeAttribute('title');});  /* tooltip ชื่อไฟล์เป็นของจอ */
   wrap.querySelectorAll('.typosel').forEach(function(el){el.classList.remove('typosel');});
@@ -3507,15 +3508,15 @@ function _floatBottom(pg,px){ var bot=0;  /* ขอบล่างสุดข�
   pg.querySelectorAll('.fline').forEach(function(q){ var v=Math.max(parseFloat(q.getAttribute('data-y1'))||0,parseFloat(q.getAttribute('data-y2'))||0); if(v>bot) bot=v; });
   return bot;
 }
-function _blankFit(pg){  /* หน้าเปล่าในโหมดแก้ไข: ปุ่มลบหน้าอยู่ใต้กล่องข้อความล่างสุด + หน้ายืดถึงปุ่ม (แบบหน้าเมนูที่ปุ่มต่อท้ายเนื้อหา · ผู้ใช้ 28 ต.ค. 2026) */
+function _blankFit(pg){  /* โหมดแก้ไข: กล่อง/เส้นลอยล้นขอบล่างกระดาษ = หน้ายืดเป็นลายเฉียง · ใช้ทุกหน้า (เมนู + เปล่า) · ปุ่มลบหน้าอยู่นอกกระดาษแล้ว ไม่ดันหน้า (ผู้ใช้ 1 พ.ย. 2026 · lint #178) */
   if(!pg) return;
-  if(!document.body.classList.contains('editmode')){ pg.style.removeProperty('--floath'); pg.style.removeProperty('--blankh'); pg.style.removeProperty('--blankdel'); return; }
+  if(!document.body.classList.contains('editmode')){ pg.style.removeProperty('--floath'); return; }
   var px=pg.getBoundingClientRect().width/210||1, bot=_floatBottom(pg,px);
-  if(!pg.classList.contains('pgblank')){ if(bot+6>297.05) pg.style.setProperty('--floath',(bot+6).toFixed(1)+'mm'); else pg.style.removeProperty('--floath'); return; }  /* หน้าเมนู: กล่อง/เส้นลอยเลยกระดาษ (ถูกดัน/พิมพ์จนเลย) = หน้ายืดเป็นลายเฉียงให้เห็น + ลากกลับได้ (ผู้ใช้ 31 ต.ค. 2026 · lint #176) */
-  pg.style.removeProperty('--floath'); var dp=pg.querySelector(':scope > .ed-delpage'), dh=(dp && dp.getBoundingClientRect().height/px)||10;
-  var dt=Math.max(297-10-dh, bot+6), H=Math.max(297, dt+dh+10);  /* ไม่มีกล่องใกล้ขอบล่าง = ตำแหน่งเดิม (เหนือขอบล่าง 10mm) */
-  pg.style.setProperty('--blankdel', dt.toFixed(1)+'mm');
-  if(H>297.05) pg.style.setProperty('--blankh', H.toFixed(1)+'mm'); else pg.style.removeProperty('--blankh');
+  if(bot+6>297.05) pg.style.setProperty('--floath',(bot+6).toFixed(1)+'mm'); else pg.style.removeProperty('--floath');
+}
+function _delPageFit(){  /* ปุ่มลบหน้านี้: พื้นที่ขวาไม่พอ (ซูมจนเต็มจอ) หรือมุมมองตาราง (หน้าเรียงชิดกัน) = ย้ายเข้ามุมขวาบนในกระดาษ (ผู้ใช้ 1 พ.ย. 2026 · lint #178) */
+  var vw=document.documentElement.clientWidth, gv=document.body.classList.contains('gridview');
+  document.querySelectorAll('.page').forEach(function(pg){ var dp=pg.querySelector(':scope > .ed-delpage'); pg.classList.remove('dpin'); if(!dp) return; if(gv || dp.getBoundingClientRect().right>vw-4) pg.classList.add('dpin'); });
 }
 /* ขอบกระดาษที่วางได้ (มม.) = เว้นขอบกระดาษ 3 มม. ที่ลูกกลิ้งเครื่องพิมพ์หนีบ (A4 210×297 → ล่าง 294 · ขวา 207 · ผู้ใช้ 31 ต.ค. 2026 · lint #176)
    กติกา: กดเพิ่มชิ้นใหม่ = ไม่เลยขอบนี้ (ไม่เพิ่ม + เตือน) · ลาก/ลูกศร = อิสระทุกทิศ (บน·ล่าง·ซ้าย·ขวา เหมือนกัน) · ปล่อยแล้วเลยขอบล่าง = เตือน · หน้ายืดลายเฉียงเฉพาะโหมดแก้ไข เมื่อชิ้นล้นขอบล่างกระดาษ */
@@ -3528,7 +3529,7 @@ function _ftOverCheck(pg,silent,moved){  /* moved = กล่องที่เ�
 }
 function _flOverCheck(L){ var ov=(L||[]).some(function(l){ if(!l||!l.isConnected) return false; var q=_flGet(l); return Math.max(q.y1,q.y2)>_PT_B+0.05; }); if(ov) flashStatus('warning',tk('fl.flineOverPrint')); return ov; }  /* เส้นที่เพิ่งลาก/ขยับ เลยขอบกระดาษล่าง = เตือน (แบบกล่องข้อความ) */
 document.addEventListener('input',function(e){ var bx=e.target && e.target.closest && e.target.closest('.ftext'); if(bx) _ftOverCheck(bx.closest('.page')); });  /* พิมพ์จนกล่องสูงเลยขอบพิมพ์ = เตือน */
-function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); }  /* ทุกหน้า: หน้าเปล่า = ปุ่มลบหน้า + ยืด · หน้าเมนู = ยืดตามกล่อง/เส้นลอย */
+function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); _delPageFit(); }  /* ทุกหน้า: หน้าเปล่า = ปุ่มลบหน้า + ยืด · หน้าเมนู = ยืดตามกล่อง/เส้นลอย */
 document.addEventListener('input',function(e){ var p=e.target && e.target.closest && e.target.closest('.page'); if(p) _blankFit(p); });  /* พิมพ์แล้วกล่องสูงขึ้น = ปุ่ม/หน้าขยับตาม */
 function _ftChainBelow(ref,px){  /* กล่องที่ต่อกันลงไปจากกล่อง ref (ขอบบนชนขอบล่าง คลาด ≤0.5mm + ซ้อนแนวนอน · กติกาเดียวกับยืดหลายกล่อง) */
   var pg=ref.closest('.page'); if(!pg) return [];
@@ -6704,6 +6705,7 @@ function syncBarHeight(){
 }
 syncBarHeight();
 window.addEventListener('resize', syncBarHeight);
+window.addEventListener('resize', function(){ if(typeof _delPageFit==='function') _delPageFit(); });  /* ปุ่มลบหน้า: หน้าต่างแคบลง = ย้ายเข้ามุมในกระดาษ (lint #178) */
 if(window.ResizeObserver){
   var _ro=new ResizeObserver(syncBarHeight);
   var _bar=document.getElementById('edbar');
@@ -6978,7 +6980,7 @@ document.addEventListener('focusout', function(e){
 });
 /* In-page zoom — ย่อ/ขยายเฉพาะหน้า A4 (ผู้ใช้ 16 ต.ค. 2026 · lint #69): ตั้ง --pagezoom บน body · CSS zoom เฉพาะจอ · ปุ่มอยู่แถบบนข้าง Undo/Redo · จำค่าข้าม reload (localStorage) · strip ออกตอนบันทึก (build*) */
 var ZOOM_KEY='oe_pagezoom', _ZMIN=50, _ZMAX=200, _ZSTEP=10, _ZGRID=45, _zoom=100;
-function _zoomApply(){ document.body.style.setProperty('--pagezoom', (_zoom/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=_zoom+'%'; var o=document.getElementById('zoomOut'), i=document.getElementById('zoomIn'); if(o) o.disabled=(_zoom<=_ZMIN); if(i) i.disabled=(_zoom>=_ZMAX); document.body.classList.toggle('gridview', _zoom<=_ZGRID); if(typeof _zoomMetaUpdate==='function') _zoomMetaUpdate(); }
+function _zoomApply(){ document.body.style.setProperty('--pagezoom', (_zoom/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=_zoom+'%'; var o=document.getElementById('zoomOut'), i=document.getElementById('zoomIn'); if(o) o.disabled=(_zoom<=_ZMIN); if(i) i.disabled=(_zoom>=_ZMAX); document.body.classList.toggle('gridview', _zoom<=_ZGRID); if(typeof _zoomMetaUpdate==='function') _zoomMetaUpdate(); if(typeof _delPageFit==='function') _delPageFit(); }
 function _zoomCommit(z){ if(_dd) _ddClose(true); z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function zoomIn(){ _zoomCommit((Math.floor(_zoom/_ZSTEP)+1)*_ZSTEP); }
 function zoomOut(){ _zoomCommit((Math.ceil(_zoom/_ZSTEP)-1)*_ZSTEP); }

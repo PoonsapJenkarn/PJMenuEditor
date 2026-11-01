@@ -2969,8 +2969,7 @@ def main():
     # ---- 133) หน้าใหม่ไม่ซ่อนขอบบนใต้ริบบอน + ปุ่มลบหน้านี้ของหน้าเปล่าอยู่ล่างหน้า (ผู้ใช้ 27 ต.ค. 2026) ----
     if 'function _scrollToPageTop(' not in txt or 'if(firstNew) _scrollToPageTop(firstNew);' not in txt or "firstNew.scrollIntoView(" in txt:
         errors.append('lint #133: เพิ่มหน้าแล้วต้องเลื่อนให้ขอบบนกระดาษอยู่ใต้ริบบอน (ห้าม scrollIntoView start — แถบ sticky บังขอบบน)')
-    if '.page.pgblank > .ed-delpage{position:absolute;left:50%;top:var(--blankdel,277mm);' not in _css:
-        errors.append('lint #133: ปุ่ม ลบหน้านี้ ของหน้าเปล่าต้องอยู่ล่างหน้า (เหมือนหน้าเมนู)')
+    # (ข้อปุ่มลบหน้าของหน้าเปล่าอยู่ล่างหน้า ถูกแทนด้วย #178 · ปุ่มย้ายออกนอกกระดาษด้านขวา ผู้ใช้ 1 พ.ย. 2026)
 
     # ---- 134) เลือกหลายกล่องข้อความ: Shift+คลิก + ลากกรอบเลือก · ลาก/ลูกศร/Delete ทั้งชุด · ดูดแนวด้วยกรอบรอบนอก (ผู้ใช้ 27 ต.ค. 2026) ----
     for _f134 in ('function _ftToggle(','function _ftSyncHandles(','function _ftBBox(','function _ftDeleteSel(','function _ftMarqEnd(','var _ftSet=[], _ftMarq=null;'):
@@ -3082,14 +3081,10 @@ def main():
         errors.append('lint #141: ดันเลยขอบพิมพ์ล่างต้องเตือน (TH+EN)')
 
     # ---- 142) หน้าเปล่าแบบหน้าเมนู: ยืดตามกล่องข้อความในโหมดแก้ไข · ปุ่มลบหน้าใต้กล่องล่างสุด · ไม่ติดไฟล์/undo (ผู้ใช้ 28 ต.ค. 2026) ----
-    if 'function _blankFit(pg){' not in txt or 'function _blankFitAll(){' not in txt or "var dt=Math.max(297-10-dh, bot+6), H=Math.max(297, dt+dh+10);" not in txt:
-        errors.append('lint #142: ต้องมี _blankFit (ปุ่มลบหน้าใต้กล่องล่างสุด + หน้ายืด)')
-    if 'body.editmode:not(.measuring) .page.pgblank{min-height:var(--blankh,297mm) !important;}' not in _css:
-        errors.append('lint #142: หน้าเปล่าต้องยืดตาม --blankh เฉพาะโหมดแก้ไข (ไม่กระทบการวัดล้น/พิมพ์)')
+    if 'function _blankFit(pg){' not in txt or 'function _blankFitAll(){' not in txt:
+        errors.append('lint #142: ต้องมี _blankFit (หน้ายืดตามกล่อง/เส้นลอย · ปุ่มลบหน้าย้ายออกนอกกระดาษ ดู #178)')
     for _c142,_m142 in (("_restorePages(_lastSnap); _blankFitAll(); _dirty=true;",'undo/redo'),("if(D.moved) _blankFitAll();",'ลาก/ยืดกล่อง'),("_blankFitAll(); markDirty(); _revealEl(box); if(_over)",'เพิ่มกล่อง'),("if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด",'เข้า/ออกโหมด')):
         if _c142 not in txt: errors.append('lint #142: ต้องจัดหน้าเปล่าใหม่หลัง '+_m142)
-    if txt.count("p.style.removeProperty('--blankh'); p.style.removeProperty('--blankdel'); });")!=3:
-        errors.append('lint #142: ต้องล้าง --blankh/--blankdel ตอนบันทึกไฟล์ (2 จุด) + snapshot undo')
     _fa142=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
     if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>_PT_B+0.05){ box.remove();" not in _fa142:
         errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องไม่เพิ่ม + เตือน (แทนการเยื้อง 5mm · กดเพิ่มไม่เลยขอบพิมพ์ ผู้ใช้ 31 ต.ค. 2026 · ดู #176)')
@@ -3688,9 +3683,9 @@ def main():
     if 'height/px>_PT_B+0.05;' not in txt or 'function _flOverCheck(L){' not in txt: errors.append('lint #176: เตือนเลยขอบล่างต้องใช้ _PT_B ทั้งกล่อง (_ftOverCheck) และเส้น (_flOverCheck)')
     if txt.count('_flOverCheck(')<5: errors.append('lint #176: ต้องเรียก _flOverCheck หลังลากเส้น/ลากชุดปนกล่อง/ลูกศรเส้น/ลูกศรกล่อง')
     if re.search(r">289\+0\.05", txt): errors.append('lint #176: ห้ามใช้ 289 เป็นขอบเตือนแล้ว ใช้ _PT_B')
-    if 'body.editmode:not(.measuring) .page:not(.pgblank){min-height:var(--floath,297mm) !important;}' not in _css: errors.append('lint #176: หน้าเมนูต้องยืดตาม --floath เฉพาะโหมดแก้ไข')
-    if 'bot=_floatBottom(pg,px);' not in txt or "function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); }" not in txt: errors.append('lint #176: _blankFit ต้องจัดทุกหน้า (หน้าเมนู = --floath)')
-    if txt.count("p.style.removeProperty('--floath'); p.style.removeProperty('--blankh');")!=3: errors.append('lint #176: ต้องล้าง --floath ตอนบันทึก/undo (3 จุด)')
+    if 'body.editmode:not(.measuring) .page{min-height:var(--floath,297mm) !important;}' not in _css: errors.append('lint #176: ทุกหน้าต้องยืดตาม --floath เฉพาะโหมดแก้ไข')
+    if 'bot=_floatBottom(pg,px);' not in txt or "function _blankFitAll(){ document.querySelectorAll('.page').forEach(_blankFit); _delPageFit(); }" not in txt: errors.append('lint #176: _blankFit ต้องจัดทุกหน้า (หน้าเมนู = --floath)')
+    if txt.count("p.style.removeProperty('--floath'); p.classList.remove('dpin'); });")!=3: errors.append('lint #176/#178: ต้องล้าง --floath + dpin ตอนบันทึก/undo (3 จุด)')
     for _k176 in ('fl.ftextFull','fl.flineFull','fl.flineOverPrint'):
         if txt.count("'"+_k176+"':'")<2: errors.append('lint #176: i18n '+_k176+' ไม่ครบ TH+EN')
 
@@ -3698,6 +3693,12 @@ def main():
     _ft177=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _t177=_ft177.group(0) if _ft177 else ''
     if "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline');" not in _t177 or "} else if(_lref){ var _lo=_flGet(_lref)" not in _t177: errors.append('lint #177: ftextAdd ไม่ได้เลือก ต้องต่อจากชิ้นล่าสุดในหน้า (เส้นล่าสุด = ต่อใต้เส้น)')
     if "querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1];" in txt or "querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1];" in txt: errors.append('lint #177: ห้ามกลับไปดูแค่ชนิดเดียวกัน (กล่องดูแค่กล่อง / เส้นดูแค่เส้น = ทับกัน)')
+
+    # ---- 178) ปุ่ม "ลบหน้านี้" อยู่พื้นที่เทาด้านขวานอกกระดาษ แนวขอบบนหน้า (ผู้ใช้ 1 พ.ย. 2026 · ไม่แทรกช่องว่างระหว่างหน้า ไม่บังงาน ไม่ยืดหน้า) · ไม่มีที่ = มุมขวาบนในกระดาษ ----
+    if '.page > .ed-delpage{position:absolute;left:100%;top:0;' not in _css or '.page.dpin > .ed-delpage{left:auto;right:4mm;top:4mm;' not in _css: errors.append('lint #178: ปุ่มลบหน้าต้องอยู่นอกกระดาษด้านขวา + fallback มุมขวาบน (.dpin)')
+    if 'function _delPageFit(){' not in txt or txt.count('_delPageFit()')<5: errors.append('lint #178: ต้องมี _delPageFit และเรียกจาก _blankFitAll / decorate / _zoomApply / resize')
+    for _j178 in ('--blankh','--blankdel','.page.pgblank > .ed-delpage'):
+        if _j178 in txt: errors.append('lint #178: ขยะจากปุ่มลบหน้าแบบเดิม (ใต้กล่องล่างสุด) ต้องลบ: '+_j178)
 
     # ---- report ----
     print("=" * 54)

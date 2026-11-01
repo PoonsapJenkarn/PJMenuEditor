@@ -6989,18 +6989,18 @@ document.addEventListener('focusout', function(e){
   }
 });
 /* In-page zoom — ย่อ/ขยายเฉพาะหน้า A4 (ผู้ใช้ 16 ต.ค. 2026 · lint #69): ตั้ง --pagezoom บน body · CSS zoom เฉพาะจอ · ปุ่มอยู่แถบบนข้าง Undo/Redo · จำค่าข้าม reload (localStorage) · strip ออกตอนบันทึก (build*) */
-var ZOOM_KEY='oe_pagezoom', _ZMIN=30, _ZMAX=200, _ZSTEP=10, _ZGRID=45, _zoom=100;  /* ต่ำสุด 30% (เดิม 50) = ซูมถึงมุมมองตาราง (_ZGRID) ได้จริงทุกจอ · ผู้ใช้ 1 พ.ย. 2026 · lint #179 */
+var ZOOM_KEY='oe_pagezoom', _ZMIN=10, _ZMAX=200, _ZSTEP=10, _ZGRID=45, _zoom=100;  /* ต่ำสุด 10% ทุกวิธี (ปุ่ม − · พิมพ์ · รายการ ▾ · พอดีจอ · Ctrl+ล้อเมาส์) · เดิม 50 → 30 → 10 · ผู้ใช้ 1 พ.ย. 2026 · lint #179 */
 function _zoomApply(){ document.body.style.setProperty('--pagezoom', (_zoom/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=_zoom+'%'; var o=document.getElementById('zoomOut'), i=document.getElementById('zoomIn'); if(o) o.disabled=(_zoom<=_ZMIN); if(i) i.disabled=(_zoom>=_ZMAX); document.body.classList.toggle('gridview', _zoom<=_ZGRID); if(typeof _zoomMetaUpdate==='function') _zoomMetaUpdate(); if(typeof _delPageFit==='function') _delPageFit(); }
 function _zoomCommit(z){ if(_dd) _ddClose(true); z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function zoomIn(){ _zoomCommit((Math.floor(_zoom/_ZSTEP)+1)*_ZSTEP); }
 function zoomOut(){ _zoomCommit((Math.ceil(_zoom/_ZSTEP)-1)*_ZSTEP); }
 function zoomReset(){ _zoomCommit(100); }
-/* ช่อง zoom รับเฉพาะตัวเลข 0-9 สูงสุด 3 หลัก (30-200) · กรองสดขณะพิมพ์ (oninput) — ตัวอักษร/สัญลักษณ์ไม่ขึ้น · เงียบ (ไม่เด้ง warning · clamp ตอน blur) · ผู้ใช้ 18 ต.ค. 2026 · lint ข้อ 10/69 */
+/* ช่อง zoom รับเฉพาะตัวเลข 0-9 สูงสุด 3 หลัก (10-200) · กรองสดขณะพิมพ์ (oninput) — ตัวอักษร/สัญลักษณ์ไม่ขึ้น · เงียบ (ไม่เด้ง warning · clamp ตอน blur) · ผู้ใช้ 18 ต.ค. 2026 · lint ข้อ 10/69 */
 function _zoomClean(v){ v=_prNorm(String(v==null?'':v)); var out='',n=0; for(var i=0;i<v.length;i++){ var c=v.charAt(i); if(c>='0'&&c<='9'&&n<3){ out+=c; n++; } } return out; }
 function _zoomFilter(el){ if(!el) return; var v=el.value, o=_zoomClean(v); if(o===v) return; var ps=(typeof el.selectionStart==='number')?el.selectionStart:v.length, kp=_zoomClean(v.slice(0,ps)).length; el.value=o; try{ el.setSelectionRange(kp,kp); }catch(_){ } }
 function _zoomType(){ var el=document.getElementById('zoomLvl'); if(!el) return; var v=parseInt(String(el.value).replace(/[^0-9]/g,''),10); if(isNaN(v)){ _zoomApply(); return; } _zoomCommit(v); }
 /* Fit / Fit Width (ผู้ใช้ 18 ต.ค. 2026): คำนวณ zoom จากขนาดจอจริง · Fit=เห็นทั้งหน้า (พอดีกว้าง+สูง) · FitW=ความกว้างเพจเต็มพื้นที่จอ (เลื่อนแนวตั้ง)
-   ใช้ขอบล่าง _ZMIN เดียวกับซูมปกติ (30% · เดิมมีค่าต่ำสุดของ fit แยก ยุบรวม 1 พ.ย. 2026) · อ้าง InDesign Fit Page / Word Page Width */
+   ใช้ขอบล่าง _ZMIN เดียวกับซูมปกติ (10% · เดิมมีค่าต่ำสุดของ fit แยก ยุบรวม 1 พ.ย. 2026) · อ้าง InDesign Fit Page / Word Page Width */
 function _zoomFitCommit(z){ z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function _pageFitMetrics(){
   var pg=document.querySelector('.page'); if(!pg) return null;
@@ -7074,7 +7074,7 @@ function _uiscalePreview(v){ document.body.style.setProperty('--uiscale',(v/100)
 function _uiDdCfg(){ return {btn:'uiLvl', pop:'uiDdPop', values:_uiScaleList(), cur:_uiscale, preview:_uiscalePreview, commit:_uiscaleCommit, revert:_uiscaleApply}; }
 function _uiDdToggle(e){ _ddToggle(e,_uiDdCfg); }
 /* ซูมหน้า A4: รายการค่าสำเร็จรูป (แบบ Word) ภายใน _ZMIN.._ZMAX · ชี้ดูไม่แตะ _zoom/localStorage · ตรึงจุดที่กำลังดูบนหน้าไว้ระหว่างชี้ (หน้าไม่วิ่งหนี) · ยกเลิก = คืนซูม + ตำแหน่งเลื่อนเดิมเป๊ะ */
-function _zoomPresets(){ return [30,40,50,75,100,125,150,175,200].filter(function(v){ return v>=_ZMIN && v<=_ZMAX; }); }
+function _zoomPresets(){ return [10,20,30,40,50,75,100,125,150,175,200].filter(function(v){ return v>=_ZMIN && v<=_ZMAX; }); }
 var _zoomDdAnchor=null;
 function _zoomDdAnchorSet(){ var sc=document.scrollingElement||document.documentElement, pgs=document.querySelectorAll('.page'), idx=(typeof _priceVisiblePage==='function')?_priceVisiblePage():0, pg=pgs[idx]||pgs[0], bar=document.getElementById('edbar'), y=bar?bar.getBoundingClientRect().bottom:0; if(!pg){ _zoomDdAnchor=null; return; } var r=pg.getBoundingClientRect(); _zoomDdAnchor={pg:pg, y:y, f:(y-r.top)/(r.height||1), top:sc.scrollTop, left:sc.scrollLeft}; }
 function _zoomPreview(v){ document.body.style.setProperty('--pagezoom',(v/100)); var el=document.getElementById('zoomLvl'); if(el) el.value=v+'%'; document.body.classList.toggle('gridview', v<=_ZGRID); var a=_zoomDdAnchor; if(a && document.contains(a.pg)){ var sc=document.scrollingElement||document.documentElement, r=a.pg.getBoundingClientRect(); sc.scrollTop += (r.top + a.f*r.height) - a.y; } }
@@ -7139,11 +7139,10 @@ document.addEventListener('wheel',function(e){
 },{passive:false});
 _uiscaleLoad();
 _zoomLoad();
-var _ZWHEEL_MIN=20;
-function _zoomSetFree(z){ z=Math.round(z); z=Math.max(_ZWHEEL_MIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
+function _zoomSetFree(z){ z=Math.round(z); z=Math.max(_ZMIN,Math.min(_ZMAX,z)); _zoom=z; try{ localStorage.setItem(ZOOM_KEY,String(z)); }catch(e){} _zoomApply(); }
 function _pageAtClientY(cy){ var pgs=document.querySelectorAll('.page'); if(!pgs.length) return null; var best=pgs[0], bd=Infinity; for(var i=0;i<pgs.length;i++){ var r=pgs[i].getBoundingClientRect(); if(cy>=r.top && cy<=r.bottom) return pgs[i]; var d=Math.min(Math.abs(cy-r.top),Math.abs(cy-r.bottom)); if(d<bd){ bd=d; best=pgs[i]; } } return best; }
 function _zoomAtPoint(cx,cy,nz){ var pg=_pageAtClientY(cy); if(!pg){ _zoomSetFree(nz); return; } var r0=pg.getBoundingClientRect(); var fx=(cx-r0.left)/(r0.width||1), fy=(cy-r0.top)/(r0.height||1); _zoomSetFree(nz); var r1=pg.getBoundingClientRect(); var sc=document.scrollingElement||document.documentElement; sc.scrollLeft += (r1.left+fx*r1.width)-cx; sc.scrollTop += (r1.top+fy*r1.height)-cy; }
-function _zoomWheel(e){ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); var factor=(e.deltaY<0)?1.1:(1/1.1); var nz=Math.round(_zoom*factor); if(nz===_zoom) nz=_zoom+((e.deltaY<0)?1:-1); nz=Math.max(_ZWHEEL_MIN,Math.min(_ZMAX,nz)); if(nz===_zoom) return; _zoomAtPoint(e.clientX,e.clientY,nz); }
+function _zoomWheel(e){ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); var factor=(e.deltaY<0)?1.1:(1/1.1); var nz=Math.round(_zoom*factor); if(nz===_zoom) nz=_zoom+((e.deltaY<0)?1:-1); nz=Math.max(_ZMIN,Math.min(_ZMAX,nz)); if(nz===_zoom) return; _zoomAtPoint(e.clientX,e.clientY,nz); }
 window.addEventListener('wheel', _zoomWheel, {passive:false});
 function _zoomMetaUpdate(){ var el=document.getElementById('edstatusPage'); if(!el) return; var pgs=document.querySelectorAll('.page'); var n=pgs.length; if(!n){ el.textContent=''; return; } var c=(typeof _priceVisiblePage==='function')?_priceVisiblePage():0; if(c<0||c>=n) c=0; var lbl=(typeof t==='function')?t('st.pg'):'หน้า'; el.textContent=lbl+' '+(c+1)+' / '+n+' · '+_zoom+'%'; }
 var _zoomMetaT=null;

@@ -385,7 +385,7 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - ปุ่มควบคุม `.zoomctl` (− / % / +) อยู่แถบบนข้าง Undo/Redo (#edtabs) · ปุ่ม % กลางคลิก = รีเซ็ต 100% · press-state ต้องมี `:not(.on)` (lint #43) แม้ไม่ใช่ปุ่ม toggle
 - บันทึก: buildEditorHtml + buildMenuHtml ต้อง `b.style.removeProperty('--pagezoom')` ทั้งคู่ → ไฟล์ที่บันทึก/ดาวน์โหลดเปิดครั้งหน้าเริ่มที่ 100% เสมอ (zoom เป็นมุมมองบนจอ ไม่ติดไปกับไฟล์)
 - lint #69 ล็อก: กฎ apply แบบ screen-only · `.zoomctl` + 3 ปุ่ม (zoomOut/zoomLvl/zoomIn) · strip --pagezoom ครบ 2 ที่ · i18n ttl.zoomIn/zoomOut/zoomReset th+en
-- ช่อง % (`#zoomLvl`) เป็น `<input>` พิมพ์ค่าเองได้ (16 ต.ค. 2026): focus=select-all · onchange=`_zoomType()` · Enter=blur commit · รับค่าอิสระ 30–200 ทีละ 1 (เดิม 50 · 1 พ.ย. 2026) (ไม่ปัด 10) ผ่าน `_zoomCommit` (clamp เท่านั้น) · ปุ่ม −/+ ยังขยับทีละ 10 เข้ากริด (zoomIn/zoomOut ใช้ floor/ceil ÷ step) · คลิก-reset เดิมหายไป → พิมพ์ 100 แทน (แบบ Figma/เบราว์เซอร์) · zoomLvl อยู่ใน `_FILTERED16` (มีตัวกรอง strip ตัวเลข) · อยู่ใน #edtabs ไม่มี preventDefault ครอบ จึง focus/พิมพ์ได้
+- ช่อง % (`#zoomLvl`) เป็น `<input>` พิมพ์ค่าเองได้ (16 ต.ค. 2026): focus=select-all · onchange=`_zoomType()` · Enter=blur commit · รับค่าอิสระ 10–200 ทีละ 1 (เดิม 50 → 30 → 10 · 1 พ.ย. 2026) (ไม่ปัด 10) ผ่าน `_zoomCommit` (clamp เท่านั้น) · ปุ่ม −/+ ยังขยับทีละ 10 เข้ากริด (zoomIn/zoomOut ใช้ floor/ceil ÷ step) · คลิก-reset เดิมหายไป → พิมพ์ 100 แทน (แบบ Figma/เบราว์เซอร์) · zoomLvl อยู่ใน `_FILTERED16` (มีตัวกรอง strip ตัวเลข) · อยู่ใน #edtabs ไม่มี preventDefault ครอบ จึง focus/พิมพ์ได้
 - lint #69(e): `#zoomLvl` ต้องเป็น `<input>` + ต้องมี `function _zoomType` (กันถอยกลับเป็นปุ่ม)
 
 
@@ -483,7 +483,7 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 - เพิ่ม 2 ปุ่มในแถบ zoom (.zoomctl) ต่อจากปุ่ม + : **Fit** (id=zoomFit · 'พอดีหน้า'/'Fit') + **A4** (id=zoomA4 · 'A4'/'A4' · = Actual Size zoom 100%) · อ้าง InDesign Fit Page / Word Page Width
 - **Fit (zoomFitPage):** zoom = min(availW/pw, availH/ph) → เห็นทั้งแผ่น A4 ในจอ (พอดีทั้งกว้างและสูง) · **A4 (zoomReset = _zoomCommit(100)):** zoom = 100% ตายตัว → เพจกว้าง 210mm = ขนาด A4 จริง (เท่าที่พิมพ์ออกกระดาษ) · ชื่อ 'A4' (ผู้ใช้เลือก) · ปรับ 18 ต.ค. 2026: เดิมปุ่ม 2 คำนวณ Fit Width จากจอ = ผิดความหมาย (ผู้ใช้ต้องการ 210mm จริง ไม่ใช่กว้างตามจอ) → เปลี่ยนเป็น Actual Size 100% + ชื่อสั้น 'A4' แก้ปัญหาแถบ zoom แคบล้นทับ TH/EN
 - คำนวณจากขนาดจริง: `_pageFitMetrics()` อ่าน .page getBoundingClientRect หารด้วย zoom ปัจจุบัน (ได้ขนาด unzoomed จริง ไม่ hardcode 96/25.4) · availW=clientWidth-32 · availH=innerHeight-padT-padB-32 (padding body = ความสูง toolbar/status bar)
-- ~~_ZFIT_MIN=30~~ ยุบรวมแล้ว (1 พ.ย. 2026 · lint #179): _ZMIN=30 ใช้ทุกทาง (ปุ่ม −/+/พิมพ์เอง/รายการ ▾/fit) · เหตุผล: _ZMIN=50 ทำให้มุมมองตาราง (_ZGRID=45) เปิดไม่ได้บนจอใหญ่ = ฟีเจอร์ที่ไม่ทำงานจริง (กฎ #6) · รายการ ▾ มี 30/40 (40 = มุมมองตาราง)
+- ~~_ZFIT_MIN=30~~ ยุบรวมแล้ว (1 พ.ย. 2026 · lint #179): _ZMIN=10 ใช้ทุกทาง (ปุ่ม −/+/พิมพ์เอง/รายการ ▾/fit/Ctrl+ล้อเมาส์ · ยุบ _ZWHEEL_MIN=20 ด้วย) · เหตุผล: _ZMIN=50 ทำให้มุมมองตาราง (_ZGRID=45) เปิดไม่ได้บนจอใหญ่ = ฟีเจอร์ที่ไม่ทำงานจริง (กฎ #6) · รายการ ▾ มี 10/20/30/40 (≤45 = มุมมองตาราง)
 - ปุ่ม fit เป็น button-triggered (ไม่ auto-refit ตอน resize · ตรงกับ InDesign/Figma) · ค่าที่ได้ persist ใน localStorage เหมือน zoom ปกติ · --pagezoom ยัง strip จาก build* (ของจอ ไม่ติดไฟล์)
 - CSS .zoomctl .zfit = width:auto + padding 0 10px + font 13px (ปุ่มข้อความ ไม่ fix 30px เหมือน .zbtn)
 - lint #69(g): require id=zoomFit/zoomA4 + function zoomFitPage/_pageFitMetrics + i18n ttl.zoomFit/ttl.zoomA4/zoom.fit/zoom.a4 th+en

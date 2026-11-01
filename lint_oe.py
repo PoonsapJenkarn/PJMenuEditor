@@ -3745,6 +3745,20 @@ def main():
     if '#edstatus .edstatus-pg{order:1;flex:none;}' not in _css or '#edstatus .edstatus-meta{margin-left:auto;' not in _css: errors.append('lint #184: ตัวบอกหน้าต้องตรึงขวาสุดของแถบสถานะ (order:1 + meta margin-left:auto)')
     if not re.search(r'<span class="edstatus-msg" id="edstatusMsg">[^<]*</span><span class="edstatus-pg" id="edstatusPage"></span><span class="edstatus-meta" id="edstatusMeta"></span>', txt): errors.append('lint #184: ลำดับ span ในแถบสถานะเปลี่ยน — ตรวจตำแหน่งตัวบอกหน้าใหม่')
 
+    # ---- 185) tooltip โมโนโครมต้องตรงกับที่ทำจริง: จอ + พิมพ์ (CSS @media screen, print) + Save Menu (คง boardmode · #74) เป็นเทา · Save Editor ไม่เก็บ (ผู้ใช้ 1 พ.ย. 2026 · เดิมเขียนว่าเฉพาะจอ) ----
+    for _m185 in re.finditer(r"'ttl\.boardOn':'([^']*)'", txt):
+        if 'เฉพาะจอ' in _m185.group(1) or 'screen only' in _m185.group(1).lower() or 'Save Menu' not in _m185.group(1): errors.append('lint #185: ttl.boardOn ต้องบอกว่าพิมพ์ + Save Menu เป็นเทาด้วย (ห้ามเขียนว่าเฉพาะจอ)')
+    if len(re.findall(r"'ttl\.boardOn':'", txt))<2: errors.append('lint #185: ttl.boardOn ไม่ครบ TH+EN')
+
+    # ---- 186) ค่าเริ่มต้นทุกประเภท (ตั้งค่าเริ่มต้น) เก็บในไฟล์ <html data-defstyles> · F5/เปิดใหม่ยังอยู่ · Save Menu ตัดออก (ผู้ใช้ 1 พ.ย. 2026 · เดิมหน่วยความจำ F5 หาย) ----
+    if 'function _defPersist(){' not in txt or '(function _defLoad(){' not in txt: errors.append('lint #186: ต้องมี _defPersist + _defLoad (ค่าเริ่มต้นเก็บในไฟล์)')
+    _t186=re.search(r"\nfunction typoSetDefault\(\)\{[\s\S]*?\n\}", txt); _t186=_t186.group(0) if _t186 else ''
+    if _t186.count('_defPersist();')<2: errors.append('lint #186: typoSetDefault ต้องเรียก _defPersist ทั้งทางกล่องข้อความและทางประเภทอื่น')
+    _w186=re.findall(r"_defaultStyles(?:\.\w+|\[[^\]]+\])\s*=[^=]", txt)
+    if len(_w186)!=4: errors.append('lint #186: มีจุดเขียน _defaultStyles เพิ่ม/หาย ('+str(len(_w186))+' จุด · ปกติ 4 = กล่องข้อความ · ประเภทเดียว · 3 ประเภท · _defLoad) — จุดใหม่ต้องเรียก _defPersist ด้วย แล้วปรับ lint')
+    _m186=re.search(r"\nfunction buildMenuHtml\(\)\{[\s\S]*?\n\}", txt)
+    if not _m186 or "clone.removeAttribute('data-defstyles');" not in _m186.group(0): errors.append('lint #186: Save Menu ต้องตัด data-defstyles')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

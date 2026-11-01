@@ -1,3 +1,34 @@
+# SESSION STATUS - OE Isan Menu Editor
+
+## เคลียร์เรื่องค้าง รอบ 2/2 · 1 พ.ย. 2026 18:30 — เสร็จ (ยังไม่ commit) · รอทดสอบ (รวม #185 tooltip)
+- #186 ค่าเริ่มต้นทุกประเภทเก็บในไฟล์: <html data-defstyles='JSON'> · _defPersist() เรียกใน typoSetDefault 2 ทาง · _defLoad() ตอนโหลด (JSON เสีย = ทิ้ง) · buildMenuHtml ตัดออก · Save Editor เก็บ (clone documentElement)
+- ข้อจำกัด: ไม่อยู่ใน undo (เหมือนเดิม) · draft กู้คืน (localStorage) เก็บแค่หน้า = ค่าเริ่มต้นไม่ได้กลับจาก draft (เหมือนธีม/เลย์เอาต์)
+- lint #186 · PASS · html 8,555,680 bytes
+- repo: ผู้ใช้เลือกเอา typo_partial_mockup.html ออกจาก repo อย่างเดียว (ไฟล์ยังอยู่ในเครื่อง · .gitignore มี *_mockup.html แล้ว)
+- commit: git rm --cached typo_partial_mockup.html / git add -A / git commit -m "fix: ค่าเริ่มต้นทุกประเภทเก็บในไฟล์ (F5 ไม่หาย) · tooltip โมโนโครมตรงกับที่ทำจริง · เลิก track ไฟล์ mockup + lint #185 #186" / git push
+
+## เคลียร์เรื่องค้าง รอบ 1/2 · 1 พ.ย. 2026 18:25 — tooltip โมโนโครมแก้แล้ว (ยังไม่ commit) · ตรวจ repo แล้ว · รอผู้ใช้ตอบ 2 ข้อ
+- หัวไฟล์นี้หายจาก file_edit รอบ 18:15 (fuzzy ทับบรรทัดแรก) → คืนแล้ว
+- #185 ttl.boardOn TH/EN = จอ + พิมพ์ + Save Menu เป็นเทา · Save Editor ไม่เก็บ · lint #185 · PASS · html 8,554,157 bytes
+- repo PJMenuEditor = PUBLIC (เปิด github.com โดยไม่ล็อกอินเห็นไฟล์) · track: SESSION_STATUS.md (101KB) · GF_Knowledge_Notes.md (= Google Fonts notes) · STATUS_BAR_SPEC.md · verify_oe.py · typo_partial_mockup.html (track ทั้งที่ .gitignore มี *_mockup.html = เพิ่มก่อนกฎ) · PoonsapBrand/ logo
+- ค้น SESSION_STATUS: อีเมล = poonsapjenkarn@gmail.com + PoonsapJenkarn@github.com (มีใน README/About อยู่แล้ว) · ไม่พบ password/token/ghp_ (ค้นเฉพาะคำเหล่านี้)
+- ค่าเริ่มต้น: พบว่า _defaultStyles ทุกประเภท (nm pr sechead secnote ... ftext) อยู่ในหน่วยความจำทั้งหมด ไม่ใช่แค่กล่องข้อความ → ถามขอบเขต
+- commit (tooltip): git add -A / git commit -m "fix: tooltip โมโนโครมตรงกับที่ทำจริง (จอ+พิมพ์+Save Menu เป็นเทา) + lint #185" / git push
+
+## เคลียร์เรื่องค้าง 1 พ.ย. 2026 18:15 (อ่านโค้ด · ยังไม่แก้) · รอผู้ใช้เลือก
+- โมโนโครม (boardmode): tooltip ttl.boardOn = "เฉพาะจอ · พิมพ์/บันทึกไม่เปลี่ยน" ไม่ตรงโค้ด
+  - จริง: CSS อยู่ใน @media screen, print → พิมพ์ = เทา · Save Menu (buildMenuHtml) คง boardmode ไว้ = เทา (lint #74 ล็อก WYSIWYG) · Save Editor strip boardmode = ไม่ติด
+  - เสนอ: แก้ tooltip ให้ตรงโค้ด (TH+EN) · อีกทาง = เปลี่ยนเป็นเฉพาะจอจริง (ต้องแก้ CSS + lint #74)
+- ค่าเริ่มต้นกล่องข้อความ (#168): เก็บในหน่วยความจำ → F5 หาย · เสนอเก็บในไฟล์ (แบบ data-theme/data-layout บน html) · อีกทาง localStorage (เครื่องนี้เท่านั้น) · คงเดิม
+- repo public/private: ไม่รู้สถานะปัจจุบัน (ผู้ใช้ต้องดูที่ GitHub) · MIT (16 ต.ค.) = ตั้งใจให้คนเห็น · SESSION_STATUS.md น่าจะถูก commit ด้วย (commit ละ 3 ไฟล์) → ถ้า public คนอื่นเห็นบันทึกงาน
+- agent ข้อ 9: เสนอแก้ข้อความเป็น `**<< End of Turn >>**` ตัวหนา (เขียนด้วย &lt;&lt; &gt;&gt; เพราะ << >> ดิบถูกตัดเหลือ ">") · รอผู้ใช้พิมพ์ "ยืนยัน" · ห้าม publish
+- ทดสอบพิมพ์ปิด Background graphics (#165): ยังไม่ได้ผล
+
+## ✅ ทดสอบผ่าน + commit 1 พ.ย. 2026 18:10 — #184 · HEAD = f2118f3 (push แล้ว)
+- รูป 1: ข้อความสถานะยาว (เพิ่มเส้น) ตัวบอกหน้า "หน้า 3 / 3 · 164%" อยู่ขวาสุด ✅ · เส้นต่อใต้กล่อง/เส้น ไม่ทับ (#177) ✅
+- รูป 2: ลากชุดกล่อง+เส้นจนเส้นเลย 294 = เตือนเหลือง (#176 _flOverCheck) ✅ · หน้ายืดลายเฉียง ✅ · ตัวบอกหน้าขวาสุดตอนแถบเหลือง ✅
+- git output "Enumerating cruft objects" = git gc อัตโนมัติ ไม่ใช่ error
+- ถัดไป (รอผู้ใช้เลือก): รอบ 3/7 ทำซ้ำ/คัดลอก-วาง (Ctrl+D/C/V) · เรื่องค้างตัดสินใจ (tooltip โมโนโครม · ค่าเริ่มต้นหายตอน F5 · repo public/private · agent ข้อ 9)
 
 ## เสร็จ (ยังไม่ commit) 1 พ.ย. 2026 17:20 — #184 ตัวบอกหน้าตรึงขวาสุดของแถบสถานะ · รอทดสอบ
 - ผู้ใช้เลือก: ตรึงขวาสุด · CSS #edstatus .edstatus-pg{order:1;flex:none;} (ใช้ร่วมกับ .edstatus-meta margin-left:auto ที่มีอยู่ = ดันไปขวาแม้ว่าง) · ป้ายล้นหน้าอยู่ซ้ายของตัวบอกหน้า

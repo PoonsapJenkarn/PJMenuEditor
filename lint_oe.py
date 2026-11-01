@@ -3635,7 +3635,7 @@ def main():
     for _x173 in ('id="btnEdit"','data-i18n="grp.insert"','ftextAdd()','flineAdd()'):
         if _x173 in _sh173: errors.append('lint #173: แท็บ เมนู ต้องไม่มี '+_x173+' (ย้ายไปแท็บ ข้อความ)')
     _pi173=txt.find('<div class="rpane" data-pane="image">'); _sf173=txt[_pf173:_pi173] if 0<=_pf173<_pi173 else ''
-    if _sf173.count('rg-neededit')!=4: errors.append('lint #173: แท็บ ข้อความ ต้องมีกลุ่มที่ต้องกดแก้ข้อความก่อน 4 กลุ่ม (ฟอนต์ · กล่อง · จัดเรียง · จัดรูปแบบ) — พบ {}'.format(_sf173.count('rg-neededit')))
+    if _sf173.count('rg-neededit')!=5: errors.append('lint #173: แท็บ ข้อความ ต้องมีกลุ่มที่ต้องกดแก้ข้อความก่อน 5 กลุ่ม (ฟอนต์ · กล่อง · จัดเรียง · คลิปบอร์ด #187 · จัดรูปแบบ) — พบ {}'.format(_sf173.count('rg-neededit')))
     for _g173 in ('<div class="rgroup fontgrp rg-neededit">','<div class="rgroup rg-ord-fmt rg-neededit">','<div class="rgroup rg-neededit"><div class="rgb fbox">','<div class="rgroup rg-neededit"><div class="rgb">  <!-- จัดกลุ่มกล่องข้อความ'):
         if _g173 not in _sf173: errors.append('lint #173: ขาด '+_g173[:50])
     _ia173=_sf173.find('id="btnFtextAddFmt"'); _ga173=_sf173.rfind('<div class="rgroup',0,_ia173)
@@ -3758,6 +3758,34 @@ def main():
     if len(_w186)!=4: errors.append('lint #186: มีจุดเขียน _defaultStyles เพิ่ม/หาย ('+str(len(_w186))+' จุด · ปกติ 4 = กล่องข้อความ · ประเภทเดียว · 3 ประเภท · _defLoad) — จุดใหม่ต้องเรียก _defPersist ด้วย แล้วปรับ lint')
     _m186=re.search(r"\nfunction buildMenuHtml\(\)\{[\s\S]*?\n\}", txt)
     if not _m186 or "clone.removeAttribute('data-defstyles');" not in _m186.group(0): errors.append('lint #186: Save Menu ต้องตัด data-defstyles')
+
+    # ---- 187) คลิปบอร์ดชิ้นงาน Ctrl+D/C/X/V กล่องข้อความ+เส้น (รอบ 3/7 · ผู้ใช้ 1 พ.ย. 2026) · ปุ่มในแท็บข้อความ (จางตอนยังไม่ได้แก้) + แท็บเส้น · Ctrl+D ไม่ได้เลือก = กัน bookmark + เตือน ----
+    for _f187 in ('function _clipTake(){','function _clipPlace(C,pg,newTop,msgKey){','function clipDup(){','function clipCopy(){','function clipCut(){','function clipPaste(){','function _clipSync(){',"document.addEventListener('keydown',function _clipKd(e){"):
+        if _f187 not in txt: errors.append('lint #187: ไม่พบ '+_f187)
+    _k187=re.search(r"document\.addEventListener\('keydown',function _clipKd\(e\)\{[\s\S]*?\n\},true\);", txt); _k187=_k187.group(0) if _k187 else ''
+    for _n187 in ("if(!document.body.classList.contains('editmode') || _ftEdit) return;", "closest('input,select,textarea,[contenteditable=\"true\"],#edpanel')) return;", "if(c==='KeyD'){ e.preventDefault(); e.stopPropagation(); if(n) clipDup(); else flashStatus('warning',tk('fl.clipNeedSel')); return; }", "if(c==='KeyV'){ if(!_clip) return;", "if(!n) return;"):
+        if _n187 not in _k187: errors.append('lint #187: ปุ่มลัดคลิปบอร์ดขาด '+_n187[:60])
+    _p187=re.search(r"\nfunction _clipPlace\(C,pg,newTop,msgKey\)\{[\s\S]*?\n\}", txt); _p187=_p187.group(0) if _p187 else ''
+    for _n187 in ("if(newTop+C.h>_PT_B+0.05){ flashStatus('warning',tk('fl.clipFull')); return false; }", "el.setAttribute('data-ftg',gm[g]);", "markDirty();"):
+        if _n187 not in _p187: errors.append('lint #187: _clipPlace ขาด '+_n187[:60])
+    _ff187=txt.find('<div class="rpane" data-pane="fmt">'); _fi187=txt.find('<div class="rpane" data-pane="image">'); _sf187=txt[_ff187:_fi187] if 0<=_ff187<_fi187 else ''
+    for _b187 in ('Dup','Copy','Cut','Paste'):
+        if 'id="btnClip'+_b187+'"' not in _sf187: errors.append('lint #187: แท็บ ข้อความ ขาดปุ่ม btnClip'+_b187)
+        if txt.count('id="btnFlClip'+_b187+'"')!=1: errors.append('lint #187: แท็บ เส้น ขาดปุ่ม btnFlClip'+_b187)
+    if '<div class="rgroup rg-neededit"><div class="rgb">  <!-- คลิปบอร์ด' not in _sf187: errors.append('lint #187: กลุ่มคลิปบอร์ดแท็บข้อความต้องจางตอนยังไม่ได้แก้ (rg-neededit)')
+    if "if(typeof _clipSync==='function') _clipSync();" not in txt: errors.append('lint #187: _ftGroupSync ต้องเรียก _clipSync (ปุ่มตามการเลือก)')
+    if "clone.querySelectorAll('#btnClipPaste,#btnFlClipPaste')" not in txt: errors.append('lint #187: Save Editor ต้องรีเซ็ตปุ่มคลิปบอร์ดเป็นกดไม่ได้')
+    for _k187 in ('btn.clipDup','btn.clipCopy','btn.clipCut','btn.clipPaste','grp.clip','ttl.clipDup','ttl.clipCopy','ttl.clipCut','ttl.clipPaste','ttl.clipNeedSel','ttl.clipNeedCopy','fl.clipNeedSel','fl.clipNeedCopy','fl.clipDuped','fl.clipCopied','fl.clipCutDone','fl.clipPasted','fl.clipFull'):
+        if txt.count("'"+_k187+"':'")<2: errors.append('lint #187: i18n '+_k187+' ไม่ครบ TH+EN')
+
+    # ---- 188) ทำซ้ำ/วาง หาที่ว่างถัดไป ไม่ทับกล่อง/เส้นที่มีอยู่ (บั๊ก 1 พ.ย. 2026: Ctrl+D/V วางทับเส้น) · label ต้องผูกกับช่อง (Chrome Issues: No label associated with a form field) ----
+    _f188=re.search(r"\nfunction _clipFree\(C,pg,top\)\{[\s\S]*?\n\}", txt); _f188=_f188.group(0) if _f188 else ''
+    if "pg.querySelectorAll('.fline').forEach(" not in _f188 or "pg.querySelectorAll('.ftext').forEach(" not in _f188: errors.append('lint #188: _clipFree ต้องตรวจชนทั้งกล่องและเส้น')
+    _p188=re.search(r"\nfunction _clipPlace\(C,pg,newTop,msgKey\)\{[\s\S]*?\n\}", txt)
+    if not _p188 or 'newTop=_clipFree(C,pg,newTop);' not in _p188.group(0): errors.append('lint #188: _clipPlace ต้องหาที่ว่างก่อนวาง')
+    for _m188 in re.finditer(r"<label\b([^>]*)>", txt):
+        _a188=_m188.group(1); _nx188=txt[_m188.end():_m188.end()+12]
+        if 'for=' not in _a188 and not _nx188.startswith('<input'): errors.append('lint #188: <label> ต้องมี for= หรือครอบ <input> — '+txt[_m188.start():_m188.start()+70])
 
     # ---- report ----
     print("=" * 54)

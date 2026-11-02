@@ -1,5 +1,25 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## รอบ 7/7 #194 เปลี่ยนชื่อไฟล์ · ขั้น 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 19:43 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
+- **ไฟล์หลักตอนนี้ = C:\OE\PJMenuEditor.html** (ลบ OEIsanHotpotMenuEditor.html แล้ว · เนื้อเหมือนเดิม + แก้ชื่อ Save)
+- Save Editor PJMenuEditor_<ts> · Save Menu/PDF PJMenu_<ts> · ประวัติ PJMenu_log_<ts> (2 จุด)
+- _lsRenameMigrate(): เปิด PJMenuEditor.html ครั้งแรก ย้าย oe_draft_/oe_actlog_ จากชื่อเดิม (เฉพาะเมื่อชื่อใหม่ยังไม่มี) แล้วลบของเดิม · ยังไม่รู้ว่าเบราว์เซอร์ให้ 2 ไฟล์ใช้ localStorage ร่วมกันไหม (รอผลทดสอบ)
+- lint PATH/docstring · verify_oe TARGET · .gitignore แก้ P ใหญ่ + PJMenuEditor_*.html PJMenu_*.html · README · STATUS_BAR_SPEC · THIRD-PARTY · lint #194 (new rc0 / old rc1 · lint บนดิสก์ rc0)
+- ผู้ใช้ต้องแก้ shortcut/bookmark/คำสั่ง --app เอง
+- commit: git add -A / git status (ต้องเห็น renamed) / git commit -m "refactor: เปลี่ยนชื่อไฟล์เป็น PJMenuEditor.html · ชื่อไฟล์ที่ Save · ย้ายร่าง/ประวัติจากชื่อเดิม + lint #194" / git push
+
+## รอบ 7/7 เปลี่ยนชื่อไฟล์ · ขั้น 1/2 อ่านโค้ด · 2 พ.ย. 2026 19:39 — เสนอแล้ว รอตัดสิน 2 ข้อ
+- ในโค้ด: saveEditorFile 'OEIsanHotpotMenuEditor_' · downloadMenu 'OEIsanHotpotMenu_' · log 2 จุด 'OEIsanHotpotMenu_log_' · beforeprint title 'OEIsanHotpotMenu_'
+- localStorage ผูกชื่อไฟล์: _draftKey 'oe_draft_'+ชื่อไฟล์ · _actlogKey 'oe_actlog_'+ชื่อไฟล์ → ต้องย้ายค่าจากชื่อเดิมครั้งแรกที่เปิดชื่อใหม่ · key oe_* อื่น (ภาษา/ธีม/ซูม ฯลฯ) ไม่ผูกชื่อไฟล์ = ไม่แตะ
+- นอกโค้ด: lint PATH + docstring + #163 · verify_oe.py TARGET · .gitignore (OEIsanHotPotMenuEditor_ ตัว P ใหญ่ผิด + เพิ่ม PJ*) · README ตาราง · STATUS_BAR_SPEC หัว · THIRD-PARTY บรรทัด 4 · pre-commit hook เรียก lint_oe.py (ไม่ต้องแก้)
+- ไม่แตะ: SESSION_STATUS ประวัติเก่า · OEIsanHotpotMenu_items.txt · <title> ชื่อร้านตัวอย่าง
+- คำถาม: (1) ชื่อไฟล์ที่ Save (2) ใครเปลี่ยนชื่อไฟล์ (agent / git mv)
+
+## #193 ทดสอบผ่าน + committed c17288e (pushed) · 2 พ.ย. 2026 19:35
+- ผู้ใช้ส่งรูป 2 ชุด: ชุดแรก (undo 7-8) ยังเห็นกรอบโค้งซ้อนในกรอบเหลี่ยม = ก่อน F5 · ชุดสอง (undo 2-3 = เริ่มใหม่หลัง F5) กรอบชั้นเดียว · พิมพ์ = เส้นประชั้นเดียว · หลายกล่อง = กรอบที่ตัวกล่อง + กรอบรวม · F12 ไม่มี error
+- มุม 5 mm ได้ลองแล้ว (กล่องบรรทัดเดียว = ทรงแคปซูล ตามที่แจ้งไว้)
+- HEAD = c17288e · ถัดไป: รอบ 7/7 เปลี่ยนชื่อไฟล์ PJMenuEditor.html
+
 ## #193 กรอบเลือกซ้ำ 2 ชั้น · 2 พ.ย. 2026 18:32 — แก้แล้ว + lint ผ่าน รอทดสอบ (ยังไม่ commit)
 - เลือกกล่องเดียว: .ftext.sel:has(~ .selov.ovft){outline:none} = กรอบเหลือที่ชั้นจุดจับ · .ftext.fedit เอา outline dashed ออก (ชั้นจุดจับเป็นเส้นประแทน)
 - เลือกหลายกล่อง: ไม่มีชั้นจุดจับ → กรอบที่ตัวกล่องเหมือนเดิม

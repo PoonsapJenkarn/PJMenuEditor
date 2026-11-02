@@ -1,7 +1,7 @@
 THIRD-PARTY LICENSES
 ====================
 
-PJ Menu Editor (OEIsanHotpotMenuEditor.html)
+PJ Menu Editor (PJMenuEditor.html)
 Copyright (c) 2026 Poonsap Jenkarn
 
 The program code is licensed under the MIT License (see the LICENSE file).

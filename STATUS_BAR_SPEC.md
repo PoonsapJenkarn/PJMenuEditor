@@ -1,4 +1,4 @@
-# STATUS_BAR_SPEC — OEIsanHotpotMenuEditor.html
+# STATUS_BAR_SPEC — PJMenuEditor.html (เดิม OEIsanHotpotMenuEditor.html)
 
 สเปกระบบข้อความสถานะ (status bar `#edstatus` + toast `#edToast`)
 อ้างอิงโค้ด **v26** (23 ก.ย. 2026) · เลขบรรทัดอิงไฟล์ ณ วันจัดทำ — ถ้าแก้โค้ดแล้วบรรทัดเลื่อน ให้ยึด **ชื่อฟังก์ชัน** เป็นหลัก

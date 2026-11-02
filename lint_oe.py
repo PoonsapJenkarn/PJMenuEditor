@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-pre-save lint สำหรับ OEIsanHotpotMenuEditor.html
+pre-save lint สำหรับ PJMenuEditor.html (เดิม OEIsanHotpotMenuEditor.html)
 จับบั๊ก pattern ที่เคยหลุดจริง — เปลี่ยน 'ความจำ' เป็น check อัตโนมัติ
 
 รันเอง:   python lint_oe.py
@@ -12,7 +12,7 @@ exit code: 0 = ผ่าน, 1 = พบ error (บล็อก commit ถ้า�
 import re, sys, os
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                    "OEIsanHotpotMenuEditor.html")  # เปลี่ยนชื่อจาก OEIsanHotpotMenuWithImageEditor.html (8 ต.ค. 2026)
+                    "PJMenuEditor.html")  # เปลี่ยนชื่อจาก OEIsanHotpotMenuEditor.html (2 พ.ย. 2026 · lint #194) · ก่อนนั้น OEIsanHotpotMenuWithImageEditor.html (8 ต.ค. 2026)
 
 def main():
     if not os.path.exists(PATH):
@@ -3868,6 +3868,22 @@ def main():
     for _m193 in re.finditer(r'\.ftext\.fedit\{([^}]*)\}', _css):
         if 'outline' in _m193.group(1): errors.append('lint #193: กรอบประตอนพิมพ์ต้องอยู่ที่ชั้นจุดจับ ห้ามใส่ outline ที่ .ftext.fedit (ซ้อน 2 ชั้น)')
     if '@media screen{body.editmode .ftext.fedit ~ .selov.ovft{outline-style:dashed;}}' not in _css: errors.append('lint #193: ตอนพิมพ์ กรอบชั้นจุดจับต้องเป็นเส้นประ')
+    # ---- 194) เปลี่ยนชื่อไฟล์เป็น PJMenuEditor.html (รอบ 7/7 · ผู้ใช้ 2 พ.ย. 2026): Save Editor = PJMenuEditor_<เวลา> · Save Menu/PDF = PJMenu_<เวลา> · ประวัติ = PJMenu_log_<เวลา> · ย้ายร่าง/ประวัติจากชื่อเดิม ----
+    if os.path.basename(PATH)!='PJMenuEditor.html': errors.append('lint #194: ไฟล์หลักต้องชื่อ PJMenuEditor.html')
+    for _b194 in ("'OEIsanHotpotMenuEditor_'+","'OEIsanHotpotMenu_'+","'OEIsanHotpotMenu_log_'+"):
+        if _b194 in txt: errors.append('lint #194: ยังตั้งชื่อไฟล์ที่ Save ด้วยชื่อเดิม '+_b194)
+    for _n194 in ("var fname='PJMenuEditor_'+tsStamp()+'.html'","var fname='PJMenu_'+tsStamp()+'.html'","document.title='PJMenu_'+stamp();"):
+        if txt.count(_n194)!=1: errors.append('lint #194: ต้องมี '+_n194+' 1 จุด')
+    if txt.count("'PJMenu_log_'+tsStamp()")!=2: errors.append('lint #194: ส่งออกประวัติ 2 จุดต้องใช้ PJMenu_log_')
+    _m194=re.search(r'\nfunction _lsRenameMigrate\(\)\{[\s\S]*?\n\}\n_lsRenameMigrate\(\);', txt)
+    if not _m194 or "['oe_draft_','oe_actlog_']" not in _m194.group(0) or "if(localStorage.getItem(p+f)==null)" not in _m194.group(0): errors.append('lint #194: ต้องย้ายร่าง+ประวัติจากชื่อเดิม (เฉพาะเมื่อชื่อใหม่ยังไม่มี) ก่อนโหลด')
+    elif not (txt.find('_lsRenameMigrate();') < txt.find('function _draftKey(){') < txt.find('_actlogLoad();\n\n</script>')): errors.append('lint #194: ย้ายร่าง/ประวัติต้องรันก่อน _draftOffer/_actlogLoad')
+    try:
+        with open(os.path.join(os.path.dirname(PATH),'.gitignore'),encoding='utf-8') as _gf194: _gi194=_gf194.read()
+    except Exception: _gi194=''
+    for _g194 in ('PJMenuEditor_*.html','PJMenu_*.html','OEIsanHotpotMenuEditor_*.html'):
+        if _g194 not in _gi194.split('\n'): errors.append('lint #194: .gitignore ต้องมี '+_g194)
+    if 'OEIsanHotPotMenuEditor_' in _gi194: errors.append('lint #194: .gitignore สะกดผิด (P ใหญ่) OEIsanHotPotMenuEditor_')
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

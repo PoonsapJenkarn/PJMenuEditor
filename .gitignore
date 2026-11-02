@@ -7,8 +7,11 @@ desktop.ini
 ~$*
 
 # ไฟล์ที่ดาวน์โหลด/ส่งออกชั่วคราว (สำเนาซ้ำจากปุ่ม Save)
-OEIsanHotPotMenuEditor_*.html
+OEIsanHotpotMenuEditor_*.html
 OEIsanHotpotMenu_*.html
+# ชื่อใหม่ (เปลี่ยนชื่อไฟล์ 2 พ.ย. 2026) · ไม่ตรงกับ PJMenuEditor.html (ต้องมี _ ต่อท้าย)
+PJMenuEditor_*.html
+PJMenu_*.html
 *(1).html
 *(2).html
 *(3).html

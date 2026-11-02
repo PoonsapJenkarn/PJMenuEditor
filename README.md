@@ -6,7 +6,7 @@
 
 | ไฟล์ | บทบาท | มีรูป | Editor UI |
 |---|---|---|---|
-| `OEIsanHotpotMenuEditor.html` | editor + รูปอาหาร | มี | มี |
+| `PJMenuEditor.html` | editor + รูปอาหาร (เดิมชื่อ OEIsanHotpotMenuEditor.html) | มี | มี |
 
 ## วิธีเปิด
 เปิดใน Chrome / Edge โดยตรง (ดับเบิลคลิก หรือวาง path ใน address bar)

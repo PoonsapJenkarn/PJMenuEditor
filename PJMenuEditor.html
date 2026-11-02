@@ -1640,7 +1640,7 @@ body.gridview:not(.presentmode) .page{margin:20px 0 0 0 !important;} body.gridvi
   function pad(n){return (n<10?'0':'')+n;}
   function stamp(){var d=new Date();return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());}
   var _orig=document.title;
-  window.addEventListener('beforeprint',function(){_orig=document.title;document.title='OEIsanHotpotMenu_'+stamp();});
+  window.addEventListener('beforeprint',function(){_orig=document.title;document.title='PJMenu_'+stamp();});
   window.addEventListener('afterprint',function(){document.title=_orig;});
   /* พิมพ์: กล่องข้อความที่เลยขอบกระดาษล่าง (297mm) ตัดให้จบที่ขอบชั่วคราว · ทั้งกล่องอยู่นอกกระดาษ = ซ่อน · พิมพ์เสร็จคืนค่าเดิม
      กันหน้าขาวเกินท้ายเอกสาร (กล่องล้นไกลทำให้ Chrome สร้างหน้าเพิ่ม แม้ .page overflow:hidden) · อยู่ใน printTitleScript = ใช้ได้ทั้งตัวแก้ไขและไฟล์ Save Menu (ผู้ใช้ 28 ต.ค. 2026) */
@@ -2391,7 +2391,7 @@ function tsStamp(){
 }
 async function downloadMenu(){
   var html=buildMenuHtml();
-  var fname='OEIsanHotpotMenu_'+tsStamp()+'.html', _wErr=null;
+  var fname='PJMenu_'+tsStamp()+'.html', _wErr=null;
   /* แยก 2 จังหวะ (ผู้ใช้ 28 ต.ค. 2026): ปิดหน้าต่างเลือกที่เก็บ = ยกเลิกจริง · เขียนไฟล์ไม่สำเร็จหลังกด Save (เช่น Chrome Safe Browsing บล็อกตอนเขียน) = บอก error จริง + ดาวน์โหลดแทน (เดิมรวม try เดียว → แจ้งว่า "ยกเลิก" ทั้งที่ผู้ใช้กด Save) */
   if(window.showSaveFilePicker){
     var handle=null;
@@ -2453,7 +2453,7 @@ function flashStatus(type,msg){
 }
 async function saveEditorFile(){
   var html=buildEditorHtml();
-  var fname='OEIsanHotpotMenuEditor_'+tsStamp()+'.html', _wErr=null;
+  var fname='PJMenuEditor_'+tsStamp()+'.html', _wErr=null;
   /* Path 1: File System Access API — แยก ยกเลิกจริง (ปิดหน้าต่าง) ออกจาก เขียนไม่สำเร็จ (บอก error จริง + ดาวน์โหลดแทน) · ผู้ใช้ 28 ต.ค. 2026 */
   if(window.showSaveFilePicker){
     var handle=null;
@@ -2582,6 +2582,13 @@ function _takeSnapshot(){
    เก็บ _lastSnap (HTML บีบอัด: ข้อความ+โครงสร้าง+ตำแหน่งรูป · รูป=data-pool id ไม่เก็บ base64 → เหลือ KB) ลง localStorage ทุกครั้งที่แก้ (ผ่าน _takeSnapshot ที่ debounce อยู่แล้ว)
    บันทึกไฟล์สำเร็จ (clearDirty) = ลบร่าง · เปิดไฟล์แล้วเจอร่าง = ครั้งก่อนปิดโดยไม่ได้บันทึก → เสนอกู้คืน (ไม่ auto-กู้)
    กู้คืน: _restorePages (กลไกเดียวกับ Undo) rehydrate รูปจาก POOL ที่เติมตอนโหลด (_lastSnap=_serializePages) · รูปที่เพิ่งเพิ่มระหว่างยังไม่บันทึก (base64 ไม่อยู่ในไฟล์) กู้พิกเซลไม่ได้ → ดรอปเฟรม + แจ้งจำนวน */
+/* เปลี่ยนชื่อไฟล์ OEIsanHotpotMenuEditor.html → PJMenuEditor.html (ผู้ใช้ 2 พ.ย. 2026 · lint #194): ร่างอัตโนมัติ + ประวัติ ผูก key กับชื่อไฟล์
+   เปิดชื่อใหม่ครั้งแรก = ย้ายของชื่อเดิมมา (เฉพาะเมื่อชื่อใหม่ยังไม่มี · ไม่ทับของใหม่) แล้วลบของเดิม ไม่ค้าง 2 ชุด · ไฟล์ชื่ออื่น (สำเนาที่ Save) ไม่แตะ */
+function _lsRenameMigrate(){
+  var f=(location.pathname||'').split('/').pop()||''; if(f!=='PJMenuEditor.html') return;
+  ['oe_draft_','oe_actlog_'].forEach(function(p){ try{ var o=localStorage.getItem(p+'OEIsanHotpotMenuEditor.html'); if(o==null) return; if(localStorage.getItem(p+f)==null){ localStorage.setItem(p+f,o); localStorage.removeItem(p+'OEIsanHotpotMenuEditor.html'); } }catch(e){} });
+}
+_lsRenameMigrate();  /* ก่อน _draftOffer (init) และ _actlogLoad (ท้ายสคริปต์) */
 function _draftKey(){ var f=(location.pathname||'').split('/').pop()||'menu'; return 'oe_draft_'+f; }
 function _draftSave(){ try{ if(_lastSnap!=null) localStorage.setItem(_draftKey(), JSON.stringify({html:_lastSnap, ts:Date.now()})); }catch(e){} }
 function _draftClear(){ try{ localStorage.removeItem(_draftKey()); }catch(e){} var b=document.getElementById('draftBar'); if(b) b.remove(); }
@@ -7057,7 +7064,7 @@ async function _actlogSaveAndClear(){
   if(_alSaving || !ACTLOG.length) return;
   _alSaving=true;
   var ep=document.getElementById('edpanel'); if(ep) _actlogClearPreview(ep);
-  var arr=_actlogSorted(), n=arr.length, fname='OEIsanHotpotMenu_log_'+tsStamp()+'.json', r=null;
+  var arr=_actlogSorted(), n=arr.length, fname='PJMenu_log_'+tsStamp()+'.json', r=null;
   try{ r=await _saveAs(fname, _logTypes(arr,[_LOG_T_JSON,_LOG_T_CSV])); }  /* เลือกชนิดในหน้าต่าง Save · JSON ก่อน */
   catch(e){ r=null; }
   finally{ _alSaving=false; }
@@ -7146,7 +7153,7 @@ async function _saveAs(fname,types){
 async function exportActLog(fmt){
   if(!ACTLOG.length){ flashStatus('warning',tk('log.exportNone')); return; }
   var arr=_actlogSorted(), n=arr.length, csv=(fmt==='csv');
-  var fname='OEIsanHotpotMenu_log_'+tsStamp()+(csv?'.csv':'.json');
+  var fname='PJMenu_log_'+tsStamp()+(csv?'.csv':'.json');
   var r=await _saveAs(fname, _logTypes(arr,[csv?_LOG_T_CSV:_LOG_T_JSON]));
   if(r.how==='cancel'){ flashStatus('warning',tk('fl.logExportCancel')); return; }
   if(r.how==='badext'){ flashStatus('warning',tk('fl.saveBadExt',{f:r.name,exts:r.exts})); return; }

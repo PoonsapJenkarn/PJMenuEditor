@@ -3548,11 +3548,11 @@ def main():
     for _n167 in ("_typoType.key==='ftext' && typeof _fbSnapBox==='function'", "_fbRestoreBox({b:_bx,a:_fbA})", "_fbSnapBox(_bx).a.join('|')!==_b0", "if(_fbSrc) _typoFtByPage(targets,_one);", "_fbSync()"):
         if _n167 not in _a167: errors.append('lint #167: typoApplyAllSame ขาด '+_n167)
     _fr167=re.search(r"\nfunction typoResetSel\(\)\{[\s\S]*?\n\}", txt); _r167=_fr167.group(0) if _fr167 else ''
-    for _n167 in ("_ty.key==='ftext' && typeof _fbRestoreBox==='function'", "_fbRestoreBox({b:_rb,a:[null,null,null,null]})", "_fbSnapBox(_rb).a.join('|')!==_r0", "if(_isFt) _typoFtByPage(targets,_one);", "_fbSync()"):
+    for _n167 in ("_ty.key==='ftext' && typeof _fbRestoreBox==='function'", "_fbRestoreBox({b:_rb,a:_FB_ATTR.map(function(){ return null; })})", "_fbSnapBox(_rb).a.join('|')!==_r0", "if(_isFt) _typoFtByPage(targets,_one);", "_fbSync()"):
         if _n167 not in _r167: errors.append('lint #167: typoResetSel ขาด '+_n167)
     _fp167=re.search(r"\nfunction _typoFtByPage\(targets,fn\)\{[\s\S]*?\n\}", txt)
     if not _fp167 or '_ftRestack(L,' not in _fp167.group(0): errors.append('lint #167: _typoFtByPage ต้องทำทีละหน้าผ่าน _ftRestack')
-    if "var _FB_ATTR=['data-fbc','data-fbw','data-fbs','data-fgc'];" not in txt: errors.append('lint #167: _FB_ATTR ต้องมี 4 ค่า (คืนค่าใช้ [null,null,null,null])')
+    if "var _FB_ATTR=['data-fbc','data-fbw','data-fbs','data-fgc','data-fbr'];" not in txt: errors.append('lint #167/#192: _FB_ATTR ต้องมี 5 ค่า (ขอบ 3 · พื้น · มุมโค้ง)')
 
     # ---- 165b) ปุ่ม ขอบ/พื้น ตอนยังไม่ได้ใส่ = ลายตารางหมากรุกทั้งสองปุ่ม (กฎเดียว) · ปุ่มริบบอนกับตัวเลือก ไม่มี ในถาดต้องเหมือนกัน (ผู้ใช้ 30 ต.ค. 2026 12:26 เลือกให้เหมือนกัน) ----
     _ck165=re.search(r"#typobar #fbBdCur\.fb-cur-none,#typobar #fbBdPop \.fb-sw-none,#typobar #fbBgCur\.fb-cur-none,#typobar #fbBgPop \.fb-sw-none\{[^}]*\}", txt)
@@ -3851,6 +3851,18 @@ def main():
     if "if(e.target.closest('.selov'))return;" not in txt or "var _ovb=tg.closest('.selov.ovft');" not in txt or "if(ev.target.closest('.selov')) return;" not in txt or "_imgDown(el,e,true)" not in txt: errors.append('lint #191: คลิกจุดจับในชั้น .selov ต้องไม่เลิกเลือก และต้องทำกับกล่อง/รูปที่ยึด')
     if "_ftHandles(b,false); b.remove();" not in txt or "_ftHandles(box,false); box.remove();" not in txt: errors.append('lint #191: ลบกล่อง (ปุ่ม × / Delete / กล่องว่างตอนเลิกพิมพ์) ต้องลบชั้นจุดจับด้วย')
     if txt.count("'st.ftextEditUp':'")<2 or "_ftEditUp=!_zPlan('fwd').err;" not in txt: errors.append('lint #191: พิมพ์ในกล่องที่มีชิ้นอยู่ข้างหน้า ต้องแจ้งที่แถบล่างว่ายกชั่วคราว (TH+EN)')
+    # ---- 192) มุมโค้งกล่องข้อความ 0/1/2/3/5 mm (รอบ 6/7 · ผู้ใช้ 2 พ.ย. 2026): ทั้งถาดขอบ+พื้น ค่าเดียวกัน (data-fbr ใน _FB_ATTR) · ยังไม่มีขอบ/พื้น = ใส่ตามธีม ----
+    _pb192=txt[txt.find('id="fbBdPop"'):txt.find('id="fbBgPick"')]; _pg192=txt[txt.find('id="fbBgPop"'):txt.find('data-i18n="grp.ftBox"')]
+    for _p192,_n192 in ((_pb192,'ขอบ'),(_pg192,'พื้น')):
+        if re.findall(r'data-fbrv="([0-9.]+)"', _p192)!=['0','1','2','3','5'] or 'data-i18n="fb.rLbl"' not in _p192: errors.append('lint #192: ถาด'+_n192+'ต้องมีมุมโค้ง 0 1 2 3 5 mm')
+    if '#typobar .fb-ws,#typobar .fb-sts,#typobar .fb-rs{' not in txt: errors.append('lint #192: แถวมุมโค้งต้องใช้หน้าตาเดียวกับแถวความหนา')
+    _rd192=re.search(r'\nfunction _fbRender\(b\)\{[\s\S]*?\n\}', txt); _pt192=re.search(r'\nfunction _fbPut\(b,k,pv\)\{[\s\S]*?\n\}', txt)
+    if not _rd192 or "b.style.borderRadius=d.r+'mm'" not in _rd192.group(0) or "removeProperty('border-radius')" not in _rd192.group(0): errors.append('lint #192: _fbRender ต้องใส่/ถอด border-radius ตาม data-fbr')
+    if not _pt192 or "b.setAttribute('data-fbr',String(pv.r))" not in _pt192.group(0): errors.append('lint #192: _fbPut ต้องเขียนมุมโค้งทั้ง 2 ถาด')
+    if "_fbPv.r=parseFloat(rr); if(!_fbPv.c) _fbPv.c='theme';" not in txt: errors.append('lint #192: กดมุมโค้งตอนยังไม่มีขอบ/พื้น ต้องใส่ตามธีม')
+    if "st:d.st, r:d.r};" not in txt or "st:(d.c?d.st:'solid'), r:d.r};" not in txt: errors.append('lint #192: เปิดถาด/หน้าต่างสี ต้องจำมุมโค้งเดิม')
+    if '[null,null,null,null]' in txt: errors.append('lint #192: ห้ามตั้งจำนวนค่าขอบ/พื้นตายตัว ใช้ _FB_ATTR.map')
+    if txt.count("'fb.rLbl':'")<2: errors.append('lint #192: i18n fb.rLbl ไม่ครบ TH+EN')
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

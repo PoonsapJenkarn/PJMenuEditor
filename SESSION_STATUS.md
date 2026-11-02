@@ -1,5 +1,22 @@
 # SESSION STATUS - OE Isan Menu Editor
 
+## รอบ 6/7 มุมโค้ง #192 · ขั้น 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 17:06 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
+- ผู้ใช้เลือก: ชิปอยู่ทั้ง 2 ถาด ค่าเดียวกัน · กดตอนยังไม่มีขอบ/พื้น = ใส่ตามธีม
+- data-fbr (mm) ใน _FB_ATTR (5 ค่า) · _fbGet r · _fbRender border-radius · _fbPut เขียน r ทั้ง 2 ถาด · _fbOpen/_fbDlgDone จำ r · _fbPvUi .on · คลิกชิป data-fbrv
+- typoResetSel ใช้ _FB_ATTR.map แทน [null×4] · i18n fb.rLbl TH/EN · CSS .fb-rs ร่วมกับ .fb-ws
+- lint #192 + ปรับ #167 · new rc0 / old rc1 · html 8,604,406 bytes
+- commit: git add -A / git commit -m "feat: มุมโค้งกล่องข้อความ 0/1/2/3/5 มม. (ถาดขอบ+พื้น ค่าเดียวกัน) + lint #192" / git push
+
+## รอบ 6/7 มุมโค้งกล่อง · ขั้น 1/2 อ่านโค้ด · 2 พ.ย. 2026 16:29 — เสนอแล้ว รอตัดสิน 2 ข้อ
+- ถาด: #fbBdPop (สี+ความหนา 7+แบบเส้น 4) · #fbBgPop (สี) · _fbPv {k,L,orig,c,w,st} · _fbPut/_fbRender/_fbGet · _FB_ATTR 4 ค่า
+- แผน: attr ใหม่ data-fbr (mm) เพิ่มใน _FB_ATTR → snapshot/ยกเลิก/ตั้งค่าเริ่มต้น/ใช้ทั้งประเภท ได้ตาม · _fbRender ใส่ border-radius · แถวชิป 0/1/2/3/5 mm
+- ต้องแก้: typoResetSel [null,null,null,null] → _FB_ATTR.map · lint #165 (ถาดพื้นห้ามมีชิป) #167 (_FB_ATTR 4 ค่า)
+- คำถาม: (1) ชิปอยู่ทั้ง 2 ถาด ใช้ค่าเดียวกัน หรือถาดขอบอย่างเดียว (2) เลือกมุมตอนยังไม่มีขอบ/พื้น = ใส่ตามธีมให้เอง หรือเก็บค่าไว้เฉยๆ
+
+## #191 ทดสอบผ่าน + committed e4107ce (pushed) · 2 พ.ย. 2026 16:21
+- ผ่านทุกข้อ: รูปอยู่ลำดับจริง จุดจับอยู่บนสุด · ลาก/ย่อขยาย จุดจับตาม · นำมาไว้หน้าสุด · × รูป + Ctrl+Z · เลือกกล่องหลังรูป · ยืดกล่อง · พิมพ์ = ยกชั่วคราว + แถบล่าง · Esc กลับลำดับ · × กล่อง ไม่มีจุดจับค้าง · Save Editor ไม่มีจุดจับค้าง · F12 ไม่มี error
+- HEAD = e4107ce · ถัดไป: รอบ 6/7 มุมโค้งกล่อง (0/1/2/3/5 mm ในถาดขอบ/พื้น + _FB_ATTR) → 7/7 เปลี่ยนชื่อไฟล์ PJMenuEditor.html
+
 ## #191 รอบ 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
 - เลิกยก .fimg.sel / .ftext.sel (z24) · ยก .ftext.fedit z24 เฉพาะตอนพิมพ์ + แถบล่าง st.ftextEditUp ถ้ามีชิ้นข้างหน้า
 - ชั้นจุดจับ .selov (ลูก .page, z28) ยึดชิ้นด้วย CSS anchor (--imgsel / --ftsel) · .ovimg = กรอบมุม/×/.rz/.sizetag · .ovft = กรอบเขียว/8 ทิศ/×

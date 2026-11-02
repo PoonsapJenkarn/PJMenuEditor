@@ -3787,6 +3787,26 @@ def main():
         _a188=_m188.group(1); _nx188=txt[_m188.end():_m188.end()+12]
         if 'for=' not in _a188 and not _nx188.startswith('<input'): errors.append('lint #188: <label> ต้องมี for= หรือครอบ <input> — '+txt[_m188.start():_m188.start()+70])
 
+    # ---- 189) จัดแนว + กระจาย (รอบ 4/7 · ผู้ใช้ 1 พ.ย. 2026): ปุ่ม จัดแนว ▾ ปุ่มเดียว แท็บข้อความ + แท็บเส้น · กลุ่ม = 1 หน่วย · 1 หน่วย = เทียบหน้าขอบออกแบบ 12/198·8/289 · กระจาย ≥3 · ตัวเลือกที่ใช้ไม่ได้ = จาง ----
+    for _f189 in ('function _alignUnits(){','function _alignApply(v){','function _alignCfg(btn){','function _alignDdToggle(e,btn){','function _alignSync(){','function _ddDisAttr(o,v){'):
+        if _f189 not in txt: errors.append('lint #189: ไม่พบ '+_f189)
+    if 'var _AL_PG={l:12,t:8,r:198,b:289};' not in txt: errors.append('lint #189: เทียบหน้าต้องใช้ขอบออกแบบ 12/198 · 8/289 มม.')
+    _a189=re.search(r"\nfunction _alignApply\(v\)\{[\s\S]*?\n\}", txt); _a189=_a189.group(0) if _a189 else ''
+    for _n189 in ("if(dist && U.length<3){","if(!mv.length){ flashStatus('info',tk('fl.alignNoChange'","markDirty();","if(U.length===1) R=_AL_PG;"):
+        if _n189 not in _a189: errors.append('lint #189: _alignApply ขาด '+_n189[:50])
+    for _id189 in ('btnAlign','btnFlAlign'):
+        if txt.count('id="'+_id189+'"')!=1: errors.append('lint #189: ต้องมีปุ่ม #'+_id189+' 1 ปุ่ม')
+        if '#edbar #'+_id189+'.on,' not in _css: errors.append('lint #189: #'+_id189+' ต้องเขียวตอน .on (กฎข้อ 11)')
+    _ff189=txt.find('<div class="rpane" data-pane="fmt">'); _fi189=txt.find('<div class="rpane" data-pane="image">'); _sf189=txt[_ff189:_fi189] if 0<=_ff189<_fi189 else ''
+    _ga189=_sf189.find('id="btnAlign"'); _gu189=_sf189.find('id="btnFtUngroup"'); _gl189=_sf189.find('data-i18n="grp.arrange"')
+    if not (0<=_gu189<_ga189<_gl189): errors.append('lint #189: ปุ่ม จัดแนว ต้องอยู่ในกลุ่ม จัดเรียง ต่อจาก ยกเลิกกลุ่ม')
+    if "if(o.disabled && o.disabled(v)) return;" not in txt or "if(b && _dd && !b.disabled)" not in txt: errors.append('lint #189: ตัวเลือกจางในรายการต้องกด/ชี้ไม่ได้')
+    if "if(typeof _alignSync==='function') _alignSync();" not in txt: errors.append('lint #189: _ftGroupSync ต้องเรียก _alignSync')
+    if "#epDdPop,#alignDdPop,#calModal" not in txt: errors.append('lint #189: คลิกในรายการจัดแนวต้องไม่เลิกเลือกชิ้น')
+    if '@media print{#alignDdPop{display:none !important;}}' not in _css or "clone.querySelector('#alignDdPop')" not in txt or "'#alignDdPop','#epDdPop'" not in txt: errors.append('lint #189: รายการจัดแนวต้องซ่อนตอนพิมพ์ + strip ตอนบันทึก')
+    for _k189 in ('btn.align','ttl.alignNeedSel','ttl.alignPage','ttl.alignSel','ttl.alignNeed3','al.l','al.c','al.r','al.t','al.m','al.b','al.dh','al.dv','fl.alignedPage','fl.alignedSel','fl.alignNoChange'):
+        if txt.count("'"+_k189+"':'")<2: errors.append('lint #189: i18n '+_k189+' ไม่ครบ TH+EN')
+
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

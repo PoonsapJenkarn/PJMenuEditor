@@ -787,8 +787,8 @@ def main():
         if not _f39 or ".fimg[title]" not in _f39.group(0):
             errors.append('{} ไม่ลบ tooltip ชื่อไฟล์ (.fimg[title]) — หลุดลง snapshot / ไฟล์ (ดู UI_STANDARD.md ข้อ 6)'.format(_fn39))
     #   39c) ป้ายใต้รูป 2 แถว + ไม่ถูกปุ่มย่อขยายทับ (ผู้ใช้ 9 ต.ค. 2026 19:33)
-    _tg39 = re.search(r'\.fimg \.sizetag\{([^}]*)\}', _css)
-    _rz39 = re.search(r'\.fimg \.rz\{([^}]*)\}', _css)
+    _tg39 = re.search(r'\.selov \.sizetag\{([^}]*)\}', _css)
+    _rz39 = re.search(r'\.selov \.rz\{([^}]*)\}', _css)
     _mt39 = re.search(r'margin-top:(\d+)px', _tg39.group(1)) if _tg39 else None
     _bt39 = re.search(r'bottom:-(\d+)px', _rz39.group(1)) if _rz39 else None
     if not (_mt39 and _bt39) or int(_mt39.group(1)) <= int(_bt39.group(1)):
@@ -2924,7 +2924,7 @@ def main():
         errors.append('lint #130: สีเริ่มต้นกล่องข้อความต้องตามธีม (--txt-name)')
     if txt.count('.rz,.delbtn,.sizetag,.fth,.ftdel')!=3 or txt.count("querySelectorAll('.ftext').forEach(function(el){el.classList.remove('sel','fedit');")!=3:
         errors.append('lint #130: ปุ่มจับ/สถานะเลือกของกล่องข้อความต้องถูกตัดออกทั้ง บันทึก editor · ดาวน์โหลดเมนู · snapshot')
-    if '@media print{.ftext{outline:none !important;}.ftext .fth,.ftext .ftdel{display:none !important;}}' not in _css:
+    if '@media print{.ftext{outline:none !important;}.selov{display:none !important;}}' not in _css:
         errors.append('lint #130: พิมพ์ต้องไม่มีกรอบ/ปุ่มจับกล่องข้อความ')
     if "if(!on && typeof _ftDeselect==='function') _ftDeselect();" not in txt or "_ftSel=null; _ftEdit=null; _ftDrag=null;" not in txt:
         errors.append('lint #130: ออกจากโหมดแก้ข้อความ/undo ต้องล้างสถานะกล่องข้อความ')
@@ -2933,7 +2933,7 @@ def main():
     if "x.appendChild(document.createTextNode(t('ft.default')))" not in txt:
         errors.append('lint #130: คำเริ่มต้นในกล่อง = เนื้อหาผู้ใช้ ห้ามผูก data-i18n (สลับภาษาจะทับข้อความที่พิมพ์)')
     # 130b) × ข้างขวาระดับขอบบน (ไม่ยื่นเหนือกล่อง) · เส้นช่วยจัดแนว + ดูดเข้าแนว · ไม่ซ้อนกรอบฟ้า (ผู้ใช้ 27 ต.ค. 2026)
-    if '.ftext .ftdel{position:absolute;right:-30px;top:0;' not in _css:
+    if '.selov .ftdel{position:absolute;right:-30px;top:0;' not in _css:
         errors.append('lint #130: × ของกล่องข้อความต้องอยู่ข้างขวา ระดับขอบบน (ไม่ยื่นเหนือกล่อง — วางเรียงแล้ว × ต้องติดกล่องตัวเอง)')
     for _f130b in ('function _ftSnap(','function _ftTargets(','function _ftGuides(','function _ftGuideClear('):
         if _f130b not in txt: errors.append('lint #130: ไม่พบ '+_f130b+' (ดูดเข้าแนว)')
@@ -2963,8 +2963,8 @@ def main():
         errors.append('lint #132: Tab / Shift+Tab ต้องวนเลือกกล่องในหน้า')
     if txt.count("'st.ftextSel':'")<2 or '{i} / {n}' not in txt:
         errors.append('lint #132: แถบล่างต้องบอก กล่อง i / n ในหน้านี้')
-    if '@media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;z-index:24;}}' not in _css:
-        errors.append('lint #132: กล่องที่เลือกต้องลอยหน้าสุด (เห็นจุดจับแม้ซ้อน)')
+    if '@media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;anchor-name:--ftsel;}body.editmode .ftext.fedit{z-index:24;}}' not in _css:
+        errors.append('lint #132/#191: กล่องที่เลือกอยู่ลำดับจริง (จุดจับอยู่ชั้น .selov) · ยกขึ้นหน้าเฉพาะตอนพิมพ์')
 
     # ---- 133) หน้าใหม่ไม่ซ่อนขอบบนใต้ริบบอน + ปุ่มลบหน้านี้ของหน้าเปล่าอยู่ล่างหน้า (ผู้ใช้ 27 ต.ค. 2026) ----
     if 'function _scrollToPageTop(' not in txt or 'if(firstNew) _scrollToPageTop(firstNew);' not in txt or "firstNew.scrollIntoView(" in txt:
@@ -3723,7 +3723,7 @@ def main():
 
     # ---- 182) เพิ่มหน้า (เมนู/เปล่า) = หน้าใหม่ไม่ติดชิ้นลอยของหน้าต้นแบบ: รูป · กล่อง · เส้น · จุดจับ/เส้นนำ/กรอบเลือก · สถานะชั่วคราว (บั๊ก 31 ต.ค. 2026: เส้นติดไปหน้าใหม่) ----
     _fa182=re.search(r"\nfunction _addPagesBatch\(n,type\)\{[\s\S]*?\n\}", txt); _a182=_fa182.group(0) if _fa182 else ''
-    if "np.querySelectorAll('.fimg,.ftext,.fline,.flh,.fldel,.flhl,.ftguide,.ftmarq,.ftgrp').forEach(function(el){el.remove();});" not in _a182: errors.append('lint #182: _addPagesBatch ต้องลบชิ้นลอยทุกชนิด (.fimg .ftext .fline + จุดจับ/เส้นนำ/กรอบ) ออกจากหน้าใหม่')
+    if "np.querySelectorAll('.fimg,.ftext,.fline,.flh,.fldel,.flhl,.ftguide,.ftmarq,.ftgrp,.selov').forEach(function(el){el.remove();});" not in _a182: errors.append('lint #182: _addPagesBatch ต้องลบชิ้นลอยทุกชนิด (.fimg .ftext .fline + จุดจับ/เส้นนำ/กรอบ) ออกจากหน้าใหม่')
     if "np.classList.remove('overflowed','pgcur','pgcontenthide','dpin'); np.style.removeProperty('--floath');" not in _a182: errors.append('lint #182: หน้าใหม่ต้องล้าง dpin / --floath ของหน้าต้นแบบ')
     if _a182.find("np.querySelectorAll('.fimg,.ftext,.fline")>_a182.find('if(blank){') or _a182.find('if(blank){')<0: errors.append('lint #182: ต้องลบชิ้นลอยก่อนแยกทางหน้าเปล่า/หน้าเมนู (ใช้ทั้งสองแบบ)')
 
@@ -3808,7 +3808,7 @@ def main():
         if txt.count("'"+_k189+"':'")<2: errors.append('lint #189: i18n '+_k189+' ไม่ครบ TH+EN')
 
     # ---- 190) ลำดับหน้า-หลัง (รอบ 5/7 · ผู้ใช้ 2 พ.ย. 2026): รูป/เส้น/กล่อง z เดียวกัน = ลำดับในหน้า · ไฟล์เดิมเรียง รูป→เส้น→กล่อง · ปุ่ม ลำดับ ▾ แท็บข้อความ/เส้น/รูป · ปุ่มลัด Ctrl+(Shift+)[ ] · data-seq = ชิ้นที่เพิ่มล่าสุด ----
-    for _c190 in ('.fimg{position:absolute;z-index:20;','.fline{position:absolute;z-index:20;','.ftext{position:absolute;z-index:20;','.flhl{position:absolute;z-index:23;','@media screen{body.imgmode .fimg.sel{z-index:24;}}','@media print{#zDdPop{display:none !important;}}','#zDdPop .ui-dd-opt:disabled{'):
+    for _c190 in ('.fimg{position:absolute;z-index:20;','.fline{position:absolute;z-index:20;','.ftext{position:absolute;z-index:20;','.flhl{position:absolute;z-index:23;','@media screen{body.imgmode .fimg.sel{anchor-name:--imgsel;}}','@media print{#zDdPop{display:none !important;}}','#zDdPop .ui-dd-opt:disabled{'):
         if _c190 not in _css: errors.append('lint #190: CSS ขาด '+_c190[:50])
     for _f190 in ('function _zSeqNext(){','function _zLatest(list){','function _zFloats(pg){','function _zMigrate(pg){','function _zMigrateAll(){','function _zCtx(){','function _zPlan(v){','function _zApply(v){','function _zCfg(btn){','function _zDdToggle(e,btn){','function _zSync(){',"document.addEventListener('keydown',function _zKd(e){"):
         if _f190 not in txt: errors.append('lint #190: ไม่พบ '+_f190)
@@ -3826,6 +3826,31 @@ def main():
     for _k190 in ('btn.zorder','ttl.zNeedSel','ttl.zorder','z.front','z.fwd','z.bwd','z.back','zs.front','zs.fwd','zs.bwd','zs.back','ttl.zAtFront','ttl.zAtBack','ttl.zNoFwd','ttl.zNoBwd','fl.zDone'):
         if txt.count("'"+_k190+"':'")<2: errors.append('lint #190: i18n '+_k190+' ไม่ครบ TH+EN')
 
+    # ---- 191) ชิ้นที่เลือกอยู่ลำดับจริง · จุดจับอยู่ชั้น .selov บนสุด ยึดด้วย CSS anchor · พิมพ์ = ยกชั่วคราว + แจ้ง (ผู้ใช้ 2 พ.ย. 2026 เลือก แนวทาง ก) ----
+    _p191=0; _bad191=[]
+    while True:
+        _b191=_css.find('{',_p191)
+        if _b191<0: break
+        _e191=_css.find('}',_b191)
+        if _e191<0: break
+        _bd191=_css[_b191+1:_e191]
+        if '{' in _bd191: _p191=_b191+1; continue
+        _sl191=_css[_p191:_b191][-160:]
+        if ('.fimg.sel' in _sl191 or '.ftext.sel' in _sl191) and 'z-index' in _bd191: _bad191.append(_sl191.strip()[-60:])
+        _p191=_e191+1
+    if _bad191: errors.append('lint #191: ห้ามยกรูป/กล่องที่เลือกขึ้นหน้า (z-index ที่ .sel) — บนจอต้องตรงลำดับจริง: '+' | '.join(_bad191[:3]))
+    for _o191 in ('.fimg .rz','.fimg .delbtn','.fimg .sizetag','.ftext .fth','.ftext .ftdel','.fimg.sel::before'):
+        if _o191 in _css: errors.append('lint #191: จุดจับต้องอยู่ชั้น .selov ไม่ใช่ในตัวชิ้น ('+_o191+')')
+    for _c191 in ('.selov{position:absolute;z-index:28;box-sizing:border-box;pointer-events:none;left:anchor(left);top:anchor(top);right:anchor(right);bottom:anchor(bottom);','.selov.ovft{position-anchor:--ftsel;','.selov.ovimg{position-anchor:--imgsel;}','.selov .fth,.selov .ftdel{pointer-events:auto;}','body:not(.editmode) .selov.ovft,body:not(.imgmode) .selov.ovimg{display:none !important;}','@supports not (anchor-name:--a){.selov{display:none !important;}}','@media print{.ftext{outline:none !important;}.selov{display:none !important;}}'):
+        if _c191 not in _css: errors.append('lint #191: CSS ขาด '+_c191[:60])
+    for _fn191,_ban191 in (('_imgHandles','el.appendChild('),('_ftHandles','box.appendChild(')):
+        _m191=re.search(r'\nfunction '+_fn191+r'\([^)]*\)\{[\s\S]*?\n\}', txt)
+        if not _m191 or 'pg.appendChild(o);' not in _m191.group(0) or _ban191 in _m191.group(0): errors.append('lint #191: '+_fn191+' ต้องสร้างจุดจับในชั้น .selov (ลูก .page) ไม่ใส่ในตัวชิ้น')
+    if txt.count(".flhl,.selov').forEach(function(el){el.remove();});")!=2 or ".flhl,.selov,#imgbar')" not in txt or ".ftgrp,.selov')" not in txt: errors.append('lint #191: ชั้น .selov ต้องถูกตัดตอน snapshot · Save Editor · Save Menu · หน้าใหม่')
+    if "P.pg.querySelectorAll(':scope > .selov').forEach(function(o){ P.pg.appendChild(o); });" not in txt: errors.append('lint #191: จัดลำดับแล้วต้องย้าย .selov ไปท้ายหน้า (anchor ต้องอยู่ก่อน)')
+    if "if(e.target.closest('.selov'))return;" not in txt or "var _ovb=tg.closest('.selov.ovft');" not in txt or "if(ev.target.closest('.selov')) return;" not in txt or "_imgDown(el,e,true)" not in txt: errors.append('lint #191: คลิกจุดจับในชั้น .selov ต้องไม่เลิกเลือก และต้องทำกับกล่อง/รูปที่ยึด')
+    if "_ftHandles(b,false); b.remove();" not in txt or "_ftHandles(box,false); box.remove();" not in txt: errors.append('lint #191: ลบกล่อง (ปุ่ม × / Delete / กล่องว่างตอนเลิกพิมพ์) ต้องลบชั้นจุดจับด้วย')
+    if txt.count("'st.ftextEditUp':'")<2 or "_ftEditUp=!_zPlan('fwd').err;" not in txt: errors.append('lint #191: พิมพ์ในกล่องที่มีชิ้นอยู่ข้างหน้า ต้องแจ้งที่แถบล่างว่ายกชั่วคราว (TH+EN)')
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

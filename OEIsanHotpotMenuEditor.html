@@ -576,7 +576,8 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
 .ftext[data-fgc],.ftext[data-fbc]{-webkit-print-color-adjust:exact;print-color-adjust:exact;}  /* ขอบ/พื้นหลังกล่องข้อความพิมพ์ออกโดยไม่ต้องติ๊ก Background graphics (lint #165) */
 @media screen{body.editmode .ftext{pointer-events:auto;cursor:move;outline:1px dashed #9aa4b0;outline-offset:0;}}
 @media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;anchor-name:--ftsel;}body.editmode .ftext.fedit{z-index:24;}}  /* กล่องที่เลือก = อยู่ลำดับจริง · จุดจับอยู่ชั้น .selov · กำลังพิมพ์ = ยกขึ้นหน้าชั่วคราว ข้อความไม่ถูกบัง (ผู้ใช้ 2 พ.ย. 2026 เลือก · lint #191) */
-@media screen{body.editmode .ftext.fedit{cursor:text;outline:1.5px dashed #217346;}}
+@media screen{body.editmode .ftext.fedit{cursor:text;}}  /* กรอบประตอนพิมพ์อยู่ที่ชั้นจุดจับ (.fedit ~ .selov.ovft) ไม่ซ้อนที่ตัวกล่อง (lint #193) */
+@media screen{body.editmode .ftext.sel:has(~ .selov.ovft){outline:none;}}  /* เลือกกล่องเดียว = กรอบเขียวมีชั้นเดียวที่ชั้นจุดจับ (บนสุด) · เดิมซ้อน 2 ชั้น (ตัวกล่องโค้งตามมุม + ชั้นจุดจับเหลี่ยม) · เลือกหลายกล่อง (ไม่มีชั้นจุดจับ) = กรอบที่ตัวกล่องเหมือนเดิม (ผู้ใช้ 2 พ.ย. 2026 · lint #193) */
 @media screen{body.editmode .ftext.fedit .ftxt{cursor:text;}}
 .selov .fth{position:absolute;width:10px;height:10px;background:#fff;border:1.5px solid #217346;border-radius:2px;z-index:3;}
 .selov .fth[data-d="nw"]{left:-6px;top:-6px;cursor:nwse-resize;}.selov .fth[data-d="n"]{left:calc(50% - 5px);top:-6px;cursor:ns-resize;}.selov .fth[data-d="ne"]{right:-6px;top:-6px;cursor:nesw-resize;}

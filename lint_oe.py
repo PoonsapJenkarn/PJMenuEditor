@@ -3863,6 +3863,11 @@ def main():
     if "st:d.st, r:d.r};" not in txt or "st:(d.c?d.st:'solid'), r:d.r};" not in txt: errors.append('lint #192: เปิดถาด/หน้าต่างสี ต้องจำมุมโค้งเดิม')
     if '[null,null,null,null]' in txt: errors.append('lint #192: ห้ามตั้งจำนวนค่าขอบ/พื้นตายตัว ใช้ _FB_ATTR.map')
     if txt.count("'fb.rLbl':'")<2: errors.append('lint #192: i18n fb.rLbl ไม่ครบ TH+EN')
+    # ---- 193) กรอบเลือกกล่องข้อความชั้นเดียว (ผู้ใช้ 2 พ.ย. 2026): เลือกกล่องเดียว = กรอบที่ชั้นจุดจับเท่านั้น · ตัวกล่องไม่มี outline ซ้อน (ทั้งเลือก/พิมพ์) · หลายกล่อง = กรอบที่ตัวกล่อง ----
+    if '@media screen{body.editmode .ftext.sel:has(~ .selov.ovft){outline:none;}}' not in _css: errors.append('lint #193: เลือกกล่องเดียวต้องไม่มีกรอบซ้อนที่ตัวกล่อง (มีที่ชั้นจุดจับแล้ว)')
+    for _m193 in re.finditer(r'\.ftext\.fedit\{([^}]*)\}', _css):
+        if 'outline' in _m193.group(1): errors.append('lint #193: กรอบประตอนพิมพ์ต้องอยู่ที่ชั้นจุดจับ ห้ามใส่ outline ที่ .ftext.fedit (ซ้อน 2 ชั้น)')
+    if '@media screen{body.editmode .ftext.fedit ~ .selov.ovft{outline-style:dashed;}}' not in _css: errors.append('lint #193: ตอนพิมพ์ กรอบชั้นจุดจับต้องเป็นเส้นประ')
     # ---- report ----
     print("=" * 54)
     print(" OE Menu Editor — pre-save lint")

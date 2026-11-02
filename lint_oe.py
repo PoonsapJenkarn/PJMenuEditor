@@ -1075,7 +1075,7 @@ def main():
     if _iobj>=0:
         _ths=txt.find("th:{",_iobj); _ens=txt.find("en:{",_iobj)
         _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
-        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        _enb=txt[_ens:_ens+60000] if _ens>=0 else ""  # หน้าต่าง en ขยาย 20000→60000 (คีย์ใหม่ดันคีย์เดิมเลยหน้าต่าง · 2 พ.ย. 2026)
         for _k in ('img.origSize','img.curSize'):
             if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
             if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
@@ -1262,7 +1262,7 @@ def main():
     if _iobj60>=0:
         _ths=txt.find("th:{",_iobj60); _ens=txt.find("en:{",_iobj60)
         _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
-        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        _enb=txt[_ens:_ens+60000] if _ens>=0 else ""  # หน้าต่าง en ขยาย 20000→60000 (คีย์ใหม่ดันคีย์เดิมเลยหน้าต่าง · 2 พ.ย. 2026)
         for _k in ('st.overflowNote','st.overflowNoteTtl'):
             if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
             if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
@@ -1334,7 +1334,7 @@ def main():
     if _iobj63>=0:
         _ths=txt.find("th:{",_iobj63); _ens=txt.find("en:{",_iobj63)
         _thb=txt[_ths:_ens] if (_ths>=0 and _ens>_ths) else ""
-        _enb=txt[_ens:_ens+20000] if _ens>=0 else ""
+        _enb=txt[_ens:_ens+60000] if _ens>=0 else ""  # หน้าต่าง en ขยาย 20000→60000 (คีย์ใหม่ดันคีย์เดิมเลยหน้าต่าง · 2 พ.ย. 2026)
         for _k in ('draft.found','draft.restore','draft.discard','fl.draftRestored','fl.draftRestoredLost','fl.draftDiscarded'):
             if ("'"+_k+"'") not in _thb: errors.append('i18n '+_k+' ขาดใน th (ดู UI_STANDARD.md ข้อ 7)')
             if ("'"+_k+"'") not in _enb: errors.append('i18n '+_k+' ขาดใน en (ดู UI_STANDARD.md ข้อ 7)')
@@ -2955,7 +2955,7 @@ def main():
     if len(re.findall(r'class="edtab active"', txt))!=1 or len(re.findall(r'class="rpane active"', txt))!=1:
         errors.append('lint #131: ต้องมีแท็บ/ริบบอน active อย่างละ 1 เท่านั้น')
     # ---- 132) กล่องข้อความใหม่ไม่ทับกัน: วางต่อใต้กล่องที่เลือก/ล่าสุด + Tab วนเลือก + บอก i/n (ผู้ใช้ 27 ต.ค. 2026) ----
-    if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline'); if(_all.length){ var _la=_all[_all.length-1]; if(_la.classList.contains('fline')) _lref=_la; else ref=_la; } }" not in txt:
+    if "var ref=(_ftSel && _ftSel.isConnected)?_ftSel:null;" not in txt or "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline'); if(_all.length){ var _la=_zLatest(_all); if(_la.classList.contains('fline')) _lref=_la; else ref=_la; } }" not in txt:
         errors.append('lint #132: กล่องใหม่ต้องวางต่อใต้กล่องที่เลือก หรือกล่องล่าสุดในหน้า (ไม่ทับที่เดิม)')
     if 'left=Math.min(210-w,left+5)' in txt:
         errors.append('lint #132: ห้ามเยื้องกล่องใหม่ 5mm (ทำให้ซ้อนเป็นขั้นบันได) — ต่อลงไป + เตือนแทน (ผู้ใช้ 28 ต.ค. 2026)')
@@ -3129,7 +3129,7 @@ def main():
 
     # ---- 148) คลิกกล่องข้อความลอย: ตัวเลือก element ทั่วไป (click) ต้องข้าม .ftext — ไม่ทับคำเตือน/สถานะของกล่อง · ไม่ชี้กล่องที่เพิ่งเอาออกจากชุด (ผู้ใช้ 28 ต.ค. 2026) ----
     _ck148=txt.find("/* คลิกบนเอกสารในโหมดแก้ไข → เลือก element */")
-    _cs148=txt[_ck148:_ck148+900] if _ck148>=0 else ''
+    _cs148=txt[_ck148:_ck148+1400] if _ck148>=0 else ''  # 900→1400 (เพิ่มข้อยกเว้นรายการ ▾ · 2 พ.ย. 2026)
     if "if(ev.target.closest('.ftext')) return;" not in _cs148 or _cs148.find("if(ev.target.closest('.ftext')) return;")>_cs148.find('var found=_typoFind(ev.target);'):
         errors.append('lint #148: click handler เลือก element ต้อง return ก่อน _typoFind เมื่อคลิกใน .ftext (กันทับคำเตือนเลยขอบพิมพ์)')
 
@@ -3659,7 +3659,7 @@ def main():
 
     # ---- 174) เพิ่มเส้นตอนไม่ได้เลือกอะไร = ต่อจากเส้นที่เพิ่มล่าสุดในหน้านั้น ไม่ทับเส้นเก่า (บั๊ก 31 ต.ค. 2026) · ตำแหน่งถัดไปเลยขอบพิมพ์ = ไม่เพิ่ม + เตือน ไม่ล็อกที่ขอบ (ผู้ใช้ 31 ต.ค. 2026) ----
     _fa174=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _f174=_fa174.group(0) if _fa174 else ''
-    if "if(!ref && !fref){ var _al=pg.querySelectorAll('.ftext,.fline'); if(_al.length){ var _la=_al[_al.length-1]; if(_la.classList.contains('fline')) ref=_la; else fref=_la; } }" not in _f174: errors.append('lint #174/#177: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากชิ้นที่เพิ่มล่าสุดในหน้า (กล่องหรือเส้น)')
+    if "if(!ref && !fref){ var _al=pg.querySelectorAll('.ftext,.fline'); if(_al.length){ var _la=_zLatest(_al); if(_la.classList.contains('fline')) ref=_la; else fref=_la; } }" not in _f174: errors.append('lint #174/#177: flineAdd ไม่ได้เลือกอะไร ต้องต่อจากชิ้นที่เพิ่มล่าสุดในหน้า (กล่องหรือเส้น)')
     for _n174 in ('if(_nx>_PT_R+0.05) _edge=true;','if(_ny>_PT_B+0.05) _edge=true;','if(_fy>_PT_B+0.05) _edge=true;',"if(_edge){ flashStatus('warning',tk('fl.flineFull')); return; }"):
         if _n174 not in _f174: errors.append('lint #174: flineAdd ตำแหน่งถัดไปเลยขอบพิมพ์ต้องไม่เพิ่ม + เตือน · ขาด '+_n174)
     if re.search(r"_(?:nx|ny|fy)=(?:198|285|289|202)\b", _f174): errors.append('lint #174: ห้ามล็อกเส้นไว้ที่ขอบ (ล็อก = เส้นใหม่ทับกันที่ขอบ)')
@@ -3806,6 +3806,25 @@ def main():
     if '@media print{#alignDdPop{display:none !important;}}' not in _css or "clone.querySelector('#alignDdPop')" not in txt or "'#alignDdPop','#epDdPop'" not in txt: errors.append('lint #189: รายการจัดแนวต้องซ่อนตอนพิมพ์ + strip ตอนบันทึก')
     for _k189 in ('btn.align','ttl.alignNeedSel','ttl.alignPage','ttl.alignSel','ttl.alignNeed3','al.l','al.c','al.r','al.t','al.m','al.b','al.dh','al.dv','fl.alignedPage','fl.alignedSel','fl.alignNoChange'):
         if txt.count("'"+_k189+"':'")<2: errors.append('lint #189: i18n '+_k189+' ไม่ครบ TH+EN')
+
+    # ---- 190) ลำดับหน้า-หลัง (รอบ 5/7 · ผู้ใช้ 2 พ.ย. 2026): รูป/เส้น/กล่อง z เดียวกัน = ลำดับในหน้า · ไฟล์เดิมเรียง รูป→เส้น→กล่อง · ปุ่ม ลำดับ ▾ แท็บข้อความ/เส้น/รูป · ปุ่มลัด Ctrl+(Shift+)[ ] · data-seq = ชิ้นที่เพิ่มล่าสุด ----
+    for _c190 in ('.fimg{position:absolute;z-index:20;','.fline{position:absolute;z-index:20;','.ftext{position:absolute;z-index:20;','.flhl{position:absolute;z-index:23;','@media screen{body.imgmode .fimg.sel{z-index:24;}}','@media print{#zDdPop{display:none !important;}}','#zDdPop .ui-dd-opt:disabled{'):
+        if _c190 not in _css: errors.append('lint #190: CSS ขาด '+_c190[:50])
+    for _f190 in ('function _zSeqNext(){','function _zLatest(list){','function _zFloats(pg){','function _zMigrate(pg){','function _zMigrateAll(){','function _zCtx(){','function _zPlan(v){','function _zApply(v){','function _zCfg(btn){','function _zDdToggle(e,btn){','function _zSync(){',"document.addEventListener('keydown',function _zKd(e){"):
+        if _f190 not in txt: errors.append('lint #190: ไม่พบ '+_f190)
+    if "['fimg','fline','ftext'].forEach(function(c){" not in txt: errors.append('lint #190: ไฟล์เดิมต้องเรียง รูป→เส้น→กล่อง (ภาพเหมือนเดิม)')
+    _r190=re.search(r"\nfunction _restorePages\(html\)\{[\s\S]*?\n\}", txt)
+    if not _r190 or '_zMigrateAll();' not in _r190.group(0): errors.append('lint #190: _restorePages ต้องเรียง หน้าจากร่างเก่า')
+    if txt.count('var _la=_zLatest(_all);')!=1 or txt.count('var _la=_zLatest(_al);')!=1: errors.append('lint #190: ชิ้นที่เพิ่มล่าสุดต้องใช้ data-seq (_zLatest) ไม่ใช่ตัวหลังสุดในหน้า')
+    if txt.count("setAttribute('data-seq',String(_zSeqNext()))")<4: errors.append('lint #190: ชิ้นที่เพิ่มใหม่ (กล่อง · เส้น · สำเนา) ต้องได้ data-seq')
+    for _id190 in ('btnZ','btnFlZ','btnImgZ'):
+        if txt.count('id="'+_id190+'"')!=1: errors.append('lint #190: ต้องมีปุ่ม #'+_id190+' 1 ปุ่ม')
+        if '#edbar #'+_id190+'.on,' not in _css: errors.append('lint #190: #'+_id190+' ต้องเขียวตอน .on')
+    if txt.count("if(typeof _zSync==='function') _zSync();")<2: errors.append('lint #190: _ftGroupSync + _imgReadout ต้องเรียก _zSync')
+    if "if(e.target.closest('#zDdPop'))return;" not in txt or "#edgeDdPop,#zDdPop,#epDdPop" not in txt: errors.append('lint #190: คลิกในรายการลำดับต้องไม่เลิกเลือกชิ้น/รูป')
+    if "clone.querySelector('#zDdPop')" not in txt or "'#zDdPop','#alignDdPop'" not in txt or "clone.querySelectorAll('[data-seq]')" not in txt: errors.append('lint #190: ต้อง strip รายการลำดับ + data-seq/data-zord ตอนบันทึก')
+    for _k190 in ('btn.zorder','ttl.zNeedSel','ttl.zorder','z.front','z.fwd','z.bwd','z.back','zs.front','zs.fwd','zs.bwd','zs.back','ttl.zAtFront','ttl.zAtBack','ttl.zNoFwd','ttl.zNoBwd','fl.zDone'):
+        if txt.count("'"+_k190+"':'")<2: errors.append('lint #190: i18n '+_k190+' ไม่ครบ TH+EN')
 
     # ---- report ----
     print("=" * 54)

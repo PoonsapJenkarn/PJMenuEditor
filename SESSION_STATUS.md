@@ -1,5 +1,22 @@
 # SESSION STATUS - PJ Menu Editor
 
+## git diff --stat ยืนยัน · 3 พ.ย. 2026 11:19
+- ผล: เห็นแค่ SESSION_STATUS.md (+13) · UI_STANDARD.md ไม่อยู่ใน diff = เนื้อหาตรงกับ repo ✅ (สถานะ modified มาจากขนาดไฟล์ที่ index จดไว้)
+- ถัดไป: ผู้ใช้รัน git add -A → git status (คาด: เหลือ SESSION_STATUS.md) → commit/push
+
+## git status เห็น UI_STANDARD.md modified · 3 พ.ย. 2026 11:11 — ผมทำนายผิด
+- ตรวจ .git/index + blob: เนื้อไฟล์บนดิสก์ sha f200ff45… = blob ใน index ตรงทุก byte (LF 185,192 bytes) · แต่ index ยังจดขนาดเดิม 185,725 (ตอนเป็น CRLF) = ข้อมูลขนาด/เวลาใน index ค้าง ไม่ใช่เนื้อหาเปลี่ยน
+- ยังไม่รู้แน่ว่าทำไม git status ไม่ล้างให้เอง · ให้ผู้ใช้รัน git diff --stat (คาดว่าเห็นแค่ SESSION_STATUS.md) แล้ว git add -A (รีเฟรช index) → git status ไม่ควรเห็น UI_STANDARD.md
+
+## UI_STANDARD.md แปลง CRLF → LF บนดิสก์ · 3 พ.ย. 2026 10:48
+- 533 บรรทัด CRLF → LF · ไม่มี CR เดี่ยว · เนื้อหาทุกบรรทัดเหมือนเดิม (assert) · 185725 → 185192 bytes
+- ใน repo เป็น LF อยู่แล้ว (.gitattributes eol=lf) → git status ไม่ควรเห็น UI_STANDARD.md · ไม่ต้อง commit (ยกเว้น SESSION_STATUS.md ที่บันทึกนี้)
+
+## #195 committed 5bfa8a4 (pushed) · 3 พ.ย. 2026 09:54
+- หัวข้อ lint ขึ้น 'PJ Menu Editor — pre-save lint' ✅
+- warning: UI_STANDARD.md CRLF will be replaced by LF — ตรวจ line ending บนดิสก์ (ดูผลในบันทึกถัดไป)
+- HEAD = 5bfa8a4 · ไม่มีงานค้าง commit
+
 ## ชื่อโปรแกรมเดิมที่เหลือ #195 · ขั้น 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 21:53 — รอ commit
 - ผู้ใช้เลือกครบ 4 กลุ่ม: log export app:'PJ Menu Editor' · lint banner 'PJ Menu Editor — pre-save lint' · หัว UI_STANDARD/.gitattributes/GF_Knowledge_Notes · หัวไฟล์นี้ (เดิม '# SESSION STATUS - OE Isan Menu Editor')
 - คงไว้: ชื่อร้านตัวอย่าง · บันทึก 'เดิมชื่อ …' · โค้ดย้ายร่าง · lint #194/#163/#70 · .gitignore รูปแบบเก่า · lint_oe.py/verify_oe.py · oe_* localStorage · โฟลเดอร์ C:\OE

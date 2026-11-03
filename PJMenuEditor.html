@@ -7115,7 +7115,7 @@ function _actlogCsv(arr){  /* BOM = Excel เปิดภาษาไทยถ�
   return '\ufeff'+rows.map(function(r){ return r.map(_csvCell).join(','); }).join('\r\n')+'\r\n';
 }
 function _actlogJson(arr){  /* type = ค่าดิบ (info/warning/error/edit) ใช้กรองต่อได้ · ts = มิลลิวินาที */
-  return JSON.stringify({app:'OE Isan Menu Editor', exported:_isoLocal(Date.now(),true), count:arr.length,
+  return JSON.stringify({app:'PJ Menu Editor', exported:_isoLocal(Date.now(),true), count:arr.length,
     entries:arr.map(function(e){ var o={time:_isoLocal(e.ts,true), ts:e.ts, type:e.type||'info', msg:_actlogText(e)}; if(e.m && e.m.k){ o.key=e.m.k; if(e.m.a) o.args=e.m.a; } return o; })},null,2)+'\n';
 }
 /* บันทึกไฟล์ออกจากแอป: ให้ผู้ใช้เลือกที่เก็บเองในหน้าต่าง Save ทุกครั้ง → ผู้ใช้รู้ว่าไฟล์อยู่ไหน

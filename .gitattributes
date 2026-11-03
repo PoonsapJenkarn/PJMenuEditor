@@ -1,4 +1,4 @@
-# OE Isan Menu — line-ending & diff policy
+# PJ Menu Editor — line-ending & diff policy
 # เป้าหมาย: repo เก็บ LF เหมือนกันทุกเครื่อง เลิก warning "LF will be replaced by CRLF" ถาวร
 
 # ค่าเริ่มต้น: ทุกไฟล์ text ให้ normalize เป็น LF (ทั้ง repo และ working dir)

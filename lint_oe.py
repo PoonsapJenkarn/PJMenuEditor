@@ -3884,9 +3884,24 @@ def main():
     for _g194 in ('PJMenuEditor_*.html','PJMenu_*.html','OEIsanHotpotMenuEditor_*.html'):
         if _g194 not in _gi194.split('\n'): errors.append('lint #194: .gitignore ต้องมี '+_g194)
     if 'OEIsanHotPotMenuEditor_' in _gi194: errors.append('lint #194: .gitignore สะกดผิด (P ใหญ่) OEIsanHotPotMenuEditor_')
+    # ---- 195) ชื่อโปรแกรม = PJ Menu Editor ทุกจุดที่คนเห็น (ผู้ใช้ 2 พ.ย. 2026): ไฟล์ประวัติที่ส่งออก · หัวข้อ lint · บรรทัดแรกของเอกสาร · ชื่อร้านตัวอย่าง โออี อีสาน คงไว้ (เป็นเนื้อหา ไม่ใช่ชื่อโปรแกรม) ----
+    _o195=('OE Isan'+' Menu Editor','OE'+' Menu Editor')
+    for _x195 in _o195:
+        if _x195 in txt: errors.append('lint #195: ยังมีชื่อโปรแกรมเดิม '+_x195+' ในไฟล์ — ใช้ PJ Menu Editor')
+    if "app:'PJ Menu Editor'" not in txt: errors.append('lint #195: ไฟล์ประวัติที่ส่งออกต้องระบุ app PJ Menu Editor')
+    _d195=os.path.dirname(PATH)
+    try:
+        with open(os.path.join(_d195,'lint_oe.py'),encoding='utf-8') as _f195: _ls195=_f195.read()
+    except Exception: _ls195=''
+    if 'print(" PJ Menu Editor — pre-save lint")' not in _ls195: errors.append('lint #195: หัวข้อ lint ต้องเป็น PJ Menu Editor — pre-save lint')
+    for _n195 in ('UI_STANDARD.md','.gitattributes','GF_Knowledge_Notes.md','SESSION_STATUS.md'):
+        try:
+            with open(os.path.join(_d195,_n195),encoding='utf-8') as _f195: _h195=_f195.readline()
+        except Exception: _h195=''
+        if 'OE Isan' in _h195 or 'OE Menu' in _h195 or 'PJ Menu Editor' not in _h195: errors.append('lint #195: บรรทัดแรกของ '+_n195+' ต้องใช้ชื่อ PJ Menu Editor')
     # ---- report ----
     print("=" * 54)
-    print(" OE Menu Editor — pre-save lint")
+    print(" PJ Menu Editor — pre-save lint")
     print("=" * 54)
     print(" ไฟล์:", os.path.basename(PATH), "({:,} bytes)".format(len(txt)))
     print(" braces {}:{}  parens {}:{}  <script>:{}/{}".format(

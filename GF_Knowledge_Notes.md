@@ -1,4 +1,4 @@
-# Google Fonts Knowledge — สรุปบทความ (เก็บไว้อ้างอิงโปรเจกต์ OE Isan Menu)
+# Google Fonts Knowledge — สรุปบทความ (เก็บไว้อ้างอิงโปรเจกต์ PJ Menu Editor)
 
 **ที่มา:** https://fonts.google.com/knowledge · อ่านผ่านเบราว์เซอร์บนเครื่อง TH-JH3W034 (หน้า render ด้วย JS) · สรุปโดย agent 15 ต.ค. 2026
 **License ต้นฉบับ:** เนื้อหา Knowledge เป็น CC BY-SA 4.0 ของ Google — โน้ตนี้สรุปด้วยคำของเราเอง ไม่ใช่สำเนา

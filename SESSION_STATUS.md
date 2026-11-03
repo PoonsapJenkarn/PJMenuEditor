@@ -1,4 +1,27 @@
-# SESSION STATUS - OE Isan Menu Editor
+# SESSION STATUS - PJ Menu Editor
+
+## ชื่อโปรแกรมเดิมที่เหลือ #195 · ขั้น 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 21:53 — รอ commit
+- ผู้ใช้เลือกครบ 4 กลุ่ม: log export app:'PJ Menu Editor' · lint banner 'PJ Menu Editor — pre-save lint' · หัว UI_STANDARD/.gitattributes/GF_Knowledge_Notes · หัวไฟล์นี้ (เดิม '# SESSION STATUS - OE Isan Menu Editor')
+- คงไว้: ชื่อร้านตัวอย่าง · บันทึก 'เดิมชื่อ …' · โค้ดย้ายร่าง · lint #194/#163/#70 · .gitignore รูปแบบเก่า · lint_oe.py/verify_oe.py · oe_* localStorage · โฟลเดอร์ C:\OE
+- lint #195: html ห้ามมี 'OE Isan Menu Editor'/'OE Menu Editor' · banner lint ต้อง PJ · บรรทัดแรกของ 4 เอกสารห้ามมี OE Isan/OE Menu
+- commit: git add -A / git commit -m "docs: เปลี่ยนชื่อโปรแกรมที่เหลือเป็น PJ Menu Editor (ประวัติที่ส่งออก · หัวข้อ lint · หัวเอกสาร) + lint #195" / git push
+
+## ตรวจชื่อเดิมที่เหลือ · ขั้น 1/2 ค้นหา · 2 พ.ย. 2026 21:51 — เสนอแล้ว รอเลือก (ยังไม่แก้)
+- ควรเปลี่ยน (ชื่อโปรแกรมที่คนเห็น): PJMenuEditor.html:7118 log export app:'OE Isan Menu Editor' · lint banner 'OE Menu Editor — pre-save lint' · UI_STANDARD.md:1 · .gitattributes:1 · SESSION_STATUS หัว · GF_Knowledge_Notes.md:1
+- คงไว้ (ชื่อร้านตัวอย่าง): หัวไฟล์ :4, <title>, alt โลโก้, README:3, UI_STANDARD:330, GF:93, คอมเมนต์ 'โลโก้ OE' :2921
+- คงไว้ (บันทึกการเปลี่ยนชื่อ/ทำงานจริง): 'เดิมชื่อ …' ใน README/STATUS_BAR_SPEC/lint/verify · โค้ดย้ายร่าง · lint #194/#163/#70 · .gitignore รูปแบบเก่า · OEIsanHotpotMenu_items.txt · mockup (gitignored) · ประวัติ SESSION_STATUS
+- ไม่แนะนำเปลี่ยน: lint_oe.py/verify_oe.py (pre-commit hook ใน .git/hooks ไม่อยู่ใน git) · localStorage oe_* (ค่าตั้งหาย) · โฟลเดอร์ C:\OE · OE_BROWSER
+
+## #194 F12 ตรวจแล้ว · 2 พ.ย. 2026 21:48
+- ผู้ใช้: เปิด C:/OE/PJMenuEditor.html → F12 Console "No issues" ✅ · แถบล่าง: บันทึกไฟล์ Editor แล้ว PJMenuEditor_20261102-195118.html ✅
+- ยังไม่มีภาพยืนยัน: Save Menu (PJMenu_<ts>.html) · ร่าง/ประวัติย้ายจากชื่อเดิม
+- HEAD = e3e7a1b · ไม่มีงานค้าง commit · งานถัดไปที่เสนอ: ตาราง (ขั้น D) / ตรวจชื่อเดิมที่ยังเหลือ
+
+## รอบ 7/7 #194 committed e3e7a1b (pushed) · 2 พ.ย. 2026 19:52 — แผน 7 รอบครบ
+- git status: renamed OEIsanHotpotMenuEditor.html -> PJMenuEditor.html (99%) ✅
+- ภาพยืนยัน: เปิด C:/OE/PJMenuEditor.html ได้ · Save Editor = PJMenuEditor_20261102-195118.html ✅ · PDF = PJMenu_20261102-195141.pdf ✅
+- ยังไม่มีภาพยืนยัน: Save Menu (PJMenu_<ts>.html) · ร่าง/ประวัติย้ายจากชื่อเดิม (ไม่เห็นแถบกู้ร่าง = อาจไม่มีร่างค้าง) · F12
+- HEAD = e3e7a1b · งานค้างเดิม: ตาราง (ขั้น D)
 
 ## รอบ 7/7 #194 เปลี่ยนชื่อไฟล์ · ขั้น 2/2 แก้แล้ว + lint ผ่าน · 2 พ.ย. 2026 19:43 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
 - **ไฟล์หลักตอนนี้ = C:\OE\PJMenuEditor.html** (ลบ OEIsanHotpotMenuEditor.html แล้ว · เนื้อเหมือนเดิม + แก้ชื่อ Save)

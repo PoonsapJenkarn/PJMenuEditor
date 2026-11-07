@@ -1,5 +1,37 @@
 # SESSION STATUS - PJ Menu Editor
 
+## ตาราง D1 · ขั้น 2a เสร็จ + lint #196 ผ่าน · 6 พ.ย. 2026 21:04 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
+- 2a: ปุ่ม ตาราง ▾ (#btnTblAdd) กลุ่มแทรก แท็บข้อความ · #tblPickPop 10×6 (เมาส์/ลูกศร+Enter/Esc · keydown ที่ window capture) · ftextAdd(tbl) data-ftbl + table.fttbl · กว้าง c×25 ≤186 · พิมพ์ทีละ td (_tblEditStart) · Tab/Shift+Tab (_tblTab) · Tab ช่องสุดท้ายเพิ่มแถว · วาง/ลาก = ข้อความล้วน · ตารางว่างไม่ลบเอง · strip td contenteditable 3 จุด + คลิปบอร์ด · board mode เส้นเทา · ป้ายเปลี่ยนภาษา (_tblPickRelang ใน applyLang)
+- lint: regex ftextAdd\(\) → ([^)]*) 7 จุด · #176 ข้อความเตือนแยกตาราง · #20 ยกเว้น _tblPickHl (มี relang) · #tblPickPop แทรกตำแหน่งที่ไม่ชน lint #189/#190
+- html 8,621,141 bytes · new rc0 / old rc1 · lint บนดิสก์ rc0
+- ถัดไป 2b: กลุ่ม ตาราง (เพิ่ม ▾ บน/ล่าง/ซ้าย/ขวา · ลบ ▾ แถว/คอลัมน์ · เส้นตาราง ▾ ทุกเส้น/แนวนอน/ไม่มี) · ยังไม่ commit จนกว่า 2a ผ่าน
+- commit 2a (ถ้าผ่าน): git add -A / git commit -m "feat: ตาราง D1 ขั้น 2a — ปุ่ม ตาราง ▾ เลือกขนาด · พิมพ์ทีละช่อง · Tab ข้ามช่อง/เพิ่มแถว · วางเป็นข้อความล้วน + lint #196" / git push
+
+## ตาราง D1 · ขั้น 1/3 อ่านโค้ดเสร็จ · 6 พ.ย. 2026 20:56 — แผนพร้อม ยังไม่แก้ (lint ถัดไป #196)
+- ผู้ใช้เลือก: ตารางช่องเล็กลากเลือก (10 แถว × 6 คอลัมน์) · เส้นตั้งต้น = ทุกเส้น · D1 ก่อน D2
+- โครง: .ftext[data-ftbl] + .ftxt > table.fttbl > tbody > tr > td · ftextAdd(tbl) ใช้ที่วางเดิม (ref/เส้นล่าสุด/กลางจอ) · กว้าง max(w, c*25) ≤186 · data-seq/_ftDefApply/เตือนเลยขอบ ได้ตามเดิม
+- พิมพ์: _ftStartEdit แยกก่อน x.setAttribute(contenteditable) → _tblEditStart: td ทุกช่อง contenteditable (แต่ละช่องเป็น editing host = ลบ/วางข้ามช่องไม่ได้) · ช่องจาก elementFromPoint · _ftStopEdit ถอด td contenteditable + กล่องว่างที่มี table ไม่ลบ
+- Tab/Shift+Tab (capture keydown, ข้ามเมื่อ _dd เปิด) · Tab ช่องสุดท้าย = เพิ่มแถว · Tab เลือกเนื้อหาช่องแบบ Word · paste ใน td = ข้อความล้วน (กันตารางซ้อน)
+- ริบบอน: แทรก → ปุ่ม ตาราง ▾ (#btnTblAdd · #tblPickPop) · กลุ่มใหม่ ตาราง (rg-neededit): เพิ่ม ▾ (บน/ล่าง/ซ้าย/ขวา) · ลบ ▾ (แถว/คอลัมน์) · เส้นตาราง ▾ (ทุกเส้น/แนวนอน/ไม่มี) ใช้ _ddOpen pop #tblDdPop · จางพร้อม tooltip เหตุผล · คอลัมน์สูงสุด 10 · เหลือ 1 แถว/คอลัมน์ ลบไม่ได้
+- ช่องปัจจุบัน: selection ใน td ของ _ftEdit หรือ _tblLastTd (focusin) — กดปุ่มริบบอนแล้ว focus หลุด
+- ต้องเพิ่ม #tblDdPop/#tblPickPop ในทุกจุดที่มี #zDdPop: CSS 5 กฎร่วม + print + clone remove (7857831) + build list (7860991) + mousedown _flMd (8085652) + ftext (8098687) + click typo (8346459)
+- strip: 3 จุด 'var _fx=el.querySelector(.ftxt)…' → ถอด contenteditable ทั้ง .ftxt และ td · clip clone ด้วย
+- CSS: border-collapse/table-layout fixed/width 100% · td 1px var(--note-bd) · [data-tbln=h] ไม่มีเส้นตั้ง · [none] โปร่ง + เส้นประเฉพาะ @media screen editmode · ช่องที่พิมพ์ = กรอบเขียว (screen) · boardmode :not([data-tbln=none])
+- ปุ่ม .on เขียว: เพิ่ม 4 id ในรายการ bg/svg/span ต่อจาก #btnImgZ.on
+- i18n TH/EN แทรกก่อน 'st.ftextEditUp' ทั้ง 2 ภาษา
+
+## ตาราง (ขั้น D) · ขั้น 1/2 อ่านโค้ด+เสนอ · 6 พ.ย. 2026 08:17 — รอตัดสิน (ยังไม่แก้)
+- บันทึกเดิม 27 ต.ค.: ขั้น D ตัดสินใจหลังลอง A–C · ยากสุด = แก้ช่อง/เพิ่มลบแถวคอลัมน์/ลากกว้าง · แบบ Word (โครงหลัก + ของลอย) ไม่ใช่ Canva
+- เสนอโครง: ตาราง = กล่องข้อความชนิดหนึ่ง (.ftext[data-ftbl] + <table> ใน .ftxt) → ได้ลาก/ยืด/ลำดับ/คลิปบอร์ด/จัดแนว/กลุ่ม/ขอบพื้นมุมโค้ง/ตั้งค่าเริ่มต้น/Save/พิมพ์/Undo จากของเดิม ไม่ต้องเขียนซ้ำ
+- ต้องเขียนใหม่: พิมพ์ทีละช่อง (contenteditable ที่ td แทน .ftxt กันโครงตารางพัง) · Tab/Shift+Tab ข้ามช่อง · Tab ช่องสุดท้าย = เพิ่มแถว · แทรก/ลบ แถว-คอลัมน์ · เส้นตาราง · กล่องตารางว่างไม่ลบเอง
+- เสนอแบ่ง D1 (สร้าง/พิมพ์/Tab/แถว-คอลัมน์/เส้น) · D2 (ลากกว้างคอลัมน์/จัดชิดรายคอลัมน์/แถวหัว) · ไม่ทำ: รวมช่อง (merge)
+- คำถาม: ขอบเขตรอบแรก · วิธีสร้าง · เส้นตั้งต้น
+
+## ตรวจสถานะ repo · 5 พ.ย. 2026 11:28
+- .git/logs/HEAD: commit 26ba2fd 'docs: บันทึกแปลง UI_STANDARD.md เป็น LF บนดิสก์' ทำไปแล้วเมื่อ 3 พ.ย. 2026 11:27 (+07) · วันนี้ git status = working tree clean · git push = Everything up-to-date → push แล้ว
+- HEAD = 26ba2fd · บันทึกนี้จะไปกับ commit ถัดไป (ไม่ต้อง commit แยก)
+- ยังไม่ยืนยัน: ร่าง/ประวัติย้ายจากชื่อเดิม (#194) · งานพักไว้: ตาราง (ขั้น D)
+
 ## git diff --stat ยืนยัน · 3 พ.ย. 2026 11:19
 - ผล: เห็นแค่ SESSION_STATUS.md (+13) · UI_STANDARD.md ไม่อยู่ใน diff = เนื้อหาตรงกับ repo ✅ (สถานะ modified มาจากขนาดไฟล์ที่ index จดไว้)
 - ถัดไป: ผู้ใช้รัน git add -A → git status (คาด: เหลือ SESSION_STATUS.md) → commit/push

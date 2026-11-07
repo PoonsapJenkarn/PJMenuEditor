@@ -269,6 +269,7 @@ def main():
             if _st < _m.start(): _own = _nm
             else: break
         if _own in _hooks: continue
+        if _own == '_tblPickHl' and "if(typeof _tblPickRelang==='function') _tblPickRelang();" in txt: continue  # ป้ายขนาดตารางช่องเล็ก: applyLang เรียก _tblPickRelang → _tblPickHl สร้างใหม่ (lint #196)
         _po = _js.rfind('openPanel(', 0, _m.start()); _inpanel = False
         if _po >= 0:
             _d = 0; _q = _po + len('openPanel')
@@ -3058,7 +3059,7 @@ def main():
         errors.append('lint #139: เลิกเลือกกล่องต้องปล่อยแถบรูปแบบ')
 
     # ---- 140) เพิ่มกล่องข้อความ = อยู่แท็บเดิม เลือกกล่อง (ไม่พิมพ์) · ดับเบิลคลิก/Enter = พิมพ์ + ไปแท็บรูปแบบข้อความ (ผู้ใช้ 28 ต.ค. 2026) ----
-    _fa140=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa140=_fa140.group(0) if _fa140 else ''
+    _fa140=re.search(r'function ftextAdd\([^)]*\)\{[\s\S]*?\n\}', txt); _fa140=_fa140.group(0) if _fa140 else ''
     if 'toggleEdit(true);' not in _fa140 or '_ftSelect(box);' not in _fa140 or '_ftStartEdit(' in _fa140:
         errors.append('lint #140: ftextAdd ต้องเข้าโหมดโดยไม่สลับแท็บ + แค่เลือกกล่อง (ห้ามเริ่มพิมพ์เอง)')
     if 'function toggleEdit(keepTab){' not in txt:
@@ -3072,7 +3073,7 @@ def main():
     # ---- 141) เลือกกล่องกลางแถวแล้วเพิ่ม = แทรกตรงนั้น ดันกล่องที่ต่อกันข้างล่างลง (ไม่ทับ) · เลยขอบพิมพ์ = เตือน (ผู้ใช้ 28 ต.ค. 2026) ----
     if 'function _ftChainBelow(ref,px){' not in txt or 'Math.abs(s.t-(c.t+c.h))<=0.5 && s.l<c.l+c.w && c.l<s.l+s.w' not in txt:
         errors.append('lint #141: ต้องมี _ftChainBelow หากล่องที่ต่อกันลงไป (คลาด ≤0.5mm + ซ้อนแนวนอน)')
-    _fa141=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa141=_fa141.group(0) if _fa141 else ''
+    _fa141=re.search(r'function ftextAdd\([^)]*\)\{[\s\S]*?\n\}', txt); _fa141=_fa141.group(0) if _fa141 else ''
     if '_ch=_ftChainBelow(ref,pxmm);' not in _fa141 or "b.style.top=(_ftNum(b.style.top)+_nh).toFixed(1)+'mm';" not in _fa141:
         errors.append('lint #141: ftextAdd ต้องแทรกใต้กล่องที่เลือก แล้วดันกล่องที่ต่อกันข้างล่างลงเท่าความสูงกล่องใหม่')
     if _fa141.find('pg.appendChild(box);')>_fa141.find('var _nh=box.getBoundingClientRect()'):
@@ -3085,7 +3086,7 @@ def main():
         errors.append('lint #142: ต้องมี _blankFit (หน้ายืดตามกล่อง/เส้นลอย · ปุ่มลบหน้าย้ายออกนอกกระดาษ ดู #178)')
     for _c142,_m142 in (("_restorePages(_lastSnap); _blankFitAll(); _dirty=true;",'undo/redo'),("if(D.moved) _blankFitAll();",'ลาก/ยืดกล่อง'),("_blankFitAll(); markDirty(); _revealEl(box); if(_over)",'เพิ่มกล่อง'),("if(typeof _blankFitAll==='function') _blankFitAll();  /* เข้าโหมด",'เข้า/ออกโหมด')):
         if _c142 not in txt: errors.append('lint #142: ต้องจัดหน้าเปล่าใหม่หลัง '+_m142)
-    _fa142=re.search(r'function ftextAdd\(\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
+    _fa142=re.search(r'function ftextAdd\([^)]*\)\{[\s\S]*?\n\}', txt); _fa142=_fa142.group(0) if _fa142 else ''
     if "if(_ftNum(box.style.top)+box.getBoundingClientRect().height/pxmm>_PT_B+0.05){ box.remove();" not in _fa142:
         errors.append('lint #142: กล่องใหม่เลยขอบพิมพ์ล่างต้องไม่เพิ่ม + เตือน (แทนการเยื้อง 5mm · กดเพิ่มไม่เลยขอบพิมพ์ ผู้ใช้ 31 ต.ค. 2026 · ดู #176)')
 
@@ -3566,7 +3567,7 @@ def main():
     _ca168=re.search(r"\nfunction _ftDefCapture\(x\)\{[\s\S]*?\n\}", txt)
     if not _ca168 or '_FB_ATTR.forEach' not in _ca168.group(0) or 'fmt:_typoCaptureFormat(x)' not in _ca168.group(0): errors.append('lint #168: _ftDefCapture ต้องเก็บตัวอักษรด้วย _typoCaptureFormat (รวมสีที่ทาโดยไฮไลท์) และขอบ/พื้น (_FB_ATTR)')
     if '_FT_DEF_PROPS' in txt: errors.append('lint #168: _FT_DEF_PROPS ไม่ใช้แล้ว (ขยะ)')
-    _fa168=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _f168=_fa168.group(0) if _fa168 else ''
+    _fa168=re.search(r"\nfunction ftextAdd\([^)]*\)\{[\s\S]*?\n\}", txt); _f168=_fa168.group(0) if _fa168 else ''
     _ap168=_f168.find('_ftDefApply(box,x);'); _pa168=_f168.find('pg.appendChild(box);'); _ov168=_f168.find('var _over=false;')
     if not (0<=_pa168<_ap168<_ov168): errors.append('lint #168: ftextAdd ต้องเรียก _ftDefApply(box,x) หลัง pg.appendChild(box) และก่อนวัดความสูง (var _over)')
     _da168=re.search(r"\nfunction _ftDefApply\(box,x\)\{[\s\S]*?\n\}", txt)
@@ -3670,7 +3671,7 @@ def main():
     _fr175=re.search(r"\nfunction _revealEl\(el\)\{[\s\S]*?\n\}", txt); _r175=_fr175.group(0) if _fr175 else ''
     for _n175 in ("getElementById('edbar')","getElementById('edstatus')","_scrollKeepTo("):
         if _n175 not in _r175: errors.append('lint #175: _revealEl ขาด '+_n175)
-    _fl175=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _ft175=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt)
+    _fl175=re.search(r"\nfunction flineAdd\(\)\{[\s\S]*?\n\}", txt); _ft175=re.search(r"\nfunction ftextAdd\([^)]*\)\{[\s\S]*?\n\}", txt)
     if not _fl175 or '_revealEl(l);' not in _fl175.group(0): errors.append('lint #175: flineAdd ต้องเรียก _revealEl(l)')
     if not _ft175 or '_revealEl(box);' not in _ft175.group(0): errors.append('lint #175: ftextAdd ต้องเรียก _revealEl(box)')
 
@@ -3678,8 +3679,8 @@ def main():
     if 'var _PT_B=294, _PT_R=207;' not in txt: errors.append('lint #176: ขอบกระดาษที่วางได้ต้องเป็น _PT_B=294 / _PT_R=207 (เว้น 3 มม.)')
     for _j176 in ('_ptLim','D.clamped','fl.dragPrintStop'):
         if _j176 in txt: errors.append('lint #176: ลาก/ลูกศรต้องอิสระทุกทิศ ห้ามมี '+_j176+' (ผู้ใช้ 31 ต.ค. 2026)')
-    _ft176=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _t176=_ft176.group(0) if _ft176 else ''
-    if "box.remove(); _blankFitAll(); flashStatus('warning',tk('fl.ftextFull')); return; }" not in _t176 or '_PT_B+0.05) _over=true;' not in _t176: errors.append('lint #176: ftextAdd กล่องใหม่เลยขอบกระดาษต้องไม่เพิ่ม + เตือน · ดันกล่องล่างใช้ _PT_B')
+    _ft176=re.search(r"\nfunction ftextAdd\([^)]*\)\{[\s\S]*?\n\}", txt); _t176=_ft176.group(0) if _ft176 else ''
+    if "box.remove(); _blankFitAll(); flashStatus('warning',tk(tbl?'fl.tblFull':'fl.ftextFull')); return; }" not in _t176 or '_PT_B+0.05) _over=true;' not in _t176: errors.append('lint #176: ftextAdd กล่องใหม่เลยขอบกระดาษต้องไม่เพิ่ม + เตือน · ดันกล่องล่างใช้ _PT_B')
     if 'height/px>_PT_B+0.05;' not in txt or 'function _flOverCheck(L){' not in txt: errors.append('lint #176: เตือนเลยขอบล่างต้องใช้ _PT_B ทั้งกล่อง (_ftOverCheck) และเส้น (_flOverCheck)')
     if txt.count('_flOverCheck(')<5: errors.append('lint #176: ต้องเรียก _flOverCheck หลังลากเส้น/ลากชุดปนกล่อง/ลูกศรเส้น/ลูกศรกล่อง')
     if re.search(r">289\+0\.05", txt): errors.append('lint #176: ห้ามใช้ 289 เป็นขอบเตือนแล้ว ใช้ _PT_B')
@@ -3690,7 +3691,7 @@ def main():
         if txt.count("'"+_k176+"':'")<2: errors.append('lint #176: i18n '+_k176+' ไม่ครบ TH+EN')
 
     # ---- 177) เพิ่มกล่อง/เส้นตอนไม่ได้เลือกอะไร = ต่อจากชิ้นที่เพิ่มล่าสุดในหน้า กล่องหรือเส้นก็ได้ (บั๊ก 31 ต.ค. 2026: เพิ่มกล่องแล้วเพิ่มเส้น = ทับกัน · ผู้ใช้เลือกแบบ ก) ----
-    _ft177=re.search(r"\nfunction ftextAdd\(\)\{[\s\S]*?\n\}", txt); _t177=_ft177.group(0) if _ft177 else ''
+    _ft177=re.search(r"\nfunction ftextAdd\([^)]*\)\{[\s\S]*?\n\}", txt); _t177=_ft177.group(0) if _ft177 else ''
     if "var _lref=null; if(!ref){ var _all=pg.querySelectorAll('.ftext,.fline');" not in _t177 or "} else if(_lref){ var _lo=_flGet(_lref)" not in _t177: errors.append('lint #177: ftextAdd ไม่ได้เลือก ต้องต่อจากชิ้นล่าสุดในหน้า (เส้นล่าสุด = ต่อใต้เส้น)')
     if "querySelectorAll('.ftext'); if(_all.length) ref=_all[_all.length-1];" in txt or "querySelectorAll('.fline'); if(_al.length) ref=_al[_al.length-1];" in txt: errors.append('lint #177: ห้ามกลับไปดูแค่ชนิดเดียวกัน (กล่องดูแค่กล่อง / เส้นดูแค่เส้น = ทับกัน)')
 
@@ -3899,6 +3900,23 @@ def main():
             with open(os.path.join(_d195,_n195),encoding='utf-8') as _f195: _h195=_f195.readline()
         except Exception: _h195=''
         if 'OE Isan' in _h195 or 'OE Menu' in _h195 or 'PJ Menu Editor' not in _h195: errors.append('lint #195: บรรทัดแรกของ '+_n195+' ต้องใช้ชื่อ PJ Menu Editor')
+    # ---- 196) ตาราง D1 (ผู้ใช้ 6 พ.ย. 2026): กล่องข้อความชนิดตาราง · ปุ่ม ตาราง ▾ ในกลุ่มแทรก (ช่องเล็ก 10×6) · พิมพ์ทีละช่อง · Tab/Shift+Tab · Tab ช่องสุดท้ายเพิ่มแถว · วาง/ลาก = ข้อความล้วน ----
+    _ia196=txt.find('id="btnFlineAddFmt"'); _ib196=txt.find('id="btnTblAdd"'); _ic196=txt.find('data-i18n="grp.insert"',_ia196)
+    if not (0<_ia196<_ib196<_ic196) or txt.count('id="btnTblAdd"')!=1 or 'onclick="tblPickToggle(event)"' not in txt: errors.append('lint #196: ปุ่ม ตาราง ▾ (#btnTblAdd) ต้องอยู่กลุ่มแทรกของแท็บข้อความ ต่อจากปุ่มเส้น')
+    for _f196 in ('function _tblOf(box){','function _tblTdOf(n){','function _tblBuild(r,c){','function _tblEditStart(box,cx,cy){','function _tblTab(e){','function tblPickToggle(e){','function _tblPickOpen(){','function _tblPickClose(){','function _tblPickKey(e){','function ftextAdd(tbl){'):
+        if _f196 not in txt: errors.append('lint #196: ไม่พบ '+_f196)
+    if "window.addEventListener('keydown',_tblPickKey,true);" not in txt: errors.append('lint #196: ปุ่มลัดของตารางช่องเล็กต้องดักที่ window (ก่อนปุ่มลัดกล่องข้อความ)')
+    if "box.setAttribute('data-ftbl','1'); x.appendChild(_tblBuild(tbl.r,tbl.c));" not in txt or 'w=Math.min(186,tbl.c*25); if(!ref && !_lref) left=(210-w)/2;' not in txt: errors.append('lint #196: ftextAdd ต้องสร้างตาราง (data-ftbl + _tblBuild) กว้างคอลัมน์ละ 25 มม. ไม่เกินขอบพิมพ์')
+    if "if(_tblOf(box)){ _tblEditStart(box,cx,cy); return; }" not in txt or "if(x && !_tblOf(b) &&" not in txt or "x.querySelectorAll('td[contenteditable]')" not in txt: errors.append('lint #196: เริ่ม/เลิกพิมพ์ต้องแยกตาราง (พิมพ์ทีละช่อง · ถอด contenteditable ทุกช่อง · ตารางว่างไม่ลบเอง)')
+    if "var _fx=el.querySelector('.ftxt'); if(_fx) _fx.removeAttribute('contenteditable');" in txt or txt.count("el.querySelectorAll('.ftxt,.ftxt td').forEach(function(_fx){ _fx.removeAttribute('contenteditable'); });")!=3 or "c.querySelectorAll('.ftxt,.ftxt td').forEach(function(x){ x.removeAttribute('contenteditable'); });" not in txt: errors.append('lint #196: contenteditable ของช่องตารางต้องถูกตัดตอน snapshot · Save Editor · Save Menu · คัดลอก')
+    if "if(e.key==='Tab' && _tblTab(e)) return;" not in txt: errors.append('lint #196: Tab/Shift+Tab ต้องข้ามช่องตาราง')
+    if "var td=_tblTdOf(e.target); if(!td) return; var cd=e.clipboardData;" not in txt or "document.addEventListener('drop',function(e){ var td=_tblTdOf(e.target);" not in txt: errors.append('lint #196: วาง/ลากลงช่องตารางต้องเป็นข้อความล้วน')
+    if txt.count('#alignDdPop,#calModal,#aboutModal,.cp-pop,#tblPickPop')!=2 or "ev.target.closest('#tblPickPop')" not in txt or "clone.querySelector('#tblPickPop')" not in txt or "'#pasteModal','#tblPickPop','#zDdPop'," not in txt: errors.append('lint #196: #tblPickPop ต้องอยู่ในรายการเครื่องมือ (ไม่เลิกเลือก) + ตัดตอนบันทึก')
+    for _c196 in ('.fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}','.fttbl td{border:1px solid var(--note-bd);','@media print{#tblPickPop{display:none !important;}}','#tblPickPop .tp-c.hl{',':root body.boardmode .fttbl:not([data-tbln="none"]) td{','#edbar #btnTblAdd.on,','#edbar #btnTblAdd.on svg,','#edbar #btnTblAdd.on span{'):
+        if _c196 not in txt: errors.append('lint #196: CSS ขาด '+_c196[:50])
+    for _k196 in ('btn.tblAdd','ttl.tblAdd','tbl.pickLbl','fl.tblAdd','fl.tblFull','fl.tblRowAdd','st.tblEdit','st.tblEditUp'):
+        if txt.count("'"+_k196+"':'")<2: errors.append('lint #196: i18n '+_k196+' ไม่ครบ TH+EN')
+    if "function _tblPickRelang(){ if(_tblPk) _tblPickHl(_tblPk.r,_tblPk.c); }" not in txt or "if(typeof _tblPickRelang==='function') _tblPickRelang();" not in txt: errors.append('lint #196: ป้ายขนาดตารางช่องเล็กต้องเปลี่ยนตาม TH/EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

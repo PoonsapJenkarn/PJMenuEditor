@@ -3948,6 +3948,20 @@ def main():
     if "'tbl.pickLbl':'{r} rows × {c} columns'" in txt: errors.append('lint #198: ป้าย EN ห้าม rows/columns ตายตัว (1 rows ผิดไวยากรณ์)')
     for _k198 in ('grp.tbl','btn.tblIns','btn.tblDel','btn.tblLn','ttl.tblIns','ttl.tblDel','ttl.tblLn','ttl.tblNeed','ttl.tblNeedCell','tbl.ins.above','tbl.ins.below','tbl.ins.left','tbl.ins.right','tbl.del.row','tbl.del.col','tbl.ln.all','tbl.ln.h','tbl.ln.none','ttl.tblMaxCol','ttl.tblOneRow','ttl.tblOneCol','fl.tblInsRow','fl.tblInsCol','fl.tblDelRow','fl.tblDelCol','fl.tblLn'):
         if txt.count("'"+_k198+"':'")<2: errors.append('lint #198: i18n '+_k198+' ไม่ครบ TH+EN')
+    # ---- 199) ตาราง D2a (ผู้ใช้ 7 พ.ย. 2026): ลากเส้นแบ่งคอลัมน์ปรับความกว้าง (colgroup %) · 2 คอลัมน์ปรับกัน ตารางกว้างเท่าเดิม · ต่ำสุด 5 มม. · แทรกคอลัมน์ = แบ่งครึ่ง · ลบ = ให้ข้างเคียง · คอลัมน์กว้างเท่ากัน ----
+    for _f199 in ('function _tblCg(T){','function _tblColsEnsure(T){','function _tblColHit(e){','function _tblColHov(on){',"document.addEventListener('mousedown',function _tblColMd(e){","document.addEventListener('mousemove',function _tblColMm(e){","document.addEventListener('mouseup',function _tblColMu(){"):
+        if _f199 not in txt: errors.append('lint #199: ไม่พบ '+_f199)
+    _md199=txt.find("document.addEventListener('mousedown',function _tblColMd(e){"); _fb199=txt.find("var box=tg.closest('.ftext'); if(!box){ var _ovb=tg.closest('.selov.ovft');")
+    if not (0<=_md199<_fb199): errors.append('lint #199: ตัวลากเส้นแบ่งคอลัมน์ต้องลงทะเบียนก่อนตัวจับเมาส์ของกล่องข้อความ (ได้คลิกก่อน)')
+    if 'e.preventDefault(); e.stopImmediatePropagation();' not in txt[_md199:_md199+400]: errors.append('lint #199: จับเส้นแบ่งคอลัมน์ต้องหยุดไม่ให้กล่องข้อความเริ่มลากย้าย')
+    if '_TBL_COLMIN=5' not in txt or 'nl=Math.max(mn,Math.min(sum-mn,nl));' not in txt: errors.append('lint #199: คอลัมน์ต่ำสุด 5 มม. และผลรวม 2 คอลัมน์ต้องเท่าเดิม')
+    if '|| _tblColHit(e)) return;' not in txt: errors.append('lint #199: ดับเบิลคลิกเส้นแบ่งคอลัมน์ต้องไม่เข้าพิมพ์')
+    if "_c.style.width=(_w/2).toFixed(3)+'%'; _n.style.width=(_w/2).toFixed(3)+'%';" not in txt or "if(_nb) _nb.style.width=((parseFloat(_nb.style.width)||0)+_dw).toFixed(3)+'%'; _dc.remove();" not in txt: errors.append('lint #199: แทรกคอลัมน์ = แบ่งครึ่ง · ลบคอลัมน์ = ให้ข้างเคียง (colgroup)')
+    if "ln:['all','h','none','eq']}" not in txt or "if(kind==='ln' && v==='eq'){" not in txt or "(v==='eq' && !_tblCg(C.T))?'ttl.tblEqDone':null" not in txt: errors.append('lint #199: ต้องมี คอลัมน์กว้างเท่ากัน (จางเมื่อยังไม่เคยลาก)')
+    if txt.count("if(_bfl) _bfl.classList.remove('tblcolrz');")!=2: errors.append('lint #199: class ชี้เส้นแบ่งคอลัมน์ (tblcolrz) ต้องถูกตัดตอน Save Editor/Save Menu')
+    if '@media screen{body.editmode.tblcolrz .ftext[data-ftbl],body.editmode.tblcolrz .ftext[data-ftbl] *{cursor:col-resize !important;}}' not in _css: errors.append('lint #199: ชี้เส้นแบ่งคอลัมน์ต้องเปลี่ยนเคอร์เซอร์ (เฉพาะจอ)')
+    for _k199 in ('tbl.ln.eq','ttl.tblEqDone','fl.tblEq','fl.tblColW'):
+        if txt.count("'"+_k199+"':'")<2: errors.append('lint #199: i18n '+_k199+' ไม่ครบ TH+EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

@@ -571,8 +571,9 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
 
 /* ===== กล่องข้อความลอย (ผู้ใช้ 27 ต.ค. 2026 ขั้น B · แบบ PowerPoint: คลิก = เลือก · ดับเบิลคลิก = พิมพ์) =====
    อยู่ใน .page (absolute · mm) · ใช้งานในโหมดแก้ข้อความ · สีเริ่มต้นตามธีม (--txt-name) · ความสูงโตตามข้อความ (min-height = ที่ยืดไว้) */
-.ftext{position:absolute;z-index:20;box-sizing:border-box;padding:1.5mm 2mm;color:var(--txt-name);font-size:16px;line-height:1.35;pointer-events:none;overflow-wrap:anywhere;word-break:break-word;}
+.ftext{position:absolute;z-index:20;box-sizing:border-box;padding:1.5mm 2mm;color:var(--ft-txt,var(--txt-name));font-size:16px;line-height:1.35;pointer-events:none;overflow-wrap:anywhere;word-break:break-word;}
 .ftext .ftxt{outline:none;white-space:pre-wrap;min-height:1.35em;}
+.ftext[data-fgc="theme"]{color:var(--txt-name);}.ftext .ftxt:not([style*="color:"]) .fttbl[data-thd] tr:first-child > td{color:var(--txt-name);}  /* สีตัวอักษรกล่องข้อความ (บั๊ก 7 พ.ย. 2026 · lint #202): ไม่มีพื้น = ตัวอักษรอยู่บนกระดาษ → --ft-txt (_ftTxtAuto: ธีมที่สีชื่อเมนูอ่านไม่ออกบนกระดาษ เช่นธีมเข้ม = ใช้สีตัวอักษรตามกระดาษ --page-txt) · พื้นตามธีม / แถวหัวตาราง = อยู่บนสีของธีม → --txt-name คู่สีที่ธีมออกแบบไว้ · สีที่ผู้ใช้ตั้งเอง (inline) ชนะเสมอ */
 .fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}  /* ตาราง (ขั้น D1 · ผู้ใช้ 6 พ.ย. 2026 · lint #196): อยู่ใน .ftxt ของกล่องข้อความ · คอลัมน์กว้างเท่ากัน (ลากปรับ = D2) · เส้นตั้งต้น = ทุกเส้นสีตามธีม */
 .fttbl td{border:1px solid var(--note-bd);padding:1mm 1.5mm;height:calc(1.35em + 2mm);box-sizing:border-box;vertical-align:top;overflow-wrap:anywhere;word-break:break-word;outline:none;}
 .fttbl[data-tbln="h"] td{border-left-style:none;border-right-style:none;}  /* เส้นตาราง: แนวนอนอย่างเดียว (lint #198) */
@@ -6387,6 +6388,15 @@ function _paperTextAuto(hex){
   var light=minCr(_PAPER_TXT_LIGHT)>minCr(_PAPER_TXT_DARK);
   for(var k in _PAPER_TXT_LIGHT){ if(light) he.style.setProperty('--'+k,_PAPER_TXT_LIGHT[k]); else he.style.removeProperty('--'+k); }
 }
+/* สีตัวอักษรกล่องข้อความบนกระดาษ (บั๊ก 7 พ.ย. 2026 · lint #202): ธีมเข้มสีชื่อเมนู (--txt-name) อ่อน ออกแบบไว้บนพื้นกลุ่มสีเข้ม · กล่องข้อความไม่มีพื้นอยู่บนกระดาษครีม = อ่านไม่ออก
+   contrast(--txt-name, --page-bg) < 4.5 (WCAG AA) → --ft-txt = สีตัวอักษรตามกระดาษ (--page-txt สลับเข้ม-อ่อนอยู่แล้ว) · อ่านออก = ไม่ตั้ง (ใช้ --txt-name เหมือนเดิม ธีมสว่างภาพไม่เปลี่ยน)
+   ตรวจทุกครั้งที่ data-theme / style ของ <html> เปลี่ยน (เลือกธีม · ชี้ดูธีม · ธีมกำหนดเอง · สีกระดาษ) + ตอนเปิดไฟล์ · ค่าติดไฟล์ (inline บน <html>) = Save Menu ออกเหมือนจอ */
+function _ftTxtAuto(){ var he=document.documentElement, cs=getComputedStyle(he), tn=_normHex(cs.getPropertyValue('--txt-name').trim()), pb=_normHex(cs.getPropertyValue('--page-bg').trim());
+  var want=(tn && pb && _paperCr(tn,pb)<4.5)?'var(--page-txt)':'', cur=he.style.getPropertyValue('--ft-txt').trim();
+  if(want===cur) return;  /* ค่าเดิม = ไม่แตะ style (กัน MutationObserver วนซ้ำ) */
+  if(want) he.style.setProperty('--ft-txt',want); else he.style.removeProperty('--ft-txt'); }
+(function(){ function go(){ _ftTxtAuto(); if(window.MutationObserver) new MutationObserver(_ftTxtAuto).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']}); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 function _paperSet(hex){
   var he=document.documentElement, h=(_normHex(hex)||PAPER_DEFAULT).toUpperCase();
   if(h===PAPER_DEFAULT){ he.style.removeProperty('--page-bg'); he.removeAttribute('data-paper'); }

@@ -2921,7 +2921,7 @@ def main():
         errors.append('lint #130: คลิกครั้งเดียวต้องเลือก/ลาก ไม่เข้าโหมดพิมพ์ (กำลังพิมพ์ = วางเคอร์เซอร์)')
     if '@media screen{body.editmode .ftext{pointer-events:auto;' not in _css or not re.search(r'(?m)^\.ftext\{[^}]*pointer-events:none', _css):
         errors.append('lint #130: กล่องข้อความต้องคลิกได้เฉพาะโหมดแก้ข้อความ (ไม่บังรูป/พื้นหลังในโหมดอื่น)')
-    if not re.search(r'(?m)^\.ftext\{[^}]*color:var\(--txt-name\)', _css):
+    if not re.search(r'(?m)^\.ftext\{[^}]*color:var\(--ft-txt,var\(--txt-name\)\)', _css):  # #202: ตามธีม เว้นแต่อ่านไม่ออกบนกระดาษ
         errors.append('lint #130: สีเริ่มต้นกล่องข้อความต้องตามธีม (--txt-name)')
     if txt.count('.rz,.delbtn,.sizetag,.fth,.ftdel')!=3 or txt.count("querySelectorAll('.ftext').forEach(function(el){el.classList.remove('sel','fedit');")!=3:
         errors.append('lint #130: ปุ่มจับ/สถานะเลือกของกล่องข้อความต้องถูกตัดออกทั้ง บันทึก editor · ดาวน์โหลดเมนู · snapshot')
@@ -3985,6 +3985,12 @@ def main():
         if _f201 not in txt: errors.append('lint #201: ไม่พบ '+_f201[:60])
     for _k201 in ('btn.tblAl','ttl.tblAl','tbl.al.l','tbl.al.c','tbl.al.r','tbl.al.t','tbl.al.m','tbl.al.b','fl.tblAl','btn.tblHd','ttl.tblHd','fl.tblHdOn','fl.tblHdOff'):
         if txt.count("'"+_k201+"':")!=2: errors.append('lint #201: i18n '+_k201+' ต้องมีทั้ง TH และ EN')
+    # ---- 202) สีตัวอักษรกล่องข้อความบนกระดาษ (บั๊ก 7 พ.ย. 2026: ธีมเข้มตัวอักษรกล่อง/ตารางไม่มีพื้นจางบนกระดาษครีม) · ไม่มีพื้น = --ft-txt (auto ตาม contrast) · พื้นตามธีม/แถวหัว = --txt-name · สีผู้ใช้ชนะ ----
+    if '.ftext{position:absolute;z-index:20;box-sizing:border-box;padding:1.5mm 2mm;color:var(--ft-txt,var(--txt-name));' not in txt: errors.append('lint #202: .ftext ต้องใช้สี var(--ft-txt,var(--txt-name)) ไม่ใช่ --txt-name ตรงๆ')
+    for _c202 in ('.ftext[data-fgc="theme"]{color:var(--txt-name);}','.ftext .ftxt:not([style*="color:"]) .fttbl[data-thd] tr:first-child > td{color:var(--txt-name);}'):
+        if _c202 not in txt: errors.append('lint #202: ไม่พบ CSS '+_c202[:50])
+    for _f202 in ('function _ftTxtAuto(){',"_paperCr(tn,pb)<4.5)?'var(--page-txt)':''",'if(want===cur) return;',"new MutationObserver(_ftTxtAuto).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']});"):
+        if _f202 not in txt: errors.append('lint #202: ไม่พบ '+_f202[:60])
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

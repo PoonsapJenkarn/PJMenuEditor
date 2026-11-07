@@ -3307,8 +3307,8 @@ def main():
     if not _ml160 or '_themeSortedIds().forEach' not in _ml160.group(1) or '_THEME_ORDER.forEach' in _ml160.group(1):
         errors.append('lint #160: รายการธีมต้องใช้ _themeSortedIds() ไม่ใช่ _THEME_ORDER')
     if not _ml160 or _ml160.group(1).find("html+=opt('custom')")<0 or _ml160.group(1).find("html+=opt('custom')")>_ml160.group(1).find('_themeSortedIds().forEach'):
-        errors.append('lint #160: กำหนดเองต้องอยู่บนสุดของรายการธีม')
-    if 'function _themeFltFirst(){ var ids=_themeSortedIds();' not in txt:
+        errors.append('lint #160: กำหนดเองต้องอยู่ก่อนธีมที่เรียงตามตัวอักษร (#206: ค่าเริ่มต้นอยู่บนสุด)')
+    if 'var ids=_themeSortedIds(); return ids.length?ids[0]:null; }' not in txt:  # #206: ค่าเริ่มต้นมาก่อน แล้วตามด้วยตัวแรกที่เรียงแล้ว
         errors.append('lint #160: ธีมแรกของประเภทต้องเป็นตัวแรกในรายการที่เรียงแล้ว')
     _mo160=re.search(r"function _themeDdOpen\(\)\{(.*?)\n\}", txt, re.S)
     if not _mo160 or 'pop.innerHTML=_themeDdListHtml();' not in _mo160.group(1):
@@ -4026,6 +4026,15 @@ def main():
     if not (0<=_hr205<_tr205): errors.append('lint #205: กฎสีตัวอักษรช่องต้องอยู่หลังกฎแถวหัว (specificity เท่ากัน)')
     for _k205 in ('btn.tblBg','ttl.tblBg','tbg.scope','tbg.s.cell','tbg.s.row','tbg.s.col','tbg.s.all','fl.tblBgSet','fl.tblBgOff'):
         if txt.count("'"+_k205+"':")!=2: errors.append('lint #205: i18n '+_k205+' ต้องมีทั้ง TH และ EN')
+    # ---- 206) ธีมค่าเริ่มต้น ครีม-น้ำตาล อยู่บนสุดของรายการ + ป้าย (ค่าเริ่มต้น) เฉพาะในรายการ · ลำดับ ค่าเริ่มต้น → กำหนดเอง → เรียงตามตัวอักษร (ไม่ซ้ำ) · ไม่มีปุ่มรีเซ็ตแยก (ผู้ใช้ 7 พ.ย. 2026) ----
+    if "var _THEME_DEF='cream';" not in txt or "var _theme='cream';" not in txt or "if(_THEMES.indexOf(id)<0) id='cream';" not in txt: errors.append('lint #206: ธีมค่าเริ่มต้นต้องเป็น cream (ครีม-น้ำตาล)')
+    _ml206=re.search(r"function _themeDdListHtml\(\)\{(.*?)\n\}", txt, re.S); _b206=_ml206.group(1) if _ml206 else ''
+    _d206=_b206.find('html+=opt(_THEME_DEF);'); _c206=_b206.find("html+=opt('custom');"); _s206=_b206.find('_themeSortedIds().forEach(function(id){ if(id!==_THEME_DEF) html+=opt(id); });')
+    if not (0<=_d206<_c206<_s206): errors.append('lint #206: ลำดับรายการธีมต้องเป็น ค่าเริ่มต้น → กำหนดเอง → เรียงตามตัวอักษร (ไม่ซ้ำค่าเริ่มต้น)')
+    if 'df=(id===_THEME_DEF)' not in _b206 or 'data-i18n="th.defTag"' not in _b206: errors.append('lint #206: ค่าเริ่มต้นในรายการต้องมีป้าย (ค่าเริ่มต้น)')
+    if 'th.defTag' in txt[txt.find('function _themeDdHtml(){'):txt.find('function _themeDdHtml(){')+600]: errors.append('lint #206: ป้าย (ค่าเริ่มต้น) แสดงเฉพาะในรายการ ไม่ใส่บนปุ่มธีม')
+    if "function _themeFltFirst(){ if(_themeFltMatch(_THEME_DEF)) return _THEME_DEF;" not in txt: errors.append('lint #206: ธีมแรกของประเภท = ค่าเริ่มต้นถ้าตรงประเภท (ตรงกับรายการ)')
+    if txt.count("'th.defTag':")!=2: errors.append('lint #206: i18n th.defTag ต้องมีทั้ง TH และ EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

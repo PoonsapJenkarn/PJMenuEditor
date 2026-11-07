@@ -2216,6 +2216,12 @@ function _addPagesBatch(n,type){
   else if(n===1) flashStatus('info',tk('fl.addPage',{n:_np,from:srcNo}));
   else flashStatus('info',tk('fl.addPages',{added:n,total:_np}));
 }
+/* พิมพ์/ตัวอย่างก่อนพิมพ์ แล้วกลับมาหน้าเดิม (บั๊ก 7 พ.ย. 2026: ปิดตัวอย่างก่อนพิมพ์แล้วจอเด้งไปหน้าอื่น · lint #200)
+   ตอนพิมพ์ เอกสารสั้นกว่าบนจอ (ไม่มีซูม/ที่ว่างระหว่างหน้า) เบราว์เซอร์ตัดตำแหน่งเลื่อนให้พอดีเอกสารพิมพ์ แล้วไม่คืน → จำหน้าที่เห็น + ระยะขอบบนหน้า ก่อนพิมพ์ แล้วเลื่อนกลับหลังพิมพ์ */
+var _prKeep=null;
+window.addEventListener('beforeprint',function(){ var i=_priceVisiblePage(), P=document.querySelectorAll('.page'); _prKeep=(i>=0 && P[i])?{i:i, top:P[i].getBoundingClientRect().top}:null; });
+window.addEventListener('afterprint',function(){ var K=_prKeep; _prKeep=null; if(!K) return;
+  requestAnimationFrame(function(){ var P=document.querySelectorAll('.page'); if(!P[K.i]) return; var se=document.scrollingElement||document.documentElement; _scrollKeepTo(Math.max(0,se.scrollTop+P[K.i].getBoundingClientRect().top-K.top)); }); });  /* หลังกลับเป็นหน้าตาบนจอแล้ว (rAF) */
 function _scrollKeepTo(y){  /* เลื่อนไป y แม้เอกสารสั้นลง: เติม #scrollKeep ท้าย body ให้พอ · ไม่ clamp = หน้าไม่เด้ง (ผู้ใช้ 28 ต.ค. 2026) */
   var se=document.scrollingElement||document.documentElement, mx=se.scrollHeight-se.clientHeight;
   if(y>mx+0.5){ var k=document.getElementById('scrollKeep'); if(!k){ k=document.createElement('div'); k.id='scrollKeep'; k.setAttribute('aria-hidden','true'); document.body.appendChild(k); } k.style.height=((parseFloat(k.style.height)||0)+(y-mx)).toFixed(1)+'px'; }

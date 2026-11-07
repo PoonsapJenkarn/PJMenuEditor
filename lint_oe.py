@@ -3962,6 +3962,11 @@ def main():
     if '@media screen{body.editmode.tblcolrz .ftext[data-ftbl],body.editmode.tblcolrz .ftext[data-ftbl] *{cursor:col-resize !important;}}' not in _css: errors.append('lint #199: ชี้เส้นแบ่งคอลัมน์ต้องเปลี่ยนเคอร์เซอร์ (เฉพาะจอ)')
     for _k199 in ('tbl.ln.eq','ttl.tblEqDone','fl.tblEq','fl.tblColW'):
         if txt.count("'"+_k199+"':'")<2: errors.append('lint #199: i18n '+_k199+' ไม่ครบ TH+EN')
+    # ---- 200) พิมพ์แล้วกลับหน้าเดิม (บั๊ก 7 พ.ย. 2026: ปิดตัวอย่างก่อนพิมพ์แล้วจอเด้งไปหน้าอื่น) ----
+    _e200=txt.find('<script id="editorScript">')
+    _b200=txt.find("window.addEventListener('beforeprint',function(){ var i=_priceVisiblePage(), P=document.querySelectorAll('.page'); _prKeep=")
+    if _b200<0 or _b200<_e200: errors.append('lint #200: ก่อนพิมพ์ต้องจำหน้าที่เห็น (_prKeep) ในสคริปต์ตัวแก้')
+    if "_scrollKeepTo(Math.max(0,se.scrollTop+P[K.i].getBoundingClientRect().top-K.top));" not in txt or "window.addEventListener('afterprint',function(){ var K=_prKeep;" not in txt: errors.append('lint #200: หลังพิมพ์ต้องเลื่อนกลับหน้าเดิม')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

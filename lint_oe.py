@@ -3991,6 +3991,14 @@ def main():
         if _c202 not in txt: errors.append('lint #202: ไม่พบ CSS '+_c202[:50])
     for _f202 in ('function _ftTxtAuto(){',"_paperCr(tn,pb)<4.5)?'var(--page-txt)':''",'if(want===cur) return;',"new MutationObserver(_ftTxtAuto).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']});"):
         if _f202 not in txt: errors.append('lint #202: ไม่พบ '+_f202[:60])
+    # ---- 203) สีตัวอักษรบนพื้นสีกำหนดเอง (ผู้ใช้ 7 พ.ย. 2026): สีธีมอ่านออก (contrast ≥4.5) = คงเดิม · ไม่ออก = #171A1E/#FFFFFF ที่ชัดกว่า → --ft-bgtxt · คำนวณใน _fbRender + เปลี่ยนธีม/กระดาษ + เปิดไฟล์ + Undo ----
+    if '.ftext[data-fgc]:not([data-fgc="theme"]){color:var(--ft-bgtxt,var(--txt-name));}' not in txt: errors.append('lint #203: ไม่พบ CSS สีตัวอักษรบนพื้นสีกำหนดเอง')
+    for _f203 in ('function _ftBgTxt(b,g){','if(!(tn && _paperCr(tn,h)>=4.5)) want=(_paperCr(\'#171A1E\',h)>=_paperCr(\'#FFFFFF\',h))?\'#171A1E\':\'#FFFFFF\';','function _ftBgTxtAll(){',
+                  "new MutationObserver(_ftBgTxtAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']});","_ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น",
+                  "if(typeof _ftBgTxtAll==='function') _ftBgTxtAll();  /* snapshot"):
+        if _f203 not in txt: errors.append('lint #203: ไม่พบ '+_f203[:60])
+    _rp203=txt.find('function _restorePages(html){'); _ca203=txt.find("if(typeof _ftBgTxtAll==='function') _ftBgTxtAll();  /* snapshot")
+    if not (0<=_rp203<_ca203<_rp203+1500): errors.append('lint #203: Undo/โหลดร่าง (_restorePages) ต้องคำนวณสีตัวอักษรบนพื้นใหม่')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

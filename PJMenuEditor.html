@@ -573,7 +573,7 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
    อยู่ใน .page (absolute · mm) · ใช้งานในโหมดแก้ข้อความ · สีเริ่มต้นตามธีม (--txt-name) · ความสูงโตตามข้อความ (min-height = ที่ยืดไว้) */
 .ftext{position:absolute;z-index:20;box-sizing:border-box;padding:1.5mm 2mm;color:var(--ft-txt,var(--txt-name));font-size:16px;line-height:1.35;pointer-events:none;overflow-wrap:anywhere;word-break:break-word;}
 .ftext .ftxt{outline:none;white-space:pre-wrap;min-height:1.35em;}
-.ftext[data-fgc="theme"]{color:var(--txt-name);}.ftext .ftxt:not([style*="color:"]) .fttbl[data-thd] tr:first-child > td{color:var(--txt-name);}  /* สีตัวอักษรกล่องข้อความ (บั๊ก 7 พ.ย. 2026 · lint #202): ไม่มีพื้น = ตัวอักษรอยู่บนกระดาษ → --ft-txt (_ftTxtAuto: ธีมที่สีชื่อเมนูอ่านไม่ออกบนกระดาษ เช่นธีมเข้ม = ใช้สีตัวอักษรตามกระดาษ --page-txt) · พื้นตามธีม / แถวหัวตาราง = อยู่บนสีของธีม → --txt-name คู่สีที่ธีมออกแบบไว้ · สีที่ผู้ใช้ตั้งเอง (inline) ชนะเสมอ */
+.ftext[data-fgc="theme"]{color:var(--txt-name);}.ftext[data-fgc]:not([data-fgc="theme"]){color:var(--ft-bgtxt,var(--txt-name));}  /* พื้นสีกำหนดเอง (lint #203): สีธีมอ่านออกบนพื้น = ใช้สีธีม · ไม่ออก = --ft-bgtxt เข้ม/ขาว ที่ _ftBgTxt คำนวณ */.ftext .ftxt:not([style*="color:"]) .fttbl[data-thd] tr:first-child > td{color:var(--txt-name);}  /* สีตัวอักษรกล่องข้อความ (บั๊ก 7 พ.ย. 2026 · lint #202): ไม่มีพื้น = ตัวอักษรอยู่บนกระดาษ → --ft-txt (_ftTxtAuto: ธีมที่สีชื่อเมนูอ่านไม่ออกบนกระดาษ เช่นธีมเข้ม = ใช้สีตัวอักษรตามกระดาษ --page-txt) · พื้นตามธีม / แถวหัวตาราง = อยู่บนสีของธีม → --txt-name คู่สีที่ธีมออกแบบไว้ · สีที่ผู้ใช้ตั้งเอง (inline) ชนะเสมอ */
 .fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}  /* ตาราง (ขั้น D1 · ผู้ใช้ 6 พ.ย. 2026 · lint #196): อยู่ใน .ftxt ของกล่องข้อความ · คอลัมน์กว้างเท่ากัน (ลากปรับ = D2) · เส้นตั้งต้น = ทุกเส้นสีตามธีม */
 .fttbl td{border:1px solid var(--note-bd);padding:1mm 1.5mm;height:calc(1.35em + 2mm);box-sizing:border-box;vertical-align:top;overflow-wrap:anywhere;word-break:break-word;outline:none;}
 .fttbl[data-tbln="h"] td{border-left-style:none;border-right-style:none;}  /* เส้นตาราง: แนวนอนอย่างเดียว (lint #198) */
@@ -2592,6 +2592,7 @@ function _restorePages(html){
   /* rehydrate รูปจาก pool */
   var imgs=document.querySelectorAll('.page img[data-pool]');
   for(var j=0;j<imgs.length;j++){ var id=imgs[j].getAttribute('data-pool'); if(POOL[id]){ imgs[j].setAttribute('src',POOL[id]); imgs[j].removeAttribute('data-pool'); } }
+  if(typeof _ftBgTxtAll==='function') _ftBgTxtAll();  /* snapshot ที่บันทึกตอนธีมอื่น = คำนวณสีตัวอักษรบนพื้นใหม่ (lint #203) */
   if(typeof _zMigrateAll==='function') _zMigrateAll();  /* หน้าจากร่างเก่าที่ยังไม่ได้เรียงลำดับ = เรียงแบบเดิม (หน้าที่เรียงแล้วข้าม · lint #190) */
   /* rebind 5 ฟังก์ชัน (set innerHTML ทำลาย binding เดิม) */
   if(typeof renumber==='function') renumber();
@@ -6676,9 +6677,20 @@ var _fbPv=null, _fbDlgKind=null, _fbDlgL=null, _fbDlgHome=null, _fbDlgCur=null;
 function _fbTargets(){ var L=(typeof _ftSet!=='undefined' && _ftSet?_ftSet:[]).filter(function(b){ return b.isConnected; }); if(!L.length && typeof _ftSel!=='undefined' && _ftSel && _ftSel.isConnected) L=[_ftSel]; return L; }
 function _fbGet(b){ return {c:b.getAttribute('data-fbc')||null, w:parseFloat(b.getAttribute('data-fbw'))||1, st:b.getAttribute('data-fbs')||'solid', g:b.getAttribute('data-fgc')||null, r:parseFloat(b.getAttribute('data-fbr'))||0}; }
 function _fbCss(c,k){ return c==='theme'?(k==='bd'?'var(--note-bd)':'var(--note-bg)'):c; }
+/* สีตัวอักษรบนพื้นสีกำหนดเอง (ผู้ใช้ 7 พ.ย. 2026 · lint #203): พื้น HEX ที่ผู้ใช้เลือก (ไม่ใช่ 'theme') · สีตัวอักษรธีม (--txt-name) contrast กับพื้น ≥ 4.5 (WCAG AA ชุดเดียวกับ #202) = คงสีธีม
+   ไม่ถึง = เลือก #171A1E หรือ #FFFFFF ตัวที่ contrast สูงกว่า → --ft-bgtxt บนกล่อง (inline = ติดไฟล์ · Save Menu/พิมพ์ เหมือนจอ) · สีที่ผู้ใช้ตั้งเองบน .ftxt ชนะ · แถวหัวตารางมีพื้นธีมของตัวเอง = ไม่เกี่ยว */
+function _ftBgTxt(b,g){ var h=(g && g!=='theme')?_normHex(g):null, cur=b.style.getPropertyValue('--ft-bgtxt').trim(), want='';
+  if(h){ var tn=_normHex(getComputedStyle(document.documentElement).getPropertyValue('--txt-name').trim());
+    if(!(tn && _paperCr(tn,h)>=4.5)) want=(_paperCr('#171A1E',h)>=_paperCr('#FFFFFF',h))?'#171A1E':'#FFFFFF'; }
+  if(want===cur) return;
+  if(want) b.style.setProperty('--ft-bgtxt',want); else b.style.removeProperty('--ft-bgtxt'); }
+function _ftBgTxtAll(){ document.querySelectorAll('.ftext').forEach(function(b){ _ftBgTxt(b,b.getAttribute('data-fgc')); }); }  /* เปลี่ยนธีม/กระดาษ · เปิดไฟล์ · Undo = คำนวณใหม่ทุกกล่อง (ไม่มีพื้นสีเอง = ล้างค่าค้าง) */
+(function(){ function bgTxtGo(){ _ftBgTxtAll(); if(window.MutationObserver) new MutationObserver(_ftBgTxtAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']}); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bgTxtGo); else bgTxtGo(); })();
 function _fbRender(b){ var d=_fbGet(b);
   if(d.c){ b.style.borderWidth=d.w+'px'; b.style.borderStyle=d.st; b.style.borderColor=_fbCss(d.c,'bd'); } else { b.style.removeProperty('border-width'); b.style.removeProperty('border-style'); b.style.removeProperty('border-color'); }
   if(d.g) b.style.backgroundColor=_fbCss(d.g,'bg'); else b.style.removeProperty('background-color');
+  _ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */
   if(d.r>0) b.style.borderRadius=d.r+'mm'; else b.style.removeProperty('border-radius');  /* มุมโค้ง: ขอบ+พื้นโค้งตาม · inline = พิมพ์/Save Menu ออกเหมือนจอ (lint #192) */
 }
 function _fbPut(b,k,pv){

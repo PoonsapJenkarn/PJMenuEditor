@@ -4002,13 +4002,30 @@ def main():
     # ---- 204) ช่องสีตัวอักษรตามสีจริง (บั๊ก 7 พ.ย. 2026: เปลี่ยนพื้นกล่อง/ธีม/กระดาษ/Undo แล้วช่องค้างสีเก่า) · resync ใน _fbRender + _ftBgTxtAll (ธีม/กระดาษ/โหลด/_restorePages) · ข้ามเส้น + ถาดสีเปิด ----
     if 'function _typoColorResync(){' not in txt: errors.append('lint #204: ไม่พบ _typoColorResync')
     for _f204 in ("var pp=document.getElementById('typoCpPop'); if(pp && pp.classList.contains('open')) return;","dl.closest('#typoColorPick')) return;",'(_typoType && _typoType.line)) return;',
-                  "_ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */\n  if(typeof _typoColorResync==='function') _typoColorResync();",
-                  "_ftBgTxt(b,b.getAttribute('data-fgc')); }); if(typeof _typoColorResync==='function') _typoColorResync(); }"):
+                  "_ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */\n  if(typeof _tbgTxtTable==='function') _tbgTxtTable(_tblOf(b));  /* พื้นกล่องเปลี่ยน = สีตัวอักษรในช่องที่มีสีคิดใหม่ (lint #205) */\n  if(typeof _typoColorResync==='function') _typoColorResync();",
+                  "_ftBgTxt(b,b.getAttribute('data-fgc')); }); if(typeof _tbgTxtAll==='function') _tbgTxtAll(); if(typeof _typoColorResync==='function') _typoColorResync(); }"):
         if _f204 not in txt: errors.append('lint #204: ไม่พบ '+_f204[:60])
     # ---- 204b) ปิดถาดสีตัวอักษร = ช่องสีกลับเป็นสีจริง (บั๊ก 7 พ.ย. 2026: ยกเลิกแล้วช่องค้างสีที่ชี้ดู) · resync ต้องอยู่หลัง remove('open') ----
     _cp204=txt.find('function _closePop(){'); _cpe204=txt.find('}',txt.find("p.classList.remove('open');",_cp204)+1) if _cp204>=0 else -1
     _seg204=txt[_cp204:_cp204+400] if _cp204>=0 else ''
     if "p.classList.remove('open'); if(typeof _typoColorResync==='function') _typoColorResync(); }" not in _seg204: errors.append('lint #204b: _closePop ต้อง resync ช่องสีหลังเอา open ออก')
+    # ---- 205) ตาราง D3 สีพื้นช่อง (ผู้ใช้ 7 พ.ย. 2026): ปุ่ม สีช่อง ▾ ในกลุ่มตาราง ต่อจาก แถวหัว · ขอบเขต ช่อง/แถว/คอลัมน์/ทั้งตาราง · data-tbg + พื้น inline · แถว/คอลัมน์ใหม่สืบสี · สีตัวอักษรอัตโนมัติรายช่อง · พิมพ์ออก · โมโนโครมเทา ----
+    _hd205=txt.find('id="btnTblHd"'); _bg205=txt.find('id="btnTblBg" onclick="_tbgOpen()" disabled'); _gl205=txt.find('data-i18n="grp.tbl"')
+    if txt.count('id="btnTblBg"')!=1 or not (0<=_hd205<_bg205<_gl205): errors.append('lint #205: ปุ่ม #btnTblBg ต้องมี 1 ปุ่ม ในกลุ่มตาราง ต่อจาก แถวหัว และเริ่มต้นจาง')
+    for _g205 in ('#edbar #btnTblBg.on,','#edbar #btnTblBg.on svg,','#edbar #btnTblBg.on span,'):
+        if _g205 not in _css: errors.append('lint #205: #btnTblBg ต้องเขียวตอน .on ('+_g205+')')
+    for _s205 in ('data-tbgs="cell"','data-tbgs="row"','data-tbgs="col"','data-tbgs="all"','id="tblBgHex"'):
+        if _s205 not in txt: errors.append('lint #205: ถาดสีช่องขาด '+_s205)
+    for _f205 in ('function _tbgOpen(){','function _tbgCommit(){','function _tbgCancel(){','function _tbgTxt(td){','function _tbgTxtAll(){',"if(ref && ref.hasAttribute('data-tbg')){ d.setAttribute('data-tbg',ref.getAttribute('data-tbg')); _tbgPaint(d); }",
+                  "['btnTblBg',true,'ttl.tblBg']",'_tbgTxtTable(T); markDirty();','_tbgTxtTable(C.T); markDirty();',"_tbgTxtTable(tr.closest('table')); markDirty();",'if(typeof _tbgTxtTable===\'function\') _tbgTxtTable(_tblOf(b));','if(typeof _tbgTxtAll===\'function\') _tbgTxtAll();',
+                  "_paperCr(fg,bg)>=4.5) return;",'if(!ch) return;  /* ไม่มีอะไรเปลี่ยน'):
+        if _f205 not in txt: errors.append('lint #205: ไม่พบ '+_f205[:60])
+    for _c205 in ('.fttbl td[data-tbg]{-webkit-print-color-adjust:exact;print-color-adjust:exact;}','.ftext .ftxt:not([style*="color:"]) .fttbl tr > td[data-tbg][style*="--tbg-txt"]{color:var(--tbg-txt);}',':root body.boardmode .fttbl td[data-tbg]{background-color:#DDDFE2 !important;','#tblBgPick .cp-pop{','#tblBgPick > .cp-pop{top:100%;'):
+        if _c205 not in txt: errors.append('lint #205: ไม่พบ CSS '+_c205[:60])
+    _hr205=txt.find('.ftext .ftxt:not([style*="color:"]) .fttbl[data-thd] tr:first-child > td{color:var(--txt-name);}'); _tr205=txt.find('.fttbl tr > td[data-tbg][style*="--tbg-txt"]')
+    if not (0<=_hr205<_tr205): errors.append('lint #205: กฎสีตัวอักษรช่องต้องอยู่หลังกฎแถวหัว (specificity เท่ากัน)')
+    for _k205 in ('btn.tblBg','ttl.tblBg','tbg.scope','tbg.s.cell','tbg.s.row','tbg.s.col','tbg.s.all','fl.tblBgSet','fl.tblBgOff'):
+        if txt.count("'"+_k205+"':")!=2: errors.append('lint #205: i18n '+_k205+' ต้องมีทั้ง TH และ EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

@@ -5753,7 +5753,7 @@ function _typoScopeTargets(sel, scope, groupIdx){
     var initCur=document.getElementById('typoCpCurrent'); if(initCur&&initCur.style.background){ var ih=_rgbToHex(initCur.style.background); var tc=document.getElementById('typoColor'); if(tc) tc.value=ih; var th=document.getElementById('typoHex'); if(th) th.value=ih.toUpperCase(); }
   })();
   function _openPop(){ var p=document.getElementById('typoCpPop'); if(p) p.classList.add('open'); }
-  function _closePop(){ if(_tcpOrig){ _tcpRestore(); _tcpOrig=null; } var p=document.getElementById('typoCpPop'); if(p) p.classList.remove('open'); }
+  function _closePop(){ if(_tcpOrig){ _tcpRestore(); _tcpOrig=null; } var p=document.getElementById('typoCpPop'); if(p) p.classList.remove('open'); if(typeof _typoColorResync==='function') _typoColorResync(); }  /* ปิดถาด (ยกเลิก/Esc/คลิกนอก/ตกลง) = ช่องกลับเป็นสีที่แสดงจริง ไม่ค้างสีที่ชี้ดู (lint #204b) · resync หลังเอา open ออก เพราะ resync ข้ามตอนถาดเปิด */
   window._closePop=_closePop;
   document.getElementById('typoCpApply').addEventListener('click',function(){
     var p=document.getElementById('typoCpPop'); if(!p) return; if(p.classList.contains('open')){ _closePop(); return; } _tcpSnap(); p.classList.add('open');

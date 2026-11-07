@@ -4005,6 +4005,10 @@ def main():
                   "_ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */\n  if(typeof _typoColorResync==='function') _typoColorResync();",
                   "_ftBgTxt(b,b.getAttribute('data-fgc')); }); if(typeof _typoColorResync==='function') _typoColorResync(); }"):
         if _f204 not in txt: errors.append('lint #204: ไม่พบ '+_f204[:60])
+    # ---- 204b) ปิดถาดสีตัวอักษร = ช่องสีกลับเป็นสีจริง (บั๊ก 7 พ.ย. 2026: ยกเลิกแล้วช่องค้างสีที่ชี้ดู) · resync ต้องอยู่หลัง remove('open') ----
+    _cp204=txt.find('function _closePop(){'); _cpe204=txt.find('}',txt.find("p.classList.remove('open');",_cp204)+1) if _cp204>=0 else -1
+    _seg204=txt[_cp204:_cp204+400] if _cp204>=0 else ''
+    if "p.classList.remove('open'); if(typeof _typoColorResync==='function') _typoColorResync(); }" not in _seg204: errors.append('lint #204b: _closePop ต้อง resync ช่องสีหลังเอา open ออก')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

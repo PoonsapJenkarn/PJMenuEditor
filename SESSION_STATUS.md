@@ -1,5 +1,17 @@
 # SESSION STATUS - PJ Menu Editor
 
+## #204 ผล Console + แก้ #204b · 7 พ.ย. 2026 16:24 — รอทดสอบ (ยังไม่ commit)
+- Console หลัง F5: typeof _typoColorResync = 'function' · ช่องสี = rgb(255,255,255) ตรงตัวอักษรขาว · _typoEl = null เพราะกล่องไม่ได้เลือกอยู่ตอนรัน (กรอบประ ไม่มีจุดจับ · แถบล่าง 'คลิกข้อความที่ต้องการแก้') · error getComputedStyle มาจากคำสั่งที่ผมให้รันกับ null ไม่ใช่บั๊กแอป
+- สรุป (ยังไม่พิสูจน์ครบ): ทดสอบรอบก่อนน่าจะเป็นหน้าที่ยังไม่ได้ F5 · ต้องทดสอบซ้ำบนหน้าที่ F5 แล้ว
+- #204b: _closePop เรียก _typoColorResync หลัง remove('open') (ยกเลิกถาดสี = ช่องกลับสีจริง) · lint #204b
+- commit: git add -A / git commit -m "fix: ยกเลิกถาดสีตัวอักษรแล้วช่องกลับเป็นสีจริง + lint #204b" / git push
+
+## #204 commit 7c965fa (pushed) แต่ทดสอบไม่ผ่าน · 7 พ.ย. 2026 15:42 — รอผลตรวจ Console
+- ภาพ: ชี้/ตกลงพื้นกล่อง (ดำ ฯลฯ) ตัวอักษรขาว แต่ช่องสียังเข้ม · กรมท่าเข้ม+พื้นขาว ตัวอักษรเข้ม ช่องอ่อน · เลือกกล่องใหม่ (ภาพ 20) ช่องถูก = ฟังก์ชันอ่านสีทำงาน แต่ resync หลังเปลี่ยนพื้นไม่เกิดผล
+- ตรวจโค้ดซ้ำ: _typoColorResync มี 1 ตัว เรียก 3 จุด (_fbRender, _ftBgTxtAll) · ไม่พบเหตุจากโค้ดอ่านอย่างเดียว · สมมติฐาน (ยังไม่พิสูจน์): หน้าเว็บยังเป็นไฟล์เก่า (ไม่ได้ F5) หรือ resync ออกก่อนเพราะเงื่อนไขข้าม
+- พลาดของผม: ข้อทดสอบ 6 (ยกเลิกถาดสีตัวอักษร = ช่องกลับสีจริง) ไม่ได้ใส่โค้ด · _closePop เรียก _tcpRestore ก่อนเอา 'open' ออก → ต้อง resync หลัง remove('open')
+- ขอผู้ใช้: F5 แล้วรัน typeof _typoColorResync / _typoEl / getComputedStyle(_typoEl).color ใน Console หลังตั้งพื้นดำ
+
 ## ช่องสีตัวอักษรตามสีจริง รอบ 2/2 แก้แล้ว (#204) · 7 พ.ย. 2026 15:28 — รอทดสอบ (ยังไม่ commit)
 - _typoColorResync() (ก่อน typoSelect) เรียกท้าย _fbRender + ท้าย _ftBgTxtAll (ครอบคลุม ธีม/กระดาษ observer · โหลด · _restorePages/Undo) · ข้ามเส้น · ข้ามเมื่อ #typoCpPop.open หรือ #typoCpDlg.open ใน #typoColorPick
 - commit: git add -A / git commit -m "fix: ช่องสีตัวอักษรแสดงสีจริงหลังเปลี่ยนพื้นกล่อง/ธีม/กระดาษ/Undo + lint #204" / git push

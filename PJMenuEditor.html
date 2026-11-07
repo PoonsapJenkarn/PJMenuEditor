@@ -4713,6 +4713,12 @@ function _typoColorAtCursor(el){
   }
   return _rgbToHex(getComputedStyle(e).color);
 }
+/* ช่องสีตัวอักษร (#typoCpCurrent) อ่านสีที่แสดงจริงใหม่ หลังสีเปลี่ยนเองโดยไม่ได้ย้ายเคอร์เซอร์ (บั๊ก 7 พ.ย. 2026 · lint #204): เปลี่ยนพื้นกล่อง (_fbRender #203) · ธีม/กระดาษ (_ftBgTxtAll #202) · Undo (_restorePages)
+   เดิม sync แค่ตอนเลือกช่อง + ย้ายเคอร์เซอร์ = ช่องค้างสีเก่า · ข้าม: เลือกเส้น (ช่องแสดงสีเส้น) · ถาด/หน้าต่างสีตัวอักษรเปิดอยู่ (ไม่ทับสีที่ผู้ใช้กำลังเลือก) */
+function _typoColorResync(){ if(!_typoEl || !_typoEl.isConnected || (_typoType && _typoType.line)) return;
+  var pp=document.getElementById('typoCpPop'); if(pp && pp.classList.contains('open')) return;
+  var dl=document.getElementById('typoCpDlg'); if(dl && dl.classList.contains('open') && dl.closest('#typoColorPick')) return;
+  if(typeof window._setCurrent==='function') window._setCurrent(_typoColorAtCursor(_typoEl)); }
 function typoSelect(el,type){
   // ล้าง highlight เก่า
   if(_typoEl) _typoEl.classList.remove('typosel');
@@ -6684,13 +6690,14 @@ function _ftBgTxt(b,g){ var h=(g && g!=='theme')?_normHex(g):null, cur=b.style.g
     if(!(tn && _paperCr(tn,h)>=4.5)) want=(_paperCr('#171A1E',h)>=_paperCr('#FFFFFF',h))?'#171A1E':'#FFFFFF'; }
   if(want===cur) return;
   if(want) b.style.setProperty('--ft-bgtxt',want); else b.style.removeProperty('--ft-bgtxt'); }
-function _ftBgTxtAll(){ document.querySelectorAll('.ftext').forEach(function(b){ _ftBgTxt(b,b.getAttribute('data-fgc')); }); }  /* เปลี่ยนธีม/กระดาษ · เปิดไฟล์ · Undo = คำนวณใหม่ทุกกล่อง (ไม่มีพื้นสีเอง = ล้างค่าค้าง) */
+function _ftBgTxtAll(){ document.querySelectorAll('.ftext').forEach(function(b){ _ftBgTxt(b,b.getAttribute('data-fgc')); }); if(typeof _typoColorResync==='function') _typoColorResync(); }  /* เปลี่ยนธีม/กระดาษ · เปิดไฟล์ · Undo = คำนวณใหม่ทุกกล่อง (ไม่มีพื้นสีเอง = ล้างค่าค้าง) */
 (function(){ function bgTxtGo(){ _ftBgTxtAll(); if(window.MutationObserver) new MutationObserver(_ftBgTxtAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']}); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bgTxtGo); else bgTxtGo(); })();
 function _fbRender(b){ var d=_fbGet(b);
   if(d.c){ b.style.borderWidth=d.w+'px'; b.style.borderStyle=d.st; b.style.borderColor=_fbCss(d.c,'bd'); } else { b.style.removeProperty('border-width'); b.style.removeProperty('border-style'); b.style.removeProperty('border-color'); }
   if(d.g) b.style.backgroundColor=_fbCss(d.g,'bg'); else b.style.removeProperty('background-color');
   _ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */
+  if(typeof _typoColorResync==='function') _typoColorResync();  /* ช่องสีตัวอักษรตามสีจริง (lint #204) */
   if(d.r>0) b.style.borderRadius=d.r+'mm'; else b.style.removeProperty('border-radius');  /* มุมโค้ง: ขอบ+พื้นโค้งตาม · inline = พิมพ์/Save Menu ออกเหมือนจอ (lint #192) */
 }
 function _fbPut(b,k,pv){

@@ -3999,6 +3999,12 @@ def main():
         if _f203 not in txt: errors.append('lint #203: ไม่พบ '+_f203[:60])
     _rp203=txt.find('function _restorePages(html){'); _ca203=txt.find("if(typeof _ftBgTxtAll==='function') _ftBgTxtAll();  /* snapshot")
     if not (0<=_rp203<_ca203<_rp203+1500): errors.append('lint #203: Undo/โหลดร่าง (_restorePages) ต้องคำนวณสีตัวอักษรบนพื้นใหม่')
+    # ---- 204) ช่องสีตัวอักษรตามสีจริง (บั๊ก 7 พ.ย. 2026: เปลี่ยนพื้นกล่อง/ธีม/กระดาษ/Undo แล้วช่องค้างสีเก่า) · resync ใน _fbRender + _ftBgTxtAll (ธีม/กระดาษ/โหลด/_restorePages) · ข้ามเส้น + ถาดสีเปิด ----
+    if 'function _typoColorResync(){' not in txt: errors.append('lint #204: ไม่พบ _typoColorResync')
+    for _f204 in ("var pp=document.getElementById('typoCpPop'); if(pp && pp.classList.contains('open')) return;","dl.closest('#typoColorPick')) return;",'(_typoType && _typoType.line)) return;',
+                  "_ftBgTxt(b,d.g);  /* สีตัวอักษรตามพื้น (lint #203) */\n  if(typeof _typoColorResync==='function') _typoColorResync();",
+                  "_ftBgTxt(b,b.getAttribute('data-fgc')); }); if(typeof _typoColorResync==='function') _typoColorResync(); }"):
+        if _f204 not in txt: errors.append('lint #204: ไม่พบ '+_f204[:60])
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

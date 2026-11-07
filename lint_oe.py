@@ -207,7 +207,7 @@ def main():
         _b = _span13(txt, _a + len('openPanel')) if _a >= 0 else -1
         if _a < 0 or _b < 0 or not re.search(r'(?<![\w.])filter\s*:', txt[_a:_b]):
             errors.append("openPanel mode:'prompt' ที่บรรทัด {} ไม่มี filter: — ช่องกรอกต้องรับเฉพาะตัวอักษรที่ใช้ (ดู UI_STANDARD.md ข้อ 6)".format(txt.count('\n', 0, _m.start()) + 1))
-    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch', 'flAng', 'flLen', 'fb-hex'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
+    _FILTERED16 = {'ep-input', 'ep-amt', 'ep-price', 'typoHex', 'bgHex', 'bgRange', 'typoSize', 'typoCpDlgHex', 'typoOlHex', 'thcpHex', 'shd-num', 'gfontInput', 'zoomLvl', 'calInch', 'flAng', 'flLen', 'fb-hex', 'tblNR', 'tblNC'}  # ช่องที่มีตัวกรองแล้ว (gfontInput = ชื่อฟอนต์ ฟรีเท็กซ์ · ชื่อผิด = fl.gfontNotFound ไม่ต้องกรอง) — เพิ่มช่องใหม่ต้องมีตัวกรองก่อนแล้วค่อยใส่ชื่อที่นี่
     for _m in re.finditer(r'<input\b[^>]*>', txt):
         _tag = _m.group(0)
         if not re.search(r'type\s*=\s*\\?["\']text', _tag) or 'readonly' in _tag: continue
@@ -3917,6 +3917,17 @@ def main():
     for _k196 in ('btn.tblAdd','ttl.tblAdd','tbl.pickLbl','fl.tblAdd','fl.tblFull','fl.tblRowAdd','st.tblEdit','st.tblEditUp'):
         if txt.count("'"+_k196+"':'")<2: errors.append('lint #196: i18n '+_k196+' ไม่ครบ TH+EN')
     if "function _tblPickRelang(){ if(_tblPk) _tblPickHl(_tblPk.r,_tblPk.c); }" not in txt or "if(typeof _tblPickRelang==='function') _tblPickRelang();" not in txt: errors.append('lint #196: ป้ายขนาดตารางช่องเล็กต้องเปลี่ยนตาม TH/EN')
+    # ---- 197) ตาราง: ยืดกล่องลง = ตารางยืดตาม · พิมพ์จำนวนแถว × คอลัมน์เอง (ผู้ใช้ 7 พ.ย. 2026) ----
+    if '.ftext[data-ftbl]{display:grid;grid-template-rows:1fr;}.ftext[data-ftbl] .fttbl{height:100%;}' not in txt: errors.append('lint #197: กล่องตารางต้องให้ตารางเต็มความสูงกล่อง (ยืดลงแล้วตารางยืดตาม)')
+    for _n197 in ('id=\"tblNR\"','id=\"tblNC\"','<label for=\"tblNR\"','<label for=\"tblNC\"','function _tblNumClean(v){','function _tblNumVal(id,max){','_TBL_MAXR=40, _TBL_MAXC=10',"e.target.closest('#tblPickPop input')","nm.querySelector('.tp-go').addEventListener('click'"):
+        if _n197 not in txt: errors.append('lint #197: ช่องพิมพ์จำนวนแถว/คอลัมน์ขาด '+_n197)
+    if "if(e.target && e.target.closest && e.target.closest('input')) return; e.preventDefault();" not in txt: errors.append('lint #197: คลิกช่องพิมพ์ในตารางช่องเล็กต้องได้เคอร์เซอร์ (ห้าม preventDefault)')
+    try:
+        with open(os.path.join(os.path.dirname(PATH),'UI_STANDARD.md'),encoding='utf-8') as _u197: _us197=_u197.read()
+    except Exception: _us197=''
+    if '| แถว / คอลัมน์ ตาราง (tblNR / tblNC) |' not in _us197: errors.append('lint #197: UI_STANDARD.md ตารางช่องกรอกต้องมีแถว tblNR/tblNC')
+    for _k197 in ('tbl.rows','tbl.cols','tbl.make','ttl.tblMake'):
+        if txt.count("'"+_k197+"':'")<2: errors.append('lint #197: i18n '+_k197+' ไม่ครบ TH+EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

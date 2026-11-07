@@ -1,5 +1,12 @@
 # SESSION STATUS - PJ Menu Editor
 
+## ตาราง 2a committed c6a8c33 · แก้ #197 · 7 พ.ย. 2026 10:32 — รอทดสอบ (ยังไม่ commit)
+- ผู้ใช้ทดสอบ 2a ผ่านทุกข้อ ยกเว้น: ยืดกล่องตารางลง ขอบกล่องยืด ตารางไม่ยืด
+- แก้: .ftext[data-ftbl]{display:grid;grid-template-rows:1fr} + .fttbl{height:100%} (grid ทำให้ % ความสูงอิงกล่องที่มีแค่ min-height ได้ · แถวสูงขึ้นเท่ากัน) · ทดสอบ JS/CSS ในเบราว์เซอร์จากฝั่งผมไม่ได้
+- ผู้ใช้ขอ: พิมพ์จำนวนแถว×คอลัมน์เอง → แถวใต้ตารางช่องเล็ก: แถว [ ] × คอลัมน์ [ ] [สร้าง] · แถว 1–40 คอลัมน์ 1–10 · กรองตัวเลข 2 หลัก (เงียบ) · blur clamp · Enter ในช่อง = สร้าง · Esc ปิด · ชี้เมาส์/ลูกศร = ตัวเลขตาม
+- UI_STANDARD 6.1 เพิ่มแถว tblNR/tblNC · lint #16 รายการช่องที่มีตัวกรอง + tblNR/tblNC · lint #197 · new rc0 / old rc1 · ไม่มี warning
+- commit: git add -A / git commit -m "fix: ยืดกล่องตารางแล้วตารางยืดตาม · เพิ่มช่องพิมพ์จำนวนแถว×คอลัมน์ + lint #197" / git push
+
 ## ตาราง D1 · ขั้น 2a เสร็จ + lint #196 ผ่าน · 6 พ.ย. 2026 21:04 — รอผู้ใช้ทดสอบ (ยังไม่ commit)
 - 2a: ปุ่ม ตาราง ▾ (#btnTblAdd) กลุ่มแทรก แท็บข้อความ · #tblPickPop 10×6 (เมาส์/ลูกศร+Enter/Esc · keydown ที่ window capture) · ftextAdd(tbl) data-ftbl + table.fttbl · กว้าง c×25 ≤186 · พิมพ์ทีละ td (_tblEditStart) · Tab/Shift+Tab (_tblTab) · Tab ช่องสุดท้ายเพิ่มแถว · วาง/ลาก = ข้อความล้วน · ตารางว่างไม่ลบเอง · strip td contenteditable 3 จุด + คลิปบอร์ด · board mode เส้นเทา · ป้ายเปลี่ยนภาษา (_tblPickRelang ใน applyLang)
 - lint: regex ftextAdd\(\) → ([^)]*) 7 จุด · #176 ข้อความเตือนแยกตาราง · #20 ยกเว้น _tblPickHl (มี relang) · #tblPickPop แทรกตำแหน่งที่ไม่ชน lint #189/#190

@@ -475,6 +475,7 @@ app เป็น HTML ไฟล์เดียว รันในเครื่
 | สี HEX (typoHex ฯลฯ) | # + 0-9A-F | 6 หลัก | normalize ตอน Enter | warning (hexOnly) | `_hexClean` |
 | เงา (shd-num) | 0-9 + '.' | - | clamp ช่วง | warning (shdOnly) | `_shdClean` |
 | เลขหน้า (ep-input ลบหน้า) | 0-9 + ',' + '-' | - | - | warning (pagesOnly) | `_pgCleanChars` |
+| แถว / คอลัมน์ ตาราง (tblNR / tblNC) | 0-9 เท่านั้น | 2 หลัก | ว่าง/0 = 1 · แถว ≤40 · คอลัมน์ ≤10 ตอน blur/สร้าง | เงียบ | `_tblNumClean` |
 | ฟอนต์ Google (gfontInput) | ตัวอักษรชื่อฟอนต์ | - | - | เงียบ (ชื่อผิด=ไม่พบตอนค้นหา) | - |
 
 - **เพิ่มช่องใหม่ครั้งหน้า:** ต้องทำครบ 4 ข้อ + เพิ่มแถวในตารางนี้ + เพิ่ม clean fn · ห้ามพึ่ง onchange อย่างเดียว (ค่าผิดจะโผล่ในช่องระหว่างพิมพ์)

@@ -3636,7 +3636,7 @@ def main():
     for _x173 in ('id="btnEdit"','data-i18n="grp.insert"','ftextAdd()','flineAdd()'):
         if _x173 in _sh173: errors.append('lint #173: แท็บ เมนู ต้องไม่มี '+_x173+' (ย้ายไปแท็บ ข้อความ)')
     _pi173=txt.find('<div class="rpane" data-pane="image">'); _sf173=txt[_pf173:_pi173] if 0<=_pf173<_pi173 else ''
-    if _sf173.count('rg-neededit')!=5: errors.append('lint #173: แท็บ ข้อความ ต้องมีกลุ่มที่ต้องกดแก้ข้อความก่อน 5 กลุ่ม (ฟอนต์ · กล่อง · จัดเรียง · คลิปบอร์ด #187 · จัดรูปแบบ) — พบ {}'.format(_sf173.count('rg-neededit')))
+    if _sf173.count('rg-neededit')!=6: errors.append('lint #173: แท็บ ข้อความ ต้องมีกลุ่มที่ต้องกดแก้ข้อความก่อน 6 กลุ่ม (ฟอนต์ · กล่อง · ตาราง #198 · จัดเรียง · คลิปบอร์ด #187 · จัดรูปแบบ) — พบ {}'.format(_sf173.count('rg-neededit')))
     for _g173 in ('<div class="rgroup fontgrp rg-neededit">','<div class="rgroup rg-ord-fmt rg-neededit">','<div class="rgroup rg-neededit"><div class="rgb fbox">','<div class="rgroup rg-neededit"><div class="rgb">  <!-- จัดกลุ่มกล่องข้อความ'):
         if _g173 not in _sf173: errors.append('lint #173: ขาด '+_g173[:50])
     _ia173=_sf173.find('id="btnFtextAddFmt"'); _ga173=_sf173.rfind('<div class="rgroup',0,_ia173)
@@ -3911,7 +3911,7 @@ def main():
     if "var _fx=el.querySelector('.ftxt'); if(_fx) _fx.removeAttribute('contenteditable');" in txt or txt.count("el.querySelectorAll('.ftxt,.ftxt td').forEach(function(_fx){ _fx.removeAttribute('contenteditable'); });")!=3 or "c.querySelectorAll('.ftxt,.ftxt td').forEach(function(x){ x.removeAttribute('contenteditable'); });" not in txt: errors.append('lint #196: contenteditable ของช่องตารางต้องถูกตัดตอน snapshot · Save Editor · Save Menu · คัดลอก')
     if "if(e.key==='Tab' && _tblTab(e)) return;" not in txt: errors.append('lint #196: Tab/Shift+Tab ต้องข้ามช่องตาราง')
     if "var td=_tblTdOf(e.target); if(!td) return; var cd=e.clipboardData;" not in txt or "document.addEventListener('drop',function(e){ var td=_tblTdOf(e.target);" not in txt: errors.append('lint #196: วาง/ลากลงช่องตารางต้องเป็นข้อความล้วน')
-    if txt.count('#alignDdPop,#calModal,#aboutModal,.cp-pop,#tblPickPop')!=2 or "ev.target.closest('#tblPickPop')" not in txt or "clone.querySelector('#tblPickPop')" not in txt or "'#pasteModal','#tblPickPop','#zDdPop'," not in txt: errors.append('lint #196: #tblPickPop ต้องอยู่ในรายการเครื่องมือ (ไม่เลิกเลือก) + ตัดตอนบันทึก')
+    if txt.count('#alignDdPop,#calModal,#aboutModal,.cp-pop,#tblPickPop,#tblDdPop')!=2 or "ev.target.closest('#tblPickPop')" not in txt or "clone.querySelector('#tblPickPop')" not in txt or "'#pasteModal','#tblPickPop','#tblDdPop','#zDdPop'," not in txt: errors.append('lint #196: #tblPickPop ต้องอยู่ในรายการเครื่องมือ (ไม่เลิกเลือก) + ตัดตอนบันทึก')
     for _c196 in ('.fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}','.fttbl td{border:1px solid var(--note-bd);','@media print{#tblPickPop{display:none !important;}}','#tblPickPop .tp-c.hl{',':root body.boardmode .fttbl:not([data-tbln="none"]) td{','#edbar #btnTblAdd.on,','#edbar #btnTblAdd.on svg,','#edbar #btnTblAdd.on span{'):
         if _c196 not in txt: errors.append('lint #196: CSS ขาด '+_c196[:50])
     for _k196 in ('btn.tblAdd','ttl.tblAdd','tbl.pickLbl','fl.tblAdd','fl.tblFull','fl.tblRowAdd','st.tblEdit','st.tblEditUp'):
@@ -3928,6 +3928,26 @@ def main():
     if '| แถว / คอลัมน์ ตาราง (tblNR / tblNC) |' not in _us197: errors.append('lint #197: UI_STANDARD.md ตารางช่องกรอกต้องมีแถว tblNR/tblNC')
     for _k197 in ('tbl.rows','tbl.cols','tbl.make','ttl.tblMake'):
         if txt.count("'"+_k197+"':'")<2: errors.append('lint #197: i18n '+_k197+' ไม่ครบ TH+EN')
+    # ---- 198) ตาราง 2b (ผู้ใช้ 7 พ.ย. 2026): กลุ่ม ตาราง ในแท็บข้อความ ต่อจาก แทรก · เพิ่ม ▾ / ลบ ▾ / เส้นตาราง ▾ · ทำกับช่องที่เคอร์เซอร์อยู่ · ใช้ไม่ได้ = จาง + tooltip · ป้าย EN ไม่มีเอกพจน์/พหูพจน์ผิด ----
+    _pf198=txt.find('<div class="rpane" data-pane="fmt">'); _pi198=txt.find('<div class="rpane" data-pane="image">'); _sf198=txt[_pf198:_pi198] if 0<=_pf198<_pi198 else ''
+    _gi198=_sf198.find('data-i18n="grp.insert"'); _gt198=_sf198.find('data-i18n="grp.tbl"'); _ga198=_sf198.find('data-i18n="grp.arrange"')
+    if not (0<=_gi198<_gt198<_ga198): errors.append('lint #198: กลุ่ม ตาราง ต้องอยู่แท็บข้อความ ระหว่าง แทรก กับ จัดเรียง')
+    for _b198,_k198 in (('btnTblIns','ins'),('btnTblDel','del'),('btnTblLn','ln')):
+        if txt.count('id="'+_b198+'"')!=1 or 'id="'+_b198+'" onclick="_tblDdToggle(event,\''+_k198+'\')" disabled' not in txt: errors.append('lint #198: ปุ่ม #'+_b198+' ต้องมี 1 ปุ่ม เปิดรายการ '+_k198+' และเริ่มต้นจาง')
+        for _c198 in ('#edbar #'+_b198+'.on,','#edbar #'+_b198+'.on svg,','#edbar #'+_b198+'.on span'):
+            if _c198 not in _css: errors.append('lint #198: #'+_b198+' ต้องเขียวตอน .on ('+_c198+')')
+    for _f198 in ('function _tblCtx(){','function _tblDis(kind,v){','function _tblSync(){','function _tblCfg(kind){','function _tblDdToggle(e,kind){','function _tblDo(kind,v){',"document.addEventListener('focusin',function(e){ var td=_tblTdOf(e.target);"):
+        if _f198 not in txt: errors.append('lint #198: ไม่พบ '+_f198)
+    if "if(typeof _tblSync==='function') _tblSync();  /* ปุ่มตารางตามการเลือก" not in txt or "_tblLastTd=null; }" not in txt: errors.append('lint #198: ปุ่มตารางต้อง sync ตามการเลือก และล้างช่องล่าสุดตอนเลิกพิมพ์')
+    for _d198 in ("return 'ttl.tblMaxCol';","return 'ttl.tblOneRow';","return 'ttl.tblOneCol';","if(!C.td) return 'ttl.tblNeedCell';"):
+        if _d198 not in txt: errors.append('lint #198: ตัวเลือกที่ใช้ไม่ได้ต้องจางพร้อมเหตุผล — ขาด '+_d198)
+    if "if(typeof _dd!=='undefined' && _dd) return;  /* รายการ ▾ เปิดอยู่" not in txt: errors.append('lint #198: รายการ ▾ เปิดอยู่ระหว่างพิมพ์ = Esc ปิดรายการ ไม่เลิกพิมพ์')
+    for _c198 in ('.fttbl[data-tbln="h"] td{border-left-style:none;border-right-style:none;}','.fttbl[data-tbln="none"] td{border-color:transparent;}','@media screen{body.editmode .fttbl[data-tbln="none"] td{border-style:dashed;','@media print{#tblDdPop{display:none !important;}}','#tblDdPop .ui-dd-opt:disabled{','#tblDdPop,#zDdPop,#alignDdPop,'):
+        if _c198 not in _css: errors.append('lint #198: CSS ขาด '+_c198[:60])
+    if "ev.target.closest('#tblDdPop')" not in txt or "clone.querySelector('#tblDdPop')" not in txt: errors.append('lint #198: #tblDdPop ต้องไม่เลิกเลือกตอนคลิก + ตัดตอนบันทึก')
+    if "'tbl.pickLbl':'{r} rows × {c} columns'" in txt: errors.append('lint #198: ป้าย EN ห้าม rows/columns ตายตัว (1 rows ผิดไวยากรณ์)')
+    for _k198 in ('grp.tbl','btn.tblIns','btn.tblDel','btn.tblLn','ttl.tblIns','ttl.tblDel','ttl.tblLn','ttl.tblNeed','ttl.tblNeedCell','tbl.ins.above','tbl.ins.below','tbl.ins.left','tbl.ins.right','tbl.del.row','tbl.del.col','tbl.ln.all','tbl.ln.h','tbl.ln.none','ttl.tblMaxCol','ttl.tblOneRow','ttl.tblOneCol','fl.tblInsRow','fl.tblInsCol','fl.tblDelRow','fl.tblDelCol','fl.tblLn'):
+        if txt.count("'"+_k198+"':'")<2: errors.append('lint #198: i18n '+_k198+' ไม่ครบ TH+EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

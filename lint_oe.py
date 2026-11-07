@@ -3957,7 +3957,7 @@ def main():
     if '_TBL_COLMIN=5' not in txt or 'nl=Math.max(mn,Math.min(sum-mn,nl));' not in txt: errors.append('lint #199: คอลัมน์ต่ำสุด 5 มม. และผลรวม 2 คอลัมน์ต้องเท่าเดิม')
     if '|| _tblColHit(e)) return;' not in txt: errors.append('lint #199: ดับเบิลคลิกเส้นแบ่งคอลัมน์ต้องไม่เข้าพิมพ์')
     if "_c.style.width=(_w/2).toFixed(3)+'%'; _n.style.width=(_w/2).toFixed(3)+'%';" not in txt or "if(_nb) _nb.style.width=((parseFloat(_nb.style.width)||0)+_dw).toFixed(3)+'%'; _dc.remove();" not in txt: errors.append('lint #199: แทรกคอลัมน์ = แบ่งครึ่ง · ลบคอลัมน์ = ให้ข้างเคียง (colgroup)')
-    if "ln:['all','h','none','eq']}" not in txt or "if(kind==='ln' && v==='eq'){" not in txt or "(v==='eq' && !_tblCg(C.T))?'ttl.tblEqDone':null" not in txt: errors.append('lint #199: ต้องมี คอลัมน์กว้างเท่ากัน (จางเมื่อยังไม่เคยลาก)')
+    if "ln:['all','h','none','eq']" not in txt or "if(kind==='ln' && v==='eq'){" not in txt or "(v==='eq' && !_tblCg(C.T))?'ttl.tblEqDone':null" not in txt: errors.append('lint #199: ต้องมี คอลัมน์กว้างเท่ากัน (จางเมื่อยังไม่เคยลาก)')
     if txt.count("if(_bfl) _bfl.classList.remove('tblcolrz');")!=2: errors.append('lint #199: class ชี้เส้นแบ่งคอลัมน์ (tblcolrz) ต้องถูกตัดตอน Save Editor/Save Menu')
     if '@media screen{body.editmode.tblcolrz .ftext[data-ftbl],body.editmode.tblcolrz .ftext[data-ftbl] *{cursor:col-resize !important;}}' not in _css: errors.append('lint #199: ชี้เส้นแบ่งคอลัมน์ต้องเปลี่ยนเคอร์เซอร์ (เฉพาะจอ)')
     for _k199 in ('tbl.ln.eq','ttl.tblEqDone','fl.tblEq','fl.tblColW'):
@@ -3967,6 +3967,24 @@ def main():
     _b200=txt.find("window.addEventListener('beforeprint',function(){ var i=_priceVisiblePage(), P=document.querySelectorAll('.page'); _prKeep=")
     if _b200<0 or _b200<_e200: errors.append('lint #200: ก่อนพิมพ์ต้องจำหน้าที่เห็น (_prKeep) ในสคริปต์ตัวแก้')
     if "_scrollKeepTo(Math.max(0,se.scrollTop+P[K.i].getBoundingClientRect().top-K.top));" not in txt or "window.addEventListener('afterprint',function(){ var K=_prKeep;" not in txt: errors.append('lint #200: หลังพิมพ์ต้องเลื่อนกลับหน้าเดิม')
+    # ---- 201) ตาราง D2b (ผู้ใช้ 7 พ.ย. 2026): จัดชิด ▾ ทั้งคอลัมน์ (ซ้าย/กลาง/ขวา + บน/กลาง/ล่าง) · แถว/คอลัมน์ใหม่สืบค่า · แถวหัว เปิด/ปิด (ตัวหนา + พื้นหัวกลุ่ม พิมพ์ออก · โมโนโครมเทา · ปุ่มเขียวตอนเปิด) ----
+    for _c201 in ('.fttbl td[data-tal="c"]{text-align:center;}','.fttbl td[data-tal="r"]{text-align:right;}','.fttbl td[data-tva="m"]{vertical-align:middle;}','.fttbl td[data-tva="b"]{vertical-align:bottom;}',
+                  '.fttbl[data-thd] tr:first-child > td{font-weight:700;background:rgb(var(--grp-head-bg));-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
+                  ':root body.boardmode .fttbl[data-thd] tr:first-child > td{background:#DDDFE2 !important;'):
+        if _c201 not in txt: errors.append('lint #201: ไม่พบ CSS '+_c201[:60])
+    _gl201=txt.find('data-i18n="grp.tbl"'); _ln201=txt.find('id="btnTblLn"')
+    for _b201 in ('id="btnTblAl" onclick="_tblDdToggle(event,\'al\')" disabled','id="btnTblHd" onclick="_tblHdToggle()" disabled aria-pressed="false"'):
+        _p201=txt.find(_b201)
+        if txt.count(_b201)!=1 or not (0<=_ln201<_p201<_gl201): errors.append('lint #201: ปุ่ม '+_b201[:16]+' ต้องมี 1 ปุ่ม ในกลุ่ม ตาราง ต่อจาก เส้นตาราง และเริ่มต้นจาง')
+    for _i201 in ('btnTblAl','btnTblHd'):
+        for _g201 in ('#edbar #'+_i201+'.on,','#edbar #'+_i201+'.on svg,','#edbar #'+_i201+'.on span,'):
+            if _g201 not in _css: errors.append('lint #201: #'+_i201+' ต้องเขียวตอน .on ('+_g201+')')
+    for _f201 in ("var _TBL_ALA=['data-tal','data-tva'];",'_TBL_ALA.forEach(function(a){ var x=ref.getAttribute(a);','nr.appendChild(_tblMkTd(true,tr.children[j]))','nr.appendChild(_tblMkTd(ed,tr.cells[j]))','r.insertBefore(_tblMkTd(ed,ref),',
+                  "al:['l','c','r','t','m','b']}",'function _tblAlCur(v){','isCur:(kind===\'al\')?_tblAlCur:null','((o.isCur?o.isCur(v):v===o.cur)?\' sel\':\'\')','function _tblHdToggle(){',"if(kind==='al'){ var _av=",
+                  "hb.classList.toggle('on',ho); hb.setAttribute('aria-pressed',ho?'true':'false');","['btnTblAl',true,'ttl.tblAl']"):
+        if _f201 not in txt: errors.append('lint #201: ไม่พบ '+_f201[:60])
+    for _k201 in ('btn.tblAl','ttl.tblAl','tbl.al.l','tbl.al.c','tbl.al.r','tbl.al.t','tbl.al.m','tbl.al.b','fl.tblAl','btn.tblHd','ttl.tblHd','fl.tblHdOn','fl.tblHdOff'):
+        if txt.count("'"+_k201+"':")!=2: errors.append('lint #201: i18n '+_k201+' ต้องมีทั้ง TH และ EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

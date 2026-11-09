@@ -2915,7 +2915,7 @@ def main():
         if _f130 not in txt: errors.append('lint #130: ไม่พบ '+_f130)
     if "{key:'ftext',      sel:'.ftext .ftxt'" not in txt:
         errors.append('lint #130: แถบตัวอักษรต้องรู้จักกล่องข้อความ (TYPO_TYPES ftext)')
-    if "document.addEventListener('dblclick',function(e){\n  if(!document.body.classList.contains('editmode')) return;" not in txt or "_ftStartEdit(box,e.clientX,e.clientY);" not in txt:
+    if "document.addEventListener('dblclick',function(e){\n  if(!document.body.classList.contains('editmode')){ _ftDblOut(e); return; }" not in txt or "_ftStartEdit(box,e.clientX,e.clientY);" not in txt:
         errors.append('lint #130: ดับเบิลคลิก = พิมพ์ (แบบ 1)')
     if "if(_ftEdit===box && !hd) return;" not in txt:
         errors.append('lint #130: คลิกครั้งเดียวต้องเลือก/ลาก ไม่เข้าโหมดพิมพ์ (กำลังพิมพ์ = วางเคอร์เซอร์)')
@@ -4038,6 +4038,14 @@ def main():
     if "(cur!==_THEME_DEF?'<button type=\"button\" class=\"ep-mini ep-flt-gap\" onclick=\"_themeResetDef()\" data-i18n=\"th.defReset\">'" not in _rp206 or _rp206.find('_themeResetDef()')<_rp206.find('_themeDdHtml()') or _rp206.find('_themeResetDef()')>_rp206.find('_paperTrigHtml()'): errors.append('lint #206: ปุ่ม ธีมเริ่มต้น ต้องอยู่ข้างช่องธีม (ก่อนพื้นกระดาษ) และโผล่เมื่อไม่ใช่ค่าเริ่มต้น')
     if txt.count("'th.defReset':")!=2 or "'th.paperReset':'สีเริ่มต้น'," not in txt or "'th.paperReset':'ครีมเดิม'" in txt: errors.append('lint #206: ป้ายปุ่ม ธีมเริ่มต้น (TH/EN) · พื้นกระดาษ = สีเริ่มต้น (ไม่ใช่ ครีมเดิม)')
     if '#edpanel .ep-dd-opt{display:flex;' not in _css or 'float:right' in _css[_css.find('#edpanel .ep-dd-ink{'):_css.find('#edpanel .ep-dd-ink{')+80]: errors.append('lint #206: แถวรายการธีมต้องเป็น flex (ป้ายหมึกบรรทัดเดียว)')
+    # ---- 207) ดับเบิลคลิกกล่องข้อความ/ตาราง นอกโหมดแก้ข้อความ = เข้าโหมด + พิมพ์ตรงจุด · ชิ้นบนสุดต้องเป็นกล่อง (รูป/เส้นทับ = ไม่เข้า) · ไม่ทำในโหมดนำเสนอ/แก้ส่วนหัว (ผู้ใช้ 9 พ.ย. 2026) ----
+    _i207=txt.find('function _ftDblOut(e){'); _b207=txt[_i207:txt.find('\n}\n',_i207)] if _i207>=0 else ''
+    if not _b207: errors.append('lint #207: ไม่พบ _ftDblOut (ดับเบิลคลิกกล่องนอกโหมดแก้ข้อความ)')
+    else:
+        for _k207 in ("bc.contains('presentmode')","bc.contains('headermode')","pg.classList.add('ftprobe')","finally { pg.classList.remove('ftprobe'); }","document.elementFromPoint(e.clientX,e.clientY)","hit.closest('.fimg,.fline,.ftext')","!it.classList.contains('ftext')","toggleEdit();","_ftStartEdit(it,R2.left+dx,R2.top+dy)"):
+            if _k207 not in _b207: errors.append('lint #207: _ftDblOut ขาด '+_k207)
+    if "document.addEventListener('dblclick',function(e){\n  if(!document.body.classList.contains('editmode')){ _ftDblOut(e); return; }" not in txt: errors.append('lint #207: ตัวรับดับเบิลคลิกต้องส่งต่อ _ftDblOut ตอนไม่อยู่ในโหมดแก้ข้อความ')
+    if '.page.ftprobe .ftext,.page.ftprobe .fimg,.page.ftprobe .fline{pointer-events:auto !important;}' not in _css or ".page.ftprobe .fline::after{content:'';" not in _css: errors.append('lint #207: CSS .ftprobe (เปิดรับเมาส์ชั่วคราว รวมพื้นที่คลิกรอบเส้น) หาย')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

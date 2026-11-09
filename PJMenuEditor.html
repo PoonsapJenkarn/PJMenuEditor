@@ -585,7 +585,7 @@ html[data-notehide][data-plabelhide] .noterow{display:none !important;}
 .ftext[data-ftbl]{display:grid;grid-template-rows:1fr;}.ftext[data-ftbl] .fttbl{height:100%;}  /* ยืดกล่องตารางลง = ตารางยืดตาม แถวสูงขึ้นเท่ากัน (บั๊ก 7 พ.ย. 2026: ขอบกล่องยืดแต่ตารางไม่ยืด) · grid ทำให้ % ความสูงอิงกล่องที่มีแค่ min-height ได้ · lint #197 */
 @media screen{body.editmode .ftext.fedit .fttbl td{cursor:text;}body.editmode .ftext.fedit .fttbl td:focus{outline:1.5px solid #217346;outline-offset:-2px;}}  /* ช่องที่กำลังพิมพ์ = กรอบเขียว (จอเท่านั้น) */
 .ftext[data-fgc],.ftext[data-fbc]{-webkit-print-color-adjust:exact;print-color-adjust:exact;}  /* ขอบ/พื้นหลังกล่องข้อความพิมพ์ออกโดยไม่ต้องติ๊ก Background graphics (lint #165) */
-@media screen{body.editmode .ftext{pointer-events:auto;cursor:move;outline:1px dashed #9aa4b0;outline-offset:0;}}
+@media screen{body.editmode .ftext{pointer-events:auto;cursor:move;outline:1px dashed #9aa4b0;outline-offset:0;}} @media screen{.page.ftprobe .ftext,.page.ftprobe .fimg,.page.ftprobe .fline{pointer-events:auto !important;} .page.ftprobe .fline::after{content:'';position:absolute;left:-1mm;right:-1mm;top:-3mm;height:5mm;}}  /* ตรวจชิ้นบนสุดตอนดับเบิลคลิกนอกโหมดแก้ข้อความ ชั่วคราวในสคริปต์เดียว (ผู้ใช้ 9 พ.ย. 2026 · lint #207) */
 @media screen{body.editmode .ftext.sel{outline:1.5px solid #217346;anchor-name:--ftsel;}body.editmode .ftext.fedit{z-index:24;}}  /* กล่องที่เลือก = อยู่ลำดับจริง · จุดจับอยู่ชั้น .selov · กำลังพิมพ์ = ยกขึ้นหน้าชั่วคราว ข้อความไม่ถูกบัง (ผู้ใช้ 2 พ.ย. 2026 เลือก · lint #191) */
 @media screen{body.editmode .ftext.fedit{cursor:text;}}  /* กรอบประตอนพิมพ์อยู่ที่ชั้นจุดจับ (.fedit ~ .selov.ovft) ไม่ซ้อนที่ตัวกล่อง (lint #193) */
 @media screen{body.editmode .ftext.sel:has(~ .selov.ovft){outline:none;}}  /* เลือกกล่องเดียว = กรอบเขียวมีชั้นเดียวที่ชั้นจุดจับ (บนสุด) · เดิมซ้อน 2 ชั้น (ตัวกล่องโค้งตามมุม + ชั้นจุดจับเหลี่ยม) · เลือกหลายกล่อง (ไม่มีชั้นจุดจับ) = กรอบที่ตัวกล่องเหมือนเดิม (ผู้ใช้ 2 พ.ย. 2026 · lint #193) */
@@ -4481,8 +4481,19 @@ document.addEventListener('mousemove',function(e){
   b.style.left=l.toFixed(1)+'mm'; b.style.top=tp.toFixed(1)+'mm'; _ftGuides(b.closest('.page'),sn.gx,sn.gy); _ftStatus(b);
 });
 document.addEventListener('mouseup',function(){ if(_ftMarq){ _ftMarqEnd(); return; } var D=_ftDrag; if(!D) return; _ftDrag=null; _ftGuideClear(); if(D.moved) _blankFitAll(); if(_selCount()>1){ _ftGrpFrame(); _flOverlay(); if(_ftSel) _ftStatus(_ftSel); } if(D.moved){ markDirty(); if(typeof checkOverflow==='function') checkOverflow({quiet:true}); var _ob=D.box||(D.items&&D.items[0]&&D.items[0].b); _ftOverCheck(D.pg||(_ob&&_ob.closest('.page')),false,(D.items||D.grp||[]).map(function(s){ return s.b; })); if(D.lines && D.lines.length) _flOverCheck(D.lines.map(function(q){ return q.l; })); } });  /* ลาก/ยืด จนเลยขอบพิมพ์ = เตือน (หลังวัดล้นหน้า) */
+function _ftDblOut(e){  /* ดับเบิลคลิกกล่องข้อความ/ตาราง ตอนยังไม่เปิดโหมดแก้ข้อความ = เข้าโหมด + พิมพ์ตรงจุดที่คลิก (ผู้ใช้ 9 พ.ย. 2026 · lint #207) · ชิ้นบนสุด ณ จุดนั้นต้องเป็นกล่อง (รูป/เส้นทับ = ไม่เข้า) · คลิกครั้งเดียวยังทะลุเหมือนเดิม */
+  var bc=document.body.classList; if(bc.contains('presentmode') || bc.contains('headermode') || e.button!==0) return;
+  var tg=e.target, pg=(tg && tg.closest)?tg.closest('.page'):null; if(!pg) return;
+  pg.classList.add('ftprobe'); var hit=null; try{ hit=document.elementFromPoint(e.clientX,e.clientY); } finally { pg.classList.remove('ftprobe'); }  /* นอกโหมดชิ้นลอยไม่รับเมาส์ = เปิดรับชั่วคราวเพื่อหาชิ้นบนสุด */
+  var it=(hit && hit.closest)?hit.closest('.fimg,.fline,.ftext'):null;
+  if(!it || !it.classList.contains('ftext') || it.closest('.page')!==pg) return;
+  var R=it.getBoundingClientRect(), dx=e.clientX-R.left, dy=e.clientY-R.top;  /* จุดที่คลิกเทียบกับกล่อง (หน้าอาจขยับตอนเข้าโหมด) */
+  e.preventDefault(); toggleEdit();
+  if(!document.body.classList.contains('editmode') || !it.isConnected) return;
+  var R2=it.getBoundingClientRect(); _ftStartEdit(it,R2.left+dx,R2.top+dy);
+}
 document.addEventListener('dblclick',function(e){
-  if(!document.body.classList.contains('editmode')) return;
+  if(!document.body.classList.contains('editmode')){ _ftDblOut(e); return; }  /* นอกโหมด = lint #207 */
   var tg=e.target; if(!tg||!tg.closest) return; var box=tg.closest('.ftext');
   if(!box || tg.classList.contains('fth') || tg.classList.contains('ftdel') || _ftEdit===box || _tblColHit(e)) return;  /* ดับเบิลคลิกเส้นแบ่งคอลัมน์ = ไม่เข้าพิมพ์ (lint #199) */
   e.preventDefault(); _ftStartEdit(box,e.clientX,e.clientY);

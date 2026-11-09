@@ -4046,6 +4046,21 @@ def main():
             if _k207 not in _b207: errors.append('lint #207: _ftDblOut ขาด '+_k207)
     if "document.addEventListener('dblclick',function(e){\n  if(!document.body.classList.contains('editmode')){ _ftDblOut(e); return; }" not in txt: errors.append('lint #207: ตัวรับดับเบิลคลิกต้องส่งต่อ _ftDblOut ตอนไม่อยู่ในโหมดแก้ข้อความ')
     if '.page.ftprobe .ftext,.page.ftprobe .fimg,.page.ftprobe .fline{pointer-events:auto !important;}' not in _css or ".page.ftprobe .fline::after{content:'';" not in _css: errors.append('lint #207: CSS .ftprobe (เปิดรับเมาส์ชั่วคราว รวมพื้นที่คลิกรอบเส้น) หาย')
+    # ---- 208) คลิกที่ว่าง = ออกจากโหมดแก้ข้อความ · ที่ว่าง = พื้นกระดาษ/พื้นเทาตรงๆ (รูปลอยนับเป็น element) · 2 จังหวะ (เลือก/พิมพ์/ถาดเปิด = คลิกแรกแค่เลิก) · ลาก/Shift/Ctrl ไม่นับ · แถบล่างบอกวิธีกลับเข้า (ผู้ใช้ 9 พ.ย. 2026) ----
+    def _fb208(n):
+        i=txt.find(n); return txt[i:txt.find('\n}\n',i)] if i>=0 else ''
+    _e208=_fb208('function _edIsEmpty(e){'); _b208=_fb208('function _edBusy(){')
+    if not _e208 or not _b208: errors.append('lint #208: ไม่พบ _edIsEmpty/_edBusy (คลิกที่ว่างออกโหมด)')
+    else:
+        for _k in ("tg===document.body || tg===de","tg===pg || tg.classList.contains('grid') || tg.classList.contains('col') || tg.classList.contains('brand') || tg.classList.contains('noterow') || tg.classList.contains('rule')","pg.querySelectorAll('.fimg')","e.clientX>=de.clientWidth"):
+            if _k not in _e208: errors.append('lint #208: _edIsEmpty ขาด '+_k)
+        for _k in ("_ftSel || _ftEdit || _ftSet.length || _flSel || _flSet.length || _typoEl","_dd ||","#edpanel:not(.ep-hidden)","ae.isContentEditable","!s.isCollapsed"):
+            if _k not in _b208: errors.append('lint #208: _edBusy ขาด '+_k)
+    _m208=txt.find("window.addEventListener('mousedown',function(e){\n  _edEmptyMd=null;")
+    if _m208<0 or "e.shiftKey || e.ctrlKey || e.metaKey || e.altKey" not in txt[_m208:_m208+300]: errors.append('lint #208: ต้องจดสถานะตอน mousedown (capture บน window) และไม่นับ Shift/Ctrl/Alt')
+    _i208=txt.find("window.addEventListener('click',function(e){\n  var M=_edEmptyMd;"); _c208=txt[_i208:_i208+900] if _i208>=0 else ''
+    if not _c208 or '>4 || _ftMarqClick' not in _c208 or 'if(M.busy){' not in _c208 or "toggleEdit(); if(!document.body.classList.contains('editmode')) setStatus('info',tk('st.editOffClick'));" not in _c208: errors.append('lint #208: click ต้องไม่นับการลาก · จังหวะแรกแค่เลิก · ออกโหมดแล้วแถบล่างบอกวิธีกลับเข้า')
+    if txt.count("'st.editOffClick':")!=2: errors.append('lint #208: ข้อความ st.editOffClick ต้องมีทั้ง TH/EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

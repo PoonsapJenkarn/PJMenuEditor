@@ -4058,9 +4058,20 @@ def main():
             if _k not in _b208: errors.append('lint #208: _edBusy ขาด '+_k)
     _m208=txt.find("window.addEventListener('mousedown',function(e){\n  _edEmptyMd=null;")
     if _m208<0 or "e.shiftKey || e.ctrlKey || e.metaKey || e.altKey" not in txt[_m208:_m208+300]: errors.append('lint #208: ต้องจดสถานะตอน mousedown (capture บน window) และไม่นับ Shift/Ctrl/Alt')
-    _i208=txt.find("window.addEventListener('click',function(e){\n  var M=_edEmptyMd;"); _c208=txt[_i208:_i208+900] if _i208>=0 else ''
+    _i208=txt.find("window.addEventListener('click',function(e){\n  var M=_edEmptyMd;"); _c208=txt[_i208:_i208+1800] if _i208>=0 else ''
     if not _c208 or '>4 || _ftMarqClick' not in _c208 or 'if(M.busy){' not in _c208 or "toggleEdit(); if(!document.body.classList.contains('editmode')) setStatus('info',tk('st.editOffClick'));" not in _c208: errors.append('lint #208: click ต้องไม่นับการลาก · จังหวะแรกแค่เลิก · ออกโหมดแล้วแถบล่างบอกวิธีกลับเข้า')
     if txt.count("'st.editOffClick':")!=2: errors.append('lint #208: ข้อความ st.editOffClick ต้องมีทั้ง TH/EN')
+    if not _c208 or 's.removeAllRanges();' not in _c208 or "if(_typoEl && typeof typoClear==='function') typoClear(); return; }" not in _c208: errors.append('lint #208b: คลิกแรกที่ว่างต้องล้างไฮไลท์/เคอร์เซอร์ในหน้า + ล้างแถบรูปแบบ (กัน _typoEl ค้าง = ออกโหมดไม่ได้ · บั๊กชื่อกลุ่ม 10 พ.ย. 2026)')
+    # ---- 209) ดับเบิลคลิกข้อความของหน้าเมนู นอกโหมด = เข้าโหมดแก้ข้อความ + เคอร์เซอร์ตรงจุด · ชุดช่องเดียวกับ toggleEdit · รูป/เส้น/กล่องทับ = ไม่เข้า · โหมดปรับราคา ช่องราคา = ไม่สลับ (ผู้ใช้ 9 พ.ย. 2026) ----
+    _i209=txt.find('function _edDblTpl(e,hit,pg){'); _b209=txt[_i209:txt.find('\n}\n',_i209)] if _i209>=0 else ''
+    if "var _ED_TPL_SEL='.nm, .pr, .sec-h .sechead, .sec-b > .secnote, [data-edit]';" not in txt or not _b209: errors.append('lint #209: ไม่พบ _edDblTpl/_ED_TPL_SEL (ดับเบิลคลิกข้อความหน้าเมนูนอกโหมด)')
+    else:
+        for _k in ("hit.closest(_ED_TPL_SEL)","el.closest('.page')!==pg","contains('pricemode') && el.classList.contains('pr')","toggleEdit();","document.caretRangeFromPoint(x,y)","typoSelect(f.el,f.type)"):
+            if _k not in _b209: errors.append('lint #209: _edDblTpl ขาด '+_k)
+    _d209=txt[txt.find('function _ftDblOut(e){'):txt.find('function _ftDblOut(e){')+1600]
+    if "if(!it){ _edDblTpl(e,hit,pg); return; }" not in _d209 or _d209.find('_edDblTpl(e,hit,pg)')<_d209.find("hit.closest('.fimg,.fline,.ftext')"): errors.append('lint #209: _ftDblOut ต้องส่งต่อ _edDblTpl เฉพาะเมื่อชิ้นบนสุดไม่ใช่รูป/เส้น/กล่อง')
+    for _s in ("'.nm, .pr'","'.sec-h .sechead, .sec-b > .secnote'","'[data-edit]'"):
+        if ("document.querySelectorAll("+_s+").forEach") not in txt[txt.find('function toggleEdit('):txt.find('function toggleEdit(')+3000]: errors.append('lint #209: ชุดช่องใน toggleEdit เปลี่ยน ('+_s+') — ต้องแก้ _ED_TPL_SEL ให้ตรง')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

@@ -4508,15 +4508,33 @@ window.addEventListener('mousedown',function(e){
 window.addEventListener('click',function(e){
   var M=_edEmptyMd; _edEmptyMd=null; if(!M || !document.body.classList.contains('editmode')) return;
   if(Math.abs(e.clientX-M.x)+Math.abs(e.clientY-M.y)>4 || _ftMarqClick || !_edIsEmpty(e)) return;  /* ลากกรอบ = ไม่นับ */
-  if(M.busy){ var ae=document.activeElement; if(ae && ae.isContentEditable && ae.closest && ae.closest('.page')) ae.blur(); return; }  /* จังหวะแรก: เลิกพิมพ์ชื่อเมนู/ราคา/หัวกระดาษด้วย (ตัวรับเดิมกันโฟกัสหลุดตอนเริ่มลากกรอบ) */
+  if(M.busy){ var ae=document.activeElement; if(ae && ae.isContentEditable && ae.closest && ae.closest('.page')) ae.blur();
+    var s=window.getSelection(); if(s && s.rangeCount){ var n=s.getRangeAt(0).commonAncestorContainer, ne=(n.nodeType===1?n:n.parentNode); if(ne && ne.closest && ne.closest('.page')) s.removeAllRanges(); }  /* mousedown ที่ว่างถูก preventDefault (เริ่มลากกรอบ) = เคอร์เซอร์/ไฮไลท์ค้างในช่อง → แถบรูปแบบไม่ถูกล้าง (บั๊กชื่อกลุ่ม 10 พ.ย. 2026: _typoEl ค้าง busy ทุกคลิก) */
+    if(_typoEl && typeof typoClear==='function') typoClear(); return; }  /* จังหวะแรก: เลิกพิมพ์ชื่อเมนู/ราคา/หัวกระดาษด้วย (ตัวรับเดิมกันโฟกัสหลุดตอนเริ่มลากกรอบ) */
   toggleEdit(); if(!document.body.classList.contains('editmode')) setStatus('info',tk('st.editOffClick'));
 },true);
+/* ดับเบิลคลิกข้อความของหน้าเมนู (ชื่อเมนู ราคา ชื่อกลุ่ม หมายเหตุกลุ่ม กล่องโน้ต ติดต่อ) ตอนยังไม่เปิดโหมด = เข้าโหมดแก้ข้อความ + เคอร์เซอร์ตรงจุดที่คลิก (ผู้ใช้ 9 พ.ย. 2026 · lint #209)
+   ชุดเดียวกับที่ toggleEdit เปิดให้แก้ · รูป/เส้น/กล่องทับ = ไม่เข้า (ตรวจใน _ftDblOut) · โหมดปรับราคา: ดับเบิลคลิกช่องราคา = ของโหมดปรับราคา (ไม่สลับโหมด) */
+var _ED_TPL_SEL='.nm, .pr, .sec-h .sechead, .sec-b > .secnote, [data-edit]';
+function _edDblTpl(e,hit,pg){
+  var el=(hit && hit.closest)?hit.closest(_ED_TPL_SEL):null; if(!el || el.closest('.page')!==pg) return;
+  if(document.body.classList.contains('pricemode') && el.classList.contains('pr')) return;
+  var R=el.getBoundingClientRect(), dx=e.clientX-R.left, dy=e.clientY-R.top;  /* จุดที่คลิกเทียบกับช่อง (หน้าขยับตอนเข้าโหมด) */
+  e.preventDefault(); toggleEdit();
+  if(!document.body.classList.contains('editmode') || !el.isConnected) return;
+  var R2=el.getBoundingClientRect(), x=R2.left+dx, y=R2.top+dy; try{ el.focus(); }catch(_){ }
+  var r=(document.caretRangeFromPoint)?document.caretRangeFromPoint(x,y):null; if(r && !el.contains(r.startContainer)) r=null;
+  if(!r){ r=document.createRange(); r.selectNodeContents(el); r.collapse(false); }
+  var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  var f=_typoFind(r.startContainer.nodeType===1?r.startContainer:r.startContainer.parentNode)||_typoFind(el); if(f) typoSelect(f.el,f.type);  /* แถบรูปแบบชี้ช่องที่คลิก (เหมือนคลิกในโหมด) */
+}
 function _ftDblOut(e){  /* ดับเบิลคลิกกล่องข้อความ/ตาราง ตอนยังไม่เปิดโหมดแก้ข้อความ = เข้าโหมด + พิมพ์ตรงจุดที่คลิก (ผู้ใช้ 9 พ.ย. 2026 · lint #207) · ชิ้นบนสุด ณ จุดนั้นต้องเป็นกล่อง (รูป/เส้นทับ = ไม่เข้า) · คลิกครั้งเดียวยังทะลุเหมือนเดิม */
   var bc=document.body.classList; if(bc.contains('presentmode') || bc.contains('headermode') || e.button!==0) return;
   var tg=e.target, pg=(tg && tg.closest)?tg.closest('.page'):null; if(!pg) return;
   pg.classList.add('ftprobe'); var hit=null; try{ hit=document.elementFromPoint(e.clientX,e.clientY); } finally { pg.classList.remove('ftprobe'); }  /* นอกโหมดชิ้นลอยไม่รับเมาส์ = เปิดรับชั่วคราวเพื่อหาชิ้นบนสุด */
   var it=(hit && hit.closest)?hit.closest('.fimg,.fline,.ftext'):null;
-  if(!it || !it.classList.contains('ftext') || it.closest('.page')!==pg) return;
+  if(!it){ _edDblTpl(e,hit,pg); return; }  /* ไม่โดนชิ้นลอย = ข้อความของหน้าเมนู (lint #209) */
+  if(!it.classList.contains('ftext') || it.closest('.page')!==pg) return;
   var R=it.getBoundingClientRect(), dx=e.clientX-R.left, dy=e.clientY-R.top;  /* จุดที่คลิกเทียบกับกล่อง (หน้าอาจขยับตอนเข้าโหมด) */
   e.preventDefault(); toggleEdit();
   if(!document.body.classList.contains('editmode') || !it.isConnected) return;

@@ -4072,6 +4072,23 @@ def main():
     if "if(!it){ _edDblTpl(e,hit,pg); return; }" not in _d209 or _d209.find('_edDblTpl(e,hit,pg)')<_d209.find("hit.closest('.fimg,.fline,.ftext')"): errors.append('lint #209: _ftDblOut ต้องส่งต่อ _edDblTpl เฉพาะเมื่อชิ้นบนสุดไม่ใช่รูป/เส้น/กล่อง')
     for _s in ("'.nm, .pr'","'.sec-h .sechead, .sec-b > .secnote'","'[data-edit]'"):
         if ("document.querySelectorAll("+_s+").forEach") not in txt[txt.find('function toggleEdit('):txt.find('function toggleEdit(')+3000]: errors.append('lint #209: ชุดช่องใน toggleEdit เปลี่ยน ('+_s+') — ต้องแก้ _ED_TPL_SEL ให้ตรง')
+    # ---- 210) Undo ครอบค่าระดับเอกสาร (ธีม กระดาษ เลย์เอาต์ เส้น·ขอบ ซ่อนโน้ต/เลขหน้า · ไม่รวม ตั้งค่าเริ่มต้น) + เลือกชิ้นเดิมกลับหลัง Undo/Redo (ผู้ใช้ 10 พ.ย. 2026) ----
+    if "var _DOCST_ATTRS=['data-theme','data-theme-custom','data-paper','data-layout','data-rule-style','data-rulehide','data-notehide','data-plabelhide'];" not in txt: errors.append('lint #210: _DOCST_ATTRS ต้องครบ 8 ค่า (ธีม สีกำหนดเอง กระดาษ เลย์เอาต์ เส้นคั่น 2 ซ่อนโน้ต ซ่อนเลขหน้า)')
+    _da210=txt[txt.find('var _DOCST_ATTRS='):txt.find('var _DOCST_ATTRS=')+300]
+    if 'data-defstyles' in _da210: errors.append('lint #210: ตั้งค่าเริ่มต้น (data-defstyles) ต้องไม่อยู่ใน Undo (ผู้ใช้เลือก)')
+    if "function _docStVars(){ var v=_THEME_VARS.concat(['page-bg']).concat(Object.keys(_PAPER_TXT_LIGHT)); Object.keys(_EDGE_DD).forEach(function(k){ if(k!=='rule-style') v.push(k); }); return v; }" not in txt: errors.append('lint #210: _docStVars ต้องครอบสีธีม/กระดาษ/สีตัวอักษรกระดาษ/เส้น·ขอบ')
+    _s210=txt[txt.find('function _docStSer(){'):txt.find('function _docStSer(){')+600]
+    if 'if(_docStPreviewing() && _lastSnap){' not in _s210 or "function _docStPreviewing(){ return !!((typeof _dd!=='undefined' && _dd) || (typeof _themeDd!=='undefined' && _themeDd && _themeDd.open) || document.querySelector('#thcpPop.open, #typoCpDlg.open')); }" not in txt: errors.append('lint #210: ชี้ดูอยู่ = ห้ามจดค่าชั่วคราวลง Undo')
+    if "var snap=_docStSer()+_serializePages();" not in txt or "_lastSnap=_docStSer()+_serializePages();" not in txt: errors.append('lint #210: snapshot (ระหว่างใช้ + ตอนโหลด) ต้องรวมค่าระดับเอกสาร')
+    _r210=txt[txt.find('function _restorePages(html){'):txt.find('function _restorePages(html){')+400]
+    if "var _dsm=_DOCST_RE.exec(html||''); if(_dsm){ html=html.slice(_dsm[0].length); try{ _docStApply(JSON.parse(_dsm[1])); }catch(e){} }" not in _r210: errors.append('lint #210: _restorePages ต้องแยกส่วนหัวค่าเอกสารก่อนใส่หน้า (ไม่หลุดเข้าหน้า)')
+    _i210=txt.find('function _docStApply(o){'); _a210=txt[_i210:txt.find('\n}\n',_i210)] if _i210>=0 else ''
+    for _k in ('_layoutSyncBtns(); _ruleHideSync(); _noteHideSync();','_themeRenderPanel()','_lineEdgeRenderPanel()',"_theme=(th==='custom' || _THEMES.indexOf(th)>=0)?th:'cream';"):
+        if _k not in _a210: errors.append('lint #210: _docStApply ขาด '+_k)
+    if 'markDirty(' in _a210 or '_snapNow(' in _a210: errors.append('lint #210: _docStApply ห้าม markDirty/_snapNow (จะสร้างจุด Undo ซ้อน)')
+    for _k in ("if(!undoStack.length) return; var _usc=_undoSelCap();","if(!redoStack.length) return; var _usc=_undoSelCap();","_undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.undo'));","_undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.redo'));"):
+        if _k not in txt: errors.append('lint #210: Undo/Redo ต้องเลือกชิ้นเดิมกลับ ('+_k[:40]+')')
+    if 'ไม่อยู่ใน Undo เหมือนการเลือกธีม' in txt: errors.append('lint #210: คำอธิบายเก่า (ธีมไม่อยู่ใน Undo) ไม่ตรงพฤติกรรมแล้ว')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

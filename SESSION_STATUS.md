@@ -1,5 +1,21 @@
 # SESSION STATUS - PJ Menu Editor
 
+## #210 Undo ครอบค่าระดับเอกสาร + เลือกชิ้นเดิมกลับ · รอบ 2/2 แก้แล้ว · 10 พ.ย. 2026 15:26 — รอทดสอบ (ยังไม่ commit · HEAD = 9d06967)
+- ผู้ใช้เลือก: ทุกค่าที่บันทึกลงไฟล์ ยกเว้นตั้งค่าเริ่มต้น · เลือกชิ้นเดิมกลับ
+- _DOCST_ATTRS 8 ค่า + _docStVars (สีธีม 9 · page-bg · page-title/txt/sub · rule-h/note-bw/grp-bw/note-bs/grp-bs/note-radius/grp-radius) · snapshot = '<!--docst:{json}-->'+หน้า (_takeSnapshot + load) · ชี้ดู (_dd/_themeDd/#thcpPop/#typoCpDlg) = ใช้ส่วนหัวจาก _lastSnap · _restorePages แยกส่วนหัว → _docStApply (เงียบ · _theme · localStorage theme/layout · ปุ่มเลย์เอาต์/เส้นคั่น/ซ่อนโน้ต · แผงธีม/เส้น·ขอบที่เปิด render ใหม่) · ร่างได้ธีมไปด้วย (ร่างเก่าไม่แตะ)
+- _undoSelCap/_undoSelRest ใน undo/redo: กล่อง/เส้นตาม data-seq · รูปตามหน้า+ลำดับ (โหมดรูป) · หลายชิ้น = แบบลากกรอบ · lint #210 · html 8,695,201 bytes
+- commit: git add -A / git commit -m "feat: Ctrl+Z ย้อนธีม/พื้นกระดาษ/เลย์เอาต์/เส้น·ขอบ/ซ่อนโน้ต-เลขหน้าได้ · ร่างอัตโนมัติจำค่าเหล่านี้ · Undo/Redo แล้วเลือกชิ้นเดิมกลับ + lint #210" / git push
+
+## Undo รอบ 1/2 ตรวจโค้ด + เสนอ (ยังไม่แก้) · 10 พ.ย. 2026 14:55 · HEAD = 9d06967
+- ตรวจแล้ว: snapshot = _serializePages (เฉพาะ .page clone) · _takeSnapshot เทียบสตริงกับ _lastSnap → เปลี่ยนธีม markDirty แต่สตริงเท่าเดิม = ไม่มีจุด Undo · ร่าง (_draftSave) ใช้ _lastSnap เดียวกัน = ธีมไม่อยู่ในร่าง
+- ค่าระดับเอกสารอยู่บน <html>: data-theme, data-theme-custom + style --(สีธีมกำหนดเอง), data-paper + --page-bg, data-layout, data-rule-style/data-rulehide, style --rule-h/--note-bw/bs/radius/--grp-*, data-notehide, data-plabelhide · --ft-txt = ค่าคำนวณ (ไม่เก็บ) · data-defstyles เดิมตั้งใจไม่อยู่ใน Undo · localStorage oe_theme/oe_layout = ค่าล่าสุดสำหรับไฟล์ใหม่
+- _restorePages ล้าง _ftSel/_ftEdit/_ftSet + _flAfterRestore → กล่อง/เส้นหลุดการเลือก · ftext/fline มี data-seq ไม่ซ้ำ (global) · fimg ไม่มี data-seq (ใช้ลำดับในหน้า)
+- แผน: snapshot = '<!--docst:{json}-->' + หน้า · _restorePages แยกส่วนหัวคืนค่า <html> (ไม่เรียก markDirty) + sync (_theme, ปุ่มเลย์เอาต์, เส้นคั่น, ซ่อนโน้ต, สีตัวอักษรอัตโนมัติ, แผงที่เปิด, localStorage) · ร่างเก่าไม่มีส่วนหัว = ไม่แตะ · กันจดค่าชี้ดู: เลื่อน snapshot ถ้า _dd/ถาดสีเปิด · เลือกคืน: จด หน้า+data-seq (รูป=ลำดับ) ก่อนคืน แล้วเลือกใหม่ถ้ายังอยู่ · lint #210
+- รอผู้ใช้ตอบ: ขอบเขตค่า (แนะนำ ธีม/สีกำหนดเอง/กระดาษ/เลย์เอาต์/เส้น·ขอบ/ซ่อนโน้ต-เลขหน้า · ไม่รวม โมโนโครม/ภาษา/ซูม) · ตั้งค่าเริ่มต้น · เลือกคืนหลัง Undo
+
+## #209 + #208b ผ่าน · commit 9d06967 (pushed) · 10 พ.ย. 2026 14:50 · HEAD = 9d06967 ไม่มีงานค้าง commit
+- งานที่เหลือ (รอผู้ใช้เลือก): ตัดสินขอบ/สีรายชิ้น (กล่องกลุ่ม/กล่องโน้ต · แนะนำไม่ทำ) · Undo (ธีม/พื้นกระดาษไม่อยู่ใน Undo · Undo แล้วกล่องหลุดการเลือก) · ตารางต่อ (ความสูงแถว · สี/ความหนาเส้น · วางจาก Excel) · ทดสอบค้างยืนยันเก่า (#206 EN/ปุ่มธีมเริ่มต้น/สีเริ่มต้น · #194 ย้ายร่าง · #204 · #198 · #199)
+
 ## บั๊กชื่อกลุ่มออกโหมดไม่ได้ · เจอจุดค้างจาก Console · แก้แล้ว (#208b) · 10 พ.ย. 2026 14:20 — รอทดสอบ (ยังไม่ commit #209 + #208b · HEAD = 71bfdae)
 - Console: ทุกคลิกที่ว่าง (target .page) ผลแอป busy:true · ftSel/ftEdit false · typoEl = 'sechead typosel' ค้างทุกคลิก = ต้นเหตุตรงๆ (พิสูจน์แล้ว)
 - ทำไม typoEl ไม่ถูกล้าง (ยังไม่พิสูจน์ · ค่า highlight ในภาพถูกตัด): mousedown ที่ว่าง preventDefault (เริ่มลากกรอบ) → ไฮไลท์/เคอร์เซอร์ค้างในชื่อกลุ่ม → ตัวรับ click ของแถบรูปแบบเห็น _keepSel = ไม่ typoClear

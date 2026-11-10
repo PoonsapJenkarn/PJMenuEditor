@@ -2580,6 +2580,49 @@ function clearDirty(){
 var POOL={}, _poolN=0;
 function poolAdd(uri){ for(var id in POOL){ if(POOL[id]===uri) return id; } var nid='pl'+(++_poolN); POOL[nid]=uri; return nid; }
 var undoStack=[], redoStack=[], _lastSnap=null, _snapTimer=null;
+/* Undo ครอบค่าระดับเอกสาร (ผู้ใช้ 10 พ.ย. 2026 · lint #210): ค่าที่บันทึกลงไฟล์บน <html> = ธีม · สีธีมกำหนดเอง · พื้นกระดาษ (+สีตัวอักษรตามกระดาษ) · เลย์เอาต์ · เส้นคั่น/ขอบกล่อง · ซ่อนโน้ต/เลขหน้า
+   ไม่รวม: ตั้งค่าเริ่มต้น (data-defstyles · ผู้ใช้เลือก) · โมโนโครม/ภาษา/ซูม (มุมมอง ไม่ใช่เนื้อหา) · --ft-txt (คำนวณเองจาก observer)
+   เก็บเป็นส่วนหัว <!--docst:{json}--> หน้า snapshot · ชี้ดู (รายการ ▾ · รายการธีม · ถาดสีธีม · หน้าต่างสี) = ใช้ค่าที่ยืนยันแล้วจาก snapshot ก่อนหน้า ไม่จดค่าชั่วคราว */
+var _DOCST_ATTRS=['data-theme','data-theme-custom','data-paper','data-layout','data-rule-style','data-rulehide','data-notehide','data-plabelhide'];
+var _DOCST_RE=/^<!--docst:([\s\S]*?)-->/;
+function _docStVars(){ var v=_THEME_VARS.concat(['page-bg']).concat(Object.keys(_PAPER_TXT_LIGHT)); Object.keys(_EDGE_DD).forEach(function(k){ if(k!=='rule-style') v.push(k); }); return v; }
+function _docStPreviewing(){ return !!((typeof _dd!=='undefined' && _dd) || (typeof _themeDd!=='undefined' && _themeDd && _themeDd.open) || document.querySelector('#thcpPop.open, #typoCpDlg.open')); }
+function _docStSer(){
+  if(_docStPreviewing() && _lastSnap){ var m=_DOCST_RE.exec(_lastSnap); if(m) return m[0]; }
+  var he=document.documentElement, o={a:{},s:{}};
+  _DOCST_ATTRS.forEach(function(k){ if(he.hasAttribute(k)) o.a[k]=he.getAttribute(k); });
+  _docStVars().forEach(function(k){ var v=he.style.getPropertyValue('--'+k); if(v && v.trim()) o.s[k]=v.trim(); });
+  return '<!--docst:'+JSON.stringify(o)+'-->';
+}
+function _docStApply(o){  /* คืนค่าเงียบๆ (ผู้เรียก = Undo/ร่าง จัดสถานะแก้ไฟล์เอง · ไม่สร้างจุด Undo ซ้อน) · ปุ่ม/แผงที่เปิดอยู่ตามค่าใหม่ */
+  var he=document.documentElement;
+  _DOCST_ATTRS.forEach(function(k){ var v=o.a?o.a[k]:null; if(v==null) he.removeAttribute(k); else if(he.getAttribute(k)!==v) he.setAttribute(k,v); });
+  _docStVars().forEach(function(k){ var v=o.s?o.s[k]:null; if(v==null) he.style.removeProperty('--'+k); else he.style.setProperty('--'+k,v); });
+  var th=he.getAttribute('data-theme'); _theme=(th==='custom' || _THEMES.indexOf(th)>=0)?th:'cream';
+  try{ localStorage.setItem(THEME_KEY,_theme); localStorage.setItem(LAYOUT_KEY,_layoutCur()); }catch(e){}  /* ค่าล่าสุดสำหรับไฟล์ใหม่ = ตามเอกสาร */
+  _layoutSyncBtns(); _ruleHideSync(); _noteHideSync();
+  var bt=document.getElementById('btnTheme'), be=document.getElementById('btnLineEdge');
+  if(bt && bt.classList.contains('on')) _themeRenderPanel(); else if(be && be.classList.contains('on')) _lineEdgeRenderPanel();
+}
+/* Undo/Redo แล้วเลือกชิ้นเดิมกลับ (ผู้ใช้ 10 พ.ย. 2026 · lint #210): กล่อง/เส้น = data-seq · รูป = หน้า + ลำดับในหน้า · ชิ้นหายจากการย้อน = ไม่เลือก · กำลังพิมพ์ = กลับมาเป็นเลือก (ไม่เข้าพิมพ์) */
+function _undoSelCap(){
+  var c={ft:[],fl:[],fp:null,lp:null,img:null}, sq=function(e){ return (e && e.getAttribute)?e.getAttribute('data-seq'):null; };
+  if(document.body.classList.contains('editmode')){ _selBoxes().forEach(function(b){ var s=sq(b); if(s) c.ft.push(s); }); _flLines().forEach(function(l){ var s=sq(l); if(s) c.fl.push(s); }); c.fp=sq(_ftSel); c.lp=sq(_flSel); }
+  if(_imgSel && _imgSel.isConnected && document.body.classList.contains('imgmode')){ var pg=_imgSel.closest('.page'); if(pg) c.img={p:[].indexOf.call(document.querySelectorAll('.page'),pg), i:[].indexOf.call(pg.querySelectorAll('.fimg'),_imgSel)}; }
+  return c;
+}
+function _undoSelRest(c){
+  if(!c) return; var q=function(cls,s){ return s?document.querySelector('.page .'+cls+'[data-seq="'+s+'"]'):null; };
+  if(document.body.classList.contains('editmode') && (c.ft.length || c.fl.length)){
+    var B=c.ft.map(function(s){ return q('ftext',s); }).filter(Boolean), LL=c.fl.map(function(s){ return q('fline',s); }).filter(Boolean), x0=B[0]||LL[0], pg=x0?x0.closest('.page'):null;
+    B=B.filter(function(b){ return b.closest('.page')===pg; }); LL=LL.filter(function(l){ return l.closest('.page')===pg; });  /* ชุดที่เลือกอยู่หน้าเดียวกันเสมอ */
+    if(B.length===1 && !LL.length) _ftSelect(B[0]);
+    else if(B.length){ _ftSet=B.slice(); B.forEach(function(b){ b.classList.add('sel'); }); var fp=q('ftext',c.fp); _ftSel=(fp && B.indexOf(fp)>=0)?fp:B[B.length-1]; _flSet=LL.slice(); _ftSyncHandles(); _ftTypo(_ftSel); _flSelSync(); _ftStatus(_ftSel); }  /* แบบเดียวกับลากกรอบเลือก */
+    else if(LL.length){ _flSet=LL.slice(); var lp=q('fline',c.lp); _flSelSync((lp && LL.indexOf(lp)>=0)?lp:null); }
+    if(typeof _ftGroupSync==='function') _ftGroupSync();
+  }
+  if(c.img && document.body.classList.contains('imgmode')){ var P=document.querySelectorAll('.page'), pg2=P[c.img.p], im=(pg2 && c.img.i>=0)?pg2.querySelectorAll('.fimg')[c.img.i]:null; if(im) _imgSelect(im); }
+}
 function _serializePages(){
   var pages=document.querySelectorAll('.page');
   var wrap=document.createElement('div');
@@ -2617,6 +2660,7 @@ function _reapplyEditable(){
   }
 }
 function _restorePages(html){
+  var _dsm=_DOCST_RE.exec(html||''); if(_dsm){ html=html.slice(_dsm[0].length); try{ _docStApply(JSON.parse(_dsm[1])); }catch(e){} }  /* ค่าระดับเอกสาร (ธีม กระดาษ เลย์เอาต์ เส้น·ขอบ ซ่อนโน้ต) ย้อนพร้อมหน้า · ร่างเก่าไม่มีส่วนนี้ = ไม่แตะ (lint #210) */
   var pages=document.querySelectorAll('.page');
   for(var i=pages.length-1;i>=0;i--){ pages[i].remove(); }
   var anchor=document.getElementById('edstatus');
@@ -2643,7 +2687,7 @@ function _restorePages(html){
   if(typeof syncBarHeight==='function') syncBarHeight();
 }
 function _takeSnapshot(){
-  var snap=_serializePages();
+  var snap=_docStSer()+_serializePages();  /* ค่าระดับเอกสาร + หน้า (lint #210) */
   if(snap===_lastSnap) return;
   if(_lastSnap!==null) undoStack.push(_lastSnap);
   _lastSnap=snap;
@@ -2703,8 +2747,8 @@ function _poolGC(){
 function _scheduleSnapshot(){ clearTimeout(_snapTimer); _snapTimer=setTimeout(_takeSnapshot, 500); }
 /* _snapNow: ถ่าย snapshot ทันที (สำหรับ structural op — เพิ่ม/ลบ กลุ่ม/รายการ/หน้า = 1 undo step ต่อการกระทำ) v53 */
 function _snapNow(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; } _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _takeSnapshot(); }
-function undo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!undoStack.length) return; redoStack.push(_lastSnap); _lastSnap=undoStack.pop(); _restorePages(_lastSnap); _blankFitAll(); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',tk('fl.undo')); }
-function redo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!redoStack.length) return; undoStack.push(_lastSnap); _lastSnap=redoStack.pop(); _restorePages(_lastSnap); _blankFitAll(); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _updateUndoButtons(); flashStatus('info',tk('fl.redo')); }
+function undo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!undoStack.length) return; var _usc=_undoSelCap(); redoStack.push(_lastSnap); _lastSnap=undoStack.pop(); _restorePages(_lastSnap); _blankFitAll(); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.undo')); }
+function redo(){ if(_snapTimer){ clearTimeout(_snapTimer); _snapTimer=null; _takeSnapshot(); } if(!redoStack.length) return; var _usc=_undoSelCap(); undoStack.push(_lastSnap); _lastSnap=redoStack.pop(); _restorePages(_lastSnap); _blankFitAll(); _dirty=true; var _sb=document.getElementById('btnSave'); if(_sb) _sb.classList.add('dirty'); _undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.redo')); }
 function _updateUndoButtons(){ var u=document.getElementById('btnUndo'), r=document.getElementById('btnRedo'); if(u) u.disabled=!undoStack.length; if(r) r.disabled=!redoStack.length; var ub=document.getElementById('undoBadge'); if(ub){ ub.textContent=undoStack.length?undoStack.length:''; ub.classList.toggle('full', undoStack.length>=1000); } var rb=document.getElementById('redoBadge'); if(rb) rb.textContent=redoStack.length?redoStack.length:''; if(undoStack.length<1000) _undoLimitNotified=false; }
 /* Ctrl+Z = undo · Ctrl+Y / Ctrl+Shift+Z = redo (v47 เฟส 2) */
 document.addEventListener('keydown', function(e){
@@ -3111,7 +3155,7 @@ document.addEventListener('click', function(ev){
 });
 
 window.addEventListener('resize', function(){ checkOverflow({quiet:true}); });  /* เดิมส่ง checkOverflow ตรงๆ → ทุกครั้งที่ย่อ/ขยายหน้าต่าง เขียนทับผลลัพธ์ในแถบล่าง */
-window.addEventListener('load', function(){ renumber(); _lastSnap=_serializePages(); _updateUndoButtons(); _initDragReorder(); _draftOffer();  /* เจอร่างค้างจากครั้งก่อน = เสนอกู้คืน (ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 63) */
+window.addEventListener('load', function(){ renumber(); _lastSnap=_docStSer()+_serializePages(); _updateUndoButtons(); _initDragReorder(); _draftOffer();  /* เจอร่างค้างจากครั้งก่อน = เสนอกู้คืน (ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 63) */
   /* ตรวจล้นหน้าครั้งแรก หลังฟอนต์เว็บโหลดเสร็จ (document.fonts.ready) — ไม่งั้นวัดด้วยฟอนต์ fallback ของระบบ (สูงกว่า) เตือนล้นผิดทั้งที่ยังไม่ล้น (ผู้ใช้ 13 ต.ค. 2026 · lint ข้อ 58) */
   if(document.fonts && document.fonts.ready && typeof document.fonts.ready.then==='function') document.fonts.ready.then(function(){ checkOverflow(); });
   else checkOverflow();  /* เบราว์เซอร์เก่าที่ไม่มี document.fonts = ตรวจทันทีแบบเดิม */
@@ -6448,7 +6492,7 @@ var _THEME_VARS=['note-bg','note-bd','grp-head-bg','grp-body-bg','grp-bd','txt-n
 var _THEME_TRIPLE={'grp-head-bg':1,'grp-body-bg':1};
 var _cpThemeVar=null;
 var _THEME_DEF='cream';  /* ธีมค่าเริ่มต้น = ครีม-น้ำตาล · อยู่ในรายการตามตัวอักษรเหมือนธีมอื่น (ประเภท ทั้งหมด/พาสเทล) · คืนค่าด้วยปุ่ม ธีมเริ่มต้น ข้างช่องธีม (ผู้ใช้ 7 พ.ย. 2026 · lint #206) */
-function _themeResetDef(){ _themeFlt.type=''; _themePick(_THEME_DEF); }  /* ปุ่ม ธีมเริ่มต้น: ตัวกรองกลับ ทั้งหมด (ธีมค่าเริ่มต้นต้องแสดงในรายการ) · ใช้ทางเดียวกับเลือกธีมในรายการ (_themePick) · สีกำหนดเองถูกจำไว้ไม่หาย · ไม่อยู่ใน Undo เหมือนการเลือกธีม (snapshot เก็บเฉพาะหน้า) */
+function _themeResetDef(){ _themeFlt.type=''; _themePick(_THEME_DEF); }  /* ปุ่ม ธีมเริ่มต้น: ตัวกรองกลับ ทั้งหมด (ธีมค่าเริ่มต้นต้องแสดงในรายการ) · ใช้ทางเดียวกับเลือกธีมในรายการ (_themePick) · สีกำหนดเองถูกจำไว้ไม่หาย · Ctrl+Z ย้อนได้เหมือนการเลือกธีม (ค่าระดับเอกสารอยู่ใน snapshot · lint #210) */
 var _theme='cream';
 function _themeApply(id, persist){
   if(_THEMES.indexOf(id)<0) id='cream';

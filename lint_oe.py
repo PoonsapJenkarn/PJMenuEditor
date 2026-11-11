@@ -4089,6 +4089,21 @@ def main():
     for _k in ("if(!undoStack.length) return; var _usc=_undoSelCap();","if(!redoStack.length) return; var _usc=_undoSelCap();","_undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.undo'));","_undoSelRest(_usc); _updateUndoButtons(); flashStatus('info',tk('fl.redo'));"):
         if _k not in txt: errors.append('lint #210: Undo/Redo ต้องเลือกชิ้นเดิมกลับ ('+_k[:40]+')')
     if 'ไม่อยู่ใน Undo เหมือนการเลือกธีม' in txt: errors.append('lint #210: คำอธิบายเก่า (ธีมไม่อยู่ใน Undo) ไม่ตรงพฤติกรรมแล้ว')
+    # ---- 211) วางจาก Excel ลงตาราง: Tab/หลายบรรทัด = กระจายจากช่องเคอร์เซอร์ · เพิ่มแถว/คอลัมน์ไม่เกิน 40×10 · เกิน = ตัด + เตือน · ช่อง "..." แยกถูก · ข้อความเดียวแทรกเหมือนเดิม (ผู้ใช้ 10 พ.ย. 2026) ----
+    def _fb211(n):
+        i=txt.find(n); return txt[i:txt.find('\n}\n',i)] if i>=0 else ''
+    _p211=_fb211('function _tblParseClip(s){'); _g211=_fb211('function _tblPasteGrid(td,G){')
+    if not _p211 or not _g211: errors.append('lint #211: ไม่พบ _tblParseClip/_tblPasteGrid (วางจาก Excel)')
+    else:
+        for _k in ("replace(/\\r\\n?/g,'\\n')","if(s.charAt(i+1)==='\"'){ cell+='\"';","return run(true)||run(false);"):
+            if _k not in _p211: errors.append('lint #211: _tblParseClip ขาด '+_k)
+        for _k in ("Math.min(G.length,_TBL_MAXR-r0)","Math.min(gc,_TBL_MAXC-c0)","_tblMkTd(ed,r.cells[r.cells.length-1])","_tblMkTd(ed,last.cells[j])","cg.appendChild(nc2)","_tblSetTxt(c,G[i][j2])","markDirty();","'fl.tblPasteCutRC':(xr?'fl.tblPasteCutR':'fl.tblPasteCutC')","tk('fl.tblPaste'","Math.max(bw, Math.min(_AL_PG.r-_AL_PG.l, bw+avg*addC))","nl=Math.min(bl, Math.max(_AL_PG.l, _AL_PG.r-nw))","box.style.width=nw.toFixed(1)+'mm'; box.style.left=nl.toFixed(1)+'mm';","sc=twN>0?Math.min(1,tw0/twN):1"):
+            if _k not in _g211: errors.append('lint #211: _tblPasteGrid ขาด '+_k)
+    _h211=txt.find("document.addEventListener('paste',function(e){ var td=_tblTdOf(e.target);"); _s211=txt[_h211:_h211+600] if _h211>=0 else ''
+    if "if(!/[\\t\\r\\n]/.test(one)){ document.execCommand('insertText',false,one); return; }" not in _s211 or "_tblPasteGrid(td,_tblParseClip(raw));" not in _s211: errors.append('lint #211: ตัวรับวางในช่องตาราง: ข้อความเดียว = แทรก · มี Tab/บรรทัด = _tblPasteGrid')
+    for _k in ("'fl.tblPaste':","'fl.tblPasteCutR':","'fl.tblPasteCutC':","'fl.tblPasteCutRC':"):
+        if txt.count(_k+"'วางแล้ว")+txt.count(_k+"'วางลงตาราง")!=1 or txt.count(_k+"'Pasted")!=1: errors.append('lint #211: i18n '+_k+' ต้องมี TH/EN')
+    if "'fl.tblPasteCut':" in txt: errors.append('lint #211b: ข้อความเตือนแบบเดิม (มี 0 แถว/0 คอลัมน์) ต้องไม่เหลือ')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

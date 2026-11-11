@@ -3957,7 +3957,7 @@ def main():
     if '_TBL_COLMIN=5' not in txt or 'nl=Math.max(mn,Math.min(sum-mn,nl));' not in txt: errors.append('lint #199: คอลัมน์ต่ำสุด 5 มม. และผลรวม 2 คอลัมน์ต้องเท่าเดิม')
     if '|| _tblColHit(e)) return;' not in txt: errors.append('lint #199: ดับเบิลคลิกเส้นแบ่งคอลัมน์ต้องไม่เข้าพิมพ์')
     if "_c.style.width=(_w/2).toFixed(3)+'%'; _n.style.width=(_w/2).toFixed(3)+'%';" not in txt or "if(_nb) _nb.style.width=((parseFloat(_nb.style.width)||0)+_dw).toFixed(3)+'%'; _dc.remove();" not in txt: errors.append('lint #199: แทรกคอลัมน์ = แบ่งครึ่ง · ลบคอลัมน์ = ให้ข้างเคียง (colgroup)')
-    if "ln:['all','h','none','eq']" not in txt or "if(kind==='ln' && v==='eq'){" not in txt or "(v==='eq' && !_tblCg(C.T))?'ttl.tblEqDone':null" not in txt: errors.append('lint #199: ต้องมี คอลัมน์กว้างเท่ากัน (จางเมื่อยังไม่เคยลาก)')
+    if "ln:['all','h','none','eq'" not in txt or "if(kind==='ln' && v==='eq'){" not in txt or "(v==='eq' && !_tblCg(C.T))?'ttl.tblEqDone':null" not in txt: errors.append('lint #199: ต้องมี คอลัมน์กว้างเท่ากัน (จางเมื่อยังไม่เคยลาก)')
     if txt.count("if(_bfl) _bfl.classList.remove('tblcolrz');")!=2: errors.append('lint #199: class ชี้เส้นแบ่งคอลัมน์ (tblcolrz) ต้องถูกตัดตอน Save Editor/Save Menu')
     if '@media screen{body.editmode.tblcolrz .ftext[data-ftbl],body.editmode.tblcolrz .ftext[data-ftbl] *{cursor:col-resize !important;}}' not in _css: errors.append('lint #199: ชี้เส้นแบ่งคอลัมน์ต้องเปลี่ยนเคอร์เซอร์ (เฉพาะจอ)')
     for _k199 in ('tbl.ln.eq','ttl.tblEqDone','fl.tblEq','fl.tblColW'):
@@ -4104,6 +4104,27 @@ def main():
     for _k in ("'fl.tblPaste':","'fl.tblPasteCutR':","'fl.tblPasteCutC':","'fl.tblPasteCutRC':"):
         if txt.count(_k+"'วางแล้ว")+txt.count(_k+"'วางลงตาราง")!=1 or txt.count(_k+"'Pasted")!=1: errors.append('lint #211: i18n '+_k+' ต้องมี TH/EN')
     if "'fl.tblPasteCut':" in txt: errors.append('lint #211b: ข้อความเตือนแบบเดิม (มี 0 แถว/0 คอลัมน์) ต้องไม่เหลือ')
+    # ---- 212) ตาราง ก. ลากความสูงแถว (กล่องยืดตาม) + แถวสูงเท่ากัน ใน เส้นตาราง ▾ (ผู้ใช้ 10–11 พ.ย. 2026) ----
+    for _f212 in ('function _tblRowHit(e){','function _tblRowHov(on){','function _tblRowsFreeze(T,box,px){','function _tblRowsEqual(T){',"document.addEventListener('mousedown',function _tblRowMd(e){","document.addEventListener('mousemove',function _tblRowMm(e){","document.addEventListener('mouseup',function _tblRowMu(){"):
+        if _f212 not in txt: errors.append('lint #212: ไม่พบ '+_f212)
+    _c212=txt.find("document.addEventListener('mousedown',function _tblColMd(e){"); _r212=txt.find("document.addEventListener('mousedown',function _tblRowMd(e){"); _b212=txt.find("var box=tg.closest('.ftext'); if(!box){ var _ovb=tg.closest('.selov.ovft');")
+    if not (0<=_c212<_r212<_b212): errors.append('lint #212: ตัวลากแถวต้องลงทะเบียนหลังตัวลากคอลัมน์ และก่อนตัวจับเมาส์ของกล่องข้อความ')
+    _m212=txt[_r212:_r212+2200] if _r212>=0 else ''
+    for _k in ("_tblRowsFreeze(D.T,D.box,D.px);","D.tr.style.height='0px'; D.mn=","nh=Math.max(D.mn, D.h0+(D.top?-dy:dy))","if(D.top) D.box.style.top=(D.t0+D.h0-nh).toFixed(1)+'mm';","top:!!H.top, t0:_ftNum(H.box.style.top)||0","_tblRowHov(!_tblColHit(e) && !!_tblRowHit(e));","if(!D.moved) return; markDirty();","tk('fl.tblRowH')"):
+        if _k not in _m212: errors.append('lint #212: ลากแถวขาด '+_k)
+    if "box.style.removeProperty('min-height');" not in txt[txt.find('function _tblRowsFreeze(T,box,px){'):txt.find('function _tblRowsFreeze(T,box,px){')+600]: errors.append('lint #212: เริ่มลากต้องจดความสูงทุกแถว + เอา min-height กล่องออก (กล่องยืดตาม)')
+    if "ln:['all','h','none','eq','eqr']," not in txt or "(v==='eqr' && _tblRowsEqual(C.T))?'ttl.tblEqRDone'" not in txt or "if(kind==='ln' && v==='eqr'){" not in txt: errors.append('lint #212: เส้นตาราง ▾ ต้องมี แถวสูงเท่ากัน (จางเมื่อเท่ากันอยู่แล้ว)')
+    if "Math.abs(e.clientY-rows[0].getBoundingClientRect().top)<=tol) return {box:box, T:T, tr:rows[0], px:px, top:true};" not in txt: errors.append('lint #212b: เส้นบนสุดของตารางต้องลากได้ (แถวแรกสูงขึ้นทางบน)')
+    if '|| _tblRowHit(e) || _tblColHit(e)) return;' not in txt: errors.append('lint #212: ดับเบิลคลิกเส้นล่างของแถวต้องไม่เข้าพิมพ์')
+    if txt.count("if(_bfl) _bfl.classList.remove('tblrowrz');")!=2 or '@media screen{body.editmode.tblrowrz .ftext[data-ftbl],body.editmode.tblrowrz .ftext[data-ftbl] *{cursor:row-resize !important;}}' not in _css: errors.append('lint #212: เคอร์เซอร์ ↕ (เฉพาะจอ) + ตัด class tblrowrz ตอน Save Editor/Save Menu')
+    for _k212 in ('tbl.ln.eqr','ttl.tblEqRDone','fl.tblEqR','fl.tblRowH'):
+        if txt.count("'"+_k212+"':'")!=2: errors.append('lint #212: i18n '+_k212+' ไม่ครบ TH+EN')
+    # ---- 212c) ตาราง ขอบซ้าย/ขวานอกสุดลากได้ = คอลัมน์แรก/สุดท้ายกว้างขึ้น กล่องยืดตาม (ผู้ใช้ 11 พ.ย. 2026) ----
+    _h212c=txt[txt.find('function _tblColHit(e){'):txt.find('function _tblColHit(e){')+1200]
+    if "return {box:box, T:T, i:0, px:px, edge:'l'};" not in _h212c or "return {box:box, T:T, i:nc-1, px:px, edge:'r'};" not in _h212c or "if(!row || !row.cells.length) return null;" not in _h212c: errors.append('lint #212c: _tblColHit ต้องจับขอบซ้าย/ขวานอกสุด (รวมตาราง 1 คอลัมน์)')
+    for _k in ("edge:H.edge||null};","if(D && D.edge){","dE=Math.max(_TBL_COLMIN-D.ws[kE], (D.edge==='r')?dxE:-dxE)","D.box.style.width=(D.bw0+dE).toFixed(1)+'mm'; if(D.edge==='l') D.box.style.left=(D.bl0-dE).toFixed(1)+'mm';"):
+        if _k not in txt: errors.append('lint #212c: ลากขอบนอกตารางขาด '+_k)
+    if txt.find('if(D && D.edge){')>txt.find("if(D){ if(!D.moved){ if(Math.abs(e.clientX-D.x)<2) return; D.moved=true; var cg=_tblColsEnsure(D.T);"): errors.append('lint #212c: ขอบนอกต้องจัดการก่อนเส้นแบ่งด้านใน')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

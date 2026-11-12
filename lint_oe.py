@@ -3756,7 +3756,7 @@ def main():
     _t186=re.search(r"\nfunction typoSetDefault\(\)\{[\s\S]*?\n\}", txt); _t186=_t186.group(0) if _t186 else ''
     if _t186.count('_defPersist();')<2: errors.append('lint #186: typoSetDefault ต้องเรียก _defPersist ทั้งทางกล่องข้อความและทางประเภทอื่น')
     _w186=re.findall(r"_defaultStyles(?:\.\w+|\[[^\]]+\])\s*=[^=]", txt)
-    if len(_w186)!=4: errors.append('lint #186: มีจุดเขียน _defaultStyles เพิ่ม/หาย ('+str(len(_w186))+' จุด · ปกติ 4 = กล่องข้อความ · ประเภทเดียว · 3 ประเภท · _defLoad) — จุดใหม่ต้องเรียก _defPersist ด้วย แล้วปรับ lint')
+    if len(_w186)!=5: errors.append('lint #186: มีจุดเขียน _defaultStyles เพิ่ม/หาย ('+str(len(_w186))+' จุด · ปกติ 5 = ตาราง · กล่องข้อความ · ประเภทเดียว · 3 ประเภท · _defLoad (ตาราง = lint #214)) — จุดใหม่ต้องเรียก _defPersist ด้วย แล้วปรับ lint')
     _m186=re.search(r"\nfunction buildMenuHtml\(\)\{[\s\S]*?\n\}", txt)
     if not _m186 or "clone.removeAttribute('data-defstyles');" not in _m186.group(0): errors.append('lint #186: Save Menu ต้องตัด data-defstyles')
 
@@ -4142,6 +4142,16 @@ def main():
     if "['btnTblLn',false,'ttl.tblLn'],['btnTblLc',false,'ttl.tblLc']," not in txt: errors.append('lint #213: _tblSync ต้องเปิด/จางปุ่ม สีเส้น (เลือกตารางพอ ไม่ต้องคลิกช่อง)')
     for _k in ('btn.tblLc','ttl.tblLc','fl.tblLc'):
         if txt.count("'"+_k+"':'")!=2: errors.append('lint #213: i18n '+_k+' ต้องมี TH/EN')
+    # ---- 214) ค่าเริ่มต้นตารางแยกจากกล่องข้อความ · เก็บ ตัวอักษร/ขอบ/พื้น/เส้นตาราง/แถวหัว/สีเส้น · ไม่เก็บ สีช่อง/จัดชิด/ขนาด (ผู้ใช้ 12 พ.ย. 2026) ----
+    _c214=txt[txt.find('function _tblDefCapture(x){'):txt.find('function _tblDefCapture(x){')+400]
+    if "d.tbl={ln:T.getAttribute('data-tbln')||null, thd:T.hasAttribute('data-thd'), lc:_tlcGet(T)};" not in _c214 or 'var d=_ftDefCapture(x)' not in _c214: errors.append('lint #214: _tblDefCapture ต้องเก็บ ตัวอักษร/ขอบ/พื้น + เส้นตาราง + แถวหัว + สีเส้น')
+    if 'data-tbg' in _c214 or 'data-tal' in _c214 or 'colgroup' in _c214: errors.append('lint #214: ค่าเริ่มต้นตารางไม่เก็บ สีช่อง/จัดชิด/ความกว้าง (ผู้ใช้เลือก)')
+    _a214=txt[txt.find('function _ftDefApply(box,x){'):txt.find('function _ftDefApply(box,x){')+900]
+    if "var T=_tblOf(box), d=T?_defaultStyles.ftbl:_defaultStyles.ftext; if(!d) return;" not in _a214 or "if(d.tbl.lc) _tlcSet(T,d.tbl.lc);" not in _a214: errors.append('lint #214: _ftDefApply ต้องแยก ตาราง = ftbl · กล่องข้อความ = ftext และใส่ค่าตาราง')
+    _s214=txt[txt.find('function typoSetDefault(){'):txt.find('function typoSetDefault(){')+1600]
+    if "if(_dtb) _defaultStyles.ftbl=_tblDefCapture(_typoEl); else _defaultStyles.ftext=_ftDefCapture(_typoEl);" not in _s214 or "tk(_dtb?'fl.setDefaultTbl':'fl.setDefaultFt')" not in _s214: errors.append('lint #214: ตั้งค่าเริ่มต้นตอนเลือกตาราง ต้องไม่ทับค่าของกล่องข้อความ')
+    if "_defaultStyles[(type.key==='ftext' && el.closest && el.closest('.ftext[data-ftbl]'))?'ftbl':type.key]" not in txt: errors.append('lint #214: ปุ่ม ตั้งค่าเริ่มต้น เขียว ตามค่าเริ่มต้นตาราง/กล่องข้อความ แยกกัน')
+    if txt.count("'fl.setDefaultTbl':'✔")!=2: errors.append('lint #214: i18n fl.setDefaultTbl ต้องมี TH/EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

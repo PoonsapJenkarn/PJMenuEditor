@@ -3912,7 +3912,7 @@ def main():
     if "if(e.key==='Tab' && _tblTab(e)) return;" not in txt: errors.append('lint #196: Tab/Shift+Tab ต้องข้ามช่องตาราง')
     if "var td=_tblTdOf(e.target); if(!td) return; var cd=e.clipboardData;" not in txt or "document.addEventListener('drop',function(e){ var td=_tblTdOf(e.target);" not in txt: errors.append('lint #196: วาง/ลากลงช่องตารางต้องเป็นข้อความล้วน')
     if txt.count('#alignDdPop,#calModal,#aboutModal,.cp-pop,#tblPickPop,#tblDdPop')!=2 or "ev.target.closest('#tblPickPop')" not in txt or "clone.querySelector('#tblPickPop')" not in txt or "'#pasteModal','#tblPickPop','#tblDdPop','#zDdPop'," not in txt: errors.append('lint #196: #tblPickPop ต้องอยู่ในรายการเครื่องมือ (ไม่เลิกเลือก) + ตัดตอนบันทึก')
-    for _c196 in ('.fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}','.fttbl td{border:1px solid var(--note-bd);','@media print{#tblPickPop{display:none !important;}}','#tblPickPop .tp-c.hl{',':root body.boardmode .fttbl:not([data-tbln="none"]) td{','#edbar #btnTblAdd.on,','#edbar #btnTblAdd.on svg,','#edbar #btnTblAdd.on span{'):
+    for _c196 in ('.fttbl{width:100%;border-collapse:collapse;table-layout:fixed;}','.fttbl td{border:var(--tl-w,1px) var(--tl-s,solid) var(--tl-c,var(--note-bd));','@media print{#tblPickPop{display:none !important;}}','#tblPickPop .tp-c.hl{',':root body.boardmode .fttbl:not([data-tbln="none"]) td{','#edbar #btnTblAdd.on,','#edbar #btnTblAdd.on svg,','#edbar #btnTblAdd.on span{'):
         if _c196 not in txt: errors.append('lint #196: CSS ขาด '+_c196[:50])
     for _k196 in ('btn.tblAdd','ttl.tblAdd','tbl.pickLbl','fl.tblAdd','fl.tblFull','fl.tblRowAdd','st.tblEdit','st.tblEditUp'):
         if txt.count("'"+_k196+"':'")<2: errors.append('lint #196: i18n '+_k196+' ไม่ครบ TH+EN')
@@ -4125,6 +4125,23 @@ def main():
     for _k in ("edge:H.edge||null};","if(D && D.edge){","dE=Math.max(_TBL_COLMIN-D.ws[kE], (D.edge==='r')?dxE:-dxE)","D.box.style.width=(D.bw0+dE).toFixed(1)+'mm'; if(D.edge==='l') D.box.style.left=(D.bl0-dE).toFixed(1)+'mm';"):
         if _k not in txt: errors.append('lint #212c: ลากขอบนอกตารางขาด '+_k)
     if txt.find('if(D && D.edge){')>txt.find("if(D){ if(!D.moved){ if(Math.abs(e.clientX-D.x)<2) return; D.moved=true; var cg=_tblColsEnsure(D.T);"): errors.append('lint #212c: ขอบนอกต้องจัดการก่อนเส้นแบ่งด้านใน')
+    # ---- 213) ตาราง ข. สี/ความหนา/แบบเส้นตาราง ทั้งตาราง (ผู้ใช้ 11–12 พ.ย. 2026) ----
+    _ln213=txt.find('id="btnTblLn"'); _lc213=txt.find('id="btnTblLc" onclick="_tlcOpen()" disabled'); _al213=txt.find('id="btnTblAl"')
+    if txt.count('id="btnTblLc"')!=1 or not (0<=_ln213<_lc213<_al213): errors.append('lint #213: ปุ่ม สีเส้น ▾ (#btnTblLc) ต้องมี 1 ปุ่ม ต่อจาก เส้นตาราง ▾ และเริ่มต้นจาง')
+    _ps213=txt.find('id="tblLcPop"'); _pp213=txt[_ps213:txt.find('</div></span>',_ps213)] if _ps213>=0 else ''
+    for _s in ('data-fbv="theme"','id="tblLcHex"','data-tlw="0.5"','data-tlw="5"','data-tls="solid"','data-tls="dashed"','data-tls="dotted"','cp-ok fb-ok','cp-cancel fb-cancel'):
+        if _s not in _pp213: errors.append('lint #213: ถาดสีเส้นขาด '+_s)
+    if 'data-tls="double"' in _pp213 or 'data-fbv="none"' in _pp213: errors.append('lint #213: ถาดสีเส้นไม่มี แบบคู่/ไม่มีเส้น (ไม่มีเส้น อยู่ใน เส้นตาราง ▾)')
+    if '.fttbl td{border:var(--tl-w,1px) var(--tl-s,solid) var(--tl-c,var(--note-bd));' not in _css: errors.append('lint #213: เส้นช่องตารางต้องใช้ตัวแปร --tl-w/--tl-s/--tl-c (ค่าเริ่มต้น 1px ทึบ ตามธีม)')
+    for _g in ('#edbar #btnTblLc.on,','#edbar #btnTblLc.on svg,','#edbar #btnTblLc.on span,','#tblLcPick .cp-pop{','#tblLcPick > .cp-pop{top:100%;','#tblLcPick .fb-ws,#tblLcPick .fb-sts{'):
+        if _g not in _css: errors.append('lint #213: ไม่พบ CSS '+_g)
+    for _f in ('function _tlcGet(T){','function _tlcSet(T,o){','function _tlcOpen(){','function _tlcCommit(){','function _tlcCancel(){','function _tlcInit(){'):
+        if _f not in txt: errors.append('lint #213: ไม่พบ '+_f)
+    _cm213=txt[txt.find('function _tlcCommit(){'):txt.find('function _tlcCommit(){')+500]
+    if 'if(n.c===o.c && n.w===o.w && n.s===o.s) return;' not in _cm213 or 'markDirty();' not in _cm213: errors.append('lint #213: ตกลง = 1 Undo · ไม่เปลี่ยน = ไม่มีจุด Undo')
+    if "['btnTblLn',false,'ttl.tblLn'],['btnTblLc',false,'ttl.tblLc']," not in txt: errors.append('lint #213: _tblSync ต้องเปิด/จางปุ่ม สีเส้น (เลือกตารางพอ ไม่ต้องคลิกช่อง)')
+    for _k in ('btn.tblLc','ttl.tblLc','fl.tblLc'):
+        if txt.count("'"+_k+"':'")!=2: errors.append('lint #213: i18n '+_k+' ต้องมี TH/EN')
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")

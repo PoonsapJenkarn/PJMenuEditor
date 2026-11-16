@@ -4152,6 +4152,21 @@ def main():
     if "if(_dtb) _defaultStyles.ftbl=_tblDefCapture(_typoEl); else _defaultStyles.ftext=_ftDefCapture(_typoEl);" not in _s214 or "tk(_dtb?'fl.setDefaultTbl':'fl.setDefaultFt')" not in _s214: errors.append('lint #214: ตั้งค่าเริ่มต้นตอนเลือกตาราง ต้องไม่ทับค่าของกล่องข้อความ')
     if "_defaultStyles[(type.key==='ftext' && el.closest && el.closest('.ftext[data-ftbl]'))?'ftbl':type.key]" not in txt: errors.append('lint #214: ปุ่ม ตั้งค่าเริ่มต้น เขียว ตามค่าเริ่มต้นตาราง/กล่องข้อความ แยกกัน')
     if txt.count("'fl.setDefaultTbl':'✔")!=2: errors.append('lint #214: i18n fl.setDefaultTbl ต้องมี TH/EN')
+    # ---- 215) ข้อความ A4 ต้องบอกตำแหน่งปุ่มปรับเทียบจริง (▾ ข้าง A4 มุมขวาบน · เดิมเขียนผิดว่าแท็บไฟล์) + กล่องเกี่ยวกับสูงคงที่ เลื่อนเฉพาะเนื้อหา (ผู้ใช้ 16 พ.ย. 2026) ----
+    _n215 = re.findall(r"'fl\.a4Nominal':'([^']*)'", txt)
+    if len(_n215) < 2: errors.append('lint #215: fl.a4Nominal ไม่ครบ TH+EN')
+    for _v215 in _n215:
+        if 'แท็บไฟล์' in _v215 or 'file tab' in _v215.lower(): errors.append('lint #215: fl.a4Nominal ห้ามบอกว่าปุ่มปรับเทียบอยู่แท็บไฟล์ (ปุ่มจริง = ▾ ข้าง A4 มุมขวาบน)')
+        if '▾' not in _v215 or 'A4' not in _v215: errors.append('lint #215: fl.a4Nominal ต้องบอกว่ากด ▾ ข้างปุ่ม A4')
+    _b215 = re.search(r'#aboutModal \.about-box\{([^}]*)\}', txt)
+    if not _b215 or 'height:min(85vh,540px)' not in _b215.group(1) or 'overflow:hidden' not in _b215.group(1) or 'display:flex;flex-direction:column' not in _b215.group(1):
+        errors.append('lint #215: กล่องเกี่ยวกับต้องสูงคงที่ + flex column + overflow:hidden (ห้ามเลื่อนทั้งกล่อง)')
+    if '#aboutModal .about-panes{flex:1 1 auto;min-width:0;overflow-y:auto;overflow-x:hidden;' not in txt: errors.append('lint #215: เนื้อหากล่องเกี่ยวกับ (.about-panes) ต้องเลื่อนแนวตั้งเองได้ + ห้ามมีแถบเลื่อนแนวนอน')
+    if '#aboutModal .about-link{overflow-wrap:anywhere;}' not in txt: errors.append('lint #215: ลิงก์ในกล่องเกี่ยวกับต้องตัดบรรทัดได้ (กันแถบเลื่อนแนวนอน)')
+    if not _b215 or 'width:min(92vw,500px)' not in _b215.group(1): errors.append('lint #215: กล่องเกี่ยวกับกว้าง 500px (ลิงก์ GitHub พอดีบรรทัดเดียว)')
+    _t215 = txt.find('#aboutModal .about-tabwrap{')
+    if _t215 < 0 or 'flex:1 1 auto;min-height:0;}' not in txt[_t215:_t215+120]: errors.append('lint #215: .about-tabwrap ต้อง flex:1 + min-height:0')
+
     # ---- report ----
     print("=" * 54)
     print(" PJ Menu Editor — pre-save lint")
